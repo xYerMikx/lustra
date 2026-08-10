@@ -1,11 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import {
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { MeResponse } from '@lustra/contracts'
 
 import { getMe } from '@/shared/api/auth-client'
@@ -15,9 +11,6 @@ type RequireMasterSessionProps = {
   fallback?: ReactNode
 }
 
-/**
- * Master-only gate for `/app/onboarding` and master dashboard routes.
- */
 export function RequireMasterSession({
   children,
   fallback = null,
@@ -35,8 +28,15 @@ export function RequireMasterSession({
           return
         }
 
+        if (!me) {
+          router.replace('/app/login')
+
+          return
+        }
+
         if (me.role !== 'master') {
           router.replace('/app')
+
           return
         }
 
@@ -47,6 +47,7 @@ export function RequireMasterSession({
         if (cancelled) {
           return
         }
+
         router.replace('/app/login')
       })
 

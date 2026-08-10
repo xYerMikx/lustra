@@ -1,7 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DistrictView, MasterProfileView, MeResponse } from '@lustra/contracts'
+import type {
+  DistrictView,
+  MasterProfileView,
+  MeResponse,
+  PatchMasterProfileInput,
+} from '@lustra/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import {
@@ -30,6 +35,14 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
         if (cancelled) {
           return
         }
+
+        if (!loadedProfile || !districtResponse) {
+          setLoadError('Не удалось загрузить профиль')
+          setLoading(false)
+
+          return
+        }
+
         setProfile(loadedProfile)
         setDistricts(districtResponse.districts)
         setLoading(false)
@@ -38,11 +51,13 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
         if (cancelled) {
           return
         }
+
         if (error instanceof ApiError) {
           setLoadError(error.message)
         } else {
           setLoadError('Не удалось загрузить профиль')
         }
+
         setLoading(false)
       })
 
@@ -51,9 +66,20 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
   }, [])
 
-  async function saveStepBasics(input: Parameters<typeof patchMasterProfile>[0]) {
+  const saveStepBasics = async (
+    input: PatchMasterProfileInput,
+  ): Promise<MasterProfileView> => {
     const updated = await patchMasterProfile(input)
+
+    if (!updated) {
+      throw new ApiError(500, {
+        code: 'INTERNAL',
+        message: 'Не удалось сохранить профиль',
+      })
+    }
+
     setProfile(updated)
+
     return updated
   }
 
