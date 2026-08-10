@@ -1,0 +1,85 @@
+---
+interface Props {
+  title: string
+  lead: string
+  primaryCta: string
+  secondaryCta: string
+  catalogHref: string
+  masterHref: string
+}
+
+const { title, lead, primaryCta, secondaryCta, catalogHref, masterHref } =
+  Astro.props
+---
+
+<section class="cta-band section" aria-labelledby="cta-title">
+  <div class="wrap">
+    <h2 id="cta-title">{title}</h2>
+    <p>{lead}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href={catalogHref}>{primaryCta}</a>
+      <a class="btn btn-secondary" href={masterHref}>{secondaryCta}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    padding-bottom: var(--spacing-96);
+  }
+
+  .wrap {
+    width: min(920px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    padding: var(--spacing-56) var(--spacing-32);
+    border-radius: var(--radius-22);
+    background:
+      radial-gradient(
+        ellipse 70% 80% at 10% 20%,
+        color-mix(in srgb, var(--color-gold) 28%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(135deg, var(--color-clay), var(--color-accent-700));
+    color: var(--color-on-accent);
+    text-align: center;
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  p {
+    max-width: 36ch;
+    margin-inline: auto;
+    margin-bottom: var(--spacing-32);
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-12);
+  }
+
+  .wrap :global(.btn-secondary) {
+    background: color-mix(in srgb, var(--color-surface) 14%, transparent);
+    border-color: color-mix(in srgb, var(--color-on-accent) 45%, transparent);
+    color: var(--color-on-accent);
+  }
+
+  .wrap :global(.btn-secondary:hover) {
+    border-color: var(--color-on-accent);
+    color: var(--color-on-accent);
+  }
+
+  @media (max-width: 480px) {
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

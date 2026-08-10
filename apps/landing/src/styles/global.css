@@ -8,6 +8,12 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  /* Sticky header (~56px) + breathing room for in-page anchors */
+  scroll-padding-top: calc(var(--spacing-56) + var(--spacing-16));
+}
+
 html,
 body {
   margin: 0;
@@ -41,6 +47,10 @@ h3 {
 
 p {
   margin: 0;
+}
+
+.section {
+  padding: var(--spacing-96) 0;
 }
 
 .btn {
@@ -94,6 +104,10 @@ p {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .btn {
     transition: none;
   }

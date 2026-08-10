@@ -1,61 +1,26 @@
 ---
-import BaseLayout from "../layouts/base-layout.astro";
-import { getAppUrl } from "../lib/site";
+import { getEntry } from 'astro:content'
+import BaseLayout from '../layouts/base-layout.astro'
+import ForMastersPage from '../components/for-masters-page.astro'
+import { getAppUrl } from '../lib/site'
 
-const masterAppHref = getAppUrl("/app?role=master&utm_source=landing-for-masters");
+const content = (await getEntry('sections', 'for-masters'))!.data
+const masterHref = getAppUrl(
+  '/app/register?role=master&utm_source=landing-for-masters',
+)
 ---
 
 <BaseLayout
   title="Для мастеров · Lustra"
   description="Lustra для мастеров — онлайн-запись, календарь и витрина в Минске."
+  canonicalPath="/for-masters"
 >
-  <main class="page">
-    <a class="back" href="/">← Lustra</a>
-    <h1>Для мастеров</h1>
-    <p>
-      Скоро здесь появится подробная страница: как работает кабинет, запись
-      клиентов и продвижение в каталоге.
-    </p>
-    <a class="btn btn-primary" href={masterAppHref}>Открыть кабинет</a>
-  </main>
+  <ForMastersPage
+    eyebrow={content.eyebrow!}
+    title={content.title!}
+    lead={content.lead!}
+    primaryCta={content.primaryCta!}
+    masterHref={masterHref}
+    benefits={content.benefits!}
+  />
 </BaseLayout>
-
-<style>
-  .page {
-    min-height: 100dvh;
-    width: min(560px, calc(100% - var(--spacing-40)));
-    margin-inline: auto;
-    padding: var(--spacing-40) 0 var(--spacing-64);
-    background:
-      radial-gradient(
-        ellipse 80% 50% at 0% 0%,
-        color-mix(in srgb, var(--color-gold) 14%, transparent),
-        transparent 50%
-      ),
-      var(--color-bg);
-  }
-
-  .back {
-    display: inline-block;
-    margin-bottom: var(--spacing-32);
-    font-size: var(--text-13);
-    line-height: var(--text-13--line-height);
-    color: var(--color-text-2);
-  }
-
-  .back:hover {
-    color: var(--color-accent);
-  }
-
-  h1 {
-    font-size: clamp(var(--text-32), 7vw, var(--text-40));
-    line-height: 1.15;
-    margin-bottom: var(--spacing-16);
-  }
-
-  p {
-    color: var(--color-text-2);
-    line-height: 1.55;
-    margin-bottom: var(--spacing-32);
-  }
-</style>

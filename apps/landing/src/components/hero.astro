@@ -1,0 +1,192 @@
+---
+interface Props {
+  brand: string
+  headline: string
+  lead: string
+  primaryCta: string
+  secondaryCta: string
+  catalogHref: string
+  masterHref: string
+}
+
+const { brand, headline, lead, primaryCta, secondaryCta, catalogHref, masterHref } =
+  Astro.props
+---
+
+<section class="hero" aria-labelledby="hero-brand">
+  <div class="atmosphere" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="plane" aria-hidden="true">
+    <div class="plane-glow"></div>
+  </div>
+
+  <div class="copy">
+    <p class="brand" id="hero-brand">{brand}</p>
+    <h1 class="headline">{headline}</h1>
+    <p class="lead">{lead}</p>
+    <div class="actions">
+      <a class="btn btn-primary" href={catalogHref}>{primaryCta}</a>
+      <a class="btn btn-secondary" href={masterHref}>{secondaryCta}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: min(92dvh, 880px);
+    overflow: hidden;
+    display: grid;
+    align-items: end;
+  }
+
+  .atmosphere {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        ellipse 90% 70% at 12% 18%,
+        color-mix(in srgb, var(--color-accent) 18%, transparent),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 70% 55% at 88% 8%,
+        color-mix(in srgb, var(--color-gold) 22%, transparent),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 60% 45% at 55% 100%,
+        color-mix(in srgb, var(--color-clay) 12%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(165deg, var(--color-bg) 0%, var(--color-surface-2) 48%, #e8d9cf 100%);
+    animation: drift 16s var(--ease-out-quart) infinite alternate;
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.32;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+  }
+
+  .plane {
+    position: absolute;
+    inset: 8% 0 auto;
+    height: 62%;
+    clip-path: polygon(0 18%, 100% 0, 100% 100%, 0 82%);
+    background:
+      linear-gradient(
+        120deg,
+        color-mix(in srgb, var(--color-clay) 35%, var(--color-surface-2)),
+        color-mix(in srgb, var(--color-accent) 28%, var(--color-surface)),
+        color-mix(in srgb, var(--color-gold) 40%, var(--color-bg))
+      );
+    opacity: 0.55;
+    animation: reveal var(--duration-700) var(--ease-out-quart) both;
+  }
+
+  .plane-glow {
+    position: absolute;
+    inset: 20% 30% auto;
+    height: 40%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-gold) 45%, transparent),
+      transparent 70%
+    );
+    filter: blur(24px);
+  }
+
+  .copy {
+    position: relative;
+    z-index: var(--z-10);
+    width: min(680px, calc(100% - var(--spacing-40)));
+    margin: 0 auto;
+    padding: var(--spacing-96) 0 var(--spacing-64);
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-40), 12vw, var(--text-56));
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--spacing-24);
+    animation: rise var(--duration-700) var(--ease-out-quart) both;
+  }
+
+  .headline {
+    font-size: clamp(var(--text-26), 5vw, var(--text-32));
+    line-height: 1.2;
+    max-width: 16ch;
+    margin-bottom: var(--spacing-16);
+    animation: rise var(--duration-700) var(--ease-out-quart) 80ms both;
+  }
+
+  .lead {
+    max-width: 40ch;
+    font-size: var(--text-16);
+    line-height: 1.55;
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-32);
+    animation: rise var(--duration-700) var(--ease-out-quart) 140ms both;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-12);
+    animation: rise var(--duration-700) var(--ease-out-quart) 200ms both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--spacing-16));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: scale(1) translate(0, 0);
+    }
+    to {
+      transform: scale(1.04) translate(-1.2%, 1%);
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      clip-path: polygon(0 40%, 100% 28%, 100% 72%, 0 84%);
+    }
+    to {
+      opacity: 0.55;
+      clip-path: polygon(0 18%, 100% 0, 100% 100%, 0 82%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .atmosphere,
+    .plane,
+    .brand,
+    .headline,
+    .lead,
+    .actions {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

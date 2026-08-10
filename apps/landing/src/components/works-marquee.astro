@@ -1,0 +1,154 @@
+---
+interface Work {
+  label: string
+  tone: 'accent' | 'gold' | 'sage' | 'clay' | 'surface'
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  works: Work[]
+}
+
+const { eyebrow, title, lead, works } = Astro.props
+const loop = [...works, ...works]
+---
+
+<section class="works section" id="works" aria-labelledby="works-title">
+  <div class="wrap">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="works-title">{title}</h2>
+    <p class="lead">{lead}</p>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      {
+        loop.map((work) => (
+          <figure class:list={['tile', `tone-${work.tone}`]}>
+            <figcaption>{work.label}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .wrap {
+    width: min(920px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    margin-bottom: var(--spacing-32);
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    line-height: 1.55;
+  }
+
+  .marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .track {
+    display: flex;
+    gap: var(--spacing-16);
+    width: max-content;
+    animation: scroll 42s linear infinite;
+  }
+
+  .tile {
+    margin: 0;
+    width: 200px;
+    height: 260px;
+    border-radius: var(--radius-14);
+    display: grid;
+    align-items: end;
+    padding: var(--spacing-16);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 18% 16% auto;
+    height: 42%;
+    border-radius: var(--radius-999);
+    background: color-mix(in srgb, var(--color-surface) 35%, transparent);
+    filter: blur(2px);
+  }
+
+  figcaption {
+    position: relative;
+    font-size: var(--text-15);
+    font-weight: var(--font-weight-600);
+    color: var(--color-on-accent);
+  }
+
+  .tone-accent {
+    background: linear-gradient(160deg, var(--color-accent), var(--color-clay));
+  }
+
+  .tone-gold {
+    background: linear-gradient(160deg, var(--color-gold), var(--color-clay));
+  }
+
+  .tone-sage {
+    background: linear-gradient(160deg, var(--color-sage), var(--color-clay));
+  }
+
+  .tone-clay {
+    background: linear-gradient(160deg, var(--color-clay), #3d2c26);
+  }
+
+  .tone-surface {
+    background: linear-gradient(160deg, var(--color-surface-2), var(--color-accent-700));
+  }
+
+  .tone-surface figcaption,
+  .tone-gold figcaption {
+    color: var(--color-text);
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      flex-wrap: wrap;
+      width: min(1120px, calc(100% - var(--spacing-40)));
+      margin-inline: auto;
+      justify-content: center;
+    }
+
+    .tile:nth-child(n + 13) {
+      display: none;
+    }
+  }
+</style>

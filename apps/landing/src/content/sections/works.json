@@ -1,0 +1,19 @@
+{
+  "eyebrow": "Работы",
+  "title": "Живые примеры из портфолио",
+  "lead": "Так выглядит витрина мастеров на Lustra — чистая подача, без ленты хаоса.",
+  "works": [
+    { "label": "Гель-лак", "tone": "accent" },
+    { "label": "Брови", "tone": "gold" },
+    { "label": "Укладка", "tone": "sage" },
+    { "label": "Макияж", "tone": "clay" },
+    { "label": "Педикюр", "tone": "surface" },
+    { "label": "Косметология", "tone": "accent" },
+    { "label": "Массаж", "tone": "gold" },
+    { "label": "Депиляция", "tone": "sage" },
+    { "label": "Стрижка", "tone": "clay" },
+    { "label": "Ламинирование", "tone": "surface" },
+    { "label": "Наращивание", "tone": "accent" },
+    { "label": "Перманент", "tone": "gold" }
+  ]
+}

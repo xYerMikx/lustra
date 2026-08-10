@@ -1,0 +1,135 @@
+---
+interface Benefit {
+  title: string
+  body: string
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  primaryCta: string
+  masterHref: string
+  benefits: Benefit[]
+}
+
+const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
+---
+
+<main>
+  <section class="hero-lite">
+    <div class="wrap">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{title}</h1>
+      <p class="lead">{lead}</p>
+      <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+    </div>
+  </section>
+
+  <section class="benefits section">
+    <div class="grid">
+      {
+        benefits.map((item) => (
+          <article>
+            <h2>{item.title}</h2>
+            <p>{item.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="closing section">
+    <div class="wrap">
+      <h2>Начните с профиля</h2>
+      <p>Заполните услуги и окна — клиенты найдут вас в каталоге Минска.</p>
+      <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+    </div>
+  </section>
+</main>
+
+<style>
+  .hero-lite {
+    padding: var(--spacing-64) 0 var(--spacing-40);
+    background:
+      radial-gradient(
+        ellipse 70% 60% at 80% 0%,
+        color-mix(in srgb, var(--color-gold) 18%, transparent),
+        transparent 55%
+      ),
+      var(--color-bg);
+  }
+
+  .wrap {
+    width: min(760px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h1 {
+    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    line-height: 1.15;
+    max-width: 16ch;
+    margin-bottom: var(--spacing-16);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .grid {
+    width: min(960px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-24) var(--spacing-32);
+  }
+
+  article {
+    padding-top: var(--spacing-20);
+    border-top: 1px solid var(--color-border);
+  }
+
+  article h2 {
+    font-size: var(--text-20);
+    line-height: var(--text-20--line-height);
+    margin-bottom: var(--spacing-8);
+  }
+
+  article p {
+    color: var(--color-text-2);
+    line-height: 1.5;
+  }
+
+  .closing .wrap {
+    text-align: center;
+  }
+
+  .closing h2 {
+    font-size: var(--text-32);
+    line-height: var(--text-32--line-height);
+    margin-bottom: var(--spacing-12);
+  }
+
+  .closing p {
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-24);
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
