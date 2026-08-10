@@ -9,7 +9,13 @@ import {
 
 import { ApiError } from '@/shared/api/http'
 import { register } from '@/shared/api/auth-client'
+import { RoleSegment } from './role-segment'
 import styles from './auth-form.module.css'
+
+const REGISTER_INTRO: Record<RegisterRole, string> = {
+  client: 'Аккаунт для записи к мастерам.',
+  master: 'Профиль мастера — дальше настроите услуги и расписание.',
+}
 
 export function RegisterForm() {
   const router = useRouter()
@@ -54,84 +60,68 @@ export function RegisterForm() {
   }
 
   return (
-    <form className={styles.form} onSubmit={onSubmit} noValidate>
-      <fieldset className={styles.roleGroup}>
-        <legend>Я регистрируюсь как</legend>
-        <label className={styles.roleOption}>
+    <>
+      <p className={styles.intro}>{REGISTER_INTRO[role]}</p>
+      <form className={styles.form} onSubmit={onSubmit} noValidate>
+        <div className={styles.roleField}>
+          <span className={styles.roleLabel}>Я регистрируюсь как</span>
+          <RoleSegment value={role} onChange={setRole} />
+        </div>
+
+        <label className={styles.field}>
+          <span>Имя</span>
           <input
-            type="radio"
-            name="role"
-            value="client"
-            checked={role === 'client'}
-            onChange={() => setRole('client')}
+            type="text"
+            name="firstName"
+            autoComplete="given-name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
           />
-          Клиент
         </label>
-        <label className={styles.roleOption}>
+        <label className={styles.field}>
+          <span>Email</span>
           <input
-            type="radio"
-            name="role"
-            value="master"
-            checked={role === 'master'}
-            onChange={() => setRole('master')}
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
-          Мастер
         </label>
-      </fieldset>
+        <label className={styles.field}>
+          <span>Пароль</span>
+          <input
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
+        </label>
 
-      <label className={styles.field}>
-        <span>Имя</span>
-        <input
-          type="text"
-          name="firstName"
-          autoComplete="given-name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        />
-      </label>
-      <label className={styles.field}>
-        <span>Email</span>
-        <input
-          type="email"
-          name="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label className={styles.field}>
-        <span>Пароль</span>
-        <input
-          type="password"
-          name="password"
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
-        />
-      </label>
+        <label className={styles.check}>
+          <input
+            type="checkbox"
+            checked={acceptTerms}
+            onChange={(e) => setAcceptTerms(e.target.checked)}
+          />
+          <span>Принимаю условия использования и политику конфиденциальности</span>
+        </label>
 
-      <label className={styles.check}>
-        <input
-          type="checkbox"
-          checked={acceptTerms}
-          onChange={(e) => setAcceptTerms(e.target.checked)}
-        />
-        <span>Принимаю условия использования и политику конфиденциальности</span>
-      </label>
+        {error ? (
+          <p className={styles.error} role="alert">
+            {error}
+          </p>
+        ) : null}
 
-      {error ? (
-        <p className={styles.error} role="alert">
-          {error}
-        </p>
-      ) : null}
-
-      <button className="btn btn-primary" type="submit" disabled={pending}>
-        {pending ? 'Создаём…' : 'Зарегистрироваться'}
-      </button>
-    </form>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
+          {pending ? 'Создаём…' : 'Зарегистрироваться'}
+        </button>
+      </form>
+    </>
   )
 }

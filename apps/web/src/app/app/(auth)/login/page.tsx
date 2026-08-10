@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { LoginForm } from '@/features/auth'
+import { AuthHeader, LoginForm } from '@/features/auth'
 import styles from '../auth.module.css'
 
 export const metadata: Metadata = {
@@ -12,15 +12,9 @@ export default function LoginPage() {
   return (
     <main className={styles.page}>
       <div className="shell">
-        <header className="site-header">
-          <Link href="/" className="brand">
-            Lustra
-          </Link>
-          <nav className="nav" aria-label="Основная навигация">
-            <Link href="/app/register">Регистрация</Link>
-          </nav>
-        </header>
+        <AuthHeader variant="login" />
 
+        <div className={styles.panelWrap}>
         <section className={styles.panel}>
           <p className={styles.eyebrow}>Аккаунт</p>
           <h1 className={styles.title}>Вход</h1>
@@ -30,6 +24,7 @@ export default function LoginPage() {
             Нет аккаунта? <Link href="/app/register">Зарегистрироваться</Link>
           </p>
         </section>
+        </div>
       </div>
     </main>
   )

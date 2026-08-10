@@ -83,6 +83,11 @@ p {
   line-height: 1;
   letter-spacing: -0.03em;
   color: var(--color-text);
+  text-decoration: none;
+}
+
+a.brand:hover {
+  color: var(--color-accent);
 }
 
 .nav {

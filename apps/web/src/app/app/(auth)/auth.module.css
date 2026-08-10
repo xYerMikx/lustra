@@ -3,9 +3,15 @@
   padding-bottom: 48px;
 }
 
+.panelWrap {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+}
+
 .panel {
-  max-width: 440px;
-  margin-top: 40px;
+  width: min(100%, 440px);
+  margin-inline: auto;
   padding: 28px 24px 32px;
   background: color-mix(in srgb, var(--color-surface) 92%, transparent);
   border: 1px solid var(--color-border);
