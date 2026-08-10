@@ -9,6 +9,6 @@ const APP_URL = String(import.meta.env.PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 export function getAppUrl(path = '/'): string {
   const normalized = path.startsWith('/') ? path : `/${path}`
-  
+
   return `${APP_URL}${normalized}`
 }

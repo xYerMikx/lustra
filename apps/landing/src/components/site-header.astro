@@ -1,0 +1,143 @@
+---
+import { getAppUrl } from '../lib/site'
+
+interface Props {
+  catalogHref?: string
+  masterHref?: string
+}
+
+const catalogHref = Astro.props.catalogHref ?? getAppUrl('/catalog')
+const masterHref =
+  Astro.props.masterHref ??
+  getAppUrl('/app/register?role=master&utm_source=landing')
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="/">Lustra</a>
+
+    <input
+      class="nav-toggle"
+      type="checkbox"
+      id="nav-toggle"
+      aria-label="Открыть меню"
+    />
+    <label class="nav-burger" for="nav-toggle">
+      <span></span>
+      <span></span>
+    </label>
+
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="/#how">Как работает</a>
+      <a href="/#works">Работы</a>
+      <a href="/#browse">Категории</a>
+      <a href="/for-masters">Мастерам</a>
+      <a href={catalogHref}>Каталог</a>
+      <a class="nav-cta" href={masterHref}>Я мастер</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-40);
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  }
+
+  .inner {
+    width: min(1120px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--spacing-56);
+    gap: var(--spacing-16);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: var(--text-26);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .nav-toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-burger {
+    display: none;
+    width: var(--spacing-40);
+    height: var(--spacing-40);
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .nav-burger span {
+    display: block;
+    width: var(--spacing-24);
+    height: 2px;
+    background: var(--color-text);
+    transition: transform var(--duration-250) var(--ease-out-quart);
+  }
+
+  .nav-burger span + span {
+    margin-top: var(--spacing-8);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-16) var(--spacing-20);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+    color: var(--color-text-2);
+  }
+
+  .nav a:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-cta {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
+  }
+
+  @media (max-width: 860px) {
+    .nav-burger {
+      display: grid;
+    }
+
+    .nav {
+      display: none;
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding: var(--spacing-16) var(--spacing-20) var(--spacing-24);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-2);
+    }
+
+    .nav-toggle:checked ~ .nav {
+      display: flex;
+    }
+
+    .nav-toggle:checked + .nav-burger span:first-child {
+      transform: translateY(5px) rotate(45deg);
+    }
+
+    .nav-toggle:checked + .nav-burger span:last-child {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+  }
+</style>

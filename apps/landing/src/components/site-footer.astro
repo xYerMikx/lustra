@@ -1,0 +1,109 @@
+---
+interface Props {
+  year?: number
+}
+
+const year = Astro.props.year ?? new Date().getFullYear()
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <div class="brand-col">
+      <p class="brand">Lustra</p>
+      <p class="tag">Бьюти-мастера Минска — запись без хаоса.</p>
+    </div>
+
+    <nav class="cols" aria-label="Подвал">
+      <div>
+        <p class="col-title">Продукт</p>
+        <a href="/">Главная</a>
+        <a href="/for-masters">Для мастеров</a>
+        <a href="/#faq">FAQ</a>
+      </div>
+      <div>
+        <p class="col-title">Компания</p>
+        <a href="/contacts">Контакты</a>
+        <a href="/privacy">Конфиденциальность</a>
+        <a href="/terms">Условия</a>
+      </div>
+    </nav>
+  </div>
+  <p class="copy">© {year} Lustra</p>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    padding: var(--spacing-64) 0 var(--spacing-40);
+  }
+
+  .inner {
+    width: min(1120px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    display: grid;
+    gap: var(--spacing-40);
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: var(--text-32);
+    line-height: 1;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .tag {
+    color: var(--color-text-2);
+    max-width: 28ch;
+    line-height: 1.5;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-24);
+  }
+
+  .cols div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-12);
+  }
+
+  .col-title {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .cols a {
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+  }
+
+  .cols a:hover {
+    color: var(--color-accent);
+  }
+
+  .copy {
+    width: min(1120px, calc(100% - var(--spacing-40)));
+    margin: var(--spacing-40) auto 0;
+    padding-top: var(--spacing-24);
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+  }
+
+  @media (max-width: 720px) {
+    .inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-32);
+    }
+  }
+</style>

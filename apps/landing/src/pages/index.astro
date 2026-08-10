@@ -1,172 +1,99 @@
 ---
-import BaseLayout from "../layouts/base-layout.astro";
-import { getAppUrl } from "../lib/site";
+import { getCollection, getEntry } from 'astro:content'
+import BaseLayout from '../layouts/base-layout.astro'
+import Hero from '../components/hero.astro'
+import HowItWorks from '../components/how-it-works.astro'
+import WorksMarquee from '../components/works-marquee.astro'
+import ComparisonTable from '../components/comparison-table.astro'
+import CategoriesDistricts from '../components/categories-districts.astro'
+import FaqSection from '../components/faq-section.astro'
+import CtaBand from '../components/cta-band.astro'
+import { getAppUrl } from '../lib/site'
 
-const catalogHref = getAppUrl("/catalog");
-const masterAppHref = getAppUrl("/app?role=master&utm_source=landing");
+const hero = (await getEntry('sections', 'hero'))!.data
+const how = (await getEntry('sections', 'how-it-works'))!.data
+const works = (await getEntry('sections', 'works'))!.data
+const comparison = (await getEntry('sections', 'comparison'))!.data
+const browse = (await getEntry('sections', 'browse'))!.data
+const cta = (await getEntry('sections', 'cta'))!.data
+
+const faqEntries = (await getCollection('faq')).sort(
+  (a, b) => a.data.order - b.data.order,
+)
+
+const faqItems = faqEntries.map((entry) => ({
+  question: entry.data.question,
+  answerHtml: `<p>${(entry.body ?? '').trim()}</p>`,
+}))
+
+const catalogHref = getAppUrl('/catalog')
+const masterHref = getAppUrl('/app/register?role=master&utm_source=landing')
+
+const categories = (browse.categories ?? []).map((item) => ({
+  name: item.name,
+  href: getAppUrl(`/catalog/${item.slug}`),
+}))
+
+const districts = (browse.districts ?? []).map((item) => ({
+  name: item.name,
+  href: getAppUrl(`/catalog?district=${item.slug}`),
+}))
 ---
 
 <BaseLayout
   title="Lustra — бьюти-мастера Минска"
   description="Lustra — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
 >
-  <main class="stage">
-    <div class="atmosphere" aria-hidden="true"></div>
-    <div class="grain" aria-hidden="true"></div>
+  <main>
+    <Hero
+      brand={hero.brand!}
+      headline={hero.headline!}
+      lead={hero.lead!}
+      primaryCta={hero.primaryCta!}
+      secondaryCta={hero.secondaryCta!}
+      catalogHref={catalogHref}
+      masterHref={masterHref}
+    />
 
-    <section class="hero">
-      <p class="brand">Lustra</p>
-      <h1 class="headline">Красота без хаоса записей</h1>
-      <p class="lead">
-        Агрегатор бьюти-мастеров Минска — выбирайте, смотрите окна и
-        записывайтесь в пару касаний.
-      </p>
-      <div class="actions">
-        <a class="btn btn-primary" href={catalogHref}>Найти мастера</a>
-        <a class="btn btn-secondary" href={masterAppHref}>Я мастер</a>
-      </div>
-      <p class="foot">
-        <a href="/for-masters">Для мастеров</a>
-      </p>
-    </section>
+    <HowItWorks
+      eyebrow={how.eyebrow!}
+      title={how.title!}
+      lead={how.lead!}
+      clientSteps={how.clientSteps!}
+      masterSteps={how.masterSteps!}
+    />
+
+    <WorksMarquee
+      eyebrow={works.eyebrow!}
+      title={works.title!}
+      lead={works.lead!}
+      works={works.works!}
+    />
+
+    <ComparisonTable
+      eyebrow={comparison.eyebrow!}
+      title={comparison.title!}
+      lead={comparison.lead!}
+      rows={comparison.rows!}
+    />
+
+    <CategoriesDistricts
+      eyebrow={browse.eyebrow!}
+      title={browse.title!}
+      lead={browse.lead!}
+      categories={categories}
+      districts={districts}
+    />
+
+    <FaqSection items={faqItems} />
+
+    <CtaBand
+      title={cta.title!}
+      lead={cta.lead!}
+      primaryCta={cta.primaryCta!}
+      secondaryCta={cta.secondaryCta!}
+      catalogHref={catalogHref}
+      masterHref={masterHref}
+    />
   </main>
 </BaseLayout>
-
-<style>
-  .stage {
-    position: relative;
-    min-height: 100dvh;
-    overflow: hidden;
-  }
-
-  .atmosphere {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(
-        ellipse 90% 70% at 15% 20%,
-        color-mix(in srgb, var(--color-accent) 16%, transparent),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 80% 60% at 85% 10%,
-        color-mix(in srgb, var(--color-gold) 20%, transparent),
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse 70% 50% at 50% 100%,
-        color-mix(in srgb, var(--color-clay) 10%, transparent),
-        transparent 55%
-      ),
-      linear-gradient(165deg, var(--color-bg) 0%, var(--color-surface-2) 42%, #e8d9cf 100%);
-    animation: drift 14s var(--ease-out-quart) infinite alternate;
-  }
-
-  .grain {
-    position: absolute;
-    inset: 0;
-    opacity: 0.35;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
-    mix-blend-mode: soft-light;
-  }
-
-  .hero {
-    position: relative;
-    z-index: var(--z-10);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100dvh;
-    width: min(680px, calc(100% - var(--spacing-40)));
-    margin-inline: auto;
-    padding: var(--spacing-40) 0;
-  }
-
-  .brand {
-    font-family: var(--font-display);
-    font-size: clamp(var(--text-40), 11vw, var(--text-56));
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: var(--spacing-32);
-    animation: rise var(--duration-700) var(--ease-out-quart) both;
-  }
-
-  .headline {
-    font-size: clamp(var(--text-26), 5.5vw, var(--text-32));
-    line-height: 1.2;
-    max-width: 16ch;
-    margin-bottom: var(--spacing-16);
-    animation: rise var(--duration-700) var(--ease-out-quart) 80ms both;
-  }
-
-  .lead {
-    max-width: 38ch;
-    font-size: var(--text-16);
-    line-height: 1.55;
-    color: var(--color-text-2);
-    margin-bottom: var(--spacing-32);
-    animation: rise var(--duration-700) var(--ease-out-quart) 140ms both;
-  }
-
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-12);
-    margin-bottom: var(--spacing-32);
-    animation: rise var(--duration-700) var(--ease-out-quart) 200ms both;
-  }
-
-  .foot {
-    font-size: var(--text-13);
-    line-height: var(--text-13--line-height);
-    color: var(--color-text-3);
-    animation: rise var(--duration-700) var(--ease-out-quart) 260ms both;
-  }
-
-  .foot a:hover {
-    color: var(--color-accent);
-  }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(var(--spacing-16));
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes drift {
-    from {
-      transform: scale(1) translate(0, 0);
-    }
-    to {
-      transform: scale(1.04) translate(-1.5%, 1%);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .atmosphere,
-    .brand,
-    .headline,
-    .lead,
-    .actions,
-    .foot {
-      animation: none;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero {
-      width: min(calc(100% - var(--spacing-32)), 680px);
-    }
-
-    .actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  }
-</style>

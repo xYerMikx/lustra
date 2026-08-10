@@ -1,15 +1,24 @@
 ---
 import "../styles/global.css";
+import SiteHeader from "../components/site-header.astro";
+import SiteFooter from "../components/site-footer.astro";
 
 interface Props {
   title: string;
   description?: string;
+  canonicalPath?: string;
+  ogType?: string;
 }
 
 const {
   title,
   description = "Lustra — агрегатор бьюти-мастеров в Минске.",
+  canonicalPath = Astro.url.pathname,
+  ogType = "website",
 } = Astro.props;
+
+const siteOrigin = Astro.site?.href?.replace(/\/$/, "") ?? Astro.url.origin;
+const canonical = `${siteOrigin}${canonicalPath === "/" ? "/" : canonicalPath.replace(/\/$/, "") || "/"}`;
 ---
 
 <!doctype html>
@@ -18,10 +27,23 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#faf7f4" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="ru_BY" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="alternate" hreflang="ru-BY" href={canonical} />
     <title>{title}</title>
     <slot name="head" />
   </head>
   <body>
+    <SiteHeader />
     <slot />
+    <SiteFooter />
   </body>
 </html>

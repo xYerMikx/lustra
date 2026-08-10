@@ -1,0 +1,26 @@
+{
+  "eyebrow": "Куда записаться",
+  "title": "Категории и районы Минска",
+  "lead": "Начните с услуги или района — каталог откроется уже с нужным фильтром.",
+  "categories": [
+    { "name": "Ногти", "slug": "nogti" },
+    { "name": "Брови и ресницы", "slug": "brovi-i-resnitsy" },
+    { "name": "Волосы", "slug": "volosy" },
+    { "name": "Макияж", "slug": "makiyazh" },
+    { "name": "Косметология", "slug": "kosmetologiya" },
+    { "name": "Депиляция", "slug": "depilyatsiya" },
+    { "name": "Массаж", "slug": "massazh" },
+    { "name": "Тату и пирсинг", "slug": "tatu-i-pirsing" }
+  ],
+  "districts": [
+    { "name": "Центральный", "slug": "tsentralnyj" },
+    { "name": "Советский", "slug": "sovetskij" },
+    { "name": "Первомайский", "slug": "pervomajskij" },
+    { "name": "Партизанский", "slug": "partizanskij" },
+    { "name": "Заводской", "slug": "zavodskoj" },
+    { "name": "Ленинский", "slug": "leninskij" },
+    { "name": "Московский", "slug": "moskovskij" },
+    { "name": "Октябрьский", "slug": "oktyabrskij" },
+    { "name": "Фрунзенский", "slug": "frunzenskij" }
+  ]
+}

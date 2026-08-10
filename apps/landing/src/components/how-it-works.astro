@@ -1,0 +1,172 @@
+---
+interface Step {
+  title: string
+  body: string
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  clientSteps: Step[]
+  masterSteps: Step[]
+}
+
+const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
+---
+
+<section class="how section" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="how-title">{title}</h2>
+    <p class="lead">{lead}</p>
+
+    <div class="tabs">
+      <input type="radio" name="how-tab" id="tab-client" checked />
+      <label for="tab-client">Клиенту</label>
+      <input type="radio" name="how-tab" id="tab-master" />
+      <label for="tab-master">Мастеру</label>
+
+      <div class="panel panel-client" role="tabpanel">
+        <ol>
+          {
+            clientSteps.map((step, index) => (
+              <li>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="panel panel-master" role="tabpanel">
+        <ol>
+          {
+            masterSteps.map((step, index) => (
+              <li>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wrap {
+    width: min(920px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .tabs {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    column-gap: var(--spacing-8);
+    row-gap: var(--spacing-24);
+    align-items: center;
+  }
+
+  .tabs input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tabs label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--spacing-40);
+    padding: 0 var(--spacing-20);
+    border-radius: var(--radius-8);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    font-weight: var(--font-weight-600);
+    cursor: pointer;
+  }
+
+  #tab-client:checked ~ label[for='tab-client'],
+  #tab-master:checked ~ label[for='tab-master'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .panel {
+    grid-column: 1 / -1;
+    display: none;
+  }
+
+  #tab-client:checked ~ .panel-client,
+  #tab-master:checked ~ .panel-master {
+    display: block;
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-20);
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--spacing-16);
+    padding: var(--spacing-20) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .num {
+    font-family: var(--font-display);
+    font-size: var(--text-26);
+    color: var(--color-gold);
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: var(--text-20);
+    line-height: var(--text-20--line-height);
+    margin-bottom: var(--spacing-8);
+  }
+
+  li p {
+    color: var(--color-text-2);
+    line-height: 1.5;
+  }
+</style>
