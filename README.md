@@ -118,6 +118,17 @@ chore: add makefile
 
 Проверка вручную: `echo "feat: ok" | pnpm lint:commit`
 
+### Pull requests (`gh`)
+
+Нужен залогиненный GitHub CLI: `gh auth login -h github.com`.
+
+| PR | Title | Description |
+|---|---|---|
+| `develop` → `main` | краткое **описание релиза** (что выкатываем) | только `## Summary` — конкретно что сделано |
+| `feature/*` → `develop` | краткое описание фичи/фикса | только `## Summary` — короткий what/why |
+
+Без Test plan и без подписей «Made with/by …». Агент создаёт PR через `gh` по `.cursor/rules/lustra-pull-requests.mdc`.
+
 ## Конвенции кода
 
 
