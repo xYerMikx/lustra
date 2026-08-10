@@ -12,44 +12,35 @@
 
 ## Быстрый старт
 
+Из корня репо (`manik/`):
+
 ```bash
-# 1. зависимости
-pnpm install
-
-# 2. инфраструктура
-docker compose up -d
-
-# 3. БД
-cp packages/db/.env.example packages/db/.env   # если ещё нет
-cp apps/api/.env.example apps/api/.env         # если ещё нет
-pnpm db:migrate:deploy
-pnpm db:seed
-
-# 4. сервисы (в разных терминалах)
-pnpm dev:api       # http://localhost:3333  — health: /health, /health/deep
-pnpm dev:web       # http://localhost:3000
-pnpm dev:landing   # http://localhost:4321
+make setup    # один раз: install + .env + docker + migrate + seed
+make start    # Postgres/Redis + api + web + landing
 ```
 
-Или всё сразу: `pnpm dev` (Turborepo).
+`make start` блокирует терминал (turbo dev). Стоп приложений — `Ctrl+C`; контейнеры: `make down`.
+
+Без Make — те же шаги вручную:
+
+```bash
+pnpm install
+docker compose up -d
+cp packages/db/.env.example packages/db/.env   # если ещё нет
+cp apps/api/.env.example apps/api/.env
+pnpm db:migrate:deploy && pnpm db:seed
+pnpm dev
+```
 
 | Сервис | Порт | Назначение |
 |---|---|---|
 | Postgres | 5432 | `lustra` / `lustra` / `lustra_dev` |
 | Redis | 6379 | очереди / кэш |
-| API | 3333 | NestJS (Fastify) |
-| Web | 3000 | Next.js 15 (каталог, кабинеты) |
-| Landing | 4321 | Astro (маркетинг, юр. страницы) |
+| API | 3333 | NestJS (Fastify) — `/health`, `/health/deep` |
+| Web | 3000 | Next.js 15 |
+| Landing | 4321 | Astro |
 
-Полезное:
-
-```bash
-pnpm db:studio          # Prisma Studio
-pnpm typecheck
-pnpm test
-pnpm test:e2e
-```
-
+Полезное: `make help` · `make status` · `make studio` · `make test`
 ## Структура
 
 ```
@@ -108,6 +99,21 @@ git remote add origin git@github.com:<org>/<repo>.git
 git push -u origin main
 git push -u origin develop
 ```
+
+### Хуки (husky + commitlint)
+
+- **commit-msg** → `commitlint` (Conventional Commits)
+- **pre-push** → `pnpm prepush` → `scripts/pre-push.sh` (сейчас `pnpm test`; typecheck/lint/e2e закомментированы)
+
+Формат сообщения: `type(scope?): subject`
+
+```bash
+feat(api): add hold-slot use-case
+fix(web): correct catalog empty state
+chore: add makefile
+```
+
+Проверка вручную: `echo "feat: ok" | pnpm lint:commit`
 
 ## Конвенции кода
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 /**
  * Инъекция "текущего времени" вместо прямых вызовов `new Date()`/`Date.now()`
  * в доменной логике. Даёт детерминированные юнит-тесты генератора слотов и
- * машины состояний брони (TECH-DESIGN §17: "подстановка фиктивного now").
+ * машины состояний брони
  */
 @Injectable()
 export class ClockService {
@@ -12,7 +12,6 @@ export class ClockService {
   }
 }
 
-/** Тестовый двойник: `new FixedClock(new Date('2026-07-27T10:00:00Z'))`. */
 export class FixedClock implements ClockService {
   constructor(private readonly fixed: Date) {}
 

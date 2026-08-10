@@ -39,3 +39,23 @@ Sources of truth: `docs/PRD.md` (what/why), `docs/TECH-DESIGN.md` (how). On conf
 
 - Before non-trivial features: read relevant TECH-DESIGN § and apply matching `.cursor/skills/`.
 - Don't invent parallel architectures (tRPC, thick Express services, Zustand global store).
+
+## Commit message at the end (required)
+
+After **every** completed feature/fix/task, end the reply with a ready-to-use **commit message** (do not create the commit unless the user asked). Format must pass commitlint (Conventional Commits):
+
+```
+type(scope): short subject in English or Russian
+
+Optional body — why, not a file list.
+```
+
+Types: `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci` `chore` `revert`.  
+Scope examples: `api`, `web`, `landing`, `db`, `ui`, `auth`, `booking`.
+
+Place it last, clearly labeled, e.g.:
+
+**Commit message:**
+```
+feat(api): add hold-slot use-case
+```

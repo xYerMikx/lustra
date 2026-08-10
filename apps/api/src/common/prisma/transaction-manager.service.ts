@@ -10,7 +10,7 @@ export type PrismaTx = Prisma.TransactionClient
 const storage = new AsyncLocalStorage<PrismaTx>()
 
 /**
- * Единая точка открытия транзакций (см. TECH-DESIGN §14).
+ * Единая точка открытия транзакций
  * Правила:
  *  - транзакция короткая: без HTTP-вызовов, Telegram, загрузки файлов внутри
  *  - lock_timeout выставляется на уровне пула соединений/сессии (см. connection string)
@@ -23,18 +23,17 @@ export class TransactionManager {
 
   async run<T>(fn: (tx: PrismaTx) => Promise<T>): Promise<T> {
     const existing = storage.getStore()
+
     if (existing) {
-      // Вложенный run() внутри уже открытой транзакции — используем тот же клиент,
-      // не открываем savepoint (в MVP это не требуется).
       return fn(existing)
     }
+
     return this.prisma.$transaction(
       (tx) => storage.run(tx, () => fn(tx)),
       { maxWait: 3_000, timeout: 5_000 },
     )
   }
 
-  /** Клиент для репозиториев: транзакционный, если мы внутри run(), иначе обычный. */
   getClient(): PrismaTx | PrismaService {
     return storage.getStore() ?? this.prisma
   }
