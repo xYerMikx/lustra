@@ -1,7 +1,7 @@
 ---
 interface FaqItem {
   question: string
-  answerHtml: string
+  answer: string
 }
 
 interface Props {
@@ -18,7 +18,7 @@ const jsonLd = {
     name: item.question,
     acceptedAnswer: {
       '@type': 'Answer',
-      text: item.answerHtml.replace(/<[^>]+>/g, '').trim(),
+      text: item.answer,
     },
   })),
 }
@@ -34,7 +34,9 @@ const jsonLd = {
         items.map((item) => (
           <details>
             <summary>{item.question}</summary>
-            <div class="answer" set:html={item.answerHtml} />
+            <div class="answer">
+              <p>{item.answer}</p>
+            </div>
           </details>
         ))
       }
@@ -109,7 +111,7 @@ const jsonLd = {
     line-height: 1.55;
   }
 
-  .answer :global(p) {
+  .answer p {
     margin: 0;
   }
 </style>

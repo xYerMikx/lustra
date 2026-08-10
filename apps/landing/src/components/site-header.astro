@@ -16,18 +16,19 @@ const masterHref =
   <div class="inner">
     <a class="logo" href="/">Lustra</a>
 
-    <input
-      class="nav-toggle"
-      type="checkbox"
-      id="nav-toggle"
+    <button
+      type="button"
+      class="nav-burger"
+      id="nav-burger"
+      aria-controls="site-nav"
+      aria-expanded="false"
       aria-label="Открыть меню"
-    />
-    <label class="nav-burger" for="nav-toggle">
+    >
       <span></span>
       <span></span>
-    </label>
+    </button>
 
-    <nav class="nav" aria-label="Основная навигация">
+    <nav class="nav" id="site-nav" data-open="false" aria-label="Основная навигация">
       <a href="/#how">Как работает</a>
       <a href="/#works">Работы</a>
       <a href="/#browse">Категории</a>
@@ -37,6 +38,41 @@ const masterHref =
     </nav>
   </div>
 </header>
+
+<script>
+  const burger = document.getElementById('nav-burger')
+  const nav = document.getElementById('site-nav')
+
+  if (burger instanceof HTMLButtonElement && nav instanceof HTMLElement) {
+    const setOpen = (open: boolean) => {
+      nav.dataset.open = open ? 'true' : 'false'
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false')
+      burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню')
+      burger.classList.toggle('is-open', open)
+    }
+
+    burger.addEventListener('click', () => {
+      setOpen(nav.dataset.open !== 'true')
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || nav.dataset.open !== 'true') {
+        return
+      }
+
+      setOpen(false)
+      burger.focus()
+    })
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (nav.dataset.open === 'true') {
+          setOpen(false)
+        }
+      })
+    })
+  }
+</script>
 
 <style>
   .site-header {
@@ -49,6 +85,7 @@ const masterHref =
   }
 
   .inner {
+    position: relative;
     width: min(1120px, calc(100% - var(--spacing-40)));
     margin-inline: auto;
     display: flex;
@@ -65,18 +102,21 @@ const masterHref =
     letter-spacing: -0.03em;
   }
 
-  .nav-toggle {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
   .nav-burger {
     display: none;
     width: var(--spacing-40);
     height: var(--spacing-40);
     place-items: center;
     cursor: pointer;
+    border: 0;
+    border-radius: var(--radius-8);
+    background: transparent;
+    padding: 0;
+  }
+
+  .nav-burger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--spacing-4);
   }
 
   .nav-burger span {
@@ -89,6 +129,14 @@ const masterHref =
 
   .nav-burger span + span {
     margin-top: var(--spacing-8);
+  }
+
+  .nav-burger.is-open span:first-child {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nav-burger.is-open span:last-child {
+    transform: translateY(-5px) rotate(-45deg);
   }
 
   .nav {
@@ -128,16 +176,8 @@ const masterHref =
       box-shadow: var(--shadow-2);
     }
 
-    .nav-toggle:checked ~ .nav {
+    .nav[data-open='true'] {
       display: flex;
-    }
-
-    .nav-toggle:checked + .nav-burger span:first-child {
-      transform: translateY(5px) rotate(45deg);
-    }
-
-    .nav-toggle:checked + .nav-burger span:last-child {
-      transform: translateY(-5px) rotate(-45deg);
     }
   }
 </style>

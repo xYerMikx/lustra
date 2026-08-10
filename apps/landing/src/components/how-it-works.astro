@@ -21,13 +21,39 @@ const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
     <h2 id="how-title">{title}</h2>
     <p class="lead">{lead}</p>
 
-    <div class="tabs">
-      <input type="radio" name="how-tab" id="tab-client" checked />
-      <label for="tab-client">Клиенту</label>
-      <input type="radio" name="how-tab" id="tab-master" />
-      <label for="tab-master">Мастеру</label>
+    <div class="tabs" data-how-tabs>
+      <div class="tablist" role="tablist" aria-label="Как работает Lustra">
+        <button
+          type="button"
+          role="tab"
+          id="tab-client"
+          aria-controls="panel-client"
+          aria-selected="true"
+          tabindex="0"
+          data-tab="client"
+        >
+          Клиенту
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-master"
+          aria-controls="panel-master"
+          aria-selected="false"
+          tabindex="-1"
+          data-tab="master"
+        >
+          Мастеру
+        </button>
+      </div>
 
-      <div class="panel panel-client" role="tabpanel">
+      <div
+        class="panel"
+        role="tabpanel"
+        id="panel-client"
+        aria-labelledby="tab-client"
+        data-panel="client"
+      >
         <ol>
           {
             clientSteps.map((step, index) => (
@@ -43,7 +69,14 @@ const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
         </ol>
       </div>
 
-      <div class="panel panel-master" role="tabpanel">
+      <div
+        class="panel is-hidden"
+        role="tabpanel"
+        id="panel-master"
+        aria-labelledby="tab-master"
+        data-panel="master"
+        hidden
+      >
         <ol>
           {
             masterSteps.map((step, index) => (
@@ -61,6 +94,71 @@ const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
     </div>
   </div>
 </section>
+
+<script>
+  const root = document.querySelector('[data-how-tabs]')
+
+  if (root instanceof HTMLElement) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'))
+
+    const activate = (next: string) => {
+      for (const tab of tabs) {
+        const selected = tab.dataset.tab === next
+        tab.setAttribute('aria-selected', selected ? 'true' : 'false')
+        tab.tabIndex = selected ? 0 : -1
+      }
+
+      for (const panel of panels) {
+        const selected = panel.dataset.panel === next
+        panel.classList.toggle('is-hidden', !selected)
+        panel.hidden = !selected
+      }
+    }
+
+    for (const tab of tabs) {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.tab
+        if (!id) {
+          return
+        }
+
+        activate(id)
+      })
+
+      tab.addEventListener('keydown', (event) => {
+        const currentIndex = tabs.indexOf(tab)
+        if (currentIndex < 0) {
+          return
+        }
+
+        let targetIndex = currentIndex
+
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          targetIndex = (currentIndex + 1) % tabs.length
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          targetIndex = (currentIndex - 1 + tabs.length) % tabs.length
+        } else if (event.key === 'Home') {
+          targetIndex = 0
+        } else if (event.key === 'End') {
+          targetIndex = tabs.length - 1
+        } else {
+          return
+        }
+
+        event.preventDefault()
+        const nextTab = tabs[targetIndex]
+        const nextId = nextTab?.dataset.tab
+        if (!nextTab || !nextId) {
+          return
+        }
+
+        activate(nextId)
+        nextTab.focus()
+      })
+    }
+  }
+</script>
 
 <style>
   .wrap {
@@ -90,21 +188,14 @@ const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
     line-height: 1.55;
   }
 
-  .tabs {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    column-gap: var(--spacing-8);
-    row-gap: var(--spacing-24);
-    align-items: center;
+  .tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+    margin-bottom: var(--spacing-24);
   }
 
-  .tabs input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .tabs label {
+  .tablist button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -114,26 +205,25 @@ const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
     border: 1px solid var(--color-border);
     background: var(--color-surface);
     color: var(--color-text-2);
+    font-family: var(--font-text);
     font-size: var(--text-15);
     font-weight: var(--font-weight-600);
     cursor: pointer;
   }
 
-  #tab-client:checked ~ label[for='tab-client'],
-  #tab-master:checked ~ label[for='tab-master'] {
+  .tablist button[aria-selected='true'] {
     background: var(--color-accent);
     border-color: var(--color-accent);
     color: var(--color-on-accent);
   }
 
-  .panel {
-    grid-column: 1 / -1;
-    display: none;
+  .tablist button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--spacing-4);
   }
 
-  #tab-client:checked ~ .panel-client,
-  #tab-master:checked ~ .panel-master {
-    display: block;
+  .panel.is-hidden {
+    display: none;
   }
 
   ol {

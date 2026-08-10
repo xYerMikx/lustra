@@ -2,12 +2,14 @@
 import "../styles/global.css";
 import SiteHeader from "../components/site-header.astro";
 import SiteFooter from "../components/site-footer.astro";
+import { DEFAULT_OG_PATH } from "../lib/site";
 
 interface Props {
   title: string;
   description?: string;
   canonicalPath?: string;
   ogType?: string;
+  ogImagePath?: string;
 }
 
 const {
@@ -15,10 +17,12 @@ const {
   description = "Lustra — агрегатор бьюти-мастеров в Минске.",
   canonicalPath = Astro.url.pathname,
   ogType = "website",
+  ogImagePath = DEFAULT_OG_PATH,
 } = Astro.props;
 
 const siteOrigin = Astro.site?.href?.replace(/\/$/, "") ?? Astro.url.origin;
 const canonical = `${siteOrigin}${canonicalPath === "/" ? "/" : canonicalPath.replace(/\/$/, "") || "/"}`;
+const ogImage = `${siteOrigin}${ogImagePath.startsWith("/") ? ogImagePath : `/${ogImagePath}`}`;
 ---
 
 <!doctype html>
@@ -34,9 +38,11 @@ const canonical = `${siteOrigin}${canonicalPath === "/" ? "/" : canonicalPath.re
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="alternate" hreflang="ru-BY" href={canonical} />
     <title>{title}</title>
     <slot name="head" />

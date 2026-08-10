@@ -10,6 +10,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Sticky header (~56px) + breathing room for in-page anchors */
+  scroll-padding-top: calc(var(--spacing-56) + var(--spacing-16));
 }
 
 html,

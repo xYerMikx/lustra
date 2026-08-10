@@ -23,7 +23,7 @@ const faqEntries = (await getCollection('faq')).sort(
 
 const faqItems = faqEntries.map((entry) => ({
   question: entry.data.question,
-  answerHtml: `<p>${(entry.body ?? '').trim()}</p>`,
+  answer: (entry.body ?? '').trim(),
 }))
 
 const catalogHref = getAppUrl('/catalog')
