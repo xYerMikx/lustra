@@ -915,6 +915,8 @@ GET    /admin/metrics
 
 **Ручная матрица устройств:** iPhone SE (маленький экран), iPhone 14/15 (safe-area), Android mid-range Chrome, Telegram in-app browser (важно: мастера будут открывать ссылки из Telegram), Instagram in-app browser (частый источник переходов, часто ломает cookie — проверить логин).
 
+**Smoke-данные (маркеры):** ручные прогоны Postman/curl/Playwright создают реальные записи в БД. Email: `{role}.smoke.{runId}@example.com`; idempotency броней: `smoke:{runId}:…`. Скрипт очистки `pnpm db:cleanup:smoke` — отдельный PR после auth; до него — сброс локальной БД или delete по паттерну. Детали: TECH-DESIGN §29, `.cursor/rules/lustra-smoke-data.mdc`.
+
 ## 18. План разработки
 
 Ритм: недельные спринты, вечерами/выходными считаем ~3 идеальных дня в неделю. Ниже — календарный план для одного разработчика с AI-ассистом; при full-time темпе сжимается примерно вдвое.

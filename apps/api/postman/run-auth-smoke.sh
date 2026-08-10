@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Local curl smoke for auth API (cookie jar + CSRF).
-# Source of truth for Postman collections: Postman workspace via MCP — do not
-# reintroduce *.postman_collection.json into git (see .cursor/rules/lustra-postman.mdc).
+# Smoke emails: {role}.smoke.{runId}@example.com — see .cursor/rules/lustra-smoke-data.mdc
+# Postman collections: workspace via MCP — not in git (.cursor/rules/lustra-postman.mdc).
 set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:3333}"

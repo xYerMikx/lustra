@@ -38,3 +38,7 @@ alwaysApply: true
 ## When API changes
 
 Update the Postman collection through MCP (request + examples + auth/CSRF notes), not by editing JSON in git.
+
+## Smoke data in requests
+
+Register/login smoke requests must use marker emails: `{role}.smoke.{runId}@example.com` with a fresh `runId` per run (Postman pre-request script or collection variable). See `.cursor/rules/lustra-smoke-data.mdc`. Cleanup script is deferred to a later PR.
