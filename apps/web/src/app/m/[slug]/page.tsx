@@ -81,7 +81,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function MasterPage({ params }: PageProps) {
   const { slug } = await params;
   const master = MASTERS[slug];
-  if (!master) notFound();
+  if (!master) {
+    notFound();
+  }
 
   return (
     <main className={styles.page}>

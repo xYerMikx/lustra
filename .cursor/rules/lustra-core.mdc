@@ -35,6 +35,22 @@ Sources of truth: `docs/PRD.md` (what/why), `docs/TECH-DESIGN.md` (how). On conf
 - Backend: private fields (`masterNote`, `trustScore`, `addressExact`) never leak via client DTOs.
 - Roles: `client` \| `master` \| `admin`. Resource owner IDs come from JWT/session, **never** from request body.
 
+## Control flow braces (required)
+
+Never write single-line `if` / `else` / `for` / `while` without braces. Always expand for readability:
+
+```ts
+// ❌ BAD
+if (!master) notFound();
+
+// ✅ GOOD
+if (!master) {
+  notFound();
+}
+```
+
+Same for early returns, throws, and one-liner bodies.
+
 ## Docs / agent
 
 - Before non-trivial features: read relevant TECH-DESIGN § and apply matching `.cursor/skills/`.
