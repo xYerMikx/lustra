@@ -7,6 +7,7 @@ import { isProduction } from '@/common/env/is-production'
 import { PrismaModule } from '@/common/prisma/prisma.module'
 import { HealthModule } from '@/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
+import { MasterProfileModule } from '@/modules/master-profile/master-profile.module'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from '@/modules/auth/auth.module'
     PrismaModule,
     HealthModule,
     AuthModule,
+    MasterProfileModule,
   ],
   providers: [
     {
