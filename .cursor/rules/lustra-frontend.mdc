@@ -1,0 +1,45 @@
+---
+description: Frontend patterns — composition, no casual useEffect, Next/Astro
+globs: apps/web/**/*.{ts,tsx},apps/landing/**/*.{ts,tsx,astro,css}
+alwaysApply: false
+---
+
+# Lustra — frontend
+
+## Structure (`apps/web`)
+
+`app/` routes · `entities/` presentational domain UI · `features/` stateful scenarios · `shared/` api/hooks/ui/lib. Landing stays mostly static Astro islands.
+
+## Naming
+
+- Files/folders: **kebab-case** — `master-card.tsx`, `booking-sheet.tsx`, `use-hold-timer.ts`.
+- Exported components/hooks: PascalCase / `use*` camelCase in source.
+
+## Components
+
+- **≤ 300 lines**; split into composed children + hooks.
+- Composition over props-drilling mega-components.
+- Four UI states where data loads: `loading` (skeleton), `empty`, `error` (+ retry), `success`.
+- No cards in hero; avoid generic dashboard chrome on marketing/public pages.
+
+## State & effects
+
+- Server/public data: RSC + `fetch` tags / TanStack Query for private mutable data.
+- Filters/steps: URL `searchParams` as source of truth.
+- Forms: react-hook-form + Zod from `@lustra/contracts`.
+- **Avoid `useEffect`** unless syncing with an external system (DOM, browser API, non-React widget). Prefer:
+  - derived state during render
+  - event handlers
+  - `useEffectEvent` when an effect must call latest callback
+  - Query/`useSyncExternalStore` for subscriptions
+- No global client store by default (no Zustand unless offline).
+
+## Validation & roles
+
+- Client validation = UX only. Never skip API checks.
+- Gate routes by role (`client` / `master` / `admin`); never trust hidden buttons alone.
+
+## Tests
+
+- Unit-test pure utils in `shared/lib` and feature helpers (Vitest).
+- E2E (Playwright) for critical flows — see testing skill.

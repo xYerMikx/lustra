@@ -1,0 +1,163 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lustra — бьюти-мастера Минска</title>
+    <meta
+      name="description"
+      content="Lustra — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="stage">
+      <div class="atmosphere" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <section class="hero">
+        <p class="brand">Lustra</p>
+        <h1 class="headline">Красота без хаоса записей</h1>
+        <p class="lead">
+          Агрегатор бьюти-мастеров Минска — выбирайте, смотрите окна и
+          записывайтесь в пару касаний.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="http://localhost:3000/catalog"
+            >Найти мастера</a
+          >
+          <a class="btn btn-secondary" href="http://localhost:3000/app"
+            >Я мастер</a
+          >
+        </div>
+        <p class="foot">
+          <a href="/for-masters">Для мастеров</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  .stage {
+    position: relative;
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .atmosphere {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 90% 70% at 15% 20%, rgba(194, 94, 82, 0.16), transparent 55%),
+      radial-gradient(ellipse 80% 60% at 85% 10%, rgba(198, 161, 91, 0.2), transparent 50%),
+      radial-gradient(ellipse 70% 50% at 50% 100%, rgba(107, 78, 66, 0.1), transparent 55%),
+      linear-gradient(165deg, #faf7f4 0%, #f1e8e1 42%, #e8d9cf 100%);
+    animation: drift 14s ease-in-out infinite alternate;
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100dvh;
+    width: min(680px, calc(100% - 40px));
+    margin-inline: auto;
+    padding: 48px 0;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 11vw, 80px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .headline {
+    font-size: clamp(26px, 5.5vw, 36px);
+    line-height: 1.2;
+    max-width: 16ch;
+    margin-bottom: 16px;
+    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+  }
+
+  .lead {
+    max-width: 38ch;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-text-2);
+    margin-bottom: 32px;
+    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+  }
+
+  .foot {
+    font-size: 14px;
+    color: var(--color-text-3);
+    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 260ms both;
+  }
+
+  .foot a:hover {
+    color: var(--color-accent);
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: scale(1) translate(0, 0);
+    }
+    to {
+      transform: scale(1.04) translate(-1.5%, 1%);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      width: min(100% - 28px, 680px);
+    }
+
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

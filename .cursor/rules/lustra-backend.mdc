@@ -1,0 +1,44 @@
+---
+description: NestJS backend — modules, guards, use-cases, no god services
+globs: apps/api/**/*.ts
+alwaysApply: false
+---
+
+# Lustra — backend
+
+## Module layout (per feature)
+
+```
+modules/<name>/
+  api/       controllers + DTO re-exports (Zod from @lustra/contracts)
+  app/       one use-case per operation — `hold-slot.usecase.ts`, `confirm-booking.usecase.ts`
+  domain/    pure FSM / policy — `booking-status.machine.ts` (no Prisma, no HTTP)
+  infra/     repositories — `booking.repository.ts` (Prisma + raw SQL when needed)
+```
+
+## Hard rules
+
+- Filenames: **kebab-case** (`hold-slot.usecase.ts`). Class names: PascalCase (`HoldSlotUseCase`).
+- **No god services.** Prefer `*.usecase.ts` ≤ 300 lines; split by operation, not by dumping into `BookingsService`.
+- Controllers: thin — parse → call use-case → map DTO. No business logic.
+- Authz: `JwtGuard` + `RolesGuard` + ownership check inside use-case. `masterId`/`userId` from `@CurrentUser()`, never from body.
+- Validation: **Zod pipe from contracts on every input**. Backend is the hard gate; reject unknown fields.
+- Errors: `DomainError(code, httpStatus, message, details?)` → filter → `{ error: { code, message, details, requestId } }`.
+- Transactions: short; no Telegram/HTTP/file I/O inside. Domain events via `OutboxEvent` in same TX.
+- Private fields stripped in mappers — write tests that client DTOs lack `masterNote` / `trustScore`.
+
+## Nest patterns to use
+
+- Guards for auth/roles; interceptors for idempotency/logging; pipes for Zod.
+- Throttler on `/auth/*` and sensitive mutations.
+- Inject `Clock` for time; never `Date.now()` scattered in domain if testability matters.
+
+## Anti-patterns
+
+```ts
+// ❌ fat service with 20 public methods
+@Injectable() class BookingsService { create(){} cancel(){} … }
+
+// ✅ one use-case per mutation
+@Injectable() class HoldSlotUseCase { execute(input: HoldSlotInput) { … } }
+```

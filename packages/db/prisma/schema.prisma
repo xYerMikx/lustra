@@ -1,0 +1,832 @@
+// Схема БД "Lustra". Источник истины: /docs/TECH-DESIGN.md §4-§9.
+//
+// Конвенции:
+// - id: String @default(uuid()) (хранится как text)
+// - все времена: timestamptz. ВАЖНО: Prisma по умолчанию маппит DateTime в
+//   `timestamp(3) without time zone`, поэтому каждое поле-момент времени явно
+//   помечено `@db.Timestamptz` (иначе неявный cast timestamp->timestamptz в
+//   tstzrange() внутри EXCLUDE-констрейнтов помечен STABLE, а не IMMUTABLE,
+//   и Postgres отказывается строить по нему GiST-индекс). Поля-календарные
+//   даты (birthDate, AvailabilityException.date, activeFrom/activeTo) — @db.Date.
+// - деньги: Decimal(10,2) + currency (в MVP всегда "BYN")
+// - "минуты от начала суток" (0..1440): Int
+// - поля вида *Id, ссылающиеся на MediaAsset (avatarId, coverId, mediaId, documentId) —
+//   МЯГКИЕ ссылки без формального Prisma-relation: MediaAsset полиморфна (owner может быть
+//   любой сущностью), Prisma не поддерживает полиморфные relation, поэтому целостность
+//   этих ссылок проверяется в application-слое (use-case), не в БД.
+// - Booking.clientUserId и MasterClient.userId — денормализация для быстрых списков
+//   ("мои записи"), а не единственный источник истины о владении. Настоящая связь
+//   клиент -> бронь идёт через MasterClient.
+// - Инварианты, которые Prisma не выражает (EXCLUDE USING gist, частичные индексы,
+//   CHECK, extensions) добавляются отдельной SQL-миграцией: prisma/migrations/*_invariants.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Расширения Postgres (citext, pg_trgm, btree_gist) создаются вручную в
+// prisma/migrations/00000000000000_extensions/migration.sql — декларативный
+// список `extensions = [...]` в preview-режиме ненадёжно маппит camelCase-имена
+// на реальные имена расширений. @db.Citext ниже — обычный native type, требует
+// только чтобы расширение citext существовало на момент применения миграции
+// с CREATE TABLE (bootstrap-миграция гарантированно применяется первой).
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// =============================================================================
+// Identity
+// =============================================================================
+
+enum UserRole {
+  client
+  master
+  admin
+}
+
+enum UserStatus {
+  active
+  blocked
+  deleted
+}
+
+enum AuthTokenKind {
+  email_verify
+  password_reset
+  telegram_link
+}
+
+enum ConsentKind {
+  terms
+  privacy
+  portfolio_publication
+  marketing
+}
+
+model User {
+  id            String     @id @default(uuid())
+  role          UserRole
+  status        UserStatus @default(active)
+  email         String     @unique @db.Citext
+  passwordHash  String
+  emailVerified Boolean    @default(false)
+  phone         String?    @unique
+  phoneVerified Boolean    @default(false)
+  firstName     String
+  lastName      String?
+  avatarId      String? // мягкая ссылка -> MediaAsset.id
+  locale        String     @default("ru")
+  timezone      String     @default("Europe/Minsk")
+  lastLoginAt   DateTime? @db.Timestamptz
+  deletedAt     DateTime? @db.Timestamptz
+  createdAt     DateTime   @default(now()) @db.Timestamptz
+  updatedAt     DateTime   @updatedAt @db.Timestamptz
+
+  clientProfile ClientProfile?
+  masterProfile MasterProfile?
+  telegram      TelegramAccount?
+  notifySetting NotificationSetting?
+  sessions      RefreshSession[]
+  authTokens    AuthToken[]
+  consents      Consent[]
+  favorites     Favorite[]
+  reviews       Review[]
+  notifications NotificationLog[]
+
+  @@index([role, status])
+}
+
+model RefreshSession {
+  id         String    @id @default(uuid())
+  userId     String
+  tokenHash  String    @unique
+  familyId   String
+  expiresAt  DateTime @db.Timestamptz
+  revokedAt  DateTime? @db.Timestamptz
+  replacedBy String?
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([familyId])
+}
+
+model AuthToken {
+  id        String        @id @default(uuid())
+  userId    String?
+  kind      AuthTokenKind
+  tokenHash String        @unique
+  payload   Json?
+  expiresAt DateTime @db.Timestamptz
+  usedAt    DateTime? @db.Timestamptz
+  createdAt DateTime      @default(now()) @db.Timestamptz
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, kind])
+}
+
+model TelegramAccount {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  chatId    BigInt   @unique
+  username  String?
+  isBlocked Boolean  @default(false)
+  linkedAt  DateTime @default(now()) @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationSetting {
+  id                 String  @id @default(uuid())
+  userId             String  @unique
+  telegramEnabled    Boolean @default(true)
+  emailEnabled       Boolean @default(true)
+  reminder24hEnabled Boolean @default(true)
+  reminder2hEnabled  Boolean @default(true)
+  quietHoursEnabled  Boolean @default(true)
+  marketingEnabled   Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Consent {
+  id        String      @id @default(uuid())
+  userId    String
+  kind      ConsentKind
+  version   String
+  grantedAt DateTime    @default(now()) @db.Timestamptz
+  revokedAt DateTime? @db.Timestamptz
+  ip        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, kind])
+}
+
+model ClientProfile {
+  id                 String    @id @default(uuid())
+  userId             String    @unique
+  birthDate          DateTime? @db.Date
+  preferredDistricts Json?
+  defaultComment     String?
+  bookingsTotal      Int       @default(0)
+  bookingsCompleted  Int       @default(0)
+  cancellationsLate  Int       @default(0)
+  noShowCount        Int       @default(0)
+  lastBookingAt      DateTime? @db.Timestamptz
+  trustScore         Int       @default(100)
+  createdAt          DateTime  @default(now()) @db.Timestamptz
+  updatedAt          DateTime  @updatedAt @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  userId    String
+  masterId  String
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+
+  @@id([userId, masterId])
+  @@index([masterId])
+}
+
+// =============================================================================
+// MasterCatalog
+// =============================================================================
+
+enum MasterStatus {
+  draft
+  pending_review
+  published
+  hidden
+  banned
+}
+
+enum LocationType {
+  salon
+  home_studio
+  client_home
+}
+
+enum PriceType {
+  fixed
+  from
+  range
+}
+
+enum VerificationStatus {
+  none
+  pending
+  approved
+  rejected
+}
+
+model MasterProfile {
+  id              String       @id @default(uuid())
+  userId          String       @unique
+  slug            String       @unique
+  displayName     String
+  headline        String?
+  bio             String?      @db.VarChar(1000)
+  coverId         String? // мягкая ссылка -> MediaAsset.id
+  experienceSince Int?
+  languages       Json?
+  status          MasterStatus @default(draft)
+  publishedAt     DateTime? @db.Timestamptz
+  boostPriority   Int          @default(0) // хук под монетизацию v2 (Plan/Subscription/Promotion)
+  createdAt       DateTime     @default(now()) @db.Timestamptz
+  updatedAt       DateTime     @updatedAt @db.Timestamptz
+
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contact      MasterContact?
+  policy       MasterBookingPolicy?
+  stats        MasterStats?
+  verification MasterVerification?
+  locations    MasterLocation[]
+  services     Service[]
+  portfolio    PortfolioItem[]
+  clients      MasterClient[]
+  rules        AvailabilityRule[]
+  exceptions   AvailabilityException[]
+  blocks       TimeBlock[]
+  slots        TimeSlot[]
+  bookings     Booking[]
+  reviews      Review[]
+  favoritedBy  Favorite[]
+
+  @@index([status, boostPriority])
+}
+
+model MasterContact {
+  id               String  @id @default(uuid())
+  masterId         String  @unique
+  publicPhone      String?
+  instagram        String?
+  telegramUsername String?
+  tiktok           String?
+  website          String?
+  preferredChannel String?
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+}
+
+model MasterLocation {
+  id             String       @id @default(uuid())
+  masterId       String
+  districtId     String
+  type           LocationType @default(salon)
+  addressHint    String?
+  addressExact   String?
+  lat            Float?
+  lng            Float?
+  isPrimary      Boolean      @default(false)
+  travelRadiusKm Int?
+  travelFee      Decimal?     @db.Decimal(10, 2)
+
+  master   MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  district District      @relation(fields: [districtId], references: [id], onDelete: Restrict)
+
+  @@index([districtId])
+  @@index([masterId, isPrimary])
+}
+
+model District {
+  id   String @id @default(uuid())
+  city String @default("Minsk")
+  name String
+  slug String @unique
+  sort Int    @default(0)
+
+  locations MasterLocation[]
+
+  @@unique([city, name])
+}
+
+model MasterBookingPolicy {
+  id                         String  @id @default(uuid())
+  masterId                   String  @unique
+  granularityMin             Int     @default(30) // 15|30|60, CHECK в SQL-миграции
+  bufferBeforeMin            Int     @default(0)
+  bufferAfterMin             Int     @default(0)
+  minLeadTimeMin             Int     @default(180)
+  maxHorizonDays             Int     @default(30)
+  autoConfirm                Boolean @default(false)
+  holdTtlSec                 Int     @default(600)
+  clientCancelCutoffMin      Int     @default(720)
+  clientRescheduleAllowed    Boolean @default(true)
+  maxActiveBookingsPerClient Int     @default(3)
+  pendingExpiresMin          Int     @default(720)
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+}
+
+model MasterStats {
+  id                String    @id @default(uuid())
+  masterId          String    @unique
+  ratingAvg         Decimal   @default(0) @db.Decimal(3, 2)
+  ratingCount       Int       @default(0)
+  ratingHistogram   Json?
+  priceMin          Decimal?  @db.Decimal(10, 2)
+  priceMax          Decimal?  @db.Decimal(10, 2)
+  servicesCount     Int       @default(0)
+  portfolioCount    Int       @default(0)
+  bookingsCompleted Int       @default(0)
+  noShowRate        Decimal   @default(0) @db.Decimal(5, 2)
+  nextAvailableAt   DateTime? @db.Timestamptz
+  profileViews30d   Int       @default(0)
+  recalculatedAt    DateTime  @default(now()) @db.Timestamptz
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+
+  @@index([ratingAvg])
+  @@index([nextAvailableAt])
+  @@index([priceMin])
+}
+
+model MasterVerification {
+  id              String              @id @default(uuid())
+  masterId        String              @unique
+  status          VerificationStatus  @default(none)
+  method          String?
+  documentId      String? // мягкая ссылка -> MediaAsset.id (приватный бакет)
+  reviewedBy      String?
+  reviewedAt      DateTime? @db.Timestamptz
+  rejectionReason String?
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+}
+
+model ServiceCategory {
+  id       String  @id @default(uuid())
+  parentId String?
+  name     String
+  slug     String  @unique
+  icon     String?
+  sort     Int     @default(0)
+
+  parent   ServiceCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children ServiceCategory[] @relation("CategoryHierarchy")
+  services Service[]
+
+  @@index([parentId, sort])
+}
+
+model Service {
+  id             String    @id @default(uuid())
+  masterId       String
+  categoryId     String
+  title          String
+  description    String?
+  durationMin    Int
+  bufferAfterMin Int       @default(0)
+  price          Decimal   @db.Decimal(10, 2)
+  priceMax       Decimal?  @db.Decimal(10, 2)
+  priceType      PriceType @default(fixed)
+  currency       String    @default("BYN")
+  isActive       Boolean   @default(true)
+  sort           Int       @default(0)
+  createdAt      DateTime  @default(now()) @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @db.Timestamptz
+
+  master    MasterProfile   @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  category  ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  bookings  Booking[]
+  portfolio PortfolioItem[]
+
+  @@index([masterId, isActive, sort])
+  @@index([categoryId, price])
+}
+
+model MediaAsset {
+  id          String           @id @default(uuid())
+  ownerUserId String? // мягкая ссылка -> User.id
+  purpose     String // avatar|cover|portfolio|review|document|chat
+  storageKey  String           @unique
+  variants    Json // {"320": "key_320.avif", "720": "...", "1440": "..."}
+  mimeType    String
+  bytes       Int
+  width       Int
+  height      Int
+  blurhash    String?
+  checksum    String?
+  moderation  ModerationStatus @default(pending)
+  deletedAt   DateTime? @db.Timestamptz
+  createdAt   DateTime         @default(now()) @db.Timestamptz
+
+  portfolioItems PortfolioItem[]
+  reviewPhotos   ReviewPhoto[]
+
+  @@index([ownerUserId, purpose])
+  @@index([checksum])
+}
+
+model PortfolioItem {
+  id        String    @id @default(uuid())
+  masterId  String
+  mediaId   String
+  serviceId String?
+  caption   String?
+  sort      Int       @default(0)
+  isCover   Boolean   @default(false)
+  deletedAt DateTime? @db.Timestamptz
+  createdAt DateTime  @default(now()) @db.Timestamptz
+
+  master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  media   MediaAsset    @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  service Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([masterId, sort])
+  @@index([serviceId])
+}
+
+// =============================================================================
+// Scheduling
+// =============================================================================
+
+enum ExceptionType {
+  day_off
+  custom_hours
+}
+
+enum BlockReason {
+  break
+  lunch
+  personal
+  vacation
+  sick
+  travel
+  other
+}
+
+enum SlotStatus {
+  open
+  held
+  booked
+  blocked
+}
+
+model AvailabilityRule {
+  id         String    @id @default(uuid())
+  masterId   String
+  weekday    Int // 1=Mon .. 7=Sun
+  startMin   Int
+  endMin     Int
+  activeFrom DateTime? @db.Date
+  activeTo   DateTime? @db.Date
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+
+  @@index([masterId, weekday])
+}
+
+model AvailabilityException {
+  id       String        @id @default(uuid())
+  masterId String
+  date     DateTime      @db.Date
+  type     ExceptionType
+  startMin Int?
+  endMin   Int?
+  note     String?
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+
+  @@unique([masterId, date])
+}
+
+model TimeBlock {
+  id          String      @id @default(uuid())
+  masterId    String
+  startsAt    DateTime @db.Timestamptz
+  endsAt      DateTime @db.Timestamptz
+  reason      BlockReason @default(other)
+  note        String?
+  createdById String? // мягкая ссылка -> User.id
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+
+  master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  slots  TimeSlot[]
+
+  @@index([masterId, startsAt])
+}
+
+model TimeSlot {
+  id              String     @id @default(uuid())
+  masterId        String
+  startsAt        DateTime @db.Timestamptz
+  endsAt          DateTime @db.Timestamptz
+  status          SlotStatus @default(open)
+  version         Int        @default(0)
+  holdId          String?
+  holdExpiresAt   DateTime? @db.Timestamptz
+  bookingId       String? // денормализация; настоящая связь — через BookingSlot
+  blockId         String?
+  note            String?
+  isExtra         Boolean    @default(false)
+  outsideSchedule Boolean    @default(false)
+
+  master       MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  block        TimeBlock?    @relation(fields: [blockId], references: [id], onDelete: SetNull)
+  bookingLinks BookingSlot[]
+
+  @@unique([masterId, startsAt])
+  @@index([masterId, startsAt, status])
+  @@index([masterId, status, startsAt])
+  @@index([holdExpiresAt])
+}
+
+// =============================================================================
+// Booking
+// =============================================================================
+
+enum BookingStatus {
+  hold
+  pending
+  confirmed
+  completed
+  cancelled_by_client
+  cancelled_by_master
+  no_show
+  expired
+}
+
+enum BookingSource {
+  client_web
+  master_manual
+  admin
+}
+
+enum ContactChannel {
+  instagram
+  telegram
+  phone
+  walk_in
+  site
+  other
+}
+
+enum ActorType {
+  client
+  master
+  admin
+  system
+}
+
+model MasterClient {
+  id          String          @id @default(uuid())
+  masterId    String
+  userId      String? // мягкая ссылка -> User.id (заполнена, если есть аккаунт)
+  name        String
+  phone       String?
+  note        String?
+  tags        Json?
+  source      ContactChannel?
+  visitsCount Int             @default(0)
+  totalSpent  Decimal         @default(0) @db.Decimal(10, 2)
+  lastVisitAt DateTime? @db.Timestamptz
+  isBlocked   Boolean         @default(false)
+  createdAt   DateTime        @default(now()) @db.Timestamptz
+  updatedAt   DateTime        @updatedAt @db.Timestamptz
+
+  master   MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@unique([masterId, userId])
+  @@index([masterId, phone])
+  @@index([masterId, name])
+}
+
+model Booking {
+  id                String        @id @default(uuid())
+  masterId          String
+  masterClientId    String
+  clientUserId      String? // денормализация для "мои записи"; не формальный relation
+  serviceId         String?
+  serviceTitle      String
+  serviceDurationMin Int
+  bufferMin         Int           @default(0)
+  priceAmount       Decimal       @db.Decimal(10, 2)
+  currency          String        @default("BYN")
+  startsAt          DateTime @db.Timestamptz
+  endsAt            DateTime @db.Timestamptz
+  status            BookingStatus @default(hold)
+  source            BookingSource @default(client_web)
+  channel           ContactChannel?
+  clientComment     String?
+  masterNote        String?
+  holdId            String?       @unique
+  holdExpiresAt     DateTime? @db.Timestamptz
+  idempotencyKey    String?       @unique
+  version           Int           @default(0)
+  confirmedAt       DateTime? @db.Timestamptz
+  completedAt       DateTime? @db.Timestamptz
+  cancelledAt       DateTime? @db.Timestamptz
+  cancelledByType   ActorType?
+  cancelReason      String?
+  rescheduledFromId String?       @unique
+  createdByUserId   String?
+  depositAmount     Decimal?      @db.Decimal(10, 2)
+  paymentStatus     String?
+  createdAt         DateTime      @default(now()) @db.Timestamptz
+  updatedAt         DateTime      @updatedAt @db.Timestamptz
+
+  master         MasterProfile @relation(fields: [masterId], references: [id], onDelete: Restrict)
+  masterClient   MasterClient  @relation(fields: [masterClientId], references: [id], onDelete: Restrict)
+  service        Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  rescheduledFrom Booking?     @relation("BookingReschedule", fields: [rescheduledFromId], references: [id], onDelete: SetNull)
+  rescheduledTo   Booking?     @relation("BookingReschedule")
+
+  slots  BookingSlot[]
+  events BookingEvent[]
+  review Review?
+
+  @@index([masterId, startsAt])
+  @@index([clientUserId, startsAt])
+  @@index([masterClientId, startsAt])
+  @@index([status, startsAt])
+}
+
+model BookingSlot {
+  bookingId String
+  slotId    String @unique
+
+  booking Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  slot    TimeSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@id([bookingId, slotId])
+}
+
+model BookingEvent {
+  id         String         @id @default(uuid())
+  bookingId  String
+  actorType  ActorType
+  actorId    String?
+  fromStatus BookingStatus?
+  toStatus   BookingStatus
+  payload    Json?
+  createdAt  DateTime       @default(now()) @db.Timestamptz
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId, createdAt])
+}
+
+// =============================================================================
+// Reviews
+// =============================================================================
+
+enum ReviewStatus {
+  pending_review
+  published
+  rejected
+  hidden
+}
+
+model Review {
+  id           String       @id @default(uuid())
+  bookingId    String       @unique
+  masterId     String
+  clientUserId String
+  rating       Int // CHECK 1..5 в SQL-миграции
+  text         String?      @db.VarChar(800)
+  status       ReviewStatus @default(pending_review)
+  masterReply  String?      @db.VarChar(500)
+  repliedAt    DateTime? @db.Timestamptz
+  createdAt    DateTime     @default(now()) @db.Timestamptz
+
+  booking Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  client  User          @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
+  photos  ReviewPhoto[]
+
+  @@index([masterId, status, createdAt])
+}
+
+model ReviewPhoto {
+  reviewId String
+  mediaId  String
+  sort     Int    @default(0)
+
+  review Review     @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  media  MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@id([reviewId, mediaId])
+}
+
+// =============================================================================
+// Notifications
+// =============================================================================
+
+enum OutboxStatus {
+  pending
+  processing
+  done
+  failed
+}
+
+enum NotifyChannel {
+  telegram
+  email
+}
+
+enum NotifyStatus {
+  queued
+  sent
+  failed
+  skipped
+}
+
+model OutboxEvent {
+  id          String       @id @default(uuid())
+  type        String
+  aggregate   String
+  payload     Json
+  status      OutboxStatus @default(pending)
+  attempts    Int          @default(0)
+  lastError   String?
+  availableAt DateTime     @default(now()) @db.Timestamptz
+  processedAt DateTime? @db.Timestamptz
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+
+  @@index([status, availableAt])
+}
+
+model NotificationLog {
+  id        String        @id @default(uuid())
+  userId    String
+  channel   NotifyChannel
+  template  String
+  bookingId String? // мягкая ссылка -> Booking.id
+  dedupeKey String        @unique
+  jobId     String?
+  status    NotifyStatus  @default(queued)
+  sentAt    DateTime? @db.Timestamptz
+  error     String?
+  createdAt DateTime      @default(now()) @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([bookingId])
+}
+
+// =============================================================================
+// Moderation
+// =============================================================================
+
+enum ModerationStatus {
+  pending
+  approved
+  rejected
+}
+
+model ModerationTask {
+  id         String           @id @default(uuid())
+  entityType String // master_profile | media | review
+  entityId   String
+  status     ModerationStatus @default(pending)
+  assigneeId String?
+  decision   String?
+  comment    String?
+  decidedAt  DateTime? @db.Timestamptz
+  createdAt  DateTime         @default(now()) @db.Timestamptz
+
+  @@unique([entityType, entityId])
+  @@index([status, entityType, createdAt])
+}
+
+model Report {
+  id         String    @id @default(uuid())
+  reporterId String?
+  entityType String
+  entityId   String
+  reason     String
+  comment    String?
+  resolvedAt DateTime? @db.Timestamptz
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+
+  @@index([entityType, entityId])
+}
+
+model AuditLog {
+  id        String    @id @default(uuid())
+  actorId   String?
+  actorType ActorType
+  action    String
+  entity    String
+  entityId  String
+  payload   Json?
+  ip        String?
+  createdAt DateTime  @default(now()) @db.Timestamptz
+
+  @@index([entity, entityId])
+  @@index([actorId, createdAt])
+}

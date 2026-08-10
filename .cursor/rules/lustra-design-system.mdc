@@ -1,0 +1,32 @@
+---
+description: Lustra design system — tokens, typography, anti-AI-slop visuals
+globs: apps/web/**/*.{tsx,css},apps/landing/**/*.{astro,css},packages/ui/**/*
+alwaysApply: false
+---
+
+# Lustra — design system
+
+Tokens live in CSS variables (eventually `packages/ui/tokens.css`). Use **only** scale values — no one-off `13px` / `border-radius: 10px`.
+
+## Palette (semantic)
+
+`--color-bg #FAF7F4` · `--color-surface` · `--color-surface-2 #F1E8E1` · `--color-border #E4D8CF`  
+`--color-text #221A17` · `--color-text-2` · `--color-text-3`  
+`--color-accent #C25E52` · `--color-accent-700` · `--color-gold #C6A15B` · sage/clay/status as in TECH-DESIGN §23
+
+## Typography
+
+- Display: **Playfair Display** (headings, prices)
+- UI: **Manrope** (body, forms) — not Inter/Roboto/Arial as primary brand face
+- Spacing/radius/shadows: numeric scales (`--spacing-12`, `--radius-8`, `--shadow-1`)
+
+## Visual rules
+
+- Warm nude paper atmosphere — gradients/grain OK; **no** purple-indigo SaaS gradients, neon glow, glassmorphism stacks.
+- Landing/public: brand-first hero; one composition; full-bleed hero plane; no card clutter in first viewport.
+- Cards only when they wrap a real interaction; otherwise drop border/shadow/radius.
+- Motion: 2–3 intentional motions; respect `prefers-reduced-motion`; animate transform/opacity only.
+
+## Components
+
+Compose from small primitives (`Button`, `SlotChip`, …). New UI must reuse tokens — no hardcoded hex in feature CSS unless introducing a token.

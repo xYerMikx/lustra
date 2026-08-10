@@ -1,0 +1,41 @@
+---
+description: Core Lustra architecture — SOLID, size limits, no god objects
+alwaysApply: true
+---
+
+# Lustra — core
+
+Sources of truth: `docs/PRD.md` (what/why), `docs/TECH-DESIGN.md` (how). On conflict, prefer TECH-DESIGN for schema/API.
+
+## File naming
+
+- **Files & folders: `kebab-case` only** — `hold-slot.usecase.ts`, `master-card.tsx`, `booking-status.machine.ts`, `use-hold-timer.ts`.
+- React/Nest **symbols** stay PascalCase / camelCase in code (`HoldSlotUseCase`, `MasterCard`) — only the filename is kebab-case.
+- Tests colocated: `phone.test.ts` next to `phone.ts`. No `HoldSlotUseCase.ts` / `MasterCard.tsx` filenames.
+
+## Size & composition (hard)
+
+- React component / Nest service / use-case class: **≤ 300 lines**. Split earlier if responsibilities mix.
+- Prefer **composition** over inheritance and over mega-files.
+- No god objects: one class = one reason to change (SRP). Depend on abstractions (ports/interfaces), not concrete Prisma in domain.
+
+## SOLID (practical)
+
+| Letter | Rule here |
+|---|---|
+| S | Use-case / component does one job; extract when a second appears |
+| O | Extend via new use-case/handler, not by bloating existing service with `if (type === …)` |
+| L | Substitutable ports (e.g. `Clock`, repositories) |
+| I | Narrow interfaces — don't force callers to depend on unused methods |
+| D | Domain/app depend on ports; `infra/` implements Prisma/Redis/HTTP |
+
+## Boundaries
+
+- Frontend never trusts itself for authz or money/time invariants — API is source of truth.
+- Backend: private fields (`masterNote`, `trustScore`, `addressExact`) never leak via client DTOs.
+- Roles: `client` \| `master` \| `admin`. Resource owner IDs come from JWT/session, **never** from request body.
+
+## Docs / agent
+
+- Before non-trivial features: read relevant TECH-DESIGN § and apply matching `.cursor/skills/`.
+- Don't invent parallel architectures (tRPC, thick Express services, Zustand global store).

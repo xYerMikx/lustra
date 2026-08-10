@@ -1,0 +1,40 @@
+---
+description: Testing requirements — unit utils/services, e2e critical flows
+globs: "**/*.{test,spec}.{ts,tsx},**/e2e/**/*,**/tests/**/*"
+alwaysApply: false
+---
+
+# Lustra — testing
+
+## Unit (Vitest) — required for
+
+**Frontend:** pure utils (`shared/lib/*` — phone, money, date/tz, slug, query builders), booking/hold state helpers, rating math.
+
+**Backend:** domain pure functions (booking FSM, lead-time/cutoff policy), `SlotGenerator` edge cases, use-cases with mocked ports (no HTTP).
+
+Do not unit-test Nest controllers as the primary layer — prefer use-case + domain tests.
+
+## Integration / API e2e (Supertest + Postgres)
+
+Minimum forever-green:
+
+- Parallel holds on one slot → exactly one success, rest `409 SLOT_TAKEN`
+- Idempotency-Key replay returns same booking
+- IDOR: user A cannot read B’s booking
+- Client DTO snapshot: no `masterNote` / `trustScore`
+
+## UI e2e (Playwright, mobile viewport default)
+
+1. Master register → onboarding draft visible  
+2. Client catalog → book → booking in cabinet; slot gone  
+3. Master manual booking occupies window  
+4. Client cancel → master sees status  
+5. Review after `completed` updates rating  
+
+## When adding code
+
+- New util/policy → unit test in same PR  
+- New booking/schedule mutation → at least one API race or FSM test  
+- New user-visible flow in P0 → Playwright smoke path  
+
+Skip “testing for coverage %” of trivial JSX wrappers.
