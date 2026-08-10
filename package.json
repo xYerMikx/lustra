@@ -13,17 +13,23 @@
     "dev:landing": "turbo run dev --filter=@lustra/landing",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "lint:commit": "commitlint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",
+    "prepush": "sh scripts/pre-push.sh",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "db:generate": "pnpm --filter @lustra/db generate",
     "db:migrate": "pnpm --filter @lustra/db migrate",
     "db:migrate:deploy": "pnpm --filter @lustra/db migrate:deploy",
     "db:seed": "pnpm --filter @lustra/db seed",
-    "db:studio": "pnpm --filter @lustra/db studio"
+    "db:studio": "pnpm --filter @lustra/db studio",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "husky": "^9.1.7",
     "prettier": "^3.4.2",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2"

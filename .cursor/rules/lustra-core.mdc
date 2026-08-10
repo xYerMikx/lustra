@@ -35,7 +35,43 @@ Sources of truth: `docs/PRD.md` (what/why), `docs/TECH-DESIGN.md` (how). On conf
 - Backend: private fields (`masterNote`, `trustScore`, `addressExact`) never leak via client DTOs.
 - Roles: `client` \| `master` \| `admin`. Resource owner IDs come from JWT/session, **never** from request body.
 
+## Control flow braces (required)
+
+Never write single-line `if` / `else` / `for` / `while` without braces. Always expand for readability:
+
+```ts
+// ❌ BAD
+if (!master) notFound();
+
+// ✅ GOOD
+if (!master) {
+  notFound();
+}
+```
+
+Same for early returns, throws, and one-liner bodies.
+
 ## Docs / agent
 
 - Before non-trivial features: read relevant TECH-DESIGN § and apply matching `.cursor/skills/`.
 - Don't invent parallel architectures (tRPC, thick Express services, Zustand global store).
+
+## Commit message at the end (required)
+
+After **every** completed feature/fix/task, end the reply with a ready-to-use **commit message** (do not create the commit unless the user asked). Format must pass commitlint (Conventional Commits):
+
+```
+type(scope): short subject in English or Russian
+
+Optional body — why, not a file list.
+```
+
+Types: `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci` `chore` `revert`.  
+Scope examples: `api`, `web`, `landing`, `db`, `ui`, `auth`, `booking`.
+
+Place it last, clearly labeled, e.g.:
+
+**Commit message:**
+```
+feat(api): add hold-slot use-case
+```

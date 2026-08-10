@@ -1,0 +1,51 @@
+---
+description: GitHub PR conventions via gh — develop→main releases vs feature PRs
+alwaysApply: true
+---
+
+# Lustra — pull requests
+
+Use **`gh`** for all GitHub PR work (create, view, checks). Base production branch is **`main`** (not `master`).
+
+## When user asks to open a PR
+
+1. Push the branch (`git push -u origin HEAD`) if needed.
+2. Create PR with `gh pr create` (HEREDOC body). Draft only if user asks for draft.
+3. Return the PR URL.
+
+If `gh` returns **401 / Bad credentials** — stop and ask the user to run `gh auth login -h github.com` (do not invent tokens).
+
+## `develop` → `main` (release)
+
+**Title:** short release summary of what ships (what changed for the release), not a single commit subject.
+
+Examples:
+- `release: landing tokens, commit hooks, and makefile`
+- `release: auth + master onboarding`
+
+**Body:** only `## Summary` with brief concrete bullets.
+
+```markdown
+## Summary
+- …
+- …
+```
+
+## Feature / fix branches → `develop`
+
+Branch from `develop`: `feature/<slug>`, `fix/<slug>`.
+
+**Title:** short description of the feature/fix (or group of related changes).
+
+Examples:
+- `feat(api): hold-slot booking protocol`
+- `fix(web): catalog empty state`
+
+**Body:** only `## Summary` — short what/why (a few bullets max).
+
+## Do not
+
+- Add `## Test plan`, checklists, or “Made with/by …” / Cursor signatures in the PR body.
+- Open `feature/*` → `main` (merge to `develop` first).
+- Put a file dump in the PR body — only meaningful changes.
+- Create commits as part of “open PR” unless the user also asked to commit.

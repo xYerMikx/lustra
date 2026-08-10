@@ -1,52 +1,45 @@
 ---
-import "../styles/global.css";
+import BaseLayout from "../layouts/base-layout.astro";
+import { getAppUrl } from "../lib/site";
+
+const masterAppHref = getAppUrl("/app?role=master&utm_source=landing-for-masters");
 ---
 
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Для мастеров · Lustra</title>
-    <meta
-      name="description"
-      content="Lustra для мастеров — онлайн-запись, календарь и витрина в Минске."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <main class="page">
-      <a class="back" href="/">← Lustra</a>
-      <h1>Для мастеров</h1>
-      <p>
-        Скоро здесь появится подробная страница: как работает кабинет, запись
-        клиентов и продвижение в каталоге.
-      </p>
-      <a class="btn btn-primary" href="http://localhost:3000/app">Открыть кабинет</a>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title="Для мастеров · Lustra"
+  description="Lustra для мастеров — онлайн-запись, календарь и витрина в Минске."
+>
+  <main class="page">
+    <a class="back" href="/">← Lustra</a>
+    <h1>Для мастеров</h1>
+    <p>
+      Скоро здесь появится подробная страница: как работает кабинет, запись
+      клиентов и продвижение в каталоге.
+    </p>
+    <a class="btn btn-primary" href={masterAppHref}>Открыть кабинет</a>
+  </main>
+</BaseLayout>
 
 <style>
   .page {
     min-height: 100dvh;
-    width: min(560px, calc(100% - 40px));
+    width: min(560px, calc(100% - var(--spacing-40)));
     margin-inline: auto;
-    padding: 48px 0 64px;
+    padding: var(--spacing-40) 0 var(--spacing-64);
     background:
-      radial-gradient(ellipse 80% 50% at 0% 0%, rgba(198, 161, 91, 0.14), transparent 50%),
+      radial-gradient(
+        ellipse 80% 50% at 0% 0%,
+        color-mix(in srgb, var(--color-gold) 14%, transparent),
+        transparent 50%
+      ),
       var(--color-bg);
   }
 
   .back {
     display: inline-block;
-    margin-bottom: 32px;
-    font-size: 14px;
+    margin-bottom: var(--spacing-32);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
     color: var(--color-text-2);
   }
 
@@ -55,13 +48,14 @@ import "../styles/global.css";
   }
 
   h1 {
-    font-size: clamp(32px, 7vw, 44px);
-    margin-bottom: 16px;
+    font-size: clamp(var(--text-32), 7vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-16);
   }
 
   p {
     color: var(--color-text-2);
     line-height: 1.55;
-    margin-bottom: 28px;
+    margin-bottom: var(--spacing-32);
   }
 </style>

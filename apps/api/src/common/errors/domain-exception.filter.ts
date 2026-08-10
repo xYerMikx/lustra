@@ -45,8 +45,12 @@ export class DomainExceptionFilter implements ExceptionFilter {
   }
 
   private toStatus(exception: unknown): number {
-    if (exception instanceof DomainError) return exception.httpStatus
-    if (exception instanceof HttpException) return exception.getStatus()
+    if (exception instanceof DomainError) {
+      return exception.httpStatus
+    }
+    if (exception instanceof HttpException) {
+      return exception.getStatus()
+    }
     return 500
   }
 

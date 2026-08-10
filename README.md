@@ -12,44 +12,35 @@
 
 ## Быстрый старт
 
+Из корня репо (`manik/`):
+
 ```bash
-# 1. зависимости
-pnpm install
-
-# 2. инфраструктура
-docker compose up -d
-
-# 3. БД
-cp packages/db/.env.example packages/db/.env   # если ещё нет
-cp apps/api/.env.example apps/api/.env         # если ещё нет
-pnpm db:migrate:deploy
-pnpm db:seed
-
-# 4. сервисы (в разных терминалах)
-pnpm dev:api       # http://localhost:3333  — health: /health, /health/deep
-pnpm dev:web       # http://localhost:3000
-pnpm dev:landing   # http://localhost:4321
+make setup    # один раз: install + .env + docker + migrate + seed
+make start    # Postgres/Redis + api + web + landing
 ```
 
-Или всё сразу: `pnpm dev` (Turborepo).
+`make start` блокирует терминал (turbo dev). Стоп приложений — `Ctrl+C`; контейнеры: `make down`.
+
+Без Make — те же шаги вручную:
+
+```bash
+pnpm install
+docker compose up -d
+cp packages/db/.env.example packages/db/.env   # если ещё нет
+cp apps/api/.env.example apps/api/.env
+pnpm db:migrate:deploy && pnpm db:seed
+pnpm dev
+```
 
 | Сервис | Порт | Назначение |
 |---|---|---|
 | Postgres | 5432 | `lustra` / `lustra` / `lustra_dev` |
 | Redis | 6379 | очереди / кэш |
-| API | 3333 | NestJS (Fastify) |
-| Web | 3000 | Next.js 15 (каталог, кабинеты) |
-| Landing | 4321 | Astro (маркетинг, юр. страницы) |
+| API | 3333 | NestJS (Fastify) — `/health`, `/health/deep` |
+| Web | 3000 | Next.js 15 |
+| Landing | 4321 | Astro |
 
-Полезное:
-
-```bash
-pnpm db:studio          # Prisma Studio
-pnpm typecheck
-pnpm test
-pnpm test:e2e
-```
-
+Полезное: `make help` · `make status` · `make studio` · `make test`
 ## Структура
 
 ```
@@ -60,6 +51,7 @@ lustra/
 │  └─ landing/      # Astro 5 — /, /for-masters, /privacy, /terms
 ├─ packages/
 │  ├─ db/           # Prisma schema, миграции, seed
+│  ├─ ui/           # дизайн-токены (`tokens.css`) + будущие примитивы
 │  └─ config/       # shared tsconfig / eslint / prettier
 ├─ docs/
 │  ├─ PRD.md
@@ -70,7 +62,9 @@ lustra/
    └─ skills/       # скиллы по фронту / беку / дизайну / тестам
 ```
 
-Планируемые пакеты (ещё не заведены): `@lustra/contracts` (Zod DTO + typed client), `@lustra/ui` (токены + компоненты).
+Планируемые пакеты (ещё не заведены): `@lustra/contracts` (Zod DTO + typed client). `@lustra/ui` уже есть (токены).
+
+Landing → web ссылки: `PUBLIC_APP_URL` в `apps/landing/.env` (local `http://localhost:3000`, на staging/prod — URL приложения).
 
 ## Архитектура (кратко)
 
@@ -108,6 +102,32 @@ git remote add origin git@github.com:<org>/<repo>.git
 git push -u origin main
 git push -u origin develop
 ```
+
+### Хуки (husky + commitlint)
+
+- **commit-msg** → `commitlint` (Conventional Commits)
+- **pre-push** → `pnpm prepush` → `scripts/pre-push.sh` (сейчас `pnpm test`; typecheck/lint/e2e закомментированы)
+
+Формат сообщения: `type(scope?): subject`
+
+```bash
+feat(api): add hold-slot use-case
+fix(web): correct catalog empty state
+chore: add makefile
+```
+
+Проверка вручную: `echo "feat: ok" | pnpm lint:commit`
+
+### Pull requests (`gh`)
+
+Нужен залогиненный GitHub CLI: `gh auth login -h github.com`.
+
+| PR | Title | Description |
+|---|---|---|
+| `develop` → `main` | краткое **описание релиза** (что выкатываем) | только `## Summary` — конкретно что сделано |
+| `feature/*` → `develop` | краткое описание фичи/фикса | только `## Summary` — короткий what/why |
+
+Без Test plan и без подписей «Made with/by …». Агент создаёт PR через `gh` по `.cursor/rules/lustra-pull-requests.mdc`.
 
 ## Конвенции кода
 

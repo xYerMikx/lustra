@@ -1,0 +1,85 @@
+/**
+ * Lustra design tokens — TECH-DESIGN §23
+ * Единственный источник для landing / web / будущих компонентов.
+ * В CSS использовать только эти шкалы (никаких one-off px/hex в фичах).
+ */
+:root {
+  /* color — semantic */
+  --color-bg: #faf7f4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1e8e1;
+  --color-border: #e4d8cf;
+  --color-text: #221a17;
+  --color-text-2: #6e5f58;
+  --color-text-3: #9c8c84;
+  --color-accent: #c25e52;
+  --color-accent-700: #a94a40;
+  --color-gold: #c6a15b;
+  --color-sage: #8a9a7b;
+  --color-clay: #6b4e42;
+  --color-success: #4c8b6a;
+  --color-warning: #d08a3a;
+  --color-danger: #9e2b3f;
+  --color-on-accent: #ffffff;
+
+  /* spacing — step 4 */
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-56: 56px;
+  --spacing-64: 64px;
+  --spacing-96: 96px;
+
+  /* radius */
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-14: 14px;
+  --radius-22: 22px;
+  --radius-999: 999px;
+
+  /* typography */
+  --text-13: 13px;
+  --text-13--line-height: 18px;
+  --text-15: 15px;
+  --text-15--line-height: 22px;
+  --text-16: 16px;
+  --text-16--line-height: 24px;
+  --text-20: 20px;
+  --text-20--line-height: 28px;
+  --text-26: 26px;
+  --text-26--line-height: 32px;
+  --text-32: 32px;
+  --text-32--line-height: 38px;
+  --text-40: 40px;
+  --text-40--line-height: 46px;
+  --text-56: 56px;
+  --text-56--line-height: 60px;
+  --font-weight-400: 400;
+  --font-weight-500: 500;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
+  /* Manrope вместо Inter из черновика §23 — кириллица + бренд (см. design-system rule) */
+  --font-display: "Playfair Display Variable", "Playfair Display", Georgia, serif;
+  --font-text: "Manrope Variable", Manrope, system-ui, sans-serif;
+
+  /* shadow / motion / z */
+  --shadow-1: 0 2px 8px rgba(34, 26, 23, 0.06);
+  --shadow-2: 0 8px 24px rgba(34, 26, 23, 0.1);
+  --shadow-3: 0 24px 48px rgba(34, 26, 23, 0.14);
+  --duration-150: 150ms;
+  --duration-250: 250ms;
+  --duration-400: 400ms;
+  --duration-700: 700ms;
+  --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+}

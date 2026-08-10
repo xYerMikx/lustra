@@ -19,7 +19,6 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger))
   app.useGlobalFilters(new DomainExceptionFilter())
-  // Валидация DTO — через ZodValidationPipe из @lustra/contracts (срез 2), не class-validator
 
   const corsOrigins = (process.env.CORS_ORIGINS ?? '')
     .split(',')
@@ -27,7 +26,7 @@ async function bootstrap() {
     .filter(Boolean)
 
   await app.register(fastifyHelmet, {
-    contentSecurityPolicy: false, // включим точечно на прод-фронтах, не на API
+    contentSecurityPolicy: false,
   })
   await app.register(fastifyCors, {
     origin: corsOrigins.length > 0 ? corsOrigins : true,
