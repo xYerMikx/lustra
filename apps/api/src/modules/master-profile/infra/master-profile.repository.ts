@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { LocationType, Prisma } from '@lustra/db'
 
-import { PrismaService } from '../../../common/prisma/prisma.service'
+import { PrismaService } from '@/common/prisma/prisma.service'
 import type { MasterProfileRecord } from '../domain/map-master-profile'
 
 const profileInclude = {

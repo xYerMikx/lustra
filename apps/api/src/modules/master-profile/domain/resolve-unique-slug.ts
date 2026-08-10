@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto'
 
-import { slugify } from '../../auth/domain/slugify'
+import { slugify } from '@/modules/auth/domain/slugify'
 
 type SlugAvailability = (slug: string) => Promise<boolean>
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { AuthModule } from '../auth/auth.module'
-import { PrismaModule } from '../../common/prisma/prisma.module'
+import { PrismaModule } from '@/common/prisma/prisma.module'
 import { CatalogDistrictsController } from './api/catalog-districts.controller'
 import { MasterProfileController } from './api/master-profile.controller'
 import { GetMasterProfileUseCase } from './app/get-master-profile.usecase'

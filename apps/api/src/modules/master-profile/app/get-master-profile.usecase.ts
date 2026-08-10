@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import type { MasterProfileView } from '@lustra/contracts'
 
-import type { AuthUser } from '../../../common/auth/auth-user'
-import { DomainError } from '../../../common/errors/domain-error'
+import type { AuthUser } from '@/common/auth/auth-user'
+import { DomainError } from '@/common/errors/domain-error'
 import { toMasterProfileView } from '../domain/map-master-profile'
 import { MasterProfileRepository } from '../infra/master-profile.repository'
 
