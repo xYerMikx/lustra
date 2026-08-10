@@ -1,0 +1,296 @@
+{
+  "info": {
+    "_postman_id": "lustra-auth-smoke-2026-08",
+    "name": "Lustra Auth Smoke",
+    "description": "Slice 2 auth smoke for local API.\n\nImport into Postman, or:\n`npx --yes newman run apps/api/postman/lustra-auth.postman_collection.json -e apps/api/postman/lustra-auth.local.postman_environment.json`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3333" },
+    { "key": "clientEmail", "value": "" },
+    { "key": "masterEmail", "value": "" },
+    { "key": "password", "value": "Password1!" },
+    { "key": "csrfToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "00 Health",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('200', () => pm.response.to.have.status(200));",
+            "pm.test('ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+          ]
+        }
+      }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+    },
+    {
+      "name": "01 Me unauthenticated",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test('401', () => pm.response.to.have.status(401));"]
+        }
+      }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+    },
+    {
+      "name": "02 Refresh without CSRF",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('403', () => pm.response.to.have.status(403));",
+            "pm.test('FORBIDDEN', () => pm.expect(pm.response.json().error.code).to.eql('FORBIDDEN'));"
+          ]
+        }
+      }],
+      "request": { "method": "POST", "url": "{{baseUrl}}/auth/refresh" }
+    },
+    {
+      "name": "10 Register client",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const stamp = Date.now();",
+              "pm.collectionVariables.set('clientEmail', `client.smoke.${stamp}@example.com`);",
+              "pm.collectionVariables.set('masterEmail', `master.smoke.${stamp}@example.com`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('201', () => pm.response.to.have.status(201));",
+              "const user = pm.response.json().user;",
+              "pm.test('client', () => {",
+              "  pm.expect(user.role).to.eql('client');",
+              "  pm.expect(user.profileStatus).to.eql(null);",
+              "});",
+              "const cookies = pm.response.headers.filter(h => h.key.toLowerCase() === 'set-cookie').map(h => h.value);",
+              "pm.test('cookies', () => {",
+              "  pm.expect(cookies.some(c => c.startsWith('lustra_access='))).to.be.true;",
+              "  pm.expect(cookies.some(c => c.startsWith('lustra_refresh='))).to.be.true;",
+              "  pm.expect(cookies.some(c => c.startsWith('lustra_csrf='))).to.be.true;",
+              "});",
+              "const csrf = cookies.find(c => c.startsWith('lustra_csrf='));",
+              "if (csrf) pm.collectionVariables.set('csrfToken', decodeURIComponent(csrf.split(';')[0].slice('lustra_csrf='.length)));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{clientEmail}}\",\n  \"password\": \"{{password}}\",\n  \"firstName\": \"Клиент\",\n  \"role\": \"client\",\n  \"acceptTerms\": true\n}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "11 Me as client",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('200', () => pm.response.to.have.status(200));",
+            "pm.test('role', () => pm.expect(pm.response.json().role).to.eql('client'));"
+          ]
+        }
+      }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+    },
+    {
+      "name": "12 Logout without CSRF",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test('403', () => pm.response.to.have.status(403));"]
+        }
+      }],
+      "request": { "method": "POST", "url": "{{baseUrl}}/auth/logout" }
+    },
+    {
+      "name": "13 Logout with CSRF",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test('204', () => pm.response.to.have.status(204));"]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "X-CSRF-Token", "value": "{{csrfToken}}" }],
+        "url": "{{baseUrl}}/auth/logout"
+      }
+    },
+    {
+      "name": "14 Me after logout",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": ["pm.test('401', () => pm.response.to.have.status(401));"]
+        }
+      }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+    },
+    {
+      "name": "20 Register master",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('201', () => pm.response.to.have.status(201));",
+            "const user = pm.response.json().user;",
+            "pm.test('master draft', () => {",
+            "  pm.expect(user.role).to.eql('master');",
+            "  pm.expect(user.profileStatus).to.eql('draft');",
+            "});",
+            "const cookies = pm.response.headers.filter(h => h.key.toLowerCase() === 'set-cookie').map(h => h.value);",
+            "const csrf = cookies.find(c => c.startsWith('lustra_csrf='));",
+            "if (csrf) pm.collectionVariables.set('csrfToken', decodeURIComponent(csrf.split(';')[0].slice('lustra_csrf='.length)));"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{masterEmail}}\",\n  \"password\": \"{{password}}\",\n  \"firstName\": \"Мастер\",\n  \"role\": \"master\",\n  \"acceptTerms\": true\n}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "21 Me as master",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('200', () => pm.response.to.have.status(200));",
+            "const me = pm.response.json();",
+            "pm.test('master', () => {",
+            "  pm.expect(me.role).to.eql('master');",
+            "  pm.expect(me.profileStatus).to.eql('draft');",
+            "});"
+          ]
+        }
+      }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+    },
+    {
+      "name": "22 Login client",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('200', () => pm.response.to.have.status(200));",
+            "pm.test('client', () => pm.expect(pm.response.json().user.role).to.eql('client'));",
+            "const cookies = pm.response.headers.filter(h => h.key.toLowerCase() === 'set-cookie').map(h => h.value);",
+            "const csrf = cookies.find(c => c.startsWith('lustra_csrf='));",
+            "if (csrf) pm.collectionVariables.set('csrfToken', decodeURIComponent(csrf.split(';')[0].slice('lustra_csrf='.length)));"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{clientEmail}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "23 Login wrong password",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('401', () => pm.response.to.have.status(401));",
+            "const err = pm.response.json().error;",
+            "pm.test('generic', () => {",
+            "  pm.expect(err.code).to.eql('UNAUTHENTICATED');",
+            "  pm.expect(err.message).to.match(/Неверный email или пароль/i);",
+            "});"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{clientEmail}}\",\n  \"password\": \"WrongPass1!\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "24 Refresh with CSRF",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('200', () => pm.response.to.have.status(200));",
+            "const cookies = pm.response.headers.filter(h => h.key.toLowerCase() === 'set-cookie').map(h => h.value);",
+            "pm.test('rotated', () => {",
+            "  pm.expect(cookies.some(c => c.startsWith('lustra_access='))).to.be.true;",
+            "  pm.expect(cookies.some(c => c.startsWith('lustra_refresh='))).to.be.true;",
+            "});",
+            "const csrf = cookies.find(c => c.startsWith('lustra_csrf='));",
+            "if (csrf) pm.collectionVariables.set('csrfToken', decodeURIComponent(csrf.split(';')[0].slice('lustra_csrf='.length)));"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "X-CSRF-Token", "value": "{{csrfToken}}" }],
+        "url": "{{baseUrl}}/auth/refresh"
+      }
+    },
+    {
+      "name": "25 Duplicate email mixed case",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const email = pm.collectionVariables.get('clientEmail');",
+              "pm.variables.set('mixedEmail', email.toUpperCase());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('conflict', () => {",
+              "  pm.expect(pm.response.code).to.eql(400);",
+              "  pm.expect(pm.response.json().error.code).to.eql('VALIDATION_FAILED');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{mixedEmail}}\",\n  \"password\": \"{{password}}\",\n  \"firstName\": \"Case\",\n  \"role\": \"client\",\n  \"acceptTerms\": true\n}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    }
+  ]
+}
