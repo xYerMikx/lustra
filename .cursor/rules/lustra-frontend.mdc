@@ -19,16 +19,20 @@ alwaysApply: false
 
 ## Imports & CSS modules
 
-- Use `@/` aliases (not `../../../`).
-- Style elements via **named CSS module classes** (`.input`, `.submit`) — never nest tags like `.field input`.
-- **Never** use `:global(...)` to override shared classes from a CSS module.
+- Use `@/` aliases **everywhere** (including same feature/module). Relative only for `./foo` next to the file if needed — prefer `@/features/...` / `@/modules/...`.
+- Style via **CSS modules** with named classes (`.input`, `.radioInput`) — never nest tags (`.field input`, `.steps li`).
+- **Never** use `:global(...)` to override shared classes.
+- **Never** use inline `style={{ ... }}` — tokens + CSS modules only.
+- Layout chrome (shell/header/nav/brand): shared CSS-module component — don’t mix global `.shell` / `.site-header` in some pages and modules in others.
 
 ## Components
 
 - **≤ 300 lines**; split into composed children + hooks.
 - Composition over props-drilling mega-components.
+- **No render props** (`children={(x) => ...}`). Prefer context, hooks, or plain `children: ReactNode`.
 - Four UI states where data loads: `loading` (skeleton), `empty`, `error` (+ retry), `success`.
 - No cards in hero; avoid generic dashboard chrome on marketing/public pages.
+- Shared interactive UI (`Button`, …) from `shared/ui` — never raw `btn btn-primary` string classes in features.
 
 ## State & effects
 

@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { LoginInputSchema, type LoginInput } from '@lustra/contracts'
 
+import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { login } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
@@ -30,8 +31,15 @@ export function LoginForm() {
     setFormError(null)
 
     try {
-      await login(values)
-      router.push('/app')
+      const session = await login(values)
+
+      if (!session) {
+        setFormError('Не удалось войти')
+
+        return
+      }
+
+      router.push(resolvePostAuthPath(session.user))
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {

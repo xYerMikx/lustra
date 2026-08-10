@@ -1,4 +1,5 @@
-export { AuthHeader } from './ui/auth-header'
 export { LoginForm } from './ui/login-form'
 export { RegisterForm } from './ui/register-form'
 export { RequireSession } from './ui/require-session'
+export { RequireMasterSession, useMasterSession } from './ui/require-master-session'
+export { resolvePostAuthPath } from './lib/resolve-post-auth-path'

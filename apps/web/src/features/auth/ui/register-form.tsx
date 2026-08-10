@@ -10,6 +10,7 @@ import {
   type RegisterRole,
 } from '@lustra/contracts'
 
+import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { RoleSegment } from '@/features/auth/ui/role-segment'
 import { register as registerAccount } from '@/shared/api/auth-client'
@@ -47,8 +48,15 @@ export function RegisterForm() {
     setFormError(null)
 
     try {
-      await registerAccount(values)
-      router.push('/app')
+      const session = await registerAccount(values)
+
+      if (!session) {
+        setFormError('Не удалось зарегистрироваться')
+
+        return
+      }
+
+      router.push(resolvePostAuthPath(session.user))
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
