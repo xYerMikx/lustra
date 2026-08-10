@@ -10,13 +10,23 @@ export type AccessTokenPayload = {
   email: string
 }
 
+function resolveAccessSecret(): Uint8Array {
+  const secret = process.env.JWT_ACCESS_SECRET
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_ACCESS_SECRET is required in production')
+    }
+    return new TextEncoder().encode('dev-access-secret-change-me')
+  }
+  return new TextEncoder().encode(secret)
+}
+
 @Injectable()
 export class JwtTokenService {
   private readonly accessSecret: Uint8Array
 
   constructor() {
-    const secret = process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me'
-    this.accessSecret = new TextEncoder().encode(secret)
+    this.accessSecret = resolveAccessSecret()
   }
 
   async signAccess(payload: AccessTokenPayload): Promise<string> {

@@ -16,9 +16,16 @@ export const MasterProfileStatusSchema = z.enum([
 ])
 export type MasterProfileStatus = z.infer<typeof MasterProfileStatusSchema>
 
+const EmailSchema = z
+  .string()
+  .trim()
+  .email()
+  .max(254)
+  .transform((value) => value.toLowerCase())
+
 export const RegisterInputSchema = z
   .object({
-    email: z.string().trim().email().max(254),
+    email: EmailSchema,
     password: z.string().min(8, 'Пароль не короче 8 символов').max(128),
     firstName: z.string().trim().min(1).max(80),
     role: RegisterRoleSchema,
@@ -31,7 +38,7 @@ export type RegisterInput = z.infer<typeof RegisterInputSchema>
 
 export const LoginInputSchema = z
   .object({
-    email: z.string().trim().email().max(254),
+    email: EmailSchema,
     password: z.string().min(1).max(128),
   })
   .strict()

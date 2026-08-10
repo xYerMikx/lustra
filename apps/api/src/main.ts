@@ -25,10 +25,15 @@ async function bootstrap() {
     .map((origin) => origin.trim())
     .filter(Boolean)
 
+  if (corsOrigins.length === 0 && process.env.NODE_ENV === 'production') {
+    throw new Error('CORS_ORIGINS is required in production (comma-separated allowlist)')
+  }
+
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: false,
   })
   await app.register(fastifyCors, {
+    // Dev fallback reflects request Origin only when allowlist is empty.
     origin: corsOrigins.length > 0 ? corsOrigins : true,
     credentials: true,
   })

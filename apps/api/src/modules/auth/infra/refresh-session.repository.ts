@@ -50,22 +50,41 @@ export class RefreshSessionRepository {
     userAgent?: string
     ip?: string
   }): Promise<CreatedRefreshSession> {
-    const next = await this.create({
-      userId: params.current.userId,
-      familyId: params.current.familyId,
-      userAgent: params.userAgent,
-      ip: params.ip,
+    const rawToken = generateRefreshToken()
+    const tokenHash = hashToken(rawToken)
+    const expiresAt = new Date(Date.now() + REFRESH_TTL_SEC * 1000)
+
+    const session = await this.prisma.$transaction(async (tx) => {
+      const next = await tx.refreshSession.create({
+        data: {
+          userId: params.current.userId,
+          tokenHash,
+          familyId: params.current.familyId,
+          expiresAt,
+          userAgent: params.userAgent,
+          ip: params.ip,
+        },
+      })
+
+      const revoked = await tx.refreshSession.updateMany({
+        where: {
+          id: params.current.id,
+          revokedAt: null,
+        },
+        data: {
+          revokedAt: new Date(),
+          replacedBy: next.id,
+        },
+      })
+
+      if (revoked.count !== 1) {
+        throw new Error('REFRESH_ROTATE_RACE')
+      }
+
+      return next
     })
 
-    await this.prisma.refreshSession.update({
-      where: { id: params.current.id },
-      data: {
-        revokedAt: new Date(),
-        replacedBy: next.session.id,
-      },
-    })
-
-    return next
+    return { rawToken, session }
   }
 
   async revoke(sessionId: string): Promise<void> {

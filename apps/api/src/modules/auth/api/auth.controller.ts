@@ -77,6 +77,7 @@ export class AuthController {
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
   ) {
+    this.cookies.assertCsrf(request)
     const result = await this.refreshUseCase.execute(
       this.cookies.readRefresh(request.cookies),
       this.meta(request),
@@ -94,6 +95,7 @@ export class AuthController {
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
   ) {
+    this.cookies.assertCsrf(request)
     await this.logoutUseCase.execute(this.cookies.readRefresh(request.cookies))
     this.cookies.clearSession(reply)
   }

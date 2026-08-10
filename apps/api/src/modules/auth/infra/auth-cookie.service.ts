@@ -1,18 +1,31 @@
+import { timingSafeEqual } from 'node:crypto'
+
 import { Injectable } from '@nestjs/common'
-import type { FastifyReply } from 'fastify'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 
 import {
   ACCESS_COOKIE,
   ACCESS_TTL_SEC,
   CSRF_COOKIE,
+  CSRF_HEADER,
   REFRESH_COOKIE,
   REFRESH_TTL_SEC,
 } from '../../../common/auth/cookie.constants'
+import { DomainError } from '../../../common/errors/domain-error'
 import { generateCsrfToken } from '../domain/token-hash'
 
 export type SessionCookies = {
   accessToken: string
   refreshToken: string
+}
+
+function safeEqualStrings(left: string, right: string): boolean {
+  const a = Buffer.from(left)
+  const b = Buffer.from(right)
+  if (a.length !== b.length) {
+    return false
+  }
+  return timingSafeEqual(a, b)
 }
 
 @Injectable()
@@ -64,5 +77,25 @@ export class AuthCookieService {
       return value
     }
     return undefined
+  }
+
+  /**
+   * Double-submit CSRF: cookie `lustra_csrf` must match `X-CSRF-Token` header.
+   * Required for cookie-authenticated mutations (refresh / logout).
+   */
+  assertCsrf(request: FastifyRequest): void {
+    const cookieToken = request.cookies?.[CSRF_COOKIE]
+    const headerRaw = request.headers[CSRF_HEADER]
+    const headerToken = Array.isArray(headerRaw) ? headerRaw[0] : headerRaw
+
+    if (
+      typeof cookieToken !== 'string' ||
+      cookieToken.length === 0 ||
+      typeof headerToken !== 'string' ||
+      headerToken.length === 0 ||
+      !safeEqualStrings(cookieToken, headerToken)
+    ) {
+      throw new DomainError('FORBIDDEN', 'Недействительный CSRF-токен')
+    }
   }
 }

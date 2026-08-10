@@ -22,6 +22,29 @@ export class ApiError extends Error {
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333'
+const CSRF_COOKIE = 'lustra_csrf'
+
+function readCookie(name: string): string | undefined {
+  if (typeof document === 'undefined') {
+    return undefined
+  }
+
+  const prefix = `${name}=`
+  const match = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(prefix))
+
+  if (!match) {
+    return undefined
+  }
+
+  return decodeURIComponent(match.slice(prefix.length))
+}
+
+function needsCsrf(method: string): boolean {
+  const normalized = method.toUpperCase()
+  return normalized !== 'GET' && normalized !== 'HEAD' && normalized !== 'OPTIONS'
+}
 
 export async function apiFetch<T>(
   path: string,
@@ -30,6 +53,14 @@ export async function apiFetch<T>(
   const headers = new Headers(init.headers)
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
+  }
+
+  const method = init.method ?? 'GET'
+  if (needsCsrf(method) && !headers.has('X-CSRF-Token')) {
+    const csrf = readCookie(CSRF_COOKIE)
+    if (csrf) {
+      headers.set('X-CSRF-Token', csrf)
+    }
   }
 
   const response = await fetch(`${API_BASE}${path}`, {

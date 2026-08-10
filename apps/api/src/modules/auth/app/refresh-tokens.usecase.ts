@@ -51,11 +51,20 @@ export class RefreshTokensUseCase {
       throw new DomainError('UNAUTHENTICATED', 'Пользователь недоступен')
     }
 
-    const rotated = await this.sessions.rotate({
-      current,
-      ip: meta.ip,
-      userAgent: meta.userAgent,
-    })
+    let rotated
+    try {
+      rotated = await this.sessions.rotate({
+        current,
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+      })
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message === 'REFRESH_ROTATE_RACE') {
+        await this.sessions.revokeFamily(current.familyId)
+        throw new DomainError('UNAUTHENTICATED', 'Обнаружено повторное использование токена')
+      }
+      throw error
+    }
 
     const accessToken = await this.jwt.signAccess({
       sub: user.id,
