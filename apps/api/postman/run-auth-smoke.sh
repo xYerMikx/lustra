@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Auth API smoke against local Nest (cookie jar + CSRF).
+# Local curl smoke for auth API (cookie jar + CSRF).
+# Source of truth for Postman collections: Postman workspace via MCP — do not
+# reintroduce *.postman_collection.json into git (see .cursor/rules/lustra-postman.mdc).
 set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://localhost:3333}"
