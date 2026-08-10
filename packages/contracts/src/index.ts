@@ -24,10 +24,12 @@ export {
   MasterLocationViewSchema,
   MasterProfileViewSchema,
   PatchMasterProfileInputSchema,
+  StepBasicsInputSchema,
   type LocationType,
   type DistrictView,
   type DistrictListResponse,
   type MasterLocationView,
   type MasterProfileView,
   type PatchMasterProfileInput,
+  type StepBasicsInput,
 } from './master-profile'

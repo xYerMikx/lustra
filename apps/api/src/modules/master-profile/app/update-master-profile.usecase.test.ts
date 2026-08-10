@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { UpdateMasterProfileUseCase } from './update-master-profile.usecase'
+import type {
+  DistrictStore,
+  MasterProfileStore,
+} from '@/modules/master-profile/app/master-profile.ports'
+import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 
 describe('UpdateMasterProfileUseCase', () => {
   it('regenerates slug when displayName changes and base slug collides', async () => {
@@ -17,7 +21,7 @@ describe('UpdateMasterProfileUseCase', () => {
       locations: [],
     }
 
-    const profiles = {
+    const profiles: MasterProfileStore = {
       findByUserId: vi.fn().mockResolvedValue(profile),
       isSlugTaken: vi
         .fn()
@@ -25,6 +29,7 @@ describe('UpdateMasterProfileUseCase', () => {
           if (excludeId !== 'm1') {
             return false
           }
+
           return slug === 'anna-nails'
         }),
       updateProfile: vi.fn().mockImplementation(async (_id, data) => ({
@@ -34,12 +39,13 @@ describe('UpdateMasterProfileUseCase', () => {
       })),
       upsertPrimaryLocation: vi.fn(),
     }
-    const districts = { findById: vi.fn() }
 
-    const useCase = new UpdateMasterProfileUseCase(
-      profiles as never,
-      districts as never,
-    )
+    const districts: DistrictStore = {
+      listAll: vi.fn(),
+      findById: vi.fn(),
+    }
+
+    const useCase = new UpdateMasterProfileUseCase(profiles, districts)
 
     const result = await useCase.execute(
       { id: 'u1', role: 'master', email: 'm@example.com' },

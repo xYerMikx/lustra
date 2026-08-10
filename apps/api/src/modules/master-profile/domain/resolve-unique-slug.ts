@@ -4,6 +4,8 @@ import { slugify } from '@/modules/auth/domain/slugify'
 
 type SlugAvailability = (slug: string) => Promise<boolean>
 
+const MAX_ATTEMPTS = 20
+
 /**
  * Picks a URL slug for a display name, appending random suffixes on collision.
  */
@@ -14,10 +16,13 @@ export async function resolveUniqueSlug(
   const base = slugify(displayName) || 'master'
   let candidate = base
 
-  for (let attempt = 0; attempt < 20; attempt++) {
-    if (!(await isTaken(candidate))) {
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    const taken = await isTaken(candidate)
+
+    if (!taken) {
       return candidate
     }
+
     candidate = `${base}-${randomBytes(2).toString('hex')}`
   }
 

@@ -1,13 +1,21 @@
 'use client'
 
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from 'react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, type ReactNode } from 'react'
 import type { MeResponse } from '@lustra/contracts'
 
 import { getMe } from '@/shared/api/auth-client'
 
+const MasterSessionContext = createContext<MeResponse | null>(null)
+
 type RequireMasterSessionProps = {
-  children: (user: MeResponse) => ReactNode
+  children: ReactNode
   fallback?: ReactNode
 }
 
@@ -22,8 +30,10 @@ export function RequireMasterSession({
   useEffect(() => {
     let cancelled = false
 
-    getMe()
-      .then((me) => {
+    const loadSession = async () => {
+      try {
+        const me = await getMe()
+
         if (cancelled) {
           return
         }
@@ -42,14 +52,16 @@ export function RequireMasterSession({
 
         setUser(me)
         setReady(true)
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) {
           return
         }
 
         router.replace('/app/login')
-      })
+      }
+    }
+
+    void loadSession()
 
     return () => {
       cancelled = true
@@ -60,5 +72,19 @@ export function RequireMasterSession({
     return fallback
   }
 
-  return children(user)
+  return (
+    <MasterSessionContext.Provider value={user}>
+      {children}
+    </MasterSessionContext.Provider>
+  )
+}
+
+export function useMasterSession(): MeResponse {
+  const user = useContext(MasterSessionContext)
+
+  if (!user) {
+    throw new Error('useMasterSession must be used within RequireMasterSession')
+  }
+
+  return user
 }

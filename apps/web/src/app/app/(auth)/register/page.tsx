@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { AuthHeader, RegisterForm } from '@/features/auth'
+import { RegisterForm } from '@/features/auth'
 import styles from '@/features/auth/ui/auth-page.module.css'
+import { SiteChrome } from '@/shared/ui/site-chrome'
 
 export const metadata: Metadata = {
   title: 'Регистрация',
@@ -11,9 +12,13 @@ export const metadata: Metadata = {
 export default function RegisterPage() {
   return (
     <main className={styles.page}>
-      <div className="shell">
-        <AuthHeader variant="register" />
-
+      <SiteChrome
+        navItems={[
+          { href: '/', label: 'Главная' },
+          { href: '/catalog', label: 'Каталог' },
+          { href: '/app/login', label: 'Вход' },
+        ]}
+      >
         <div className={styles.panelWrap}>
           <section className={styles.panel}>
             <p className={styles.eyebrow}>Аккаунт</p>
@@ -27,7 +32,7 @@ export default function RegisterPage() {
             </p>
           </section>
         </div>
-      </div>
+      </SiteChrome>
     </main>
   )
 }

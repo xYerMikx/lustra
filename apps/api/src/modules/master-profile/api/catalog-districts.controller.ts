@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common'
 
-import { ListDistrictsUseCase } from '../app/list-districts.usecase'
+import { ListDistrictsUseCase } from '@/modules/master-profile/app/list-districts.usecase'
 
 @Controller('catalog/districts')
 export class CatalogDistrictsController {

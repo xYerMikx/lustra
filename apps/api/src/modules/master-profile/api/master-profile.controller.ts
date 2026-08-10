@@ -16,8 +16,8 @@ import { JwtGuard } from '@/common/auth/jwt.guard'
 import { Roles } from '@/common/auth/roles.decorator'
 import { RolesGuard } from '@/common/auth/roles.guard'
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
-import { GetMasterProfileUseCase } from '../app/get-master-profile.usecase'
-import { UpdateMasterProfileUseCase } from '../app/update-master-profile.usecase'
+import { GetMasterProfileUseCase } from '@/modules/master-profile/app/get-master-profile.usecase'
+import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 
 @Controller('master/profile')
 @UseGuards(JwtGuard, RolesGuard)

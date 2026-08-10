@@ -8,58 +8,72 @@ import type {
   PatchMasterProfileInput,
 } from '@lustra/contracts'
 
+import {
+  CURRENT_ONBOARDING_STEP,
+  ONBOARDING_STEPS,
+} from '@/features/master-onboarding/model/onboarding-steps'
+import { StepBasicsForm } from '@/features/master-onboarding/ui/step-basics-form'
+import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import {
   getMasterProfile,
   listDistricts,
   patchMasterProfile,
 } from '@/shared/api/master-profile-client'
-import { StepBasicsForm } from './step-basics-form'
-import styles from './onboarding.module.css'
 
 type OnboardingShellProps = {
   user: MeResponse
 }
 
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'ready'; profile: MasterProfileView; districts: DistrictView[] }
+
 export function OnboardingShell({ user }: OnboardingShellProps) {
-  const [profile, setProfile] = useState<MasterProfileView | null>(null)
-  const [districts, setDistricts] = useState<DistrictView[]>([])
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [state, setState] = useState<LoadState>({ status: 'loading' })
 
   useEffect(() => {
     let cancelled = false
 
-    Promise.all([getMasterProfile(), listDistricts()])
-      .then(([loadedProfile, districtResponse]) => {
+    const load = async () => {
+      try {
+        const profile = await getMasterProfile()
+        const districtResponse = await listDistricts()
+
         if (cancelled) {
           return
         }
 
-        if (!loadedProfile || !districtResponse) {
-          setLoadError('Не удалось загрузить профиль')
-          setLoading(false)
+        if (!profile || !districtResponse) {
+          setState({
+            status: 'error',
+            message: 'Не удалось загрузить профиль',
+          })
 
           return
         }
 
-        setProfile(loadedProfile)
-        setDistricts(districtResponse.districts)
-        setLoading(false)
-      })
-      .catch((error: unknown) => {
+        setState({
+          status: 'ready',
+          profile,
+          districts: districtResponse.districts,
+        })
+      } catch (error: unknown) {
         if (cancelled) {
           return
         }
 
-        if (error instanceof ApiError) {
-          setLoadError(error.message)
-        } else {
-          setLoadError('Не удалось загрузить профиль')
-        }
+        const message =
+          error instanceof ApiError
+            ? error.message
+            : 'Не удалось загрузить профиль'
 
-        setLoading(false)
-      })
+        setState({ status: 'error', message })
+      }
+    }
+
+    void load()
 
     return () => {
       cancelled = true
@@ -78,12 +92,18 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
       })
     }
 
-    setProfile(updated)
+    setState((current) => {
+      if (current.status !== 'ready') {
+        return current
+      }
+
+      return { ...current, profile: updated }
+    })
 
     return updated
   }
 
-  if (loading) {
+  if (state.status === 'loading') {
     return (
       <section className={styles.panel}>
         <p className={styles.copy}>Загружаем профиль…</p>
@@ -91,32 +111,45 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     )
   }
 
-  if (loadError || !profile) {
+  if (state.status === 'error') {
     return (
       <section className={styles.panel}>
         <p className={styles.error} role="alert">
-          {loadError ?? 'Профиль недоступен'}
+          {state.message}
         </p>
       </section>
     )
   }
+
+  const { profile, districts } = state
+  const currentStepIndex = ONBOARDING_STEPS.findIndex(
+    (step) => step.id === CURRENT_ONBOARDING_STEP,
+  )
 
   return (
     <section className={styles.panel}>
       <p className={styles.eyebrow}>Онбординг мастера</p>
       <h1 className={styles.title}>Расскажите о себе</h1>
       <p className={styles.copy}>
-        Шаг 1 из 4 — имя, район и короткий заголовок для страницы{' '}
+        Шаг {currentStepIndex + 1} из {ONBOARDING_STEPS.length} — имя, район и
+        короткий заголовок для страницы{' '}
         <span className={styles.slugHint}>/m/{profile.slug}</span>
       </p>
 
       <ol className={styles.steps} aria-label="Прогресс онбординга">
-        <li className={styles.stepActive} aria-current="step">
-          Профиль
-        </li>
-        <li className={styles.stepPending}>Услуги</li>
-        <li className={styles.stepPending}>График</li>
-        <li className={styles.stepPending}>Портфолио</li>
+        {ONBOARDING_STEPS.map((step) => {
+          const isCurrent = step.id === CURRENT_ONBOARDING_STEP
+
+          return (
+            <li
+              key={step.id}
+              className={isCurrent ? styles.stepActive : styles.stepPending}
+              aria-current={isCurrent ? 'step' : undefined}
+            >
+              {step.label}
+            </li>
+          )
+        })}
       </ol>
 
       <StepBasicsForm

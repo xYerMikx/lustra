@@ -1,30 +1,18 @@
 'use client'
 
-import Link from 'next/link'
-import type { MeResponse } from '@lustra/contracts'
+import { useMasterSession } from '@/features/auth'
+import { OnboardingShell } from '@/features/master-onboarding/ui/onboarding-shell'
+import styles from '@/features/master-onboarding/ui/onboarding.module.css'
+import { SiteChrome } from '@/shared/ui/site-chrome'
 
-import { OnboardingShell } from './onboarding-shell'
-import styles from './onboarding.module.css'
+export function OnboardingPageClient() {
+  const user = useMasterSession()
 
-type OnboardingPageClientProps = {
-  user: MeResponse
-}
-
-export function OnboardingPageClient({ user }: OnboardingPageClientProps) {
   return (
     <main className={styles.page}>
-      <div className="shell">
-        <header className="site-header">
-          <Link href="/" className="brand">
-            Lustra
-          </Link>
-          <nav className="nav" aria-label="Основная навигация">
-            <Link href="/catalog">Каталог</Link>
-          </nav>
-        </header>
-
+      <SiteChrome navItems={[{ href: '/catalog', label: 'Каталог' }]}>
         <OnboardingShell user={user} />
-      </div>
+      </SiteChrome>
     </main>
   )
 }

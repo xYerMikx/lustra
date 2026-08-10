@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
 import { RequireSession } from '@/features/auth'
 import { ButtonLink } from '@/shared/ui/button'
+import { SiteChrome } from '@/shared/ui/site-chrome'
 import styles from './app.module.css'
 
 export const metadata: Metadata = {
@@ -14,24 +14,17 @@ export default function CabinetPage() {
     <RequireSession
       fallback={
         <main className={styles.page}>
-          <div className="shell">
-            <p className={styles.copy}>Проверяем сессию…</p>
-          </div>
+          <p className={styles.copy}>Проверяем сессию…</p>
         </main>
       }
     >
       <main className={styles.page}>
-        <div className="shell">
-          <header className="site-header">
-            <Link href="/" className="brand">
-              Lustra
-            </Link>
-            <nav className="nav" aria-label="Основная навигация">
-              <Link href="/catalog">Каталог</Link>
-              <Link href="/app">Кабинет</Link>
-            </nav>
-          </header>
-
+        <SiteChrome
+          navItems={[
+            { href: '/catalog', label: 'Каталог' },
+            { href: '/app', label: 'Кабинет' },
+          ]}
+        >
           <section className={styles.shellPanel}>
             <p className={styles.eyebrow}>Личный кабинет</p>
             <h1 className={styles.title}>Кабинет</h1>
@@ -46,7 +39,7 @@ export default function CabinetPage() {
               </ButtonLink>
             </div>
           </section>
-        </div>
+        </SiteChrome>
       </main>
     </RequireSession>
   )

@@ -1,40 +1,47 @@
 .page {
   min-height: 100dvh;
-  padding-bottom: 48px;
+  padding-bottom: var(--spacing-40);
+}
+
+.fallbackCopy {
+  padding: var(--spacing-40) var(--spacing-16);
+  text-align: center;
+  color: var(--color-text-2);
 }
 
 .panel {
   max-width: 560px;
-  margin-top: 32px;
-  padding: 32px 28px;
-  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  margin-top: var(--spacing-32);
+  padding: var(--spacing-32) var(--spacing-24);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-14);
   box-shadow: var(--shadow-1);
 }
 
 .eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--color-text-3);
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-12);
 }
 
 .title {
-  font-size: 34px;
-  line-height: 1.12;
-  margin-bottom: 12px;
+  font-size: var(--text-32);
+  line-height: var(--text-32--line-height);
+  margin-bottom: var(--spacing-12);
 }
 
 .copy {
   color: var(--color-text-2);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-24);
 }
 
 .slugHint {
   color: var(--color-text);
-  font-weight: 600;
+  font-weight: var(--font-weight-600);
 }
 
 .error {
@@ -44,23 +51,25 @@
 .steps {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--spacing-8);
   list-style: none;
   padding: 0;
-  margin: 0 0 24px;
+  margin: 0 0 var(--spacing-24);
 }
 
-.steps li {
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
+.stepActive,
+.stepPending {
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-999);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-600);
 }
 
 .stepActive {
-  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+  background: var(--color-surface-2);
   color: var(--color-accent-700);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
+  border: 1px solid var(--color-border);
 }
 
 .stepPending {
@@ -71,7 +80,7 @@
 
 .select {
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 var(--spacing-12);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-8);
   background: var(--color-surface);
@@ -80,7 +89,7 @@
 }
 
 .select:focus {
-  outline: 2px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 1px;
 }
 
@@ -91,35 +100,37 @@
 }
 
 .legend {
-  font-size: 14px;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
   color: var(--color-text-2);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-8);
 }
 
 .radioGroup {
   display: grid;
-  gap: 8px;
+  gap: var(--spacing-8);
 }
 
 .radioOption {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--spacing-8);
   min-height: 44px;
-  padding: 0 12px;
+  padding: 0 var(--spacing-12);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-8);
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: 15px;
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
   cursor: pointer;
 }
 
-.radioOption:has(input:checked) {
-  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
-  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
+.radioOption:has(.radioInput:checked) {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
 }
 
-.radioOption input {
+.radioInput {
   accent-color: var(--color-accent);
 }

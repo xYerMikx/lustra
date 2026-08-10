@@ -18,7 +18,6 @@ export const DistrictListResponseSchema = z.object({
 })
 export type DistrictListResponse = z.infer<typeof DistrictListResponseSchema>
 
-/** Primary work location — no `addressExact` (private until confirmed booking). */
 export const MasterLocationViewSchema = z.object({
   id: z.string().uuid(),
   districtId: z.string().uuid(),
@@ -58,3 +57,13 @@ export const PatchMasterProfileInputSchema = z
     message: 'Укажите хотя бы одно поле для обновления',
   })
 export type PatchMasterProfileInput = z.infer<typeof PatchMasterProfileInputSchema>
+
+export const StepBasicsInputSchema = z
+  .object({
+    displayName: z.string().trim().min(1).max(80),
+    districtId: z.string().uuid(),
+    locationType: LocationTypeSchema,
+    headline: z.string().trim().max(120),
+  })
+  .strict()
+export type StepBasicsInput = z.infer<typeof StepBasicsInputSchema>

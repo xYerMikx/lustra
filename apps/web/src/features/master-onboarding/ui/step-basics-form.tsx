@@ -1,24 +1,26 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
-  PatchMasterProfileInputSchema,
+  StepBasicsInputSchema,
   type DistrictView,
-  type LocationType,
   type MasterProfileView,
   type PatchMasterProfileInput,
+  type StepBasicsInput,
 } from '@lustra/contracts'
 
-import { ApiError } from '@/shared/api/http'
 import {
-  LOCATION_TYPE_LABELS,
+  LOCATION_TYPE_OPTIONS,
   readStepBasicsDraft,
   writeStepBasicsDraft,
-  type StepBasicsDraft,
-} from '../model/step-basics-draft'
+} from '@/features/master-onboarding/model/step-basics-draft'
 import formStyles from '@/features/auth/ui/auth-form.module.css'
-import styles from './onboarding.module.css'
+import styles from '@/features/master-onboarding/ui/onboarding.module.css'
+import { ApiError } from '@/shared/api/http'
+import { Button } from '@/shared/ui/button'
 
 type StepBasicsFormProps = {
   profile: MasterProfileView
@@ -27,14 +29,20 @@ type StepBasicsFormProps = {
   onSave: (input: PatchMasterProfileInput) => Promise<MasterProfileView>
 }
 
-function buildInitialDraft(
+function buildDefaultValues(
   profile: MasterProfileView,
   userFirstName: string,
   districts: DistrictView[],
-): StepBasicsDraft {
+): StepBasicsInput {
   const stored = readStepBasicsDraft()
+
   if (stored) {
-    return stored
+    return {
+      displayName: stored.displayName,
+      districtId: stored.districtId || districts[0]?.id || '',
+      locationType: stored.locationType,
+      headline: stored.headline,
+    }
   }
 
   return {
@@ -52,98 +60,73 @@ export function StepBasicsForm({
   onSave,
 }: StepBasicsFormProps) {
   const router = useRouter()
-  const [displayName, setDisplayName] = useState('')
-  const [districtId, setDistrictId] = useState('')
-  const [locationType, setLocationType] = useState<LocationType>('salon')
-  const [headline, setHeadline] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
-  const [initialized, setInitialized] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<StepBasicsInput>({
+    resolver: zodResolver(StepBasicsInputSchema),
+    defaultValues: buildDefaultValues(profile, userFirstName, districts),
+  })
+
+  const values = watch()
 
   useEffect(() => {
-    const draft = buildInitialDraft(profile, userFirstName, districts)
-    const resolvedDistrictId =
-      draft.districtId || districts[0]?.id || ''
-
-    setDisplayName(draft.displayName)
-    setDistrictId(resolvedDistrictId)
-    setLocationType(draft.locationType)
-    setHeadline(draft.headline)
-    setInitialized(true)
-  }, [profile, userFirstName, districts])
-
-  useEffect(() => {
-    if (!initialized || !districtId) {
+    if (!values.districtId) {
       return
     }
 
     writeStepBasicsDraft({
-      displayName,
-      districtId,
-      locationType,
-      headline,
+      displayName: values.displayName,
+      districtId: values.districtId,
+      locationType: values.locationType,
+      headline: values.headline,
     })
-  }, [displayName, districtId, locationType, headline, initialized])
+  }, [values])
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
+  const submitForm = async (data: StepBasicsInput) => {
+    setFormError(null)
 
-    const parsed = PatchMasterProfileInputSchema.safeParse({
-      displayName,
-      districtId,
-      locationType,
-      headline: headline.trim() ? headline.trim() : null,
-    })
-
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'Проверьте поля')
-      return
-    }
-
-    setPending(true)
     try {
-      await onSave(parsed.data)
+      await onSave({
+        displayName: data.displayName,
+        districtId: data.districtId,
+        locationType: data.locationType,
+        headline: data.headline.length > 0 ? data.headline : null,
+      })
       router.push('/app')
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError('Не удалось сохранить профиль')
+        setFormError(err.message)
+
+        return
       }
-    } finally {
-      setPending(false)
+
+      setFormError('Не удалось сохранить профиль')
     }
   }
 
-  if (!initialized) {
-    return null
-  }
-
   return (
-    <form className={formStyles.form} onSubmit={onSubmit} noValidate>
+    <form className={formStyles.form} onSubmit={handleSubmit(submitForm)} noValidate>
       <label className={formStyles.field}>
         <span>Имя или бренд</span>
         <input
           type="text"
-          name="displayName"
           autoComplete="organization"
-          value={displayName}
-          onChange={(event) => setDisplayName(event.target.value)}
-          required
+          {...register('displayName')}
         />
+        {errors.displayName ? (
+          <span className={formStyles.fieldError}>{errors.displayName.message}</span>
+        ) : null}
       </label>
 
       <label className={formStyles.field}>
         <span>Район</span>
-        <select
-          className={styles.select}
-          name="districtId"
-          value={districtId}
-          onChange={(event) => setDistrictId(event.target.value)}
-          required
-        >
+        <select className={styles.select} {...register('districtId')}>
           <option value="" disabled>
             Выберите район
           </option>
@@ -153,47 +136,60 @@ export function StepBasicsForm({
             </option>
           ))}
         </select>
+        {errors.districtId ? (
+          <span className={formStyles.fieldError}>{errors.districtId.message}</span>
+        ) : null}
       </label>
 
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>Формат работы</legend>
-        <div className={styles.radioGroup}>
-          {(Object.keys(LOCATION_TYPE_LABELS) as LocationType[]).map((type) => (
-            <label key={type} className={styles.radioOption}>
-              <input
-                type="radio"
-                name="locationType"
-                value={type}
-                checked={locationType === type}
-                onChange={() => setLocationType(type)}
-              />
-              <span>{LOCATION_TYPE_LABELS[type]}</span>
-            </label>
-          ))}
-        </div>
+        <Controller
+          name="locationType"
+          control={control}
+          render={({ field }) => (
+            <div className={styles.radioGroup}>
+              {LOCATION_TYPE_OPTIONS.map((option) => (
+                <label key={option.value} className={styles.radioOption}>
+                  <input
+                    className={styles.radioInput}
+                    type="radio"
+                    value={option.value}
+                    checked={field.value === option.value}
+                    onChange={() => field.onChange(option.value)}
+                  />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        />
+        {errors.locationType ? (
+          <span className={formStyles.fieldError}>{errors.locationType.message}</span>
+        ) : null}
       </fieldset>
 
       <label className={formStyles.field}>
         <span>Короткий заголовок</span>
         <input
           type="text"
-          name="headline"
           placeholder="Мастер маникюра, 5 лет опыта"
-          value={headline}
-          onChange={(event) => setHeadline(event.target.value)}
           maxLength={120}
+          {...register('headline')}
         />
+        {errors.headline ? (
+          <span className={formStyles.fieldError}>{errors.headline.message}</span>
+        ) : null}
       </label>
 
-      {error ? (
+      {formError ? (
         <p className={formStyles.error} role="alert">
-          {error}
+          {formError}
         </p>
       ) : null}
 
-      <button className="btn btn-primary" type="submit" disabled={pending || !districtId}>
-        {pending ? 'Сохраняем…' : 'Сохранить и продолжить'}
-      </button>
+      <Button type="submit" disabled={isSubmitting || !values.districtId} fullWidth>
+        {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
+      </Button>
     </form>
   )
 }

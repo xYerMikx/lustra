@@ -74,9 +74,9 @@ return true
 
 ## Path aliases (required)
 
-- Prefer `@/` path aliases over deep `../../../` imports in `apps/api` and `apps/web`.
-- Same-folder imports may stay relative (`./foo`).
-- API: Nest `compilerOptions.builder = "webpack"` resolves `@/` from `tsconfig` paths — no `register-paths` / `tsc-alias` hacks.
+- Use `@/` aliases **everywhere** in `apps/api` and `apps/web` (e.g. `@/modules/master-profile/app/...`).
+- Same-folder `./foo` is OK; never `../` across folders.
+- API: Nest `compilerOptions.builder = "webpack"` resolves `@/` from `tsconfig` paths.
 
 ## Docs / agent
 

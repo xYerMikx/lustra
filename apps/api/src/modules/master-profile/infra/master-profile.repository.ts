@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import type { LocationType, Prisma } from '@lustra/db'
+import type { Prisma } from '@lustra/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
-import type { MasterProfileRecord } from '../domain/map-master-profile'
+import type {
+  PrimaryLocationInput,
+  ProfileUpdateData,
+} from '@/modules/master-profile/app/master-profile.ports'
+import type { MasterProfileRecord } from '@/modules/master-profile/domain/map-master-profile'
 
 const profileInclude = {
   locations: {
@@ -14,19 +18,6 @@ const profileInclude = {
     },
   },
 } satisfies Prisma.MasterProfileInclude
-
-type ProfileUpdateData = {
-  displayName?: string
-  headline?: string | null
-  bio?: string | null
-  slug?: string
-}
-
-type PrimaryLocationInput = {
-  districtId: string
-  type: LocationType
-  addressHint?: string | null
-}
 
 @Injectable()
 export class MasterProfileRepository {
@@ -100,9 +91,11 @@ export class MasterProfileRepository {
     }
 
     const profile = await this.findById(masterId)
+
     if (!profile) {
       throw new Error('Master profile missing after location upsert')
     }
+
     return profile
   }
 }

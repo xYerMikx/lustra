@@ -1,0 +1,41 @@
+import type { LocationType } from '@lustra/db'
+
+import type { MasterProfileRecord } from '@/modules/master-profile/domain/map-master-profile'
+
+export type ProfileUpdateData = {
+  displayName?: string
+  headline?: string | null
+  bio?: string | null
+  slug?: string
+}
+
+export type PrimaryLocationInput = {
+  districtId: string
+  type: LocationType
+  addressHint?: string | null
+}
+
+export type MasterProfileStore = {
+  findByUserId(userId: string): Promise<MasterProfileRecord | null>
+  isSlugTaken(slug: string, excludeMasterId?: string): Promise<boolean>
+  updateProfile(
+    masterId: string,
+    data: ProfileUpdateData,
+  ): Promise<MasterProfileRecord>
+  upsertPrimaryLocation(
+    masterId: string,
+    input: PrimaryLocationInput,
+  ): Promise<MasterProfileRecord>
+}
+
+export type DistrictListItem = {
+  id: string
+  name: string
+  slug: string
+  city: string
+}
+
+export type DistrictStore = {
+  listAll(): Promise<DistrictListItem[]>
+  findById(id: string): Promise<{ id: string } | null>
+}
