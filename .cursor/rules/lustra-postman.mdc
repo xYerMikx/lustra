@@ -30,8 +30,10 @@ alwaysApply: true
 
 ## Workspace
 
-- Name: Lustra (fill after first sync)
-- Workspace ID: _(paste from Postman URL `…/workspace/{id}`)_
+- Name: John Yermalayeu's Workspace
+- Workspace ID: `267d2e90-afe0-4a42-85a8-6ecfc8ebbd7c`
+- Collection: **Lustra Auth Smoke** (`53334068-a15d4d6a-e5b8-4155-bc4d-d1c30571b9a0`)
+- Environment: **Lustra Local** (`baseUrl=http://localhost:3333`)
 
 ## When API changes
 
