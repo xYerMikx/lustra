@@ -1,0 +1,262 @@
+---
+interface Step {
+  title: string
+  body: string
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  clientSteps: Step[]
+  masterSteps: Step[]
+}
+
+const { eyebrow, title, lead, clientSteps, masterSteps } = Astro.props
+---
+
+<section class="how section" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="how-title">{title}</h2>
+    <p class="lead">{lead}</p>
+
+    <div class="tabs" data-how-tabs>
+      <div class="tablist" role="tablist" aria-label="Как работает Lustra">
+        <button
+          type="button"
+          role="tab"
+          id="tab-client"
+          aria-controls="panel-client"
+          aria-selected="true"
+          tabindex="0"
+          data-tab="client"
+        >
+          Клиенту
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-master"
+          aria-controls="panel-master"
+          aria-selected="false"
+          tabindex="-1"
+          data-tab="master"
+        >
+          Мастеру
+        </button>
+      </div>
+
+      <div
+        class="panel"
+        role="tabpanel"
+        id="panel-client"
+        aria-labelledby="tab-client"
+        data-panel="client"
+      >
+        <ol>
+          {
+            clientSteps.map((step, index) => (
+              <li>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div
+        class="panel is-hidden"
+        role="tabpanel"
+        id="panel-master"
+        aria-labelledby="tab-master"
+        data-panel="master"
+        hidden
+      >
+        <ol>
+          {
+            masterSteps.map((step, index) => (
+              <li>
+                <span class="num">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector('[data-how-tabs]')
+
+  if (root instanceof HTMLElement) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'))
+
+    const activate = (next: string) => {
+      for (const tab of tabs) {
+        const selected = tab.dataset.tab === next
+        tab.setAttribute('aria-selected', selected ? 'true' : 'false')
+        tab.tabIndex = selected ? 0 : -1
+      }
+
+      for (const panel of panels) {
+        const selected = panel.dataset.panel === next
+        panel.classList.toggle('is-hidden', !selected)
+        panel.hidden = !selected
+      }
+    }
+
+    for (const tab of tabs) {
+      tab.addEventListener('click', () => {
+        const id = tab.dataset.tab
+        if (!id) {
+          return
+        }
+
+        activate(id)
+      })
+
+      tab.addEventListener('keydown', (event) => {
+        const currentIndex = tabs.indexOf(tab)
+        if (currentIndex < 0) {
+          return
+        }
+
+        let targetIndex = currentIndex
+
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          targetIndex = (currentIndex + 1) % tabs.length
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          targetIndex = (currentIndex - 1 + tabs.length) % tabs.length
+        } else if (event.key === 'Home') {
+          targetIndex = 0
+        } else if (event.key === 'End') {
+          targetIndex = tabs.length - 1
+        } else {
+          return
+        }
+
+        event.preventDefault()
+        const nextTab = tabs[targetIndex]
+        const nextId = nextTab?.dataset.tab
+        if (!nextTab || !nextId) {
+          return
+        }
+
+        activate(nextId)
+        nextTab.focus()
+      })
+    }
+  }
+</script>
+
+<style>
+  .wrap {
+    width: min(920px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .tablist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+    margin-bottom: var(--spacing-24);
+  }
+
+  .tablist button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--spacing-40);
+    padding: 0 var(--spacing-20);
+    border-radius: var(--radius-8);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+    font-family: var(--font-text);
+    font-size: var(--text-15);
+    font-weight: var(--font-weight-600);
+    cursor: pointer;
+  }
+
+  .tablist button[aria-selected='true'] {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .tablist button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--spacing-4);
+  }
+
+  .panel.is-hidden {
+    display: none;
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-20);
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--spacing-16);
+    padding: var(--spacing-20) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .num {
+    font-family: var(--font-display);
+    font-size: var(--text-26);
+    color: var(--color-gold);
+    line-height: 1;
+  }
+
+  h3 {
+    font-size: var(--text-20);
+    line-height: var(--text-20--line-height);
+    margin-bottom: var(--spacing-8);
+  }
+
+  li p {
+    color: var(--color-text-2);
+    line-height: 1.5;
+  }
+</style>

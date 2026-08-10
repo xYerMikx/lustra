@@ -1,0 +1,183 @@
+---
+import { getAppUrl } from '../lib/site'
+
+interface Props {
+  catalogHref?: string
+  masterHref?: string
+}
+
+const catalogHref = Astro.props.catalogHref ?? getAppUrl('/catalog')
+const masterHref =
+  Astro.props.masterHref ??
+  getAppUrl('/app/register?role=master&utm_source=landing')
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href="/">Lustra</a>
+
+    <button
+      type="button"
+      class="nav-burger"
+      id="nav-burger"
+      aria-controls="site-nav"
+      aria-expanded="false"
+      aria-label="Открыть меню"
+    >
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav" id="site-nav" data-open="false" aria-label="Основная навигация">
+      <a href="/#how">Как работает</a>
+      <a href="/#works">Работы</a>
+      <a href="/#browse">Категории</a>
+      <a href="/for-masters">Мастерам</a>
+      <a href={catalogHref}>Каталог</a>
+      <a class="nav-cta" href={masterHref}>Я мастер</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const burger = document.getElementById('nav-burger')
+  const nav = document.getElementById('site-nav')
+
+  if (burger instanceof HTMLButtonElement && nav instanceof HTMLElement) {
+    const setOpen = (open: boolean) => {
+      nav.dataset.open = open ? 'true' : 'false'
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false')
+      burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню')
+      burger.classList.toggle('is-open', open)
+    }
+
+    burger.addEventListener('click', () => {
+      setOpen(nav.dataset.open !== 'true')
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || nav.dataset.open !== 'true') {
+        return
+      }
+
+      setOpen(false)
+      burger.focus()
+    })
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (nav.dataset.open === 'true') {
+          setOpen(false)
+        }
+      })
+    })
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-40);
+    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  }
+
+  .inner {
+    position: relative;
+    width: min(1120px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--spacing-56);
+    gap: var(--spacing-16);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: var(--text-26);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .nav-burger {
+    display: none;
+    width: var(--spacing-40);
+    height: var(--spacing-40);
+    place-items: center;
+    cursor: pointer;
+    border: 0;
+    border-radius: var(--radius-8);
+    background: transparent;
+    padding: 0;
+  }
+
+  .nav-burger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--spacing-4);
+  }
+
+  .nav-burger span {
+    display: block;
+    width: var(--spacing-24);
+    height: 2px;
+    background: var(--color-text);
+    transition: transform var(--duration-250) var(--ease-out-quart);
+  }
+
+  .nav-burger span + span {
+    margin-top: var(--spacing-8);
+  }
+
+  .nav-burger.is-open span:first-child {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nav-burger.is-open span:last-child {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-16) var(--spacing-20);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+    color: var(--color-text-2);
+  }
+
+  .nav a:hover {
+    color: var(--color-accent);
+  }
+
+  .nav-cta {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
+  }
+
+  @media (max-width: 860px) {
+    .nav-burger {
+      display: grid;
+    }
+
+    .nav {
+      display: none;
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding: var(--spacing-16) var(--spacing-20) var(--spacing-24);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-2);
+    }
+
+    .nav[data-open='true'] {
+      display: flex;
+    }
+  }
+</style>

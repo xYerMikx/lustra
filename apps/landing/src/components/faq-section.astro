@@ -1,0 +1,117 @@
+---
+interface FaqItem {
+  question: string
+  answer: string
+}
+
+interface Props {
+  items: FaqItem[]
+}
+
+const { items } = Astro.props
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+}
+---
+
+<section class="faq section" id="faq" aria-labelledby="faq-title">
+  <div class="wrap">
+    <p class="eyebrow">FAQ</p>
+    <h2 id="faq-title">Частые вопросы</h2>
+
+    <div class="list">
+      {
+        items.map((item) => (
+          <details>
+            <summary>{item.question}</summary>
+            <div class="answer">
+              <p>{item.answer}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</section>
+
+<style>
+  .wrap {
+    width: min(760px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-32);
+  }
+
+  .list {
+    display: grid;
+    gap: var(--spacing-12);
+  }
+
+  details {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+    background: var(--color-surface);
+    padding: 0 var(--spacing-20);
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    min-height: var(--spacing-56);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-16);
+    font-weight: var(--font-weight-600);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    color: var(--color-accent);
+    font-size: var(--text-20);
+    line-height: 1;
+  }
+
+  details[open] summary::after {
+    content: '−';
+  }
+
+  .answer {
+    padding: 0 0 var(--spacing-20);
+    color: var(--color-text-2);
+    line-height: 1.55;
+  }
+
+  .answer p {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+interface LinkItem {
+  name: string
+  href: string
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  categories: LinkItem[]
+  districts: LinkItem[]
+}
+
+const { eyebrow, title, lead, categories, districts } = Astro.props
+---
+
+<section class="browse section" id="browse" aria-labelledby="browse-title">
+  <div class="wrap">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="browse-title">{title}</h2>
+    <p class="lead">{lead}</p>
+
+    <div class="grid">
+      <div>
+        <h3>Категории</h3>
+        <ul>
+          {
+            categories.map((item) => (
+              <li>
+                <a href={item.href}>{item.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div>
+        <h3>Районы</h3>
+        <ul>
+          {
+            districts.map((item) => (
+              <li>
+                <a href={item.href}>{item.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wrap {
+    width: min(960px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-40);
+  }
+
+  h3 {
+    font-size: var(--text-20);
+    line-height: var(--text-20--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    padding: 0 var(--spacing-16);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+    transition:
+      border-color var(--duration-150) ease,
+      color var(--duration-150) ease;
+  }
+
+  a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-32);
+    }
+  }
+</style>
