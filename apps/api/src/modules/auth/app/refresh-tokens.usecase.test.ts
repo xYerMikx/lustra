@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { DomainError } from '../../../common/errors/domain-error'
-import { RefreshTokensUseCase } from './refresh-tokens.usecase'
+import { DomainError } from '@/common/errors/domain-error'
+import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
 
 describe('RefreshTokensUseCase', () => {
   it('revokes the whole family when a revoked refresh token is reused', async () => {

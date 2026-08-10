@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import type { MeResponse } from '@lustra/contracts'
 
-import type { AuthUser } from '../../../common/auth/auth-user'
-import { DomainError } from '../../../common/errors/domain-error'
-import { toAuthUserView } from '../domain/map-auth-user'
-import { AuthUserRepository } from '../infra/auth-user.repository'
+import type { AuthUser } from '@/common/auth/auth-user'
+import { DomainError } from '@/common/errors/domain-error'
+import { toAuthUserView } from '@/modules/auth/domain/map-auth-user'
+import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
 
 @Injectable()
 export class GetMeUseCase {
@@ -12,9 +12,11 @@ export class GetMeUseCase {
 
   async execute(actor: AuthUser): Promise<MeResponse> {
     const user = await this.users.findById(actor.id)
+
     if (!user || user.status !== 'active' || user.deletedAt) {
       throw new DomainError('UNAUTHENTICATED', 'Требуется вход')
     }
+
     return toAuthUserView(user)
   }
 }

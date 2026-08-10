@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import type { RefreshSession } from '@lustra/db'
 
-import { REFRESH_TTL_SEC } from '../../../common/auth/cookie.constants'
-import { PrismaService } from '../../../common/prisma/prisma.service'
-import { generateFamilyId, generateRefreshToken, hashToken } from '../domain/token-hash'
+import { REFRESH_TTL_SEC } from '@/common/auth/cookie.constants'
+import { PrismaService } from '@/common/prisma/prisma.service'
+import { REFRESH_ROTATE_RACE } from '@/modules/auth/domain/refresh-errors'
+import {
+  generateFamilyId,
+  generateRefreshToken,
+  hashToken,
+} from '@/modules/auth/domain/token-hash'
 
 export type CreatedRefreshSession = {
   rawToken: string
@@ -78,7 +83,7 @@ export class RefreshSessionRepository {
       })
 
       if (revoked.count !== 1) {
-        throw new Error('REFRESH_ROTATE_RACE')
+        throw new Error(REFRESH_ROTATE_RACE)
       }
 
       return next

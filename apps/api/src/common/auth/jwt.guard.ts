@@ -6,16 +6,12 @@ import {
 } from '@nestjs/common'
 import type { FastifyRequest } from 'fastify'
 
-import type { AuthUser } from './auth-user'
-import { ACCESS_COOKIE } from './cookie.constants'
-import { JwtTokenService } from './jwt-token.service'
+import type { AuthUser } from '@/common/auth/auth-user'
+import { ACCESS_COOKIE } from '@/common/auth/cookie.constants'
+import { JwtTokenService } from '@/common/auth/jwt-token.service'
 
 type AuthedRequest = FastifyRequest & { user?: AuthUser }
 
-/**
- * Reads access JWT from httpOnly cookie or Authorization: Bearer.
- * Attaches AuthUser to the request when valid.
- */
 @Injectable()
 export class JwtGuard implements CanActivate {
   constructor(private readonly tokens: JwtTokenService) {}
@@ -23,6 +19,7 @@ export class JwtGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthedRequest>()
     const raw = this.extractToken(request)
+
     if (!raw) {
       throw new UnauthorizedException('Требуется вход')
     }
@@ -34,6 +31,7 @@ export class JwtGuard implements CanActivate {
         role: payload.role,
         email: payload.email,
       }
+
       return true
     } catch {
       throw new UnauthorizedException('Сессия истекла или недействительна')
@@ -42,13 +40,16 @@ export class JwtGuard implements CanActivate {
 
   private extractToken(request: AuthedRequest): string | undefined {
     const cookieToken = request.cookies?.[ACCESS_COOKIE]
+
     if (typeof cookieToken === 'string' && cookieToken.length > 0) {
       return cookieToken
     }
 
     const header = request.headers.authorization
+
     if (typeof header === 'string' && header.startsWith('Bearer ')) {
       const bearer = header.slice('Bearer '.length).trim()
+
       if (bearer.length > 0) {
         return bearer
       }

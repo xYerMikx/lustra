@@ -1,16 +1,20 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import {
   RegisterInputSchema,
+  type RegisterInput,
   type RegisterRole,
 } from '@lustra/contracts'
 
+import styles from '@/features/auth/ui/auth-form.module.css'
+import { RoleSegment } from '@/features/auth/ui/role-segment'
+import { register as registerAccount } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
-import { register } from '@/shared/api/auth-client'
-import { RoleSegment } from './role-segment'
-import styles from './auth-form.module.css'
+import { Button } from '@/shared/ui/button'
 
 const REGISTER_INTRO: Record<RegisterRole, string> = {
   client: 'Аккаунт для записи к мастерам.',
@@ -19,108 +23,115 @@ const REGISTER_INTRO: Record<RegisterRole, string> = {
 
 export function RegisterForm() {
   const router = useRouter()
-  const [firstName, setFirstName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<RegisterRole>('client')
-  const [acceptTerms, setAcceptTerms] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(RegisterInputSchema),
+    defaultValues: {
+      firstName: '',
+      email: '',
+      password: '',
+      role: 'client',
+      acceptTerms: false,
+    },
+  })
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
+  const role = watch('role')
 
-    const parsed = RegisterInputSchema.safeParse({
-      firstName,
-      email,
-      password,
-      role,
-      acceptTerms: acceptTerms ? true : false,
-    })
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'Проверьте поля')
-      return
-    }
+  const submitForm = async (values: RegisterInput) => {
+    setFormError(null)
 
-    setPending(true)
     try {
-      await register(parsed.data)
+      await registerAccount(values)
       router.push('/app')
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError('Не удалось зарегистрироваться')
+        setFormError(err.message)
+
+        return
       }
-    } finally {
-      setPending(false)
+
+      setFormError('Не удалось зарегистрироваться')
     }
   }
 
   return (
     <>
       <p className={styles.intro}>{REGISTER_INTRO[role]}</p>
-      <form className={styles.form} onSubmit={onSubmit} noValidate>
+      <form className={styles.form} onSubmit={handleSubmit(submitForm)} noValidate>
         <div className={styles.roleField}>
           <span className={styles.roleLabel}>Я регистрируюсь как</span>
-          <RoleSegment value={role} onChange={setRole} />
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <RoleSegment value={field.value} onChange={field.onChange} />
+            )}
+          />
         </div>
 
         <label className={styles.field}>
           <span>Имя</span>
           <input
+            className={styles.input}
             type="text"
-            name="firstName"
             autoComplete="given-name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
+            {...register('firstName')}
           />
+          {errors.firstName ? (
+            <span className={styles.fieldError}>{errors.firstName.message}</span>
+          ) : null}
         </label>
+
         <label className={styles.field}>
           <span>Email</span>
           <input
+            className={styles.input}
             type="email"
-            name="email"
             autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
+            {...register('email')}
           />
+          {errors.email ? (
+            <span className={styles.fieldError}>{errors.email.message}</span>
+          ) : null}
         </label>
+
         <label className={styles.field}>
           <span>Пароль</span>
           <input
+            className={styles.input}
             type="password"
-            name="password"
             autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
+            {...register('password')}
           />
+          {errors.password ? (
+            <span className={styles.fieldError}>{errors.password.message}</span>
+          ) : null}
         </label>
 
         <label className={styles.check}>
-          <input
-            type="checkbox"
-            checked={acceptTerms}
-            onChange={(e) => setAcceptTerms(e.target.checked)}
-          />
+          <input type="checkbox" {...register('acceptTerms')} />
           <span>Принимаю условия использования и политику конфиденциальности</span>
         </label>
+        {errors.acceptTerms ? (
+          <span className={styles.fieldError}>{errors.acceptTerms.message}</span>
+        ) : null}
 
-        {error ? (
+        {formError ? (
           <p className={styles.error} role="alert">
-            {error}
+            {formError}
           </p>
         ) : null}
 
-        <button className="btn btn-primary" type="submit" disabled={pending}>
-          {pending ? 'Создаём…' : 'Зарегистрироваться'}
-        </button>
+        <Button type="submit" fullWidth disabled={isSubmitting}>
+          {isSubmitting ? 'Создаём…' : 'Зарегистрироваться'}
+        </Button>
       </form>
     </>
   )

@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import type { AuthSessionResponse } from '@lustra/contracts'
 
-import { DomainError } from '../../../common/errors/domain-error'
-import { JwtTokenService } from '../../../common/auth/jwt-token.service'
-import { hashToken } from '../domain/token-hash'
-import { toAuthUserView } from '../domain/map-auth-user'
-import { AuthUserRepository } from '../infra/auth-user.repository'
-import { RefreshSessionRepository } from '../infra/refresh-session.repository'
+import { JwtTokenService } from '@/common/auth/jwt-token.service'
+import { DomainError } from '@/common/errors/domain-error'
+import { toAuthUserView } from '@/modules/auth/domain/map-auth-user'
+import { REFRESH_ROTATE_RACE } from '@/modules/auth/domain/refresh-errors'
+import { hashToken } from '@/modules/auth/domain/token-hash'
+import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
+import {
+  type CreatedRefreshSession,
+  RefreshSessionRepository,
+} from '@/modules/auth/infra/refresh-session.repository'
 
 export type RefreshResult = AuthSessionResponse & {
   accessToken: string
@@ -31,6 +35,7 @@ export class RefreshTokensUseCase {
 
     const tokenHash = hashToken(rawRefreshToken)
     const current = await this.sessions.findByTokenHash(tokenHash)
+
     if (!current) {
       throw new DomainError('UNAUTHENTICATED', 'Сессия недействительна')
     }
@@ -46,12 +51,14 @@ export class RefreshTokensUseCase {
     }
 
     const user = await this.users.findById(current.userId)
+
     if (!user || user.status !== 'active' || user.deletedAt) {
       await this.sessions.revokeFamily(current.familyId)
       throw new DomainError('UNAUTHENTICATED', 'Пользователь недоступен')
     }
 
-    let rotated
+    let rotated: CreatedRefreshSession
+
     try {
       rotated = await this.sessions.rotate({
         current,
@@ -59,10 +66,11 @@ export class RefreshTokensUseCase {
         userAgent: meta.userAgent,
       })
     } catch (error: unknown) {
-      if (error instanceof Error && error.message === 'REFRESH_ROTATE_RACE') {
+      if (error instanceof Error && error.message === REFRESH_ROTATE_RACE) {
         await this.sessions.revokeFamily(current.familyId)
         throw new DomainError('UNAUTHENTICATED', 'Обнаружено повторное использование токена')
       }
+
       throw error
     }
 

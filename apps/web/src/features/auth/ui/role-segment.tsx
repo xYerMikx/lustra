@@ -1,6 +1,6 @@
 import type { RegisterRole } from '@lustra/contracts'
 
-import styles from './auth-form.module.css'
+import styles from '@/features/auth/ui/auth-form.module.css'
 
 type RoleSegmentProps = {
   value: RegisterRole
@@ -17,6 +17,7 @@ export function RoleSegment({ value, onChange }: RoleSegmentProps) {
     <div className={styles.roleSegment} role="group" aria-label="Я регистрируюсь как">
       {OPTIONS.map((option) => {
         const selected = value === option.value
+
         return (
           <button
             key={option.value}

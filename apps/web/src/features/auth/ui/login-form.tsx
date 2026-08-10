@@ -1,82 +1,86 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useState, type FormEvent } from 'react'
-import {
-  LoginInputSchema,
-  type LoginInput,
-} from '@lustra/contracts'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { LoginInputSchema, type LoginInput } from '@lustra/contracts'
 
-import { ApiError } from '@/shared/api/http'
+import styles from '@/features/auth/ui/auth-form.module.css'
 import { login } from '@/shared/api/auth-client'
-import styles from './auth-form.module.css'
+import { ApiError } from '@/shared/api/http'
+import { Button } from '@/shared/ui/button'
 
 export function LoginForm() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(LoginInputSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
+  const submitForm = async (values: LoginInput) => {
+    setFormError(null)
 
-    const parsed = LoginInputSchema.safeParse({ email, password } satisfies LoginInput)
-    if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? 'Проверьте поля')
-      return
-    }
-
-    setPending(true)
     try {
-      await login(parsed.data)
+      await login(values)
       router.push('/app')
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.message)
-      } else {
-        setError('Не удалось войти')
+        setFormError(err.message)
+
+        return
       }
-    } finally {
-      setPending(false)
+
+      setFormError('Не удалось войти')
     }
   }
 
   return (
-    <form className={styles.form} onSubmit={onSubmit} noValidate>
+    <form className={styles.form} onSubmit={handleSubmit(submitForm)} noValidate>
       <label className={styles.field}>
         <span>Email</span>
         <input
+          className={styles.input}
           type="email"
-          name="email"
           autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          {...register('email')}
         />
+        {errors.email ? (
+          <span className={styles.fieldError}>{errors.email.message}</span>
+        ) : null}
       </label>
+
       <label className={styles.field}>
         <span>Пароль</span>
         <input
+          className={styles.input}
           type="password"
-          name="password"
           autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={8}
+          {...register('password')}
         />
+        {errors.password ? (
+          <span className={styles.fieldError}>{errors.password.message}</span>
+        ) : null}
       </label>
-      {error ? (
+
+      {formError ? (
         <p className={styles.error} role="alert">
-          {error}
+          {formError}
         </p>
       ) : null}
-      <button className="btn btn-primary" type="submit" disabled={pending}>
-        {pending ? 'Входим…' : 'Войти'}
-      </button>
+
+      <Button type="submit" fullWidth disabled={isSubmitting}>
+        {isSubmitting ? 'Входим…' : 'Войти'}
+      </Button>
     </form>
   )
 }

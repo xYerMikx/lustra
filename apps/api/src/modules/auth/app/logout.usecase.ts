@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
-import { hashToken } from '../domain/token-hash'
-import { RefreshSessionRepository } from '../infra/refresh-session.repository'
+import { hashToken } from '@/modules/auth/domain/token-hash'
+import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.repository'
 
 @Injectable()
 export class LogoutUseCase {
@@ -14,6 +14,7 @@ export class LogoutUseCase {
 
     const tokenHash = hashToken(rawRefreshToken)
     const current = await this.sessions.findByTokenHash(tokenHash)
+
     if (!current || current.revokedAt) {
       return
     }

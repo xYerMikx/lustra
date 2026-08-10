@@ -22,7 +22,7 @@ export function login(input: LoginInput) {
 }
 
 export function logout() {
-  return apiFetch<void>('/auth/logout', { method: 'POST' })
+  return apiFetch('/auth/logout', { method: 'POST' })
 }
 
 export function refreshSession() {

@@ -3,10 +3,17 @@
   padding-bottom: var(--spacing-40);
 }
 
-.shellPanel {
-  max-width: 520px;
-  margin-top: var(--spacing-40);
-  padding: var(--spacing-32) var(--spacing-24);
+.panelWrap {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--spacing-24);
+}
+
+.panel {
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+  padding: var(--spacing-24);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-14);
@@ -33,8 +40,14 @@
   margin-bottom: var(--spacing-24);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-12);
+.footer {
+  margin-top: var(--spacing-20);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.footerLink {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-600);
 }

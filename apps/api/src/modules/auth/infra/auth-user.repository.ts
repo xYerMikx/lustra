@@ -6,9 +6,9 @@ import type { Prisma, UserRole } from '@lustra/db'
 import {
   PRIVACY_CONSENT_VERSION,
   TERMS_CONSENT_VERSION,
-} from '../../../common/auth/cookie.constants'
-import { PrismaService } from '../../../common/prisma/prisma.service'
-import { buildMasterSlug } from '../domain/slugify'
+} from '@/common/auth/cookie.constants'
+import { PrismaService } from '@/common/prisma/prisma.service'
+import { buildMasterSlug } from '@/modules/auth/domain/slugify'
 
 export type AuthUserRecord = Prisma.UserGetPayload<{
   include: {
@@ -25,6 +25,52 @@ type CreateUserInput = {
   ip?: string
 }
 
+const AUTH_USER_INCLUDE = {
+  telegram: { select: { id: true } },
+  masterProfile: { select: { status: true } },
+} satisfies Prisma.UserInclude
+
+function buildRoleProfileData(
+  input: CreateUserInput,
+  slug: string,
+): Pick<Prisma.UserCreateInput, 'clientProfile' | 'masterProfile'> {
+  if (input.role === 'client') {
+    return {
+      clientProfile: { create: {} },
+    }
+  }
+
+  return {
+    masterProfile: {
+      create: {
+        slug,
+        displayName: input.firstName,
+        policy: { create: {} },
+        stats: { create: {} },
+      },
+    },
+  }
+}
+
+function buildCreateUserData(input: CreateUserInput, slug: string): Prisma.UserCreateInput {
+  const consents: Prisma.ConsentCreateWithoutUserInput[] = [
+    { kind: 'terms', version: TERMS_CONSENT_VERSION, ip: input.ip },
+    { kind: 'privacy', version: PRIVACY_CONSENT_VERSION, ip: input.ip },
+  ]
+
+  const roleProfile = buildRoleProfileData(input, slug)
+
+  return {
+    email: input.email,
+    passwordHash: input.passwordHash,
+    firstName: input.firstName,
+    role: input.role,
+    notifySetting: { create: {} },
+    consents: { create: consents },
+    ...roleProfile,
+  }
+}
+
 @Injectable()
 export class AuthUserRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -32,57 +78,25 @@ export class AuthUserRepository {
   findByEmail(email: string): Promise<AuthUserRecord | null> {
     return this.prisma.user.findUnique({
       where: { email },
-      include: {
-        telegram: { select: { id: true } },
-        masterProfile: { select: { status: true } },
-      },
+      include: AUTH_USER_INCLUDE,
     })
   }
 
   findById(id: string): Promise<AuthUserRecord | null> {
     return this.prisma.user.findUnique({
       where: { id },
-      include: {
-        telegram: { select: { id: true } },
-        masterProfile: { select: { status: true } },
-      },
+      include: AUTH_USER_INCLUDE,
     })
   }
 
   async createWithProfile(input: CreateUserInput): Promise<AuthUserRecord> {
     const suffix = randomBytes(3).toString('hex')
     const slug = buildMasterSlug(input.firstName, suffix)
+    const data = buildCreateUserData(input, slug)
 
     return this.prisma.user.create({
-      data: {
-        email: input.email,
-        passwordHash: input.passwordHash,
-        firstName: input.firstName,
-        role: input.role,
-        notifySetting: { create: {} },
-        consents: {
-          create: [
-            { kind: 'terms', version: TERMS_CONSENT_VERSION, ip: input.ip },
-            { kind: 'privacy', version: PRIVACY_CONSENT_VERSION, ip: input.ip },
-          ],
-        },
-        ...(input.role === 'client'
-          ? { clientProfile: { create: {} } }
-          : {
-              masterProfile: {
-                create: {
-                  slug,
-                  displayName: input.firstName,
-                  policy: { create: {} },
-                  stats: { create: {} },
-                },
-              },
-            }),
-      },
-      include: {
-        telegram: { select: { id: true } },
-        masterProfile: { select: { status: true } },
-      },
+      data,
+      include: AUTH_USER_INCLUDE,
     })
   }
 

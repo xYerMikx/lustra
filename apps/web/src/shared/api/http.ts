@@ -23,6 +23,10 @@ export class ApiError extends Error {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333'
 const CSRF_COOKIE = 'lustra_csrf'
+const FALLBACK_ERROR: ApiErrorBody['error'] = {
+  code: 'INTERNAL',
+  message: 'Ошибка запроса',
+}
 
 function readCookie(name: string): string | undefined {
   if (typeof document === 'undefined') {
@@ -30,9 +34,7 @@ function readCookie(name: string): string | undefined {
   }
 
   const prefix = `${name}=`
-  const match = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(prefix))
+  const match = document.cookie.split('; ').find((row) => row.startsWith(prefix))
 
   if (!match) {
     return undefined
@@ -43,21 +45,53 @@ function readCookie(name: string): string | undefined {
 
 function needsCsrf(method: string): boolean {
   const normalized = method.toUpperCase()
+
   return normalized !== 'GET' && normalized !== 'HEAD' && normalized !== 'OPTIONS'
 }
 
-export async function apiFetch<T>(
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isApiErrorBody(value: unknown): value is ApiErrorBody {
+  if (!isRecord(value) || !isRecord(value.error)) {
+    return false
+  }
+
+  return typeof value.error.code === 'string' && typeof value.error.message === 'string'
+}
+
+async function readJsonBody(response: Response): Promise<unknown> {
+  try {
+    return await response.json()
+  } catch {
+    return null
+  }
+}
+
+function toApiError(status: number, payload: unknown): ApiError {
+  if (isApiErrorBody(payload)) {
+    return new ApiError(status, payload.error)
+  }
+
+  return new ApiError(status, FALLBACK_ERROR)
+}
+
+export async function apiFetch<T = undefined>(
   path: string,
   init: RequestInit = {},
-): Promise<T> {
+): Promise<T | undefined> {
   const headers = new Headers(init.headers)
+
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
 
   const method = init.method ?? 'GET'
+
   if (needsCsrf(method) && !headers.has('X-CSRF-Token')) {
     const csrf = readCookie(CSRF_COOKIE)
+
     if (csrf) {
       headers.set('X-CSRF-Token', csrf)
     }
@@ -70,20 +104,13 @@ export async function apiFetch<T>(
   })
 
   if (response.status === 204) {
-    return undefined as T
+    return undefined
   }
 
-  const payload = (await response.json().catch(() => null)) as
-    | T
-    | ApiErrorBody
-    | null
+  const payload = await readJsonBody(response)
 
   if (!response.ok) {
-    const errorBody =
-      payload && typeof payload === 'object' && 'error' in payload
-        ? (payload as ApiErrorBody).error
-        : { code: 'INTERNAL', message: 'Ошибка запроса' }
-    throw new ApiError(response.status, errorBody)
+    throw toApiError(response.status, payload)
   }
 
   return payload as T

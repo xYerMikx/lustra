@@ -29,8 +29,8 @@ export const RegisterInputSchema = z
     password: z.string().min(8, 'Пароль не короче 8 символов').max(128),
     firstName: z.string().trim().min(1).max(80),
     role: RegisterRoleSchema,
-    acceptTerms: z.literal(true, {
-      errorMap: () => ({ message: 'Нужно принять условия использования' }),
+    acceptTerms: z.boolean().refine((value) => value === true, {
+      message: 'Нужно принять условия использования',
     }),
   })
   .strict()

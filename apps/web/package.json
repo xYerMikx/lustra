@@ -9,10 +9,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.7.1",
     "@lustra/contracts": "workspace:*",
+    "@lustra/ui": "workspace:^",
+    "classnames": "^2.5.1",
     "next": "^15.1.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.85.0"
   },
   "devDependencies": {
     "@lustra/config": "workspace:*",

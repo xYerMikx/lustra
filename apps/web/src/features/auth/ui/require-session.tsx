@@ -1,11 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import {
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { MeResponse } from '@lustra/contracts'
 
 import { getMe } from '@/shared/api/auth-client'
@@ -15,10 +11,6 @@ type RequireSessionProps = {
   fallback?: ReactNode
 }
 
-/**
- * Client gate for `/app` shell: cookies live on the API host, so Next
- * middleware cannot see them — we verify via `/auth/me`.
- */
 export function RequireSession({ children, fallback = null }: RequireSessionProps) {
   const router = useRouter()
   const [user, setUser] = useState<MeResponse | null>(null)
@@ -32,6 +24,13 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
         if (cancelled) {
           return
         }
+
+        if (!me) {
+          router.replace('/app/login')
+
+          return
+        }
+
         setUser(me)
         setReady(true)
       })
@@ -39,6 +38,7 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
         if (cancelled) {
           return
         }
+
         router.replace('/app/login')
       })
 

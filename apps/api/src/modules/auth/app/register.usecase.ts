@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common'
 import type { RegisterInput, AuthSessionResponse } from '@lustra/contracts'
 import { Prisma } from '@lustra/db'
 
-import { DomainError } from '../../../common/errors/domain-error'
-import { JwtTokenService } from '../../../common/auth/jwt-token.service'
-import { assertPasswordPolicy } from '../domain/password-policy'
-import { toAuthUserView } from '../domain/map-auth-user'
-import { AuthUserRepository } from '../infra/auth-user.repository'
-import { PasswordHasher } from '../infra/password-hasher'
-import { RefreshSessionRepository } from '../infra/refresh-session.repository'
+import { JwtTokenService } from '@/common/auth/jwt-token.service'
+import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'
+import { DomainError } from '@/common/errors/domain-error'
+import { toAuthUserView } from '@/modules/auth/domain/map-auth-user'
+import { assertPasswordPolicy } from '@/modules/auth/domain/password-policy'
+import {
+  type AuthUserRecord,
+  AuthUserRepository,
+} from '@/modules/auth/infra/auth-user.repository'
+import { PasswordHasher } from '@/modules/auth/infra/password-hasher'
+import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.repository'
 
 export type RegisterResult = AuthSessionResponse & {
   accessToken: string
@@ -31,6 +35,7 @@ export class RegisterUseCase {
     assertPasswordPolicy(input.password)
 
     const existing = await this.users.findByEmail(input.email)
+
     if (existing) {
       throw new DomainError('VALIDATION_FAILED', 'Email уже зарегистрирован', {
         fieldErrors: { email: ['Email уже зарегистрирован'] },
@@ -39,7 +44,8 @@ export class RegisterUseCase {
 
     const passwordHash = await this.passwords.hash(input.password)
 
-    let user
+    let user: AuthUserRecord
+
     try {
       user = await this.users.createWithProfile({
         email: input.email,
@@ -49,15 +55,20 @@ export class RegisterUseCase {
         ip: meta.ip,
       })
     } catch (error: unknown) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      const isUniqueConflict =
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PRISMA_ERROR.UNIQUE_CONSTRAINT
+
+      if (isUniqueConflict) {
         throw new DomainError('VALIDATION_FAILED', 'Email уже зарегистрирован', {
           fieldErrors: { email: ['Email уже зарегистрирован'] },
         })
       }
+
       throw error
     }
 
-    const { rawToken, session: _session } = await this.sessions.create({
+    const { rawToken } = await this.sessions.create({
       userId: user.id,
       ip: meta.ip,
       userAgent: meta.userAgent,

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import type { LoginInput, AuthSessionResponse } from '@lustra/contracts'
 
-import { DomainError } from '../../../common/errors/domain-error'
-import { JwtTokenService } from '../../../common/auth/jwt-token.service'
-import { toAuthUserView } from '../domain/map-auth-user'
-import { AuthUserRepository } from '../infra/auth-user.repository'
-import { PasswordHasher } from '../infra/password-hasher'
-import { RefreshSessionRepository } from '../infra/refresh-session.repository'
+import { JwtTokenService } from '@/common/auth/jwt-token.service'
+import { DomainError } from '@/common/errors/domain-error'
+import { toAuthUserView } from '@/modules/auth/domain/map-auth-user'
+import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
+import { PasswordHasher } from '@/modules/auth/infra/password-hasher'
+import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.repository'
 
 export type LoginResult = AuthSessionResponse & {
   accessToken: string
@@ -27,12 +27,14 @@ export class LoginUseCase {
     meta: { ip?: string; userAgent?: string },
   ): Promise<LoginResult> {
     const user = await this.users.findByEmail(input.email)
+
     if (!user || user.status !== 'active' || user.deletedAt) {
       throw new DomainError('UNAUTHENTICATED', 'Неверный email или пароль')
     }
 
-    const ok = await this.passwords.verify(user.passwordHash, input.password)
-    if (!ok) {
+    const passwordMatches = await this.passwords.verify(user.passwordHash, input.password)
+
+    if (!passwordMatches) {
       throw new DomainError('UNAUTHENTICATED', 'Неверный email или пароль')
     }
 

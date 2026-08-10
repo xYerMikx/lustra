@@ -17,18 +17,18 @@ import {
 } from '@lustra/contracts'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 
-import type { AuthUser } from '../../../common/auth/auth-user'
-import { CurrentUser } from '../../../common/auth/current-user.decorator'
-import { JwtGuard } from '../../../common/auth/jwt.guard'
-import { Roles } from '../../../common/auth/roles.decorator'
-import { RolesGuard } from '../../../common/auth/roles.guard'
-import { ZodValidationPipe } from '../../../common/auth/zod-validation.pipe'
-import { GetMeUseCase } from '../app/get-me.usecase'
-import { LoginUseCase } from '../app/login.usecase'
-import { LogoutUseCase } from '../app/logout.usecase'
-import { RefreshTokensUseCase } from '../app/refresh-tokens.usecase'
-import { RegisterUseCase } from '../app/register.usecase'
-import { AuthCookieService } from '../infra/auth-cookie.service'
+import type { AuthUser } from '@/common/auth/auth-user'
+import { CurrentUser } from '@/common/auth/current-user.decorator'
+import { JwtGuard } from '@/common/auth/jwt.guard'
+import { Roles } from '@/common/auth/roles.decorator'
+import { RolesGuard } from '@/common/auth/roles.guard'
+import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
+import { GetMeUseCase } from '@/modules/auth/app/get-me.usecase'
+import { LoginUseCase } from '@/modules/auth/app/login.usecase'
+import { LogoutUseCase } from '@/modules/auth/app/logout.usecase'
+import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
+import { RegisterUseCase } from '@/modules/auth/app/register.usecase'
+import { AuthCookieService } from '@/modules/auth/infra/auth-cookie.service'
 
 @Controller('auth')
 @Throttle({ default: { limit: 10, ttl: 60_000 } })
@@ -53,6 +53,7 @@ export class AuthController {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     })
+
     return { user: result.user }
   }
 
@@ -68,6 +69,7 @@ export class AuthController {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     })
+
     return { user: result.user }
   }
 
@@ -86,6 +88,7 @@ export class AuthController {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     })
+
     return { user: result.user }
   }
 

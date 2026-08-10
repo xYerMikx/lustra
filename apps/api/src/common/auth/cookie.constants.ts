@@ -1,7 +1,6 @@
 export const ACCESS_COOKIE = 'lustra_access'
 export const REFRESH_COOKIE = 'lustra_refresh'
 export const CSRF_COOKIE = 'lustra_csrf'
-/** Lowercase Fastify header key for `X-CSRF-Token`. */
 export const CSRF_HEADER = 'x-csrf-token'
 
 export const ACCESS_TTL_SEC = 15 * 60

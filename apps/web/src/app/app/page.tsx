@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { RequireSession } from '@/features/auth'
+import { ButtonLink } from '@/shared/ui/button'
 import styles from './app.module.css'
 
 export const metadata: Metadata = {
@@ -39,12 +40,10 @@ export default function CabinetPage() {
               навигации и локального просмотра.
             </p>
             <div className={styles.actions}>
-              <Link className="btn btn-primary" href="/catalog">
-                К каталогу
-              </Link>
-              <Link className="btn btn-ghost" href="/">
+              <ButtonLink href="/catalog">К каталогу</ButtonLink>
+              <ButtonLink href="/" variant="ghost">
                 На главную
-              </Link>
+              </ButtonLink>
             </div>
           </section>
         </div>

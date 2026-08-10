@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import * as argon2 from 'argon2'
 
-/** Argon2id params from PRD §15: m=19456, t=2, p=1. */
 @Injectable()
 export class PasswordHasher {
   hash(password: string): Promise<string> {

@@ -10,9 +10,10 @@ import {
   CSRF_HEADER,
   REFRESH_COOKIE,
   REFRESH_TTL_SEC,
-} from '../../../common/auth/cookie.constants'
-import { DomainError } from '../../../common/errors/domain-error'
-import { generateCsrfToken } from '../domain/token-hash'
+} from '@/common/auth/cookie.constants'
+import { isProduction } from '@/common/env/is-production'
+import { DomainError } from '@/common/errors/domain-error'
+import { generateCsrfToken } from '@/modules/auth/domain/token-hash'
 
 export type SessionCookies = {
   accessToken: string
@@ -22,21 +23,22 @@ export type SessionCookies = {
 function safeEqualStrings(left: string, right: string): boolean {
   const a = Buffer.from(left)
   const b = Buffer.from(right)
+
   if (a.length !== b.length) {
     return false
   }
+
   return timingSafeEqual(a, b)
 }
 
 @Injectable()
 export class AuthCookieService {
   setSession(reply: FastifyReply, tokens: SessionCookies): void {
-    const secure = process.env.NODE_ENV === 'production'
     const domain = process.env.COOKIE_DOMAIN || undefined
     const common = {
       path: '/',
       sameSite: 'lax' as const,
-      secure,
+      secure: isProduction,
       domain,
     }
 
@@ -58,14 +60,14 @@ export class AuthCookieService {
   }
 
   clearSession(reply: FastifyReply): void {
-    const secure = process.env.NODE_ENV === 'production'
     const domain = process.env.COOKIE_DOMAIN || undefined
     const clear = {
       path: '/',
       sameSite: 'lax' as const,
-      secure,
+      secure: isProduction,
       domain,
     }
+
     reply.clearCookie(ACCESS_COOKIE, clear)
     reply.clearCookie(REFRESH_COOKIE, clear)
     reply.clearCookie(CSRF_COOKIE, clear)
@@ -73,28 +75,25 @@ export class AuthCookieService {
 
   readRefresh(cookies: Record<string, string | undefined> | undefined): string | undefined {
     const value = cookies?.[REFRESH_COOKIE]
+
     if (typeof value === 'string' && value.length > 0) {
       return value
     }
+
     return undefined
   }
 
-  /**
-   * Double-submit CSRF: cookie `lustra_csrf` must match `X-CSRF-Token` header.
-   * Required for cookie-authenticated mutations (refresh / logout).
-   */
   assertCsrf(request: FastifyRequest): void {
     const cookieToken = request.cookies?.[CSRF_COOKIE]
     const headerRaw = request.headers[CSRF_HEADER]
     const headerToken = Array.isArray(headerRaw) ? headerRaw[0] : headerRaw
 
-    if (
-      typeof cookieToken !== 'string' ||
-      cookieToken.length === 0 ||
-      typeof headerToken !== 'string' ||
-      headerToken.length === 0 ||
-      !safeEqualStrings(cookieToken, headerToken)
-    ) {
+    const hasCookie = typeof cookieToken === 'string' && cookieToken.length > 0
+    const hasHeader = typeof headerToken === 'string' && headerToken.length > 0
+    const tokensMatch =
+      hasCookie && hasHeader && safeEqualStrings(cookieToken, headerToken)
+
+    if (!tokensMatch) {
       throw new DomainError('FORBIDDEN', 'Недействительный CSRF-токен')
     }
   }

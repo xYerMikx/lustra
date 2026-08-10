@@ -1,18 +1,19 @@
 .form {
   display: grid;
-  gap: 16px;
+  gap: var(--spacing-16);
 }
 
 .field {
   display: grid;
-  gap: 6px;
-  font-size: 14px;
+  gap: var(--spacing-8);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
   color: var(--color-text-2);
 }
 
-.field input {
+.input {
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 var(--spacing-12);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-8);
   background: var(--color-surface);
@@ -20,52 +21,60 @@
   font: inherit;
 }
 
-.field input:focus {
-  outline: 2px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+.input:focus {
+  outline: 2px solid var(--color-accent);
   outline-offset: 1px;
+}
+
+.fieldError {
+  color: var(--color-accent-700);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
 }
 
 .intro {
   color: var(--color-text-2);
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-20);
 }
 
 .roleField {
   display: grid;
-  gap: 8px;
+  gap: var(--spacing-8);
 }
 
 .roleLabel {
-  font-size: 13px;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
   color: var(--color-text-3);
 }
 
 .roleSegment {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  padding: 4px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-8);
-  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-border));
+  background: var(--color-surface-2);
 }
 
 .roleSegmentOption {
   min-height: 44px;
-  padding: 0 12px;
+  padding: 0 var(--spacing-12);
   border: 1px solid transparent;
-  border-radius: calc(var(--radius-8) - 2px);
+  border-radius: var(--radius-4);
   background: transparent;
   color: var(--color-text-2);
   font: inherit;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  font-weight: var(--font-weight-500);
   cursor: pointer;
   transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+    background-color var(--duration-150) ease,
+    color var(--duration-150) ease,
+    border-color var(--duration-150) ease,
+    box-shadow var(--duration-150) ease;
 }
 
 .roleSegmentOption:hover {
@@ -76,23 +85,21 @@
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
-  font-weight: 600;
+  font-weight: var(--font-weight-600);
   box-shadow: var(--shadow-1);
 }
 
 .check {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
+  gap: var(--spacing-12);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
   color: var(--color-text-2);
 }
 
 .error {
   color: var(--color-accent-700);
-  font-size: 14px;
-}
-
-.form :global(.btn) {
-  width: 100%;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
 }
