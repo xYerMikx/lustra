@@ -24,6 +24,11 @@ Thumbs.db
 !.vscode/extensions.json
 .idea/
 
+# Postman exports — collections live in Postman workspace (MCP), not git
+*.postman_collection.json
+*.postman_environment.json
+*.postman_workspace.json
+
 *.tsbuildinfo
 .eslintcache
 

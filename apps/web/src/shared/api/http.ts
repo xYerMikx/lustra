@@ -1,0 +1,117 @@
+export type ApiErrorBody = {
+  error: {
+    code: string
+    message: string
+    details?: unknown
+    requestId?: string
+  }
+}
+
+export class ApiError extends Error {
+  readonly status: number
+  readonly code: string
+  readonly details?: unknown
+
+  constructor(status: number, body: ApiErrorBody['error']) {
+    super(body.message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = body.code
+    this.details = body.details
+  }
+}
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333'
+const CSRF_COOKIE = 'lustra_csrf'
+const FALLBACK_ERROR: ApiErrorBody['error'] = {
+  code: 'INTERNAL',
+  message: 'Ошибка запроса',
+}
+
+function readCookie(name: string): string | undefined {
+  if (typeof document === 'undefined') {
+    return undefined
+  }
+
+  const prefix = `${name}=`
+  const match = document.cookie.split('; ').find((row) => row.startsWith(prefix))
+
+  if (!match) {
+    return undefined
+  }
+
+  return decodeURIComponent(match.slice(prefix.length))
+}
+
+function needsCsrf(method: string): boolean {
+  const normalized = method.toUpperCase()
+
+  return normalized !== 'GET' && normalized !== 'HEAD' && normalized !== 'OPTIONS'
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isApiErrorBody(value: unknown): value is ApiErrorBody {
+  if (!isRecord(value) || !isRecord(value.error)) {
+    return false
+  }
+
+  return typeof value.error.code === 'string' && typeof value.error.message === 'string'
+}
+
+async function readJsonBody(response: Response): Promise<unknown> {
+  try {
+    return await response.json()
+  } catch {
+    return null
+  }
+}
+
+function toApiError(status: number, payload: unknown): ApiError {
+  if (isApiErrorBody(payload)) {
+    return new ApiError(status, payload.error)
+  }
+
+  return new ApiError(status, FALLBACK_ERROR)
+}
+
+export async function apiFetch<T = undefined>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T | undefined> {
+  const headers = new Headers(init.headers)
+
+  if (init.body && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
+
+  const method = init.method ?? 'GET'
+
+  if (needsCsrf(method) && !headers.has('X-CSRF-Token')) {
+    const csrf = readCookie(CSRF_COOKIE)
+
+    if (csrf) {
+      headers.set('X-CSRF-Token', csrf)
+    }
+  }
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers,
+    credentials: 'include',
+  })
+
+  if (response.status === 204) {
+    return undefined
+  }
+
+  const payload = await readJsonBody(response)
+
+  if (!response.ok) {
+    throw toApiError(response.status, payload)
+  }
+
+  return payload as T
+}

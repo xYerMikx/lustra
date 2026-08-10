@@ -1322,7 +1322,35 @@ JS на лендинге — только два острова (меню, ак�
 
 Срезы 5 и 6 — критический путь: они делаются с тестами **до** UI-полировки и до лендинга.
 
-## 29. Открытые технические вопросы
+## 29. Smoke test data (маркеры и cleanup)
+
+Ручные прогоны (Postman MCP, curl-скрипты, будущий Playwright) пишут **реальные строки** в Postgres. Без маркеров безопасная чистка невозможна.
+
+**Маркеры (обязательны для всех smoke/e2e):**
+
+| Сущность | Шаблон | Пример |
+|---|---|---|
+| Email пользователя | `{role}.smoke.{runId}@example.com` | `client.smoke.1723299840@example.com` |
+| `runId` | Unix timestamp или id CI-рана | `date +%s`, `$GITHUB_RUN_ID` |
+| `Idempotency-Key` брони | `smoke:{runId}:…` | `smoke:1723299840:hold-1` |
+| Slug мастера (e2e, позже) | `smoke-{runId}-…` | при онбординг-e2e |
+
+- `role`: `client` \| `master` \| `admin`
+- Домен только **`@example.com`**
+- Эталон: `apps/api/postman/run-auth-smoke.sh` (auth-срез)
+
+**Cleanup (отдельный PR, не блокирует feature):**
+
+- Скрипт: `packages/db/src/cleanup-smoke.ts`, команда `pnpm db:cleanup:smoke`
+- Флаги: `--dry-run` (default), `--execute`, опционально `--run-id=<id>`
+- Порядок удаления (FK): брони/hold → refresh tokens → users (профили каскадом)
+- Защита: `--execute` запрещён при prod-like `DATABASE_URL`; удаляются только строки по маркерам; лог количества до delete
+
+До появления скрипта локально: `docker compose down -v` или ручной `DELETE` по паттерну email.
+
+Postman-коллекции — в workspace (MCP), не в git (`.cursor/rules/lustra-postman.mdc`).
+
+## 30. Открытые технические вопросы
 
 1. **Шаг сетки по умолчанию:** 30 мин для всех категорий или 15 мин для брендов/ресниц (там записи часто «на 40 минут»)? Влияет на объём `TimeSlot` и на UX выбора времени.
 2. **TTL удержания:** 10 минут — не слишком долго для популярного мастера? Вариант: 5 минут для гостя (ещё не логинился) и 10 для авторизованного.

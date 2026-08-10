@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ButtonLink } from "@/shared/ui/button";
 import styles from "./page.module.css";
 
 async function getApiHealth(): Promise<"ok" | "offline"> {
@@ -35,12 +36,10 @@ export default async function HomePage() {
             Находите проверенных мастеров и записывайтесь без лишних переписок.
           </p>
           <div className={styles.actions}>
-            <Link className="btn btn-primary" href="/catalog">
-              Смотреть каталог
-            </Link>
-            <Link className="btn btn-ghost" href="/m/anna-nails">
+            <ButtonLink href="/catalog">Смотреть каталог</ButtonLink>
+            <ButtonLink href="/m/anna-nails" variant="ghost">
               Пример профиля
-            </Link>
+            </ButtonLink>
           </div>
           <p className={styles.meta}>
             API: <code>localhost:3333</code>

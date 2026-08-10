@@ -1,4 +1,7 @@
+import { config as loadEnv } from 'dotenv'
 import 'reflect-metadata'
+
+loadEnv()
 
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
@@ -7,8 +10,9 @@ import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Logger } from 'nestjs-pino'
 
-import { AppModule } from './app.module'
-import { DomainExceptionFilter } from './common/errors/domain-exception.filter'
+import { AppModule } from '@/app.module'
+import { isProduction } from '@/common/env/is-production'
+import { DomainExceptionFilter } from '@/common/errors/domain-exception.filter'
 
 async function bootstrap() {
   const adapter = new FastifyAdapter({ trustProxy: true })
@@ -25,6 +29,10 @@ async function bootstrap() {
     .map((origin) => origin.trim())
     .filter(Boolean)
 
+  if (corsOrigins.length === 0 && isProduction) {
+    throw new Error('CORS_ORIGINS is required in production (comma-separated allowlist)')
+  }
+
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: false,
   })
@@ -33,9 +41,6 @@ async function bootstrap() {
     credentials: true,
   })
   await app.register(fastifyCookie)
-
-  // Swagger UI (Fastify) нужен @fastify/static — включим после установки пакета
-  // GET /api/docs появится в срезе с OpenAPI-контрактами
 
   app.enableShutdownHooks()
 

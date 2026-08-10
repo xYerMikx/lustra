@@ -26,6 +26,9 @@ modules/<name>/
 - Errors: `DomainError(code, httpStatus, message, details?)` → filter → `{ error: { code, message, details, requestId } }`.
 - Transactions: short; no Telegram/HTTP/file I/O inside. Domain events via `OutboxEvent` in same TX.
 - Private fields stripped in mappers — write tests that client DTOs lack `masterNote` / `trustScore`.
+- Imports: `@/` aliases for anything outside the current folder (no `../../../`).
+- Env checks: use shared `isProduction` helper — never inline `process.env.NODE_ENV === 'production'`.
+- Magic strings/codes (`P2002`, race markers): named constants / maps.
 
 ## Nest patterns to use
 

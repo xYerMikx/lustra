@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { Button, ButtonLink } from "@/shared/ui/button";
 import styles from "./master.module.css";
 
 type Service = {
@@ -104,9 +106,7 @@ export default async function MasterPage({ params }: PageProps) {
           </p>
           <h1 className={styles.name}>{master.name}</h1>
           <p className={styles.bio}>{master.bio}</p>
-          <a className="btn btn-primary" href="#services">
-            Записаться
-          </a>
+          <ButtonLink href="#services">Записаться</ButtonLink>
         </section>
 
         <section id="services" className={styles.services}>
@@ -123,9 +123,7 @@ export default async function MasterPage({ params }: PageProps) {
             ))}
           </ul>
           <div className={styles.ctaWrap}>
-            <button type="button" className="btn btn-primary">
-              Записаться
-            </button>
+            <Button type="button">Записаться</Button>
           </div>
         </section>
       </div>

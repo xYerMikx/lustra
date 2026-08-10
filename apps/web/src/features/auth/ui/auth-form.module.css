@@ -1,0 +1,105 @@
+.form {
+  display: grid;
+  gap: var(--spacing-16);
+}
+
+.field {
+  display: grid;
+  gap: var(--spacing-8);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.input {
+  min-height: 44px;
+  padding: 0 var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.fieldError {
+  color: var(--color-accent-700);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.intro {
+  color: var(--color-text-2);
+  margin-bottom: var(--spacing-20);
+}
+
+.roleField {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.roleLabel {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
+.roleSegment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface-2);
+}
+
+.roleSegmentOption {
+  min-height: 44px;
+  padding: 0 var(--spacing-12);
+  border: 1px solid transparent;
+  border-radius: var(--radius-4);
+  background: transparent;
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  font-weight: var(--font-weight-500);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-150) ease,
+    color var(--duration-150) ease,
+    border-color var(--duration-150) ease,
+    box-shadow var(--duration-150) ease;
+}
+
+.roleSegmentOption:hover {
+  color: var(--color-text);
+}
+
+.roleSegmentOption[aria-pressed='true'] {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  font-weight: var(--font-weight-600);
+  box-shadow: var(--shadow-1);
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-12);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.error {
+  color: var(--color-accent-700);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
