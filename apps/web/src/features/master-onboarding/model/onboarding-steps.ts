@@ -7,22 +7,6 @@ export const ONBOARDING_STEPS = [
 
 export type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]['id']
 
-export const ONBOARDING_STEP_COPY: Record<
-  Extract<OnboardingStepId, 'profile' | 'services'>,
-  { title: string; description: (slug?: string) => string }
-> = {
-  profile: {
-    title: 'Расскажите о себе',
-    description: (slug) =>
-      `имя, район и короткий заголовок для страницы /m/${slug ?? '…'}`,
-  },
-  services: {
-    title: 'Добавьте первую услугу',
-    description: () =>
-      'выберите шаблон или задайте название, длительность и цену',
-  },
-}
-
 export function stepStatus(
   stepId: OnboardingStepId,
   currentStepId: OnboardingStepId,

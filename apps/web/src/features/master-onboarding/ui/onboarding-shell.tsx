@@ -44,11 +44,11 @@ type LoadState =
       categories: ServiceCategoryView[]
     }
 
-const STEP_CLASS: Record<'done' | 'active' | 'pending', string> = {
+const STEP_CLASS = {
   done: styles.stepDone,
   active: styles.stepActive,
   pending: styles.stepPending,
-}
+} as const
 
 export function OnboardingShell({ user }: OnboardingShellProps) {
   const router = useRouter()
