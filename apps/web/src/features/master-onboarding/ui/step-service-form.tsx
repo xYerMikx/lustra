@@ -140,11 +140,13 @@ export function StepServiceForm({
         <p className={styles.legend}>Шаблоны</p>
         {templatesLoading ? (
           <p className={styles.copyMuted}>Загружаем шаблоны…</p>
-        ) : templates.length === 0 ? (
+        ) : null}
+        {!templatesLoading && templates.length === 0 ? (
           <p className={styles.copyMuted}>
             Шаблонов нет — заполните услугу вручную
           </p>
-        ) : (
+        ) : null}
+        {!templatesLoading && templates.length > 0 ? (
           <div className={styles.templateList}>
             {templates.map((template) => (
               <button
@@ -157,7 +159,7 @@ export function StepServiceForm({
               </button>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <label className={formStyles.field}>

@@ -92,14 +92,12 @@ export class UpdateServiceUseCase {
     }
 
     if (input.priceMax !== undefined || input.priceType !== undefined) {
-      if (priceType === 'range') {
-        const nextMax =
-          input.priceMax !== undefined
-            ? input.priceMax
-            : existing.priceMax
-              ? Number(existing.priceMax)
-              : null
-        patch.priceMax = nextMax != null ? toPrismaDecimal(nextMax) : null
+      if (priceType !== 'range') {
+        patch.priceMax = null
+      } else if (input.priceMax !== undefined) {
+        patch.priceMax = toPrismaDecimal(input.priceMax)
+      } else if (existing.priceMax) {
+        patch.priceMax = toPrismaDecimal(Number(existing.priceMax))
       } else {
         patch.priceMax = null
       }
