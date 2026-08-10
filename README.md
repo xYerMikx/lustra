@@ -51,6 +51,7 @@ lustra/
 │  └─ landing/      # Astro 5 — /, /for-masters, /privacy, /terms
 ├─ packages/
 │  ├─ db/           # Prisma schema, миграции, seed
+│  ├─ ui/           # дизайн-токены (`tokens.css`) + будущие примитивы
 │  └─ config/       # shared tsconfig / eslint / prettier
 ├─ docs/
 │  ├─ PRD.md
@@ -61,7 +62,9 @@ lustra/
    └─ skills/       # скиллы по фронту / беку / дизайну / тестам
 ```
 
-Планируемые пакеты (ещё не заведены): `@lustra/contracts` (Zod DTO + typed client), `@lustra/ui` (токены + компоненты).
+Планируемые пакеты (ещё не заведены): `@lustra/contracts` (Zod DTO + typed client). `@lustra/ui` уже есть (токены).
+
+Landing → web ссылки: `PUBLIC_APP_URL` в `apps/landing/.env` (local `http://localhost:3000`, на staging/prod — URL приложения).
 
 ## Архитектура (кратко)
 

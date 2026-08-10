@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Lustra — design system
 
-Tokens live in CSS variables (eventually `packages/ui/tokens.css`). Use **only** scale values — no one-off `13px` / `border-radius: 10px`.
+Tokens live in `packages/ui/tokens.css` (TECH-DESIGN §23). Use **only** scale values — no one-off `13px` / `border-radius: 10px`. Landing and web import this file; do not duplicate hex/spacing in feature CSS.
 
 ## Palette (semantic)
 

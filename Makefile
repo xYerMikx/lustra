@@ -24,6 +24,7 @@ env: ## скопировать .env из example, если ещё нет
 	@test -f packages/db/.env || cp packages/db/.env.example packages/db/.env
 	@test -f apps/api/.env || cp apps/api/.env.example apps/api/.env
 	@test -f apps/web/.env || (test -f apps/web/.env.example && cp apps/web/.env.example apps/web/.env || true)
+	@test -f apps/landing/.env || cp apps/landing/.env.example apps/landing/.env
 	@echo ".env на месте"
 
 up: ## поднять Postgres + Redis

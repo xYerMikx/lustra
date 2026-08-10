@@ -1,51 +1,36 @@
 ---
-import "../styles/global.css";
+import BaseLayout from "../layouts/base-layout.astro";
+import { getAppUrl } from "../lib/site";
+
+const catalogHref = getAppUrl("/catalog");
+const masterAppHref = getAppUrl("/app?role=master&utm_source=landing");
 ---
 
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lustra — бьюти-мастера Минска</title>
-    <meta
-      name="description"
-      content="Lustra — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <main class="stage">
-      <div class="atmosphere" aria-hidden="true"></div>
-      <div class="grain" aria-hidden="true"></div>
+<BaseLayout
+  title="Lustra — бьюти-мастера Минска"
+  description="Lustra — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
+>
+  <main class="stage">
+    <div class="atmosphere" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
-      <section class="hero">
-        <p class="brand">Lustra</p>
-        <h1 class="headline">Красота без хаоса записей</h1>
-        <p class="lead">
-          Агрегатор бьюти-мастеров Минска — выбирайте, смотрите окна и
-          записывайтесь в пару касаний.
-        </p>
-        <div class="actions">
-          <a class="btn btn-primary" href="http://localhost:3000/catalog"
-            >Найти мастера</a
-          >
-          <a class="btn btn-secondary" href="http://localhost:3000/app"
-            >Я мастер</a
-          >
-        </div>
-        <p class="foot">
-          <a href="/for-masters">Для мастеров</a>
-        </p>
-      </section>
-    </main>
-  </body>
-</html>
+    <section class="hero">
+      <p class="brand">Lustra</p>
+      <h1 class="headline">Красота без хаоса записей</h1>
+      <p class="lead">
+        Агрегатор бьюти-мастеров Минска — выбирайте, смотрите окна и
+        записывайтесь в пару касаний.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href={catalogHref}>Найти мастера</a>
+        <a class="btn btn-secondary" href={masterAppHref}>Я мастер</a>
+      </div>
+      <p class="foot">
+        <a href="/for-masters">Для мастеров</a>
+      </p>
+    </section>
+  </main>
+</BaseLayout>
 
 <style>
   .stage {
@@ -58,11 +43,23 @@ import "../styles/global.css";
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 90% 70% at 15% 20%, rgba(194, 94, 82, 0.16), transparent 55%),
-      radial-gradient(ellipse 80% 60% at 85% 10%, rgba(198, 161, 91, 0.2), transparent 50%),
-      radial-gradient(ellipse 70% 50% at 50% 100%, rgba(107, 78, 66, 0.1), transparent 55%),
-      linear-gradient(165deg, #faf7f4 0%, #f1e8e1 42%, #e8d9cf 100%);
-    animation: drift 14s ease-in-out infinite alternate;
+      radial-gradient(
+        ellipse 90% 70% at 15% 20%,
+        color-mix(in srgb, var(--color-accent) 16%, transparent),
+        transparent 55%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 85% 10%,
+        color-mix(in srgb, var(--color-gold) 20%, transparent),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 70% 50% at 50% 100%,
+        color-mix(in srgb, var(--color-clay) 10%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(165deg, var(--color-bg) 0%, var(--color-surface-2) 42%, #e8d9cf 100%);
+    animation: drift 14s var(--ease-out-quart) infinite alternate;
   }
 
   .grain {
@@ -76,54 +73,55 @@ import "../styles/global.css";
 
   .hero {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-10);
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-height: 100dvh;
-    width: min(680px, calc(100% - 40px));
+    width: min(680px, calc(100% - var(--spacing-40)));
     margin-inline: auto;
-    padding: 48px 0;
+    padding: var(--spacing-40) 0;
   }
 
   .brand {
     font-family: var(--font-display);
-    font-size: clamp(48px, 11vw, 80px);
+    font-size: clamp(var(--text-40), 11vw, var(--text-56));
     line-height: 0.95;
     letter-spacing: -0.03em;
-    margin-bottom: 28px;
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    margin-bottom: var(--spacing-32);
+    animation: rise var(--duration-700) var(--ease-out-quart) both;
   }
 
   .headline {
-    font-size: clamp(26px, 5.5vw, 36px);
+    font-size: clamp(var(--text-26), 5.5vw, var(--text-32));
     line-height: 1.2;
     max-width: 16ch;
-    margin-bottom: 16px;
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+    margin-bottom: var(--spacing-16);
+    animation: rise var(--duration-700) var(--ease-out-quart) 80ms both;
   }
 
   .lead {
     max-width: 38ch;
-    font-size: 17px;
+    font-size: var(--text-16);
     line-height: 1.55;
     color: var(--color-text-2);
-    margin-bottom: 32px;
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+    margin-bottom: var(--spacing-32);
+    animation: rise var(--duration-700) var(--ease-out-quart) 140ms both;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 28px;
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+    gap: var(--spacing-12);
+    margin-bottom: var(--spacing-32);
+    animation: rise var(--duration-700) var(--ease-out-quart) 200ms both;
   }
 
   .foot {
-    font-size: 14px;
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
     color: var(--color-text-3);
-    animation: rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 260ms both;
+    animation: rise var(--duration-700) var(--ease-out-quart) 260ms both;
   }
 
   .foot a:hover {
@@ -133,7 +131,7 @@ import "../styles/global.css";
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(var(--spacing-16));
     }
     to {
       opacity: 1;
@@ -150,9 +148,20 @@ import "../styles/global.css";
     }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .atmosphere,
+    .brand,
+    .headline,
+    .lead,
+    .actions,
+    .foot {
+      animation: none;
+    }
+  }
+
   @media (max-width: 480px) {
     .hero {
-      width: min(100% - 28px, 680px);
+      width: min(calc(100% - var(--spacing-32)), 680px);
     }
 
     .actions {
