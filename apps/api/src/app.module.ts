@@ -8,6 +8,7 @@ import { PrismaModule } from '@/common/prisma/prisma.module'
 import { HealthModule } from '@/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { MasterProfileModule } from '@/modules/master-profile/master-profile.module'
+import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.module'
 import { MasterServicesModule } from '@/modules/master-services/master-services.module'
 
 @Module({
@@ -27,6 +28,7 @@ import { MasterServicesModule } from '@/modules/master-services/master-services.
     AuthModule,
     MasterProfileModule,
     MasterServicesModule,
+    MasterScheduleModule,
   ],
   providers: [
     {
