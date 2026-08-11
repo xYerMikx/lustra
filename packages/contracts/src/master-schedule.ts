@@ -11,6 +11,10 @@ export const GranularityMinSchema = z.union([
 ])
 export type GranularityMin = z.infer<typeof GranularityMinSchema>
 
+export function isGranularityMin(value: number): value is GranularityMin {
+  return value === 15 || value === 30 || value === 60
+}
+
 export const AvailabilityRuleViewSchema = z.object({
   id: z.string().uuid(),
   weekday: WeekdaySchema,

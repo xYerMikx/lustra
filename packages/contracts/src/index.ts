@@ -58,6 +58,7 @@ export {
 export {
   WeekdaySchema,
   GranularityMinSchema,
+  isGranularityMin,
   AvailabilityRuleViewSchema,
   MasterSchedulePolicyViewSchema,
   MasterScheduleViewSchema,
@@ -71,3 +72,14 @@ export {
   type AvailabilityRuleInput,
   type PutMasterScheduleInput,
 } from './master-schedule'
+
+export {
+  AvailabilityQuerySchema,
+  AvailabilitySlotViewSchema,
+  AvailabilityDayViewSchema,
+  AvailabilityResponseSchema,
+  type AvailabilityQuery,
+  type AvailabilitySlotView,
+  type AvailabilityDayView,
+  type AvailabilityResponse,
+} from './availability'
