@@ -1,41 +1,23 @@
-import { PrismaClient } from '@prisma/client'
+import type { ServiceTemplateView } from '@lustra/contracts'
 
-const prisma = new PrismaClient()
-
-const DISTRICTS = [
-  'Центральный',
-  'Советский',
-  'Первомайский',
-  'Партизанский',
-  'Заводской',
-  'Ленинский',
-  'Московский',
-  'Октябрьский',
-  'Фрунзенский',
-] as const
-
-function slugify(input: string): string {
-  const map: Record<string, string> = {
-    а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z',
-    и: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r',
-    с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sch',
-    ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
-  }
-  return input
-    .toLowerCase()
-    .split('')
-    .map((ch) => map[ch] ?? ch)
-    .join('')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+type TemplateSeed = {
+  categoryName: string
+  categorySlug: string
+  templates: Array<{
+    title: string
+    durationMin: number
+    price: number
+  }>
 }
 
-const CATEGORIES: Array<{
-  name: string
-  templates: Array<{ title: string; durationMin: number; price: number }>
-}> = [
+/**
+ * Onboarding shortcuts — not persisted. Slugs match `packages/db` seed
+ * (`slugify` of category names).
+ */
+const TEMPLATE_SEEDS: TemplateSeed[] = [
   {
-    name: 'Ногти',
+    categoryName: 'Ногти',
+    categorySlug: 'nogti',
     templates: [
       { title: 'Маникюр классический', durationMin: 60, price: 35 },
       { title: 'Маникюр комбинированный', durationMin: 90, price: 60 },
@@ -47,7 +29,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Брови и ресницы',
+    categoryName: 'Брови и ресницы',
+    categorySlug: 'brovi-i-resnitsy',
     templates: [
       { title: 'Коррекция и окрашивание бровей', durationMin: 45, price: 25 },
       { title: 'Ламинирование бровей', durationMin: 60, price: 35 },
@@ -57,7 +40,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Волосы',
+    categoryName: 'Волосы',
+    categorySlug: 'volosy',
     templates: [
       { title: 'Женская стрижка', durationMin: 60, price: 30 },
       { title: 'Мужская стрижка', durationMin: 45, price: 20 },
@@ -68,7 +52,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Макияж',
+    categoryName: 'Макияж',
+    categorySlug: 'makiyazh',
     templates: [
       { title: 'Дневной макияж', durationMin: 60, price: 40 },
       { title: 'Вечерний макияж', durationMin: 90, price: 60 },
@@ -76,7 +61,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Косметология',
+    categoryName: 'Косметология',
+    categorySlug: 'kosmetologiya',
     templates: [
       { title: 'Чистка лица', durationMin: 90, price: 50 },
       { title: 'Пилинг', durationMin: 60, price: 45 },
@@ -84,7 +70,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Депиляция',
+    categoryName: 'Депиляция',
+    categorySlug: 'depilyatsiya',
     templates: [
       { title: 'Шугаринг голени', durationMin: 30, price: 20 },
       { title: 'Шугаринг бикини', durationMin: 30, price: 25 },
@@ -92,7 +79,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Массаж',
+    categoryName: 'Массаж',
+    categorySlug: 'massazh',
     templates: [
       { title: 'Классический массаж спины', durationMin: 45, price: 35 },
       { title: 'Общий массаж тела', durationMin: 90, price: 65 },
@@ -100,7 +88,8 @@ const CATEGORIES: Array<{
     ],
   },
   {
-    name: 'Тату и пирсинг',
+    categoryName: 'Тату и пирсинг',
+    categorySlug: 'tatu-i-pirsing',
     templates: [
       { title: 'Пирсинг мочки уха', durationMin: 30, price: 25 },
       { title: 'Татуаж бровей', durationMin: 120, price: 90 },
@@ -109,39 +98,20 @@ const CATEGORIES: Array<{
   },
 ]
 
-async function main() {
-  console.log('Seeding districts...')
-  for (const [index, name] of DISTRICTS.entries()) {
-    await prisma.district.upsert({
-      where: { slug: slugify(name) },
-      update: {},
-      create: { name, slug: slugify(name), city: 'Minsk', sort: index },
-    })
-  }
+export function listServiceTemplates(
+  categorySlug?: string,
+): ServiceTemplateView[] {
+  const seeds = categorySlug
+    ? TEMPLATE_SEEDS.filter((seed) => seed.categorySlug === categorySlug)
+    : TEMPLATE_SEEDS
 
-  console.log('Seeding service categories + templates...')
-  for (const [index, category] of CATEGORIES.entries()) {
-    const created = await prisma.serviceCategory.upsert({
-      where: { slug: slugify(category.name) },
-      update: {},
-      create: { name: category.name, slug: slugify(category.name), sort: index },
-    })
-    // Шаблоны услуг храним как справочные данные для онбординга (не как Service —
-    // Service всегда принадлежит конкретному мастеру). Пишем в отдельную JSON-таблицу
-    // не заводим ради MVP: шаблоны читаются фронтом из статического файла ниже.
-    void created
-  }
-
-  console.log('Seed finished.')
+  return seeds.flatMap((seed) =>
+    seed.templates.map((template) => ({
+      categorySlug: seed.categorySlug,
+      title: template.title,
+      durationMin: template.durationMin,
+      price: template.price,
+      priceType: 'fixed' as const,
+    })),
+  )
 }
-
-main()
-  .catch((error) => {
-    console.error(error)
-    process.exitCode = 1
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
-
-export const SERVICE_TEMPLATES = CATEGORIES

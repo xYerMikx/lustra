@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -12,9 +11,9 @@ import {
   type StepBasicsInput,
 } from '@lustra/contracts'
 
+import { buildStepBasicsDefaultValues } from '@/features/master-onboarding/model/build-step-basics-defaults'
 import {
   LOCATION_TYPE_OPTIONS,
-  readStepBasicsDraft,
   writeStepBasicsDraft,
 } from '@/features/master-onboarding/model/step-basics-draft'
 import formStyles from '@/features/auth/ui/auth-form.module.css'
@@ -29,37 +28,12 @@ type StepBasicsFormProps = {
   onSave: (input: PatchMasterProfileInput) => Promise<MasterProfileView>
 }
 
-function buildDefaultValues(
-  profile: MasterProfileView,
-  userFirstName: string,
-  districts: DistrictView[],
-): StepBasicsInput {
-  const stored = readStepBasicsDraft()
-
-  if (stored) {
-    return {
-      displayName: stored.displayName,
-      districtId: stored.districtId || districts[0]?.id || '',
-      locationType: stored.locationType,
-      headline: stored.headline,
-    }
-  }
-
-  return {
-    displayName: profile.displayName || userFirstName,
-    districtId: profile.primaryLocation?.districtId ?? districts[0]?.id ?? '',
-    locationType: profile.primaryLocation?.type ?? 'salon',
-    headline: profile.headline ?? '',
-  }
-}
-
 export function StepBasicsForm({
   profile,
   districts,
   userFirstName,
   onSave,
 }: StepBasicsFormProps) {
-  const router = useRouter()
   const [formError, setFormError] = useState<string | null>(null)
   const {
     control,
@@ -69,7 +43,7 @@ export function StepBasicsForm({
     formState: { errors, isSubmitting },
   } = useForm<StepBasicsInput>({
     resolver: zodResolver(StepBasicsInputSchema),
-    defaultValues: buildDefaultValues(profile, userFirstName, districts),
+    defaultValues: buildStepBasicsDefaultValues(profile, userFirstName, districts),
   })
 
   const values = watch()
@@ -97,8 +71,6 @@ export function StepBasicsForm({
         locationType: data.locationType,
         headline: data.headline.length > 0 ? data.headline : null,
       })
-      router.push('/app')
-      router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message)
