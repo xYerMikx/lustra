@@ -186,3 +186,57 @@
   gap: var(--spacing-12);
   align-items: center;
 }
+
+.dayList {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.dayRow {
+  display: grid;
+  grid-template-columns: 72px 1fr 1fr;
+  gap: var(--spacing-8);
+  align-items: center;
+}
+
+.dayToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: 44px;
+  color: var(--color-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  cursor: pointer;
+}
+
+.dayTimeField {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.dayTimeLabel {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
+.timeInput {
+  min-height: 44px;
+  padding: 0 var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.timeInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timeInput:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}

@@ -94,7 +94,7 @@ export class UpdateServiceUseCase {
     if (input.priceMax !== undefined || input.priceType !== undefined) {
       if (priceType !== 'range') {
         patch.priceMax = null
-      } else if (input.priceMax !== undefined) {
+      } else if (input.priceMax != null) {
         patch.priceMax = toPrismaDecimal(input.priceMax)
       } else if (existing.priceMax) {
         patch.priceMax = toPrismaDecimal(Number(existing.priceMax))
