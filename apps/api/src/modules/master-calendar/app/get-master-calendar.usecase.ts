@@ -15,7 +15,6 @@ import {
 import { MasterCalendarRepository } from '@/modules/master-calendar/infra/master-calendar.repository'
 import { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
 import {
-  MASTER_TIMEZONE,
   addDaysToYmdDate,
   zonedLocalToUtc,
 } from '@/modules/scheduling/domain/tz'
@@ -32,38 +31,38 @@ export class GetMasterCalendarUseCase {
     actor: AuthUser,
     query: MasterCalendarQuery,
   ): Promise<MasterCalendarView> {
-    const masterId = await this.calendar.findMasterIdByUserId(actor.id)
+    const master = await this.calendar.findMasterByUserId(actor.id)
 
-    if (!masterId) {
+    if (!master) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')
     }
 
     await this.ensureSlots.execute({
-      masterId,
+      masterId: master.id,
       fromYmdDate: query.from,
       toYmdDate: query.to,
     })
 
-    const granularityMin = await this.calendar.getGranularityMin(masterId)
+    const granularityMin = await this.calendar.getGranularityMin(master.id)
 
     if (granularityMin == null || !isGranularityMin(granularityMin)) {
       throw new DomainError('NOT_FOUND', 'Политика записи мастера не найдена')
     }
 
-    const rangeFrom = zonedLocalToUtc(query.from, 0, MASTER_TIMEZONE)
+    const rangeFrom = zonedLocalToUtc(query.from, 0, master.timezone)
     const rangeTo = zonedLocalToUtc(
       addDaysToYmdDate(query.to, 1),
       0,
-      MASTER_TIMEZONE,
+      master.timezone,
     )
 
     const [slots, blocks] = await Promise.all([
-      this.calendar.listSlots(masterId, rangeFrom, rangeTo),
-      this.calendar.listBlocks(masterId, rangeFrom, rangeTo),
+      this.calendar.listSlots(master.id, rangeFrom, rangeTo),
+      this.calendar.listBlocks(master.id, rangeFrom, rangeTo),
     ])
 
     return {
-      timezone: MASTER_TIMEZONE,
+      timezone: master.timezone,
       granularityMin,
       from: query.from,
       to: query.to,

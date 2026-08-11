@@ -6,6 +6,16 @@ import {
 
 export type CalendarViewMode = 'day' | 'week'
 
+const ISO_WEEKDAY_OFFSET: Record<string, number> = {
+  Mon: 0,
+  Tue: 1,
+  Wed: 2,
+  Thu: 3,
+  Fri: 4,
+  Sat: 5,
+  Sun: 6,
+}
+
 /** Monday-based week containing `ymdDate` (Europe/Minsk calendar day). */
 export function weekRangeForDate(ymdDate: string): { from: string; to: string } {
   const noonUtc = new Date(`${ymdDate}T12:00:00.000Z`)
@@ -14,16 +24,7 @@ export function weekRangeForDate(ymdDate: string): { from: string; to: string } 
     weekday: 'short',
   }).format(noonUtc)
 
-  const offsetByWeekday: Record<string, number> = {
-    Mon: 0,
-    Tue: 1,
-    Wed: 2,
-    Thu: 3,
-    Fri: 4,
-    Sat: 5,
-    Sun: 6,
-  }
-  const offset = offsetByWeekday[weekdayName] ?? 0
+  const offset = ISO_WEEKDAY_OFFSET[weekdayName] ?? 0
   const from = addDaysToYmdDate(ymdDate, -offset)
 
   return {

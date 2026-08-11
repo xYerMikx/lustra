@@ -4,6 +4,11 @@ import type {
   TimeBlockView,
 } from '@lustra/contracts'
 
+export type CalendarMasterRecord = {
+  id: string
+  timezone: string
+}
+
 export type CalendarSlotRecord = {
   id: string
   startsAt: Date
@@ -20,7 +25,7 @@ export type CalendarBlockRecord = {
 }
 
 export type MasterCalendarStore = {
-  findMasterIdByUserId(userId: string): Promise<string | null>
+  findMasterByUserId(userId: string): Promise<CalendarMasterRecord | null>
   getGranularityMin(masterId: string): Promise<number | null>
   listSlots(
     masterId: string,

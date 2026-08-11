@@ -33,6 +33,23 @@ alwaysApply: false
 - Four UI states where data loads: `loading` (skeleton), `empty`, `error` (+ retry), `success`.
 - No cards in hero; avoid generic dashboard chrome on marketing/public pages.
 - Shared interactive UI (`Button`, …) from `shared/ui` — never raw `btn btn-primary` string classes in features.
+- **No nested ternaries in JSX** — extract a small child component or early `if` returns.
+- **Pure helpers never live inside UI components** (`ui/*.tsx`). Put them in `model/` or `shared/lib/` (kebab-case file) and import. Same for date/money/formatters and form mappers.
+
+```ts
+// ❌ BAD — util buried in the component file
+export function BlockDialog() {
+  function buildIsoRange(...) { ... }
+  return <form />
+}
+
+// ✅ GOOD
+// model/build-block-iso-range.ts
+export function buildBlockIsoRange(...) { ... }
+
+// ui/block-dialog.tsx
+import { buildBlockIsoRange } from '@/features/master-calendar/model/build-block-iso-range'
+```
 
 ## State & effects
 

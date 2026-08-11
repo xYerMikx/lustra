@@ -10,7 +10,10 @@ const actor = { id: 'u1', role: 'master' as const, email: 'master.smoke.1@exampl
 describe('GetMasterCalendarUseCase', () => {
   it('returns slots and blocks for the JWT master after ensuring projection', async () => {
     const calendar: MasterCalendarStore = {
-      findMasterIdByUserId: vi.fn().mockResolvedValue('m1'),
+      findMasterByUserId: vi.fn().mockResolvedValue({
+        id: 'm1',
+        timezone: 'Europe/Minsk',
+      }),
       getGranularityMin: vi.fn().mockResolvedValue(30),
       listSlots: vi.fn().mockResolvedValue([
         {
@@ -46,6 +49,7 @@ describe('GetMasterCalendarUseCase', () => {
       fromYmdDate: '2026-08-11',
       toYmdDate: '2026-08-11',
     })
+    expect(result.timezone).toBe('Europe/Minsk')
     expect(result.granularityMin).toBe(30)
     expect(result.slots).toHaveLength(1)
     expect(result.blocks[0]?.reason).toBe('lunch')
@@ -53,7 +57,7 @@ describe('GetMasterCalendarUseCase', () => {
 
   it('rejects when master profile is missing', async () => {
     const calendar: MasterCalendarStore = {
-      findMasterIdByUserId: vi.fn().mockResolvedValue(null),
+      findMasterByUserId: vi.fn().mockResolvedValue(null),
       getGranularityMin: vi.fn(),
       listSlots: vi.fn(),
       listBlocks: vi.fn(),

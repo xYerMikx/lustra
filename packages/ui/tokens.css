@@ -21,6 +21,8 @@
   --color-warning: #d08a3a;
   --color-danger: #9e2b3f;
   --color-on-accent: #ffffff;
+  /* Scrim for dialogs / sheets — based on --color-text */
+  --color-overlay: color-mix(in srgb, var(--color-text) 40%, transparent);
 
   /* spacing — step 4 */
   --spacing-2: 2px;

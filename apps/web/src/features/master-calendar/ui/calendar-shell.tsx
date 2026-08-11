@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import cn from 'classnames'
 
-import { DayTimeline } from '@/features/master-calendar/ui/day-timeline'
-import { WeekGrid } from '@/features/master-calendar/ui/week-grid'
-import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
+import type { DayItems } from '@/features/master-calendar/model/group-calendar'
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'
 import { useCalendarData } from '@/features/master-calendar/model/use-calendar-data'
+import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { DayTimeline } from '@/features/master-calendar/ui/day-timeline'
+import { WeekGrid } from '@/features/master-calendar/ui/week-grid'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
 
@@ -26,8 +27,6 @@ export function CalendarShell() {
           calendar.range.to,
         )
 
-  const dayView = days[0]
-
   const handleRemoveBlock = async (blockId: string) => {
     setActionError(null)
 
@@ -39,6 +38,11 @@ export function CalendarShell() {
       )
     }
   }
+
+  const rangeLabel =
+    calendar.range.from === calendar.range.to
+      ? calendar.range.from
+      : `${calendar.range.from} — ${calendar.range.to}`
 
   return (
     <section className={styles.shell}>
@@ -55,14 +59,11 @@ export function CalendarShell() {
           <Button type="button" variant="ghost" onClick={calendar.goNext}>
             Вперёд
           </Button>
-          <span className={styles.rangeLabel}>
-            {calendar.range.from === calendar.range.to
-              ? calendar.range.from
-              : `${calendar.range.from} — ${calendar.range.to}`}
-          </span>
+          <span className={styles.rangeLabel}>{rangeLabel}</span>
           <div className={styles.modeSwitch} role="group" aria-label="Вид">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               className={cn(
                 styles.modeButton,
                 calendar.mode === 'day' && styles.modeButtonActive,
@@ -70,9 +71,10 @@ export function CalendarShell() {
               onClick={() => calendar.changeMode('day')}
             >
               День
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               className={cn(
                 styles.modeButton,
                 calendar.mode === 'week' && styles.modeButtonActive,
@@ -80,7 +82,7 @@ export function CalendarShell() {
               onClick={() => calendar.changeMode('week')}
             >
               Неделя
-            </button>
+            </Button>
           </div>
           <Button type="button" onClick={() => setBlockOpen(true)}>
             Блок / обед
@@ -98,38 +100,15 @@ export function CalendarShell() {
 
       {actionError ? <p className={styles.fieldError}>{actionError}</p> : null}
 
-      {calendar.status === 'loading' ? (
-        <div className={styles.stateBox}>Загружаем сетку…</div>
-      ) : null}
-
-      {calendar.status === 'error' ? (
-        <div className={styles.errorBox}>
-          <p>{calendar.errorMessage}</p>
-          <Button type="button" onClick={calendar.refresh}>
-            Повторить
-          </Button>
-        </div>
-      ) : null}
-
-      {calendar.status === 'empty' ? (
-        <div className={styles.stateBox}>
-          На этот период нет открытых окон и блоков. Задайте недельный график в
-          онбординге — слоты появятся здесь.
-        </div>
-      ) : null}
-
-      {calendar.status === 'success' || calendar.status === 'empty' ? (
-        calendar.mode === 'week' ? (
-          <WeekGrid days={days} onSelectDay={calendar.selectDay} />
-        ) : dayView ? (
-          <DayTimeline
-            date={dayView.date}
-            openSlots={dayView.openSlots}
-            blocks={dayView.blocks}
-            onRemoveBlock={handleRemoveBlock}
-          />
-        ) : null
-      ) : null}
+      <CalendarBody
+        status={calendar.status}
+        errorMessage={calendar.errorMessage}
+        mode={calendar.mode}
+        days={days}
+        onReload={calendar.reloadCalendar}
+        onSelectDay={calendar.selectDay}
+        onRemoveBlock={handleRemoveBlock}
+      />
 
       {blockOpen ? (
         <BlockDialog
@@ -139,5 +118,90 @@ export function CalendarShell() {
         />
       ) : null}
     </section>
+  )
+}
+
+type CalendarBodyProps = {
+  status: 'loading' | 'error' | 'empty' | 'success'
+  errorMessage: string | null
+  mode: 'day' | 'week'
+  days: DayItems[]
+  onReload: () => void
+  onSelectDay: (ymdDate: string) => void
+  onRemoveBlock: (blockId: string) => void
+}
+
+function CalendarBody({
+  status,
+  errorMessage,
+  mode,
+  days,
+  onReload,
+  onSelectDay,
+  onRemoveBlock,
+}: CalendarBodyProps) {
+  if (status === 'loading') {
+    return <div className={styles.stateBox}>Загружаем сетку…</div>
+  }
+
+  if (status === 'error') {
+    return (
+      <div className={styles.errorBox}>
+        <p>{errorMessage}</p>
+        <Button type="button" onClick={onReload}>
+          Повторить
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {status === 'empty' ? (
+        <div className={styles.stateBox}>
+          На этот период нет открытых окон и блоков. Задайте недельный график в
+          онбординге — слоты появятся здесь.
+        </div>
+      ) : null}
+      <CalendarGrid
+        mode={mode}
+        days={days}
+        onSelectDay={onSelectDay}
+        onRemoveBlock={onRemoveBlock}
+      />
+    </>
+  )
+}
+
+type CalendarGridProps = {
+  mode: 'day' | 'week'
+  days: DayItems[]
+  onSelectDay: (ymdDate: string) => void
+  onRemoveBlock: (blockId: string) => void
+}
+
+function CalendarGrid({
+  mode,
+  days,
+  onSelectDay,
+  onRemoveBlock,
+}: CalendarGridProps) {
+  if (mode === 'week') {
+    return <WeekGrid days={days} onSelectDay={onSelectDay} />
+  }
+
+  const dayView = days[0]
+
+  if (!dayView) {
+    return null
+  }
+
+  return (
+    <DayTimeline
+      date={dayView.date}
+      openSlots={dayView.openSlots}
+      blocks={dayView.blocks}
+      onRemoveBlock={onRemoveBlock}
+    />
   )
 }

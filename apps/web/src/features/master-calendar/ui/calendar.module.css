@@ -42,7 +42,7 @@
   font-size: var(--text-16);
   line-height: var(--text-16--line-height);
   color: var(--color-text-2);
-  min-width: 12rem;
+  min-width: calc(var(--spacing-96) + var(--spacing-96));
 }
 
 .modeSwitch {
@@ -57,17 +57,24 @@
   min-height: 44px;
   padding: 0 var(--spacing-16);
   border: none;
+  border-radius: 0;
   background: transparent;
   color: var(--color-text-2);
   font-size: var(--text-15);
   line-height: var(--text-15--line-height);
-  cursor: pointer;
+  box-shadow: none;
+  transform: none;
+}
+
+.modeButton:hover:not(:disabled) {
+  border-color: transparent;
+  color: var(--color-text);
+  transform: none;
 }
 
 .modeButtonActive {
   background: var(--color-surface-2);
   color: var(--color-text);
-  font-weight: var(--font-weight-600);
 }
 
 .stateBox {
@@ -218,7 +225,7 @@
 .dialogBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(34, 26, 23, 0.4);
+  background: var(--color-overlay);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -227,7 +234,7 @@
 }
 
 .dialog {
-  width: min(480px, 100%);
+  width: min(100%, calc(var(--spacing-96) * 5));
   background: var(--color-surface);
   border-radius: var(--radius-14);
   border: 1px solid var(--color-border);

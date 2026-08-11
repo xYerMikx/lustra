@@ -4,6 +4,7 @@ import { isGranularityMin } from '@lustra/contracts'
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {
   CalendarBlockRecord,
+  CalendarMasterRecord,
   CalendarSlotRecord,
   MasterCalendarStore,
 } from '@/modules/master-calendar/app/master-calendar.ports'
@@ -12,13 +13,22 @@ import type {
 export class MasterCalendarRepository implements MasterCalendarStore {
   constructor(private readonly prisma: PrismaService) {}
 
-  findMasterIdByUserId(userId: string): Promise<string | null> {
-    return this.prisma.masterProfile
-      .findUnique({
-        where: { userId },
-        select: { id: true },
-      })
-      .then((row) => row?.id ?? null)
+  async findMasterByUserId(
+    userId: string,
+  ): Promise<CalendarMasterRecord | null> {
+    const row = await this.prisma.masterProfile.findUnique({
+      where: { userId },
+      select: {
+        id: true,
+        user: { select: { timezone: true } },
+      },
+    })
+
+    if (!row) {
+      return null
+    }
+
+    return { id: row.id, timezone: row.user.timezone }
   }
 
   async getGranularityMin(masterId: string): Promise<number | null> {

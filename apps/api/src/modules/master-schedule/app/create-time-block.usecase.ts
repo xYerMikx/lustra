@@ -10,7 +10,10 @@ import {
   TIME_BLOCK_NO_OVERLAP,
 } from '@/common/db/prisma-error-codes'
 import { DomainError } from '@/common/errors/domain-error'
-import type { TimeBlockStore } from '@/modules/master-schedule/app/time-block.ports'
+import type {
+  TimeBlockRecord,
+  TimeBlockStore,
+} from '@/modules/master-schedule/app/time-block.ports'
 import { toTimeBlockView } from '@/modules/master-schedule/domain/map-time-block'
 import { TimeBlockRepository } from '@/modules/master-schedule/infra/time-block.repository'
 import { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
@@ -63,7 +66,7 @@ export class CreateTimeBlockUseCase {
       )
     }
 
-    let record
+    let record: TimeBlockRecord
 
     try {
       record = await this.blocks.create(masterId, actor.id, {

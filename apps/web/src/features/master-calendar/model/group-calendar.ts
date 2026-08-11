@@ -7,7 +7,6 @@ import type {
 import {
   MASTER_TIMEZONE,
   addDaysToYmdDate,
-  formatYmdDateInTimeZone,
   zonedLocalToUtc,
 } from '@/shared/lib/tz'
 
@@ -88,12 +87,4 @@ export function dateLabel(ymdDate: string): string {
     day: 'numeric',
     month: 'short',
   }).format(instant)
-}
-
-export function isSameYmd(a: string, b: string): boolean {
-  return a === b
-}
-
-export function ymdOfInstant(iso: string): string {
-  return formatYmdDateInTimeZone(new Date(iso), MASTER_TIMEZONE)
 }

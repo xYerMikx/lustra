@@ -99,7 +99,7 @@ export function useCalendarData() {
     setMode('day')
   }, [])
 
-  const refresh = useCallback(() => {
+  const reloadCalendar = useCallback(() => {
     setReloadToken((value) => value + 1)
   }, [])
 
@@ -128,7 +128,7 @@ export function useCalendarData() {
     goToday,
     changeMode,
     selectDay,
-    refresh,
+    reloadCalendar,
     addBlock,
     removeBlock,
   }

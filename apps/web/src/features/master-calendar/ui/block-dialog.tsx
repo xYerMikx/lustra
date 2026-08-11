@@ -8,13 +8,10 @@ import {
 } from '@lustra/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
+import { buildBlockIsoRange } from '@/features/master-calendar/model/build-block-iso-range'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
-import {
-  MASTER_TIMEZONE,
-  addDaysToYmdDate,
-  zonedLocalToUtc,
-} from '@/shared/lib/tz'
+import { zonedLocalToUtc } from '@/shared/lib/tz'
 import { Button } from '@/shared/ui/button'
 
 type BlockDialogProps = {
@@ -42,40 +39,6 @@ const REASON_OPTIONS: Array<{
   { value: 'travel', label: 'Поездка' },
   { value: 'other', label: 'Другое' },
 ]
-
-function buildIsoRange(
-  date: string,
-  allDay: boolean,
-  startTime: string,
-  endTime: string,
-): { startsAt: string; endsAt: string } {
-  if (allDay) {
-    return {
-      startsAt: zonedLocalToUtc(date, 0, MASTER_TIMEZONE).toISOString(),
-      endsAt: zonedLocalToUtc(
-        addDaysToYmdDate(date, 1),
-        0,
-        MASTER_TIMEZONE,
-      ).toISOString(),
-    }
-  }
-
-  const [startH, startM] = startTime.split(':').map(Number)
-  const [endH, endM] = endTime.split(':').map(Number)
-
-  return {
-    startsAt: zonedLocalToUtc(
-      date,
-      (startH ?? 0) * 60 + (startM ?? 0),
-      MASTER_TIMEZONE,
-    ).toISOString(),
-    endsAt: zonedLocalToUtc(
-      date,
-      (endH ?? 0) * 60 + (endM ?? 0),
-      MASTER_TIMEZONE,
-    ).toISOString(),
-  }
-}
 
 export function BlockDialog({
   defaultDate,
@@ -106,12 +69,12 @@ export function BlockDialog({
   const submitForm = handleSubmit(async (values) => {
     setFormError(null)
 
-    const range = buildIsoRange(
-      values.date,
-      values.allDay,
-      values.startTime,
-      values.endTime,
-    )
+    const range = buildBlockIsoRange({
+      date: values.date,
+      allDay: values.allDay,
+      startTime: values.startTime,
+      endTime: values.endTime,
+    })
 
     const parsed = CreateTimeBlockInputSchema.safeParse({
       startsAt: range.startsAt,
