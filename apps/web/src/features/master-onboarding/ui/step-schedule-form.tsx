@@ -10,6 +10,7 @@ import {
 } from '@lustra/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
+import { buildStepScheduleDefaults } from '@/features/master-onboarding/model/build-step-schedule-defaults'
 import {
   SCHEDULE_PRESETS,
   WEEKDAY_LABELS,
@@ -30,45 +31,13 @@ type StepScheduleFormProps = {
   onBack: () => void
 }
 
-function buildDefaults(
-  initial: MasterScheduleView | null,
-): PutMasterScheduleInput {
-  if (initial && initial.rules.length > 0) {
-    return {
-      rules: initial.rules.map((rule) => ({
-        weekday: rule.weekday,
-        startMin: rule.startMin,
-        endMin: rule.endMin,
-      })),
-      policy: {
-        granularityMin: initial.policy.granularityMin,
-        leadTimeHours: initial.policy.leadTimeHours,
-        horizonDays: initial.policy.horizonDays,
-      },
-    }
-  }
-
-  const weekdaysPreset = SCHEDULE_PRESETS.find(
-    (preset) => preset.id === 'weekdays-10-20',
-  )
-
-  return {
-    rules: weekdaysPreset?.build() ?? [],
-    policy: {
-      granularityMin: initial?.policy.granularityMin ?? 30,
-      leadTimeHours: initial?.policy.leadTimeHours ?? 3,
-      horizonDays: initial?.policy.horizonDays ?? 30,
-    },
-  }
-}
-
 export function StepScheduleForm({
   initialSchedule,
   onSave,
   onBack,
 }: StepScheduleFormProps) {
   const [formError, setFormError] = useState<string | null>(null)
-  const defaults = buildDefaults(initialSchedule)
+  const defaults = buildStepScheduleDefaults(initialSchedule)
   const [dayDrafts, setDayDrafts] = useState<Record<number, DayScheduleDraft>>(
     () => rulesToDayDrafts(defaults.rules),
   )
@@ -161,7 +130,7 @@ export function StepScheduleForm({
   return (
     <form className={formStyles.form} onSubmit={handleSubmit(submitForm)} noValidate>
       <div className={styles.templateBlock}>
-        <p className={styles.legend}>Пресеты</p>
+        <p className={styles.legend}>Быстрый выбор</p>
         <div className={styles.templateList}>
           {SCHEDULE_PRESETS.map((preset) => (
             <button

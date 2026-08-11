@@ -46,6 +46,14 @@ export function minutesToTimeInput(minutes: number): string {
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
 }
 
+function isValidHour(hours: number): boolean {
+  return Number.isInteger(hours) && hours >= 0 && hours <= 23
+}
+
+function isValidMinute(mins: number): boolean {
+  return Number.isInteger(mins) && mins >= 0 && mins <= 59
+}
+
 export function timeInputToMinutes(value: string): number | null {
   const match = /^(\d{2}):(\d{2})$/.exec(value)
 
@@ -56,14 +64,7 @@ export function timeInputToMinutes(value: string): number | null {
   const hours = Number(match[1])
   const mins = Number(match[2])
 
-  if (
-    !Number.isInteger(hours) ||
-    !Number.isInteger(mins) ||
-    hours < 0 ||
-    hours > 23 ||
-    mins < 0 ||
-    mins > 59
-  ) {
+  if (!isValidHour(hours) || !isValidMinute(mins)) {
     return null
   }
 
@@ -102,14 +103,12 @@ export function rulesToDayDrafts(
         startMin: rule.startMin,
         endMin: rule.endMin,
       }
-
-      continue
-    }
-
-    drafts[rule.weekday] = {
-      enabled: true,
-      startMin: Math.min(current.startMin, rule.startMin),
-      endMin: Math.max(current.endMin, rule.endMin),
+    } else {
+      drafts[rule.weekday] = {
+        enabled: true,
+        startMin: Math.min(current.startMin, rule.startMin),
+        endMin: Math.max(current.endMin, rule.endMin),
+      }
     }
   }
 
@@ -124,15 +123,13 @@ export function dayDraftsToRules(
   for (const day of WEEKDAY_LABELS) {
     const draft = drafts[day.weekday]
 
-    if (!draft?.enabled) {
-      continue
+    if (draft?.enabled) {
+      rules.push({
+        weekday: day.weekday,
+        startMin: draft.startMin,
+        endMin: draft.endMin,
+      })
     }
-
-    rules.push({
-      weekday: day.weekday,
-      startMin: draft.startMin,
-      endMin: draft.endMin,
-    })
   }
 
   return rules

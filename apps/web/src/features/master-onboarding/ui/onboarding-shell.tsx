@@ -1,18 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type {
   CreateServiceInput,
-  DistrictView,
   MasterProfileView,
-  MasterScheduleView,
   MeResponse,
   PatchMasterProfileInput,
   PutMasterScheduleInput,
-  ServiceCategoryView,
 } from '@lustra/contracts'
 
+import {
+  onboardingDataReducer,
+  type OnboardingDataState,
+} from '@/features/master-onboarding/model/onboarding-data-reducer'
 import {
   ONBOARDING_STEPS,
   stepStatus,
@@ -41,16 +42,7 @@ type OnboardingShellProps = {
   user: MeResponse
 }
 
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'error'; message: string }
-  | {
-      status: 'ready'
-      profile: MasterProfileView
-      districts: DistrictView[]
-      categories: ServiceCategoryView[]
-      schedule: MasterScheduleView | null
-    }
+const INITIAL_DATA_STATE: OnboardingDataState = { status: 'loading' }
 
 const STEP_CLASS = {
   done: styles.stepDone,
@@ -84,7 +76,10 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
   const router = useRouter()
   const [currentStepId, setCurrentStepId] =
     useState<OnboardingStepId>('profile')
-  const [state, setState] = useState<LoadState>({ status: 'loading' })
+  const [dataState, dispatchData] = useReducer(
+    onboardingDataReducer,
+    INITIAL_DATA_STATE,
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -102,16 +97,16 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
         }
 
         if (!profile || !districtResponse || !categoryResponse) {
-          setState({
-            status: 'error',
+          dispatchData({
+            type: 'load_failed',
             message: 'Не удалось загрузить профиль',
           })
 
           return
         }
 
-        setState({
-          status: 'ready',
+        dispatchData({
+          type: 'load_succeeded',
           profile,
           districts: districtResponse.districts,
           categories: categoryResponse.categories,
@@ -127,7 +122,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
             ? error.message
             : 'Не удалось загрузить профиль'
 
-        setState({ status: 'error', message })
+        dispatchData({ type: 'load_failed', message })
       }
     }
 
@@ -150,13 +145,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
       })
     }
 
-    setState((current) => {
-      if (current.status !== 'ready') {
-        return current
-      }
-
-      return { ...current, profile: updated }
-    })
+    dispatchData({ type: 'profile_updated', profile: updated })
     setCurrentStepId('services')
 
     return updated
@@ -187,13 +176,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
       })
     }
 
-    setState((current) => {
-      if (current.status !== 'ready') {
-        return current
-      }
-
-      return { ...current, schedule: saved }
-    })
+    dispatchData({ type: 'schedule_updated', schedule: saved })
 
     router.push('/app')
     router.refresh()
@@ -201,7 +184,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     return saved
   }
 
-  if (state.status === 'loading') {
+  if (dataState.status === 'loading') {
     return (
       <section className={styles.panel}>
         <p className={styles.copy}>Загружаем профиль…</p>
@@ -209,17 +192,17 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     )
   }
 
-  if (state.status === 'error') {
+  if (dataState.status === 'error') {
     return (
       <section className={styles.panel}>
         <p className={styles.error} role="alert">
-          {state.message}
+          {dataState.message}
         </p>
       </section>
     )
   }
 
-  const { profile, districts, categories, schedule } = state
+  const { profile, districts, categories, schedule } = dataState
   const currentStepIndex = ONBOARDING_STEPS.findIndex(
     (step) => step.id === currentStepId,
   )
