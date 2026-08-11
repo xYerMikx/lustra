@@ -6,15 +6,15 @@ import type {
   SchedulingServiceRecord,
   SchedulingStore,
 } from '@/modules/scheduling/app/scheduling.ports'
-import type { OpenGranule } from '@/modules/scheduling/domain/build-availability-windows'
+import type { OpenTimeSlot } from '@/modules/scheduling/domain/build-availability-windows'
 import type {
   ScheduleExceptionInput,
   ScheduleRuleInput,
   TimeBlockInput,
-} from '@/modules/scheduling/domain/generate-granules'
+} from '@/modules/scheduling/domain/generate-slot-starts'
 import {
   MASTER_TIMEZONE,
-  formatYmdInTimeZone,
+  formatYmdDateInTimeZone,
 } from '@/modules/scheduling/domain/tz'
 
 @Injectable()
@@ -75,15 +75,15 @@ export class SchedulingRepository implements SchedulingStore {
 
   async listExceptions(
     masterId: string,
-    fromYmd: string,
-    toYmd: string,
+    fromYmdDate: string,
+    toYmdDate: string,
   ): Promise<ScheduleExceptionInput[]> {
     const rows = await this.prisma.availabilityException.findMany({
       where: {
         masterId,
         date: {
-          gte: new Date(`${fromYmd}T00:00:00.000Z`),
-          lte: new Date(`${toYmd}T00:00:00.000Z`),
+          gte: new Date(`${fromYmdDate}T00:00:00.000Z`),
+          lte: new Date(`${toYmdDate}T00:00:00.000Z`),
         },
       },
       select: {
@@ -95,7 +95,7 @@ export class SchedulingRepository implements SchedulingStore {
     })
 
     return rows.map((row) => ({
-      dateYmd: formatYmdInTimeZone(row.date, MASTER_TIMEZONE),
+      ymdDate: formatYmdDateInTimeZone(row.date, MASTER_TIMEZONE),
       type: row.type,
       startMin: row.startMin,
       endMin: row.endMin,
@@ -119,11 +119,11 @@ export class SchedulingRepository implements SchedulingStore {
     return rows
   }
 
-  listOpenGranules(
+  listOpenTimeSlots(
     masterId: string,
     from: Date,
     to: Date,
-  ): Promise<OpenGranule[]> {
+  ): Promise<OpenTimeSlot[]> {
     return this.prisma.timeSlot.findMany({
       where: {
         masterId,
@@ -135,7 +135,7 @@ export class SchedulingRepository implements SchedulingStore {
     })
   }
 
-  async upsertOpenGranules(
+  async upsertOpenTimeSlots(
     masterId: string,
     starts: Date[],
     granularityMin: number,
@@ -155,7 +155,7 @@ export class SchedulingRepository implements SchedulingStore {
     })
   }
 
-  async deleteMissingOpenGranules(
+  async deleteMissingOpenTimeSlots(
     masterId: string,
     rangeFrom: Date,
     rangeTo: Date,

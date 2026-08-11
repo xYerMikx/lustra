@@ -58,6 +58,7 @@ export {
 export {
   WeekdaySchema,
   GranularityMinSchema,
+  isGranularityMin,
   AvailabilityRuleViewSchema,
   MasterSchedulePolicyViewSchema,
   MasterScheduleViewSchema,

@@ -2,19 +2,19 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { ClockService } from '@/common/time/clock.service'
 import type { SchedulingStore } from '@/modules/scheduling/app/scheduling.ports'
-import { generateGranuleStarts } from '@/modules/scheduling/domain/generate-granules'
+import { generateSlotStarts } from '@/modules/scheduling/domain/generate-slot-starts'
 import {
   MASTER_TIMEZONE,
-  addDaysYmd,
-  formatYmdInTimeZone,
+  addDaysToYmdDate,
+  formatYmdDateInTimeZone,
   zonedLocalToUtc,
 } from '@/modules/scheduling/domain/tz'
 import { SchedulingRepository } from '@/modules/scheduling/infra/scheduling.repository'
 
 export type EnsureSlotsInput = {
   masterId: string
-  fromYmd: string
-  toYmd: string
+  fromYmdDate: string
+  toYmdDate: string
 }
 
 @Injectable()
@@ -35,18 +35,22 @@ export class EnsureSlotsUseCase {
     const now = this.clock.now()
     const [rules, exceptions, blocks] = await Promise.all([
       this.store.listRules(input.masterId),
-      this.store.listExceptions(input.masterId, input.fromYmd, input.toYmd),
+      this.store.listExceptions(
+        input.masterId,
+        input.fromYmdDate,
+        input.toYmdDate,
+      ),
       this.store.listBlocks(
         input.masterId,
-        zonedLocalToUtc(input.fromYmd, 0, MASTER_TIMEZONE),
-        zonedLocalToUtc(addDaysYmd(input.toYmd, 1), 0, MASTER_TIMEZONE),
+        zonedLocalToUtc(input.fromYmdDate, 0, MASTER_TIMEZONE),
+        zonedLocalToUtc(addDaysToYmdDate(input.toYmdDate, 1), 0, MASTER_TIMEZONE),
       ),
     ])
 
-    const starts = generateGranuleStarts({
+    const starts = generateSlotStarts({
       now,
-      fromYmd: input.fromYmd,
-      toYmd: input.toYmd,
+      fromYmdDate: input.fromYmdDate,
+      toYmdDate: input.toYmdDate,
       granularityMin: policy.granularityMin,
       maxHorizonDays: policy.maxHorizonDays,
       rules,
@@ -55,24 +59,24 @@ export class EnsureSlotsUseCase {
       timeZone: MASTER_TIMEZONE,
     })
 
-    const todayYmd = formatYmdInTimeZone(now, MASTER_TIMEZONE)
+    const todayYmdDate = formatYmdDateInTimeZone(now, MASTER_TIMEZONE)
     const rangeFrom = zonedLocalToUtc(
-      input.fromYmd < todayYmd ? todayYmd : input.fromYmd,
+      input.fromYmdDate < todayYmdDate ? todayYmdDate : input.fromYmdDate,
       0,
       MASTER_TIMEZONE,
     )
     const rangeTo = zonedLocalToUtc(
-      addDaysYmd(input.toYmd, 1),
+      addDaysToYmdDate(input.toYmdDate, 1),
       0,
       MASTER_TIMEZONE,
     )
 
-    await this.store.upsertOpenGranules(
+    await this.store.upsertOpenTimeSlots(
       input.masterId,
       starts,
       policy.granularityMin,
     )
-    await this.store.deleteMissingOpenGranules(
+    await this.store.deleteMissingOpenTimeSlots(
       input.masterId,
       rangeFrom,
       rangeTo,

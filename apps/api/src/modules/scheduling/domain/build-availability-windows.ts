@@ -1,9 +1,10 @@
 import {
   MASTER_TIMEZONE,
-  formatYmdInTimeZone,
+  formatYmdDateInTimeZone,
 } from '@/modules/scheduling/domain/tz'
 
-export type OpenGranule = {
+/** Open TimeSlot row used to assemble bookable service windows. */
+export type OpenTimeSlot = {
   id: string
   startsAt: Date
   endsAt: Date
@@ -13,11 +14,11 @@ export type BookableWindow = {
   startsAt: Date
   endsAt: Date
   slotIds: string[]
-  dateYmd: string
+  ymdDate: string
 }
 
 export type BuildWindowsInput = {
-  granules: OpenGranule[]
+  openTimeSlots: OpenTimeSlot[]
   durationMin: number
   bufferAfterMin: number
   granularityMin: number
@@ -27,8 +28,8 @@ export type BuildWindowsInput = {
 }
 
 /**
- * Builds service-length bookable windows from open granules.
- * Needs enough consecutive granules to cover duration + bufferAfter.
+ * Builds service-length bookable windows from open TimeSlots.
+ * Needs enough consecutive slots to cover duration + bufferAfter.
  * Displayed endsAt is startsAt + duration (buffer is occupancy only).
  */
 export function buildBookableWindows(input: BuildWindowsInput): BookableWindow[] {
@@ -36,11 +37,11 @@ export function buildBookableWindows(input: BuildWindowsInput): BookableWindow[]
   const needMin = input.durationMin + input.bufferAfterMin
   const needCount = Math.ceil(needMin / input.granularityMin)
 
-  if (needCount <= 0 || input.granules.length === 0) {
+  if (needCount <= 0 || input.openTimeSlots.length === 0) {
     return []
   }
 
-  const sorted = [...input.granules].sort(
+  const sorted = [...input.openTimeSlots].sort(
     (a, b) => a.startsAt.getTime() - b.startsAt.getTime(),
   )
   const earliestStart = new Date(
@@ -72,14 +73,14 @@ export function buildBookableWindows(input: BuildWindowsInput): BookableWindow[]
       startsAt: first.startsAt,
       endsAt,
       slotIds: slice.map((item) => item.id),
-      dateYmd: formatYmdInTimeZone(first.startsAt, timeZone),
+      ymdDate: formatYmdDateInTimeZone(first.startsAt, timeZone),
     })
   }
 
   return windows
 }
 
-function isConsecutive(slice: OpenGranule[], stepMs: number): boolean {
+function isConsecutive(slice: OpenTimeSlot[], stepMs: number): boolean {
   for (let i = 1; i < slice.length; i += 1) {
     const prev = slice[i - 1]
     const current = slice[i]

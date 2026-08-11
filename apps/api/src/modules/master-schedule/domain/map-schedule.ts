@@ -1,7 +1,8 @@
-import type {
-  AvailabilityRuleView,
-  MasterSchedulePolicyView,
-  MasterScheduleView,
+import {
+  isGranularityMin,
+  type AvailabilityRuleView,
+  type MasterSchedulePolicyView,
+  type MasterScheduleView,
 } from '@lustra/contracts'
 import type { AvailabilityRule, MasterBookingPolicy } from '@lustra/db'
 
@@ -27,7 +28,7 @@ export function toAvailabilityRuleView(row: ScheduleRuleRecord): AvailabilityRul
 export function toSchedulePolicyView(row: SchedulePolicyRecord): MasterSchedulePolicyView {
   const granularityMin = row.granularityMin
 
-  if (granularityMin !== 15 && granularityMin !== 30 && granularityMin !== 60) {
+  if (!isGranularityMin(granularityMin)) {
     throw new Error(`Unexpected granularityMin: ${granularityMin}`)
   }
 

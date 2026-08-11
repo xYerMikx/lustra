@@ -9,7 +9,7 @@ import {
 describe('buildBookableWindows', () => {
   const now = zonedLocalToUtc('2026-08-10', 8 * 60, MASTER_TIMEZONE)
 
-  function granule(startMin: number, id: string) {
+  function openTimeSlot(startMin: number, id: string) {
     const startsAt = zonedLocalToUtc('2026-08-10', startMin, MASTER_TIMEZONE)
 
     return {
@@ -19,13 +19,13 @@ describe('buildBookableWindows', () => {
     }
   }
 
-  it('requires enough consecutive granules for service duration', () => {
+  it('requires enough consecutive TimeSlots for service duration', () => {
     const windows = buildBookableWindows({
-      granules: [
-        granule(600, 'a'),
-        granule(630, 'b'),
-        granule(660, 'c'),
-        granule(690, 'd'),
+      openTimeSlots: [
+        openTimeSlot(600, 'a'),
+        openTimeSlot(630, 'b'),
+        openTimeSlot(660, 'c'),
+        openTimeSlot(690, 'd'),
       ],
       durationMin: 90,
       bufferAfterMin: 0,
@@ -47,7 +47,7 @@ describe('buildBookableWindows', () => {
 
   it('does not offer a 90-min service when only 60 min remain', () => {
     const windows = buildBookableWindows({
-      granules: [granule(600, 'a'), granule(630, 'b')],
+      openTimeSlots: [openTimeSlot(600, 'a'), openTimeSlot(630, 'b')],
       durationMin: 90,
       bufferAfterMin: 0,
       granularityMin: 30,
@@ -60,14 +60,14 @@ describe('buildBookableWindows', () => {
 
   it('applies lead time against injected now', () => {
     const windows = buildBookableWindows({
-      granules: [
-        granule(600, 'a'),
-        granule(630, 'b'),
-        granule(660, 'c'),
-        granule(690, 'd'),
-        granule(720, 'e'),
-        granule(750, 'f'),
-        granule(780, 'g'),
+      openTimeSlots: [
+        openTimeSlot(600, 'a'),
+        openTimeSlot(630, 'b'),
+        openTimeSlot(660, 'c'),
+        openTimeSlot(690, 'd'),
+        openTimeSlot(720, 'e'),
+        openTimeSlot(750, 'f'),
+        openTimeSlot(780, 'g'),
       ],
       durationMin: 90,
       bufferAfterMin: 0,
@@ -76,19 +76,18 @@ describe('buildBookableWindows', () => {
       minLeadTimeMin: 180,
     })
 
-    // earliest = 12:00 local → first window at 12:00 (720)
     expect(windows[0]?.startsAt.toISOString()).toBe(
       zonedLocalToUtc('2026-08-10', 720, MASTER_TIMEZONE).toISOString(),
     )
   })
 
-  it('includes bufferAfter when counting needed granules', () => {
+  it('includes bufferAfter when counting needed TimeSlots', () => {
     const windows = buildBookableWindows({
-      granules: [
-        granule(600, 'a'),
-        granule(630, 'b'),
-        granule(660, 'c'),
-        granule(690, 'd'),
+      openTimeSlots: [
+        openTimeSlot(600, 'a'),
+        openTimeSlot(630, 'b'),
+        openTimeSlot(660, 'c'),
+        openTimeSlot(690, 'd'),
       ],
       durationMin: 90,
       bufferAfterMin: 30,

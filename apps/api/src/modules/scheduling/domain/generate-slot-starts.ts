@@ -1,11 +1,11 @@
 import {
   MASTER_TIMEZONE,
-  addDaysYmd,
-  eachYmd,
-  formatYmdInTimeZone,
-  isoWeekdayForYmd,
-  maxYmd,
-  minYmd,
+  addDaysToYmdDate,
+  eachYmdDate,
+  formatYmdDateInTimeZone,
+  isoWeekdayForYmdDate,
+  maxYmdDate,
+  minYmdDate,
   zonedLocalToUtc,
 } from '@/modules/scheduling/domain/tz'
 
@@ -18,7 +18,7 @@ export type ScheduleRuleInput = {
 }
 
 export type ScheduleExceptionInput = {
-  dateYmd: string
+  ymdDate: string
   type: 'day_off' | 'custom_hours'
   startMin?: number | null
   endMin?: number | null
@@ -34,10 +34,10 @@ export type LocalInterval = {
   endMin: number
 }
 
-export type GenerateGranulesInput = {
+export type GenerateSlotStartsInput = {
   now: Date
-  fromYmd: string
-  toYmd: string
+  fromYmdDate: string
+  toYmdDate: string
   granularityMin: number
   maxHorizonDays: number
   rules: ScheduleRuleInput[]
@@ -47,41 +47,41 @@ export type GenerateGranulesInput = {
 }
 
 /**
- * Pure SlotGenerator core: local rules/exceptions/blocks → UTC granule starts.
+ * Pure SlotGenerator core: local rules/exceptions/blocks → UTC TimeSlot starts.
  * Grid aligns to each working interval start (not midnight).
  */
-export function generateGranuleStarts(input: GenerateGranulesInput): Date[] {
+export function generateSlotStarts(input: GenerateSlotStartsInput): Date[] {
   const timeZone = input.timeZone ?? MASTER_TIMEZONE
-  const todayYmd = formatYmdInTimeZone(input.now, timeZone)
-  const horizonEndYmd = addDaysYmd(todayYmd, input.maxHorizonDays)
-  const rangeStart = maxYmd(input.fromYmd, todayYmd)
-  const rangeEnd = minYmd(input.toYmd, horizonEndYmd)
+  const todayYmdDate = formatYmdDateInTimeZone(input.now, timeZone)
+  const horizonEndYmdDate = addDaysToYmdDate(todayYmdDate, input.maxHorizonDays)
+  const rangeStart = maxYmdDate(input.fromYmdDate, todayYmdDate)
+  const rangeEnd = minYmdDate(input.toYmdDate, horizonEndYmdDate)
 
   if (rangeStart > rangeEnd) {
     return []
   }
 
   const exceptionByDate = new Map(
-    input.exceptions.map((item) => [item.dateYmd, item]),
+    input.exceptions.map((item) => [item.ymdDate, item]),
   )
   const starts: Date[] = []
 
-  for (const ymd of eachYmd(rangeStart, rangeEnd)) {
+  for (const ymdDate of eachYmdDate(rangeStart, rangeEnd)) {
     const intervals = resolveDayIntervals(
-      ymd,
+      ymdDate,
       input.rules,
       exceptionByDate,
       timeZone,
     )
-    const dayStartUtc = zonedLocalToUtc(ymd, 0, timeZone)
-    const dayEndUtc = zonedLocalToUtc(addDaysYmd(ymd, 1), 0, timeZone)
+    const dayStartUtc = zonedLocalToUtc(ymdDate, 0, timeZone)
+    const dayEndUtc = zonedLocalToUtc(addDaysToYmdDate(ymdDate, 1), 0, timeZone)
     const dayBlocks = input.blocks.filter(
       (block) => block.startsAt < dayEndUtc && block.endsAt > dayStartUtc,
     )
 
     for (const interval of intervals) {
       const freeParts = subtractBlocksFromInterval(
-        ymd,
+        ymdDate,
         interval,
         dayBlocks,
         timeZone,
@@ -93,7 +93,7 @@ export function generateGranuleStarts(input: GenerateGranulesInput): Date[] {
           cursor + input.granularityMin <= part.endMin;
           cursor += input.granularityMin
         ) {
-          starts.push(zonedLocalToUtc(ymd, cursor, timeZone))
+          starts.push(zonedLocalToUtc(ymdDate, cursor, timeZone))
         }
       }
     }
@@ -103,12 +103,12 @@ export function generateGranuleStarts(input: GenerateGranulesInput): Date[] {
 }
 
 function resolveDayIntervals(
-  ymd: string,
+  ymdDate: string,
   rules: ScheduleRuleInput[],
   exceptionByDate: Map<string, ScheduleExceptionInput>,
   timeZone: string,
 ): LocalInterval[] {
-  const exception = exceptionByDate.get(ymd)
+  const exception = exceptionByDate.get(ymdDate)
 
   if (exception?.type === 'day_off') {
     return []
@@ -126,24 +126,24 @@ function resolveDayIntervals(
     return [{ startMin: exception.startMin, endMin: exception.endMin }]
   }
 
-  const weekday = isoWeekdayForYmd(ymd, timeZone)
+  const weekday = isoWeekdayForYmdDate(ymdDate, timeZone)
   const dayRules = rules.filter((rule) => {
     if (rule.weekday !== weekday) {
       return false
     }
 
     if (rule.activeFrom) {
-      const fromYmd = formatYmdInTimeZone(rule.activeFrom, timeZone)
+      const fromYmdDate = formatYmdDateInTimeZone(rule.activeFrom, timeZone)
 
-      if (ymd < fromYmd) {
+      if (ymdDate < fromYmdDate) {
         return false
       }
     }
 
     if (rule.activeTo) {
-      const toYmd = formatYmdInTimeZone(rule.activeTo, timeZone)
+      const toYmdDate = formatYmdDateInTimeZone(rule.activeTo, timeZone)
 
-      if (ymd > toYmd) {
+      if (ymdDate > toYmdDate) {
         return false
       }
     }
@@ -157,7 +157,7 @@ function resolveDayIntervals(
 }
 
 function subtractBlocksFromInterval(
-  ymd: string,
+  ymdDate: string,
   interval: LocalInterval,
   blocks: TimeBlockInput[],
   timeZone: string,
@@ -165,8 +165,8 @@ function subtractBlocksFromInterval(
   let parts: LocalInterval[] = [interval]
 
   for (const block of blocks) {
-    const blockStartMin = utcToLocalMinuteOfDay(block.startsAt, ymd, timeZone)
-    const blockEndMin = utcToLocalMinuteOfDay(block.endsAt, ymd, timeZone)
+    const blockStartMin = utcToLocalMinuteOfDay(block.startsAt, ymdDate, timeZone)
+    const blockEndMin = utcToLocalMinuteOfDay(block.endsAt, ymdDate, timeZone)
     const next: LocalInterval[] = []
 
     for (const part of parts) {
@@ -194,11 +194,11 @@ function subtractBlocksFromInterval(
 
 function utcToLocalMinuteOfDay(
   instant: Date,
-  ymd: string,
+  ymdDate: string,
   timeZone: string,
 ): number {
-  const dayStart = zonedLocalToUtc(ymd, 0, timeZone)
-  const dayEnd = zonedLocalToUtc(addDaysYmd(ymd, 1), 0, timeZone)
+  const dayStart = zonedLocalToUtc(ymdDate, 0, timeZone)
+  const dayEnd = zonedLocalToUtc(addDaysToYmdDate(ymdDate, 1), 0, timeZone)
 
   if (instant <= dayStart) {
     return 0

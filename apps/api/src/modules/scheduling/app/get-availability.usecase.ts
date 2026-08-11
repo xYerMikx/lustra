@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type {
-  AvailabilityQuery,
-  AvailabilityResponse,
+import {
+  isGranularityMin,
+  type AvailabilityQuery,
+  type AvailabilityResponse,
 } from '@lustra/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
@@ -11,11 +12,11 @@ import type { SchedulingStore } from '@/modules/scheduling/app/scheduling.ports'
 import { buildBookableWindows } from '@/modules/scheduling/domain/build-availability-windows'
 import {
   MASTER_TIMEZONE,
-  addDaysYmd,
-  eachYmd,
-  maxYmd,
-  minYmd,
-  formatYmdInTimeZone,
+  addDaysToYmdDate,
+  eachYmdDate,
+  formatYmdDateInTimeZone,
+  maxYmdDate,
+  minYmdDate,
   zonedLocalToUtc,
 } from '@/modules/scheduling/domain/tz'
 import { SchedulingRepository } from '@/modules/scheduling/infra/scheduling.repository'
@@ -51,25 +52,24 @@ export class GetAvailabilityUseCase {
       throw new DomainError('NOT_FOUND', 'Политика бронирования не найдена')
     }
 
-    if (
-      policy.granularityMin !== 15 &&
-      policy.granularityMin !== 30 &&
-      policy.granularityMin !== 60
-    ) {
+    if (!isGranularityMin(policy.granularityMin)) {
       throw new DomainError('VALIDATION_FAILED', 'Некорректный шаг сетки')
     }
 
     await this.ensureSlots.execute({
       masterId,
-      fromYmd: query.from,
-      toYmd: query.to,
+      fromYmdDate: query.from,
+      toYmdDate: query.to,
     })
 
     const now = this.clock.now()
-    const todayYmd = formatYmdInTimeZone(now, MASTER_TIMEZONE)
-    const horizonEndYmd = addDaysYmd(todayYmd, policy.maxHorizonDays)
-    const rangeStart = maxYmd(query.from, todayYmd)
-    const rangeEnd = minYmd(query.to, horizonEndYmd)
+    const todayYmdDate = formatYmdDateInTimeZone(now, MASTER_TIMEZONE)
+    const horizonEndYmdDate = addDaysToYmdDate(
+      todayYmdDate,
+      policy.maxHorizonDays,
+    )
+    const rangeStart = maxYmdDate(query.from, todayYmdDate)
+    const rangeEnd = minYmdDate(query.to, horizonEndYmdDate)
 
     if (rangeStart > rangeEnd) {
       return {
@@ -77,7 +77,7 @@ export class GetAvailabilityUseCase {
         durationMin: service.durationMin,
         granularityMin: policy.granularityMin,
         timezone: MASTER_TIMEZONE,
-        days: eachYmd(query.from, query.to).map((date) => ({
+        days: eachYmdDate(query.from, query.to).map((date) => ({
           date,
           hasOpen: false,
           slots: [],
@@ -85,15 +85,15 @@ export class GetAvailabilityUseCase {
       }
     }
 
-    const granules = await this.store.listOpenGranules(
+    const openTimeSlots = await this.store.listOpenTimeSlots(
       masterId,
       zonedLocalToUtc(rangeStart, 0, MASTER_TIMEZONE),
-      zonedLocalToUtc(addDaysYmd(rangeEnd, 1), 0, MASTER_TIMEZONE),
+      zonedLocalToUtc(addDaysToYmdDate(rangeEnd, 1), 0, MASTER_TIMEZONE),
     )
 
     const bufferAfterMin = service.bufferAfterMin + policy.bufferAfterMin
     const windows = buildBookableWindows({
-      granules,
+      openTimeSlots,
       durationMin: service.durationMin,
       bufferAfterMin,
       granularityMin: policy.granularityMin,
@@ -105,12 +105,12 @@ export class GetAvailabilityUseCase {
     const byDate = new Map<string, typeof windows>()
 
     for (const window of windows) {
-      const list = byDate.get(window.dateYmd) ?? []
+      const list = byDate.get(window.ymdDate) ?? []
       list.push(window)
-      byDate.set(window.dateYmd, list)
+      byDate.set(window.ymdDate, list)
     }
 
-    const days = eachYmd(query.from, query.to).map((date) => {
+    const days = eachYmdDate(query.from, query.to).map((date) => {
       const slots = (byDate.get(date) ?? []).map((window) => ({
         startsAt: window.startsAt.toISOString(),
         endsAt: window.endsAt.toISOString(),

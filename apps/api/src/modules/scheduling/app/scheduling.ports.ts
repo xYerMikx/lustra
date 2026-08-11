@@ -2,8 +2,8 @@ import type {
   ScheduleExceptionInput,
   ScheduleRuleInput,
   TimeBlockInput,
-} from '@/modules/scheduling/domain/generate-granules'
-import type { OpenGranule } from '@/modules/scheduling/domain/build-availability-windows'
+} from '@/modules/scheduling/domain/generate-slot-starts'
+import type { OpenTimeSlot } from '@/modules/scheduling/domain/build-availability-windows'
 
 export type SchedulingPolicyRecord = {
   granularityMin: number
@@ -27,25 +27,25 @@ export type SchedulingStore = {
   listRules(masterId: string): Promise<ScheduleRuleInput[]>
   listExceptions(
     masterId: string,
-    fromYmd: string,
-    toYmd: string,
+    fromYmdDate: string,
+    toYmdDate: string,
   ): Promise<ScheduleExceptionInput[]>
   listBlocks(
     masterId: string,
     from: Date,
     to: Date,
   ): Promise<TimeBlockInput[]>
-  listOpenGranules(
+  listOpenTimeSlots(
     masterId: string,
     from: Date,
     to: Date,
-  ): Promise<OpenGranule[]>
-  upsertOpenGranules(
+  ): Promise<OpenTimeSlot[]>
+  upsertOpenTimeSlots(
     masterId: string,
     starts: Date[],
     granularityMin: number,
   ): Promise<void>
-  deleteMissingOpenGranules(
+  deleteMissingOpenTimeSlots(
     masterId: string,
     rangeFrom: Date,
     rangeTo: Date,

@@ -49,7 +49,7 @@ export function getTimeZoneOffsetMs(instant: Date, timeZone: string): number {
 }
 
 /** Local calendar date `YYYY-MM-DD` in `timeZone` for a UTC instant. */
-export function formatYmdInTimeZone(instant: Date, timeZone: string): string {
+export function formatYmdDateInTimeZone(instant: Date, timeZone: string): string {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
@@ -58,28 +58,28 @@ export function formatYmdInTimeZone(instant: Date, timeZone: string): string {
   }).format(instant)
 }
 
-/** Convert local wall-clock (`ymd` + minutes-of-day) in `timeZone` to a UTC Date. */
+/** Convert local wall-clock (`ymdDate` + minutes-of-day) in `timeZone` to a UTC Date. */
 export function zonedLocalToUtc(
-  ymd: string,
+  ymdDate: string,
   minuteOfDay: number,
   timeZone: string,
 ): Date {
   const hours = Math.floor(minuteOfDay / 60)
   const minutes = minuteOfDay % 60
-  const guess = new Date(`${ymd}T${pad2(hours)}:${pad2(minutes)}:00.000Z`)
+  const guess = new Date(`${ymdDate}T${pad2(hours)}:${pad2(minutes)}:00.000Z`)
   const offsetMs = getTimeZoneOffsetMs(guess, timeZone)
 
   return new Date(guess.getTime() - offsetMs)
 }
 
-export function addDaysYmd(ymd: string, days: number): string {
-  const [year, month, day] = ymd.split('-').map(Number)
+export function addDaysToYmdDate(ymdDate: string, days: number): string {
+  const [year, month, day] = ymdDate.split('-').map(Number)
   const utc = new Date(Date.UTC(year!, month! - 1, day! + days))
 
   return `${utc.getUTCFullYear()}-${pad2(utc.getUTCMonth() + 1)}-${pad2(utc.getUTCDate())}`
 }
 
-export function compareYmd(a: string, b: string): number {
+export function compareYmdDate(a: string, b: string): number {
   if (a < b) {
     return -1
   }
@@ -91,29 +91,29 @@ export function compareYmd(a: string, b: string): number {
   return 0
 }
 
-export function maxYmd(a: string, b: string): string {
-  return compareYmd(a, b) >= 0 ? a : b
+export function maxYmdDate(a: string, b: string): string {
+  return compareYmdDate(a, b) >= 0 ? a : b
 }
 
-export function minYmd(a: string, b: string): string {
-  return compareYmd(a, b) <= 0 ? a : b
+export function minYmdDate(a: string, b: string): string {
+  return compareYmdDate(a, b) <= 0 ? a : b
 }
 
-export function eachYmd(fromYmd: string, toYmd: string): string[] {
+export function eachYmdDate(fromYmdDate: string, toYmdDate: string): string[] {
   const days: string[] = []
-  let cursor = fromYmd
+  let cursor = fromYmdDate
 
-  while (compareYmd(cursor, toYmd) <= 0) {
+  while (compareYmdDate(cursor, toYmdDate) <= 0) {
     days.push(cursor)
-    cursor = addDaysYmd(cursor, 1)
+    cursor = addDaysToYmdDate(cursor, 1)
   }
 
   return days
 }
 
 /** ISO weekday 1=Mon … 7=Sun for a local calendar date in `timeZone`. */
-export function isoWeekdayForYmd(ymd: string, timeZone: string): number {
-  const noonUtc = zonedLocalToUtc(ymd, 12 * 60, timeZone)
+export function isoWeekdayForYmdDate(ymdDate: string, timeZone: string): number {
+  const noonUtc = zonedLocalToUtc(ymdDate, 12 * 60, timeZone)
   const weekday = new Intl.DateTimeFormat('en-US', {
     timeZone,
     weekday: 'short',
