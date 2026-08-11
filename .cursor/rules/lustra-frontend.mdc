@@ -27,12 +27,38 @@ alwaysApply: false
 
 ## Components
 
+- **One React component per `.tsx` file** (plus its props type). If you split a child out of a shell — new kebab-case file (`calendar-body.tsx`), not a second `function` in the same module. Tiny private render helpers that are not components are still forbidden in `ui/` if they are JSX-returning components.
 - **≤ 300 lines**; split into composed children + hooks.
 - Composition over props-drilling mega-components.
 - **No render props** (`children={(x) => ...}`). Prefer context, hooks, or plain `children: ReactNode`.
 - Four UI states where data loads: `loading` (skeleton), `empty`, `error` (+ retry), `success`.
 - No cards in hero; avoid generic dashboard chrome on marketing/public pages.
 - Shared interactive UI (`Button`, …) from `shared/ui` — never raw `btn btn-primary` string classes in features.
+- **No nested ternaries in JSX** — extract a small child component (own file) or early `if` returns.
+- **Pure helpers never live inside UI components** (`ui/*.tsx`). Put them in `model/` or `shared/lib/` (kebab-case file) and import. Same for date/money/formatters and form mappers.
+
+```ts
+// ❌ BAD — util buried in the component file
+export function BlockDialog() {
+  function buildIsoRange(...) { ... }
+  return <form />
+}
+
+// ❌ BAD — two components in one file
+export function CalendarShell() { ... }
+function CalendarBody() { ... }
+
+// ✅ GOOD
+// model/build-block-iso-range.ts
+export function buildBlockIsoRange(...) { ... }
+
+// ui/calendar-body.tsx
+export function CalendarBody() { ... }
+
+// ui/calendar-shell.tsx
+import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
+import { buildBlockIsoRange } from '@/features/master-calendar/model/build-block-iso-range'
+```
 
 ## State & effects
 

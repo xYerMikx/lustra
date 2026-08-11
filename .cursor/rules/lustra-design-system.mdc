@@ -12,15 +12,15 @@ Tokens live in `packages/ui/tokens.css` (TECH-DESIGN §23). Use **only** scale v
 
 `--color-bg #FAF7F4` · `--color-surface` · `--color-surface-2 #F1E8E1` · `--color-border #E4D8CF`  
 `--color-text #221A17` · `--color-text-2` · `--color-text-3`  
-`--color-accent #C25E52` · `--color-accent-700` · `--color-gold #C6A15B` · sage/clay/status as in TECH-DESIGN §23
+`--color-accent #C25E52` · `--color-accent-700` · `--color-gold #C6A15B` · sage/clay/status as in TECH-DESIGN §23 · `--color-overlay` (dialog scrim)
 
 ## Typography
 
 - Display: **Playfair Display** (headings, prices)
 - UI: **Manrope** (body, forms) — not Inter/Roboto/Arial as primary brand face
 - Spacing/radius/shadows: numeric scales (`--spacing-12`, `--radius-8`, `--shadow-1`)
-- **No `em` / `rem`** for spacing, type, or letter-spacing — only `px` via tokens (e.g. `letter-spacing: 1px`)
-- Import tokens from `@lustra/ui/tokens.css`; do not hardcode one-off px in feature CSS
+- **No `em` / `rem`** for spacing, type, letter-spacing, or `min-width`/`max-width` — only `px` via tokens (e.g. `letter-spacing: 1px`, `min-width: var(--spacing-96)`)
+- Import tokens from `@lustra/ui/tokens.css`; do not hardcode one-off px/hex/`rgba(...)` in feature CSS — use semantic vars (`--color-overlay`, `--color-text`, …). New colors belong in `tokens.css` first.
 
 ## Visual rules
 

@@ -29,13 +29,12 @@ export default function CabinetPage() {
             <p className={styles.eyebrow}>Личный кабинет</p>
             <h1 className={styles.title}>Кабинет</h1>
             <p className={styles.copy}>
-              Здесь появится расписание, услуги и брони. Пока это заглушка для
-              навигации и локального просмотра.
+              Расписание, услуги и брони. Календарь дня и недели уже доступен.
             </p>
             <div className={styles.actions}>
-              <ButtonLink href="/catalog">К каталогу</ButtonLink>
-              <ButtonLink href="/" variant="ghost">
-                На главную
+              <ButtonLink href="/app/master/calendar">Календарь</ButtonLink>
+              <ButtonLink href="/catalog" variant="ghost">
+                К каталогу
               </ButtonLink>
             </div>
           </section>
