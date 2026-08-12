@@ -1,17 +1,17 @@
 import type { Metadata } from 'next'
 
-import { RequireSession } from '@/features/auth'
-import { CabinetHomePanel } from '@/features/booking-cabinets'
+import { RequireClientSession } from '@/features/auth'
+import { ClientBookingsShell } from '@/features/booking-cabinets'
 import { SiteChrome } from '@/shared/ui/site-chrome'
-import styles from './app.module.css'
+import styles from '@/app/app/app.module.css'
 
 export const metadata: Metadata = {
-  title: 'Кабинет',
+  title: 'Мои записи',
 }
 
-export default function CabinetPage() {
+export default function ClientBookingsPage() {
   return (
-    <RequireSession
+    <RequireClientSession
       fallback={
         <main className={styles.page}>
           <p className={styles.copy}>Проверяем сессию…</p>
@@ -23,11 +23,12 @@ export default function CabinetPage() {
           navItems={[
             { href: '/catalog', label: 'Каталог' },
             { href: '/app', label: 'Кабинет' },
+            { href: '/app/client/bookings', label: 'Записи' },
           ]}
         >
-          <CabinetHomePanel />
+          <ClientBookingsShell />
         </SiteChrome>
       </main>
-    </RequireSession>
+    </RequireClientSession>
   )
 }

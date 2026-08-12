@@ -11,6 +11,7 @@ export type BookingPolicyRecord = {
   holdTtlSec: number
   autoConfirm: boolean
   maxActiveBookingsPerClient: number
+  clientCancelCutoffMin: number
 }
 
 export type BookingServiceRecord = {
@@ -58,7 +59,26 @@ export type ConfirmHoldInput = {
   now: Date
 }
 
+export type CancelBookingStoreInput = {
+  bookingId: string
+  toStatus: Extract<BookingStatus, 'cancelled_by_client' | 'cancelled_by_master'>
+  cancelledByType: 'client' | 'master'
+  actorId: string
+  reason: string | null
+  now: Date
+}
+
+export type ConfirmPendingStoreInput = {
+  bookingId: string
+  masterId: string
+  actorId: string
+  now: Date
+}
+
+export type ListBookingsScope = 'upcoming' | 'past' | 'pending'
+
 export type BookingStore = {
+  findMasterIdByUserId(userId: string): Promise<string | null>
   findMasterPubliclyVisible(masterId: string): Promise<boolean>
   findService(
     masterId: string,
@@ -68,6 +88,18 @@ export type BookingStore = {
   findClientUser(userId: string): Promise<BookingClientUser | null>
   findBookingByIdempotencyKey(key: string): Promise<BookingRecord | null>
   findBookingById(id: string): Promise<BookingRecord | null>
+  listBookingsForClient(input: {
+    clientUserId: string
+    scope: Exclude<ListBookingsScope, 'pending'>
+    now: Date
+    limit?: number
+  }): Promise<BookingRecord[]>
+  listBookingsForMaster(input: {
+    masterId: string
+    scope: ListBookingsScope
+    now: Date
+    limit?: number
+  }): Promise<BookingRecord[]>
   countActiveBookingsForClient(
     masterId: string,
     clientUserId: string,
@@ -85,4 +117,6 @@ export type BookingStore = {
   }): Promise<HoldableSlotRow[]>
   createHold(input: CreateHoldInput): Promise<BookingRecord>
   confirmHold(input: ConfirmHoldInput): Promise<BookingRecord | null>
+  cancelBooking(input: CancelBookingStoreInput): Promise<BookingRecord | null>
+  confirmPending(input: ConfirmPendingStoreInput): Promise<BookingRecord | null>
 }
