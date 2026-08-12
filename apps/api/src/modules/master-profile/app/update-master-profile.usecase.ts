@@ -46,12 +46,27 @@ export class UpdateMasterProfileUseCase {
 
     if (input.displayName !== undefined) {
       profilePatch.displayName = input.displayName
+    }
 
-      if (input.displayName !== profile.displayName) {
-        profilePatch.slug = await resolveUniqueSlug(input.displayName, (slug) =>
-          this.profiles.isSlugTaken(slug, profile.id),
-        )
+    if (input.slug !== undefined) {
+      if (input.slug !== profile.slug) {
+        const taken = await this.profiles.isSlugTaken(input.slug, profile.id)
+
+        if (taken) {
+          throw new DomainError('VALIDATION_FAILED', 'Ссылка уже занята', {
+            fieldErrors: { slug: ['Этот адрес уже занят другим мастером'] },
+          })
+        }
       }
+
+      profilePatch.slug = input.slug
+    } else if (
+      input.displayName !== undefined &&
+      input.displayName !== profile.displayName
+    ) {
+      profilePatch.slug = await resolveUniqueSlug(input.displayName, (slug) =>
+        this.profiles.isSlugTaken(slug, profile.id),
+      )
     }
 
     if (input.headline !== undefined) {

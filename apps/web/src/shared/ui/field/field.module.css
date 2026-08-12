@@ -23,6 +23,12 @@
   line-height: var(--text-15--line-height);
 }
 
+.controlMultiline {
+  min-height: calc(var(--spacing-40) * 2);
+  padding: var(--spacing-12);
+  resize: vertical;
+}
+
 .control:focus {
   outline: 2px solid var(--color-accent);
   outline-offset: 1px;

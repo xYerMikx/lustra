@@ -5,6 +5,7 @@ import { AuthModule } from '@/modules/auth/auth.module'
 import { CatalogDistrictsController } from '@/modules/master-profile/api/catalog-districts.controller'
 import { CatalogMastersController } from '@/modules/master-profile/api/catalog-masters.controller'
 import { MasterProfileController } from '@/modules/master-profile/api/master-profile.controller'
+import { CheckSlugAvailabilityUseCase } from '@/modules/master-profile/app/check-slug-availability.usecase'
 import { GetMasterProfileUseCase } from '@/modules/master-profile/app/get-master-profile.usecase'
 import { GetPublicMasterBySlugUseCase } from '@/modules/master-profile/app/get-public-master-by-slug.usecase'
 import { ListDistrictsUseCase } from '@/modules/master-profile/app/list-districts.usecase'
@@ -29,6 +30,7 @@ import { PublicMasterRepository } from '@/modules/master-profile/infra/public-ma
     GetPublicMasterBySlugUseCase,
     SearchMastersUseCase,
     UpdateMasterProfileUseCase,
+    CheckSlugAvailabilityUseCase,
     ListDistrictsUseCase,
   ],
 })

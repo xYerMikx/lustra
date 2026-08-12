@@ -1,4 +1,5 @@
 import type {
+  CheckSlugAvailabilityResponse,
   DistrictListResponse,
   MasterProfileView,
   PatchMasterProfileInput,
@@ -15,6 +16,15 @@ export function patchMasterProfile(input: PatchMasterProfileInput) {
     method: 'PATCH',
     body: JSON.stringify(input),
   })
+}
+
+export function checkSlugAvailability(slug: string) {
+  const params = new URLSearchParams({ slug })
+
+  return apiFetch<CheckSlugAvailabilityResponse>(
+    `/master/profile/slug-availability?${params.toString()}`,
+    { method: 'GET' },
+  )
 }
 
 export function listDistricts() {

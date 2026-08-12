@@ -42,9 +42,39 @@ export const MasterProfileViewSchema = z.object({
 })
 export type MasterProfileView = z.infer<typeof MasterProfileViewSchema>
 
+/** Public URL segment for `/m/[slug]` — latin, digits, hyphens. */
+export const MasterSlugSchema = z
+  .string()
+  .trim()
+  .min(3, 'Минимум 3 символа')
+  .max(48, 'Максимум 48 символов')
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    'Только латиница, цифры и дефис (без пробелов)',
+  )
+export type MasterSlug = z.infer<typeof MasterSlugSchema>
+
+export const CheckSlugAvailabilityQuerySchema = z
+  .object({
+    slug: MasterSlugSchema,
+  })
+  .strict()
+export type CheckSlugAvailabilityQuery = z.infer<
+  typeof CheckSlugAvailabilityQuerySchema
+>
+
+export const CheckSlugAvailabilityResponseSchema = z.object({
+  slug: MasterSlugSchema,
+  available: z.boolean(),
+})
+export type CheckSlugAvailabilityResponse = z.infer<
+  typeof CheckSlugAvailabilityResponseSchema
+>
+
 export const PatchMasterProfileInputSchema = z
   .object({
     displayName: z.string().trim().min(1).max(80),
+    slug: MasterSlugSchema,
     headline: z.string().trim().max(120).nullable(),
     bio: z.string().trim().max(1000).nullable(),
     districtId: z.string().uuid(),
