@@ -30,6 +30,18 @@ export class SchedulingRepository implements SchedulingStore {
     return Boolean(row)
   }
 
+  async findMasterPubliclyVisible(masterId: string): Promise<boolean> {
+    const row = await this.prisma.masterProfile.findFirst({
+      where: {
+        id: masterId,
+        status: { in: ['pending_review', 'published'] },
+      },
+      select: { id: true },
+    })
+
+    return Boolean(row)
+  }
+
   findService(
     masterId: string,
     serviceId: string,

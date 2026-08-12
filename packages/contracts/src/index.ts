@@ -100,3 +100,15 @@ export {
   type MasterCalendarSlotView,
   type MasterCalendarView,
 } from './master-calendar'
+
+export {
+  PublicServiceViewSchema,
+  PublicMasterContactViewSchema,
+  PublicMasterViewSchema,
+  PUBLIC_MASTER_STATUSES,
+  isPublicMasterStatus,
+  type PublicServiceView,
+  type PublicMasterContactView,
+  type PublicMasterView,
+  type PublicMasterStatus,
+} from './public-master'
