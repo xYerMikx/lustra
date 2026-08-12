@@ -22,6 +22,8 @@ export type SchedulingServiceRecord = {
 
 export type SchedulingStore = {
   findMasterExists(masterId: string): Promise<boolean>
+  /** True when master is pending_review or published (deep-link / availability). */
+  findMasterPubliclyVisible(masterId: string): Promise<boolean>
   findService(masterId: string, serviceId: string): Promise<SchedulingServiceRecord | null>
   getPolicy(masterId: string): Promise<SchedulingPolicyRecord | null>
   listRules(masterId: string): Promise<ScheduleRuleInput[]>

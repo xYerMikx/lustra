@@ -34,9 +34,9 @@ export class GetAvailabilityUseCase {
     masterId: string,
     query: AvailabilityQuery,
   ): Promise<AvailabilityResponse> {
-    const exists = await this.store.findMasterExists(masterId)
+    const visible = await this.store.findMasterPubliclyVisible(masterId)
 
-    if (!exists) {
+    if (!visible) {
       throw new DomainError('NOT_FOUND', 'Мастер не найден')
     }
 
