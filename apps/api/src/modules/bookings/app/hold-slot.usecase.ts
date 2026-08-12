@@ -1,0 +1,262 @@
+import { randomUUID } from 'node:crypto'
+
+import { Inject, Injectable } from '@nestjs/common'
+import { isGranularityMin, type HoldSlotInput, type HoldSlotResponse } from '@lustra/contracts'
+
+import type { AuthUser } from '@/common/auth/auth-user'
+import {
+  BOOKING_NO_OVERLAP,
+  PRISMA_ERROR,
+} from '@/common/db/prisma-error-codes'
+import { DomainError } from '@/common/errors/domain-error'
+import { TransactionManager } from '@/common/prisma/transaction-manager.service'
+import { ClockService } from '@/common/time/clock.service'
+import type { BookingStore } from '@/modules/bookings/app/booking.ports'
+import { toBookingClientView } from '@/modules/bookings/domain/map-booking'
+import {
+  areSlotsConsecutive,
+  granuleNeedCount,
+  isSlotHoldable,
+  occupancyEndsAt,
+  serviceEndsAt,
+} from '@/modules/bookings/domain/slot-holdability'
+import { BookingRepository } from '@/modules/bookings/infra/booking.repository'
+import { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
+import {
+  MASTER_TIMEZONE,
+  addDaysToYmdDate,
+  formatYmdDateInTimeZone,
+} from '@/modules/scheduling/domain/tz'
+
+@Injectable()
+export class HoldSlotUseCase {
+  constructor(
+    @Inject(BookingRepository)
+    private readonly bookings: BookingStore,
+    private readonly tx: TransactionManager,
+    private readonly clock: ClockService,
+    private readonly ensureSlots: EnsureSlotsUseCase,
+  ) {}
+
+  async execute(
+    actor: AuthUser,
+    input: HoldSlotInput,
+    idempotencyKey: string,
+  ): Promise<HoldSlotResponse> {
+    if (!idempotencyKey.trim()) {
+      throw new DomainError('VALIDATION_FAILED', 'Нужен заголовок Idempotency-Key', {
+        fieldErrors: { 'Idempotency-Key': ['Обязательный заголовок'] },
+      })
+    }
+
+    const existing = await this.bookings.findBookingByIdempotencyKey(idempotencyKey)
+
+    if (existing) {
+      if (existing.clientUserId !== actor.id) {
+        throw new DomainError('FORBIDDEN', 'Ключ идемпотентности уже использован')
+      }
+
+      if (!existing.holdExpiresAt) {
+        throw DomainError.invalidState('Бронь по этому ключу уже подтверждена')
+      }
+
+      return {
+        bookingId: existing.id,
+        holdExpiresAt: existing.holdExpiresAt.toISOString(),
+        summary: toBookingClientView(existing),
+      }
+    }
+
+    const visible = await this.bookings.findMasterPubliclyVisible(input.masterId)
+
+    if (!visible) {
+      throw new DomainError('NOT_FOUND', 'Мастер не найден')
+    }
+
+    const service = await this.bookings.findService(input.masterId, input.serviceId)
+
+    if (!service || !service.isActive) {
+      throw new DomainError('NOT_FOUND', 'Услуга не найдена')
+    }
+
+    const policy = await this.bookings.getPolicy(input.masterId)
+
+    if (!policy) {
+      throw new DomainError('NOT_FOUND', 'Политика бронирования не найдена')
+    }
+
+    if (!isGranularityMin(policy.granularityMin)) {
+      throw new DomainError('VALIDATION_FAILED', 'Некорректный шаг сетки')
+    }
+
+    const client = await this.bookings.findClientActor(actor.id)
+
+    if (!client) {
+      throw DomainError.forbidden('Бронировать может только клиент')
+    }
+
+    const startsAt = new Date(input.startsAt)
+    const now = this.clock.now()
+    const earliest = new Date(now.getTime() + policy.minLeadTimeMin * 60_000)
+
+    if (startsAt.getTime() < earliest.getTime()) {
+      throw new DomainError(
+        'LEAD_TIME_VIOLATION',
+        'Слишком близко к началу — мастер принимает запись позже',
+      )
+    }
+
+    const todayYmd = formatYmdDateInTimeZone(now, MASTER_TIMEZONE)
+    const horizonEndYmd = addDaysToYmdDate(todayYmd, policy.maxHorizonDays)
+    const startYmd = formatYmdDateInTimeZone(startsAt, MASTER_TIMEZONE)
+
+    if (startYmd > horizonEndYmd) {
+      throw new DomainError(
+        'VALIDATION_FAILED',
+        'Дата вне горизонта записи мастера',
+      )
+    }
+
+    await this.ensureSlots.execute({
+      masterId: input.masterId,
+      fromYmdDate: startYmd,
+      toYmdDate: startYmd,
+    })
+
+    const bufferAfterMin = service.bufferAfterMin + policy.bufferAfterMin
+    const needCount = granuleNeedCount(
+      service.durationMin,
+      bufferAfterMin,
+      policy.granularityMin,
+    )
+    const rangeEndExclusive = occupancyEndsAt(
+      startsAt,
+      service.durationMin,
+      bufferAfterMin,
+    )
+    const holdId = randomUUID()
+    const holdExpiresAt = new Date(now.getTime() + policy.holdTtlSec * 1000)
+    const endsAt = serviceEndsAt(startsAt, service.durationMin)
+
+    try {
+      const booking = await this.tx.run(async () => {
+        const masterClient = await this.bookings.upsertMasterClient({
+          masterId: input.masterId,
+          userId: client.id,
+          name: client.firstName,
+          phone: client.phone,
+        })
+
+        if (masterClient.isBlocked) {
+          throw DomainError.forbidden('Мастер ограничил запись для этого клиента')
+        }
+
+        const activeCount = await this.bookings.countActiveBookingsForClient(
+          input.masterId,
+          client.id,
+        )
+
+        if (activeCount >= policy.maxActiveBookingsPerClient) {
+          throw new DomainError(
+            'LIMIT_EXCEEDED',
+            'Достигнут лимит активных записей у этого мастера',
+          )
+        }
+
+        const granules = await this.bookings.lockGranulesForUpdate({
+          masterId: input.masterId,
+          rangeStart: startsAt,
+          rangeEndExclusive,
+        })
+
+        if (
+          granules.length !== needCount ||
+          !areSlotsConsecutive(granules, policy.granularityMin)
+        ) {
+          throw DomainError.slotTaken()
+        }
+
+        const first = granules[0]
+
+        if (!first || first.startsAt.getTime() !== startsAt.getTime()) {
+          throw DomainError.slotTaken()
+        }
+
+        for (const slot of granules) {
+          if (!isSlotHoldable(slot, now)) {
+            throw DomainError.slotTaken()
+          }
+        }
+
+        return this.bookings.createHold({
+          masterId: input.masterId,
+          masterClientId: masterClient.id,
+          clientUserId: client.id,
+          serviceId: service.id,
+          serviceTitle: service.title,
+          serviceDurationMin: service.durationMin,
+          bufferMin: bufferAfterMin,
+          priceAmount: String(service.price),
+          currency: service.currency,
+          startsAt,
+          endsAt,
+          holdId,
+          holdExpiresAt,
+          idempotencyKey,
+          slotIds: granules.map((slot) => slot.id),
+        })
+      })
+
+      return {
+        bookingId: booking.id,
+        holdExpiresAt: holdExpiresAt.toISOString(),
+        summary: toBookingClientView(booking),
+      }
+    } catch (error: unknown) {
+      if (error instanceof DomainError) {
+        throw error
+      }
+
+      if (isBookingRaceConstraint(error)) {
+        throw DomainError.slotTaken()
+      }
+
+      throw error
+    }
+  }
+}
+
+function isBookingRaceConstraint(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) {
+    return false
+  }
+
+  const known = error as {
+    code?: unknown
+    meta?: { constraint?: unknown; target?: unknown }
+    message?: unknown
+  }
+
+  if (known.code === PRISMA_ERROR.UNIQUE_CONSTRAINT) {
+    return true
+  }
+
+  if (known.code !== PRISMA_ERROR.CONSTRAINT_FAILED) {
+    return false
+  }
+
+  const constraint = known.meta?.constraint
+
+  if (Array.isArray(constraint)) {
+    return constraint.includes(BOOKING_NO_OVERLAP)
+  }
+
+  if (typeof constraint === 'string') {
+    return constraint === BOOKING_NO_OVERLAP
+  }
+
+  return (
+    typeof known.message === 'string' &&
+    known.message.includes(BOOKING_NO_OVERLAP)
+  )
+}

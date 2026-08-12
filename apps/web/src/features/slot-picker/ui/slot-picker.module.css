@@ -171,3 +171,66 @@
   line-height: var(--text-13--line-height);
   color: var(--color-success);
 }
+
+.slotChipTaken {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  animation: justTakenPulse 2s ease;
+}
+
+.timer {
+  font-size: var(--text-18);
+  line-height: var(--text-18--line-height);
+  font-weight: var(--font-weight-600);
+  color: var(--color-text);
+}
+
+.timerWarn {
+  font-size: var(--text-18);
+  line-height: var(--text-18--line-height);
+  font-weight: var(--font-weight-600);
+  color: var(--color-danger);
+}
+
+.commentField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.commentInput {
+  width: 100%;
+  min-height: 88px;
+  padding: var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+}
+
+.successText {
+  font-size: var(--text-18);
+  line-height: var(--text-18--line-height);
+  color: var(--color-text);
+}
+
+@keyframes justTakenPulse {
+  0% {
+    background: color-mix(in srgb, var(--color-danger) 18%, var(--color-surface));
+  }
+
+  100% {
+    background: var(--color-bg);
+  }
+}

@@ -12,6 +12,7 @@ import styles from '@/features/slot-picker/ui/slot-picker.module.css'
 type SlotChipGridProps = {
   slots: AvailabilitySlotView[]
   selectedStartsAt: string | null
+  justTakenStartsAt?: string | null
   timezone: string
   onSelect: (slot: AvailabilitySlotView) => void
 }
@@ -19,6 +20,7 @@ type SlotChipGridProps = {
 export function SlotChipGrid({
   slots,
   selectedStartsAt,
+  justTakenStartsAt = null,
   timezone,
   onSelect,
 }: SlotChipGridProps) {
@@ -41,6 +43,7 @@ export function SlotChipGrid({
                 className={cn(
                   styles.slotChip,
                   slot.startsAt === selectedStartsAt && styles.slotChipActive,
+                  slot.startsAt === justTakenStartsAt && styles.slotChipTaken,
                 )}
                 onClick={() => onSelect(slot)}
               >

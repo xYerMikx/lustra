@@ -8,6 +8,7 @@ import { PrismaModule } from '@/common/prisma/prisma.module'
 import { TimeModule } from '@/common/time/time.module'
 import { HealthModule } from '@/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
+import { BookingsModule } from '@/modules/bookings/bookings.module'
 import { MasterCalendarModule } from '@/modules/master-calendar/master-calendar.module'
 import { MasterProfileModule } from '@/modules/master-profile/master-profile.module'
 import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.module'
@@ -35,6 +36,7 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     MasterScheduleModule,
     MasterCalendarModule,
     SchedulingModule,
+    BookingsModule,
   ],
   providers: [
     {
