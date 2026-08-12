@@ -36,3 +36,53 @@ export function saveBookingDraft(draft: BookingDraft): void {
 
   window.sessionStorage.setItem(BOOKING_DRAFT_KEY, JSON.stringify(draft))
 }
+
+export function readBookingDraft(): BookingDraft | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+
+  const raw = window.sessionStorage.getItem(BOOKING_DRAFT_KEY)
+
+  if (!raw) {
+    return null
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<BookingDraft>
+
+    if (
+      typeof parsed.masterId !== 'string' ||
+      typeof parsed.masterSlug !== 'string' ||
+      typeof parsed.serviceId !== 'string' ||
+      typeof parsed.startsAt !== 'string'
+    ) {
+      return null
+    }
+
+    return {
+      masterId: parsed.masterId,
+      masterSlug: parsed.masterSlug,
+      serviceId: parsed.serviceId,
+      startsAt: parsed.startsAt,
+    }
+  } catch {
+    return null
+  }
+}
+
+export function clearBookingDraft(): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.sessionStorage.removeItem(BOOKING_DRAFT_KEY)
+}
+
+export function buildHoldIdempotencyKey(input: {
+  masterId: string
+  serviceId: string
+  startsAt: string
+}): string {
+  return `hold:${input.masterId}:${input.serviceId}:${input.startsAt}`
+}

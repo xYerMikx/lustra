@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -24,6 +24,8 @@ const REGISTER_INTRO: Record<RegisterRole, string> = {
 
 export function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextPath = searchParams.get('next')
   const [formError, setFormError] = useState<string | null>(null)
   const {
     control,
@@ -56,7 +58,7 @@ export function RegisterForm() {
         return
       }
 
-      router.push(resolvePostAuthPath(session.user))
+      router.push(resolvePostAuthPath(session.user, nextPath))
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {

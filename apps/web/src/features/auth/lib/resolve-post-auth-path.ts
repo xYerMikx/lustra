@@ -1,6 +1,17 @@
 import type { AuthUserView } from '@lustra/contracts'
 
-export function resolvePostAuthPath(user: AuthUserView): string {
+function isSafeNextPath(value: string): boolean {
+  return value.startsWith('/') && !value.startsWith('//')
+}
+
+export function resolvePostAuthPath(
+  user: AuthUserView,
+  nextPath?: string | null,
+): string {
+  if (nextPath && isSafeNextPath(nextPath)) {
+    return nextPath
+  }
+
   if (user.role === 'master' && user.profileStatus === 'draft') {
     return '/app/onboarding'
   }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 import { LoginForm } from '@/features/auth'
 import styles from '@/features/auth/ui/auth-page.module.css'
@@ -24,7 +25,9 @@ export default function LoginPage() {
             <p className={styles.eyebrow}>Аккаунт</p>
             <h1 className={styles.title}>Вход</h1>
             <p className={styles.copy}>Войдите, чтобы открыть личный кабинет.</p>
-            <LoginForm />
+            <Suspense fallback={null}>
+              <LoginForm />
+            </Suspense>
             <p className={styles.footer}>
               Нет аккаунта?{' '}
               <Link className={styles.footerLink} href="/app/register">

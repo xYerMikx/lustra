@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 import { RegisterForm } from '@/features/auth'
 import styles from '@/features/auth/ui/auth-page.module.css'
@@ -23,7 +24,9 @@ export default function RegisterPage() {
           <section className={styles.panel}>
             <p className={styles.eyebrow}>Аккаунт</p>
             <h1 className={styles.title}>Регистрация</h1>
-            <RegisterForm />
+            <Suspense fallback={null}>
+              <RegisterForm />
+            </Suspense>
             <p className={styles.footer}>
               Уже есть аккаунт?{' '}
               <Link className={styles.footerLink} href="/app/login">

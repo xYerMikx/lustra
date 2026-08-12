@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { LoginInputSchema, type LoginInput } from '@lustra/contracts'
@@ -14,6 +14,8 @@ import { Button } from '@/shared/ui/button'
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextPath = searchParams.get('next')
   const [formError, setFormError] = useState<string | null>(null)
   const {
     register,
@@ -39,7 +41,7 @@ export function LoginForm() {
         return
       }
 
-      router.push(resolvePostAuthPath(session.user))
+      router.push(resolvePostAuthPath(session.user, nextPath))
       router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {

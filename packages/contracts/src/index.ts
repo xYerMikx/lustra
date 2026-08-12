@@ -112,3 +112,18 @@ export {
   type PublicMasterView,
   type PublicMasterStatus,
 } from './public-master'
+
+export {
+  BookingStatusSchema,
+  HoldSlotInputSchema,
+  ConfirmBookingInputSchema,
+  BookingClientViewSchema,
+  HoldSlotResponseSchema,
+  ConfirmBookingResponseSchema,
+  type BookingStatus,
+  type HoldSlotInput,
+  type ConfirmBookingInput,
+  type BookingClientView,
+  type HoldSlotResponse,
+  type ConfirmBookingResponse,
+} from './booking'

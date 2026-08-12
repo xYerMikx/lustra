@@ -8,3 +8,4 @@ export const PRISMA_ERROR = {
 export type PrismaErrorCode = (typeof PRISMA_ERROR)[keyof typeof PRISMA_ERROR]
 
 export const TIME_BLOCK_NO_OVERLAP = 'block_no_overlap'
+export const BOOKING_NO_OVERLAP = 'booking_no_overlap'
