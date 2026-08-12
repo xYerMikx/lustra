@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import {
   StepBasicsInputSchema,
   type DistrictView,
@@ -16,16 +16,18 @@ import {
   LOCATION_TYPE_OPTIONS,
   writeStepBasicsDraft,
 } from '@/features/master-onboarding/model/step-basics-draft'
-import formStyles from '@/features/auth/ui/auth-form.module.css'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { Field, TextInput } from '@/shared/ui/field'
+import { FormSelect } from '@/shared/ui/select'
 
 type StepBasicsFormProps = {
   profile: MasterProfileView
   districts: DistrictView[]
   userFirstName: string
   onSave: (input: PatchMasterProfileInput) => Promise<MasterProfileView>
+  onSkip: () => void
 }
 
 export function StepBasicsForm({
@@ -33,6 +35,7 @@ export function StepBasicsForm({
   districts,
   userFirstName,
   onSave,
+  onSkip,
 }: StepBasicsFormProps) {
   const [formError, setFormError] = useState<string | null>(null)
   const {
@@ -47,6 +50,9 @@ export function StepBasicsForm({
   })
 
   const values = watch()
+  const displayNameRegister = register('displayName')
+  const headlineRegister = register('headline')
+  const locationTypeRegister = register('locationType')
 
   useEffect(() => {
     if (!values.districtId) {
@@ -82,86 +88,103 @@ export function StepBasicsForm({
     }
   }
 
+  const districtOptions = districts.map((district) => ({
+    value: district.id,
+    label: district.name,
+  }))
+
   return (
-    <form className={formStyles.form} onSubmit={handleSubmit(submitForm)} noValidate>
-      <label className={formStyles.field}>
-        <span>Имя или бренд</span>
-        <input
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit(submitForm)}
+      noValidate
+    >
+      <Field
+        label="Имя или бренд"
+        htmlFor="onboarding-display-name"
+        error={errors.displayName?.message}
+      >
+        <TextInput
+          id="onboarding-display-name"
           type="text"
           autoComplete="organization"
-          {...register('displayName')}
+          invalid={Boolean(errors.displayName)}
+          {...displayNameRegister}
         />
-        {errors.displayName ? (
-          <span className={formStyles.fieldError}>{errors.displayName.message}</span>
-        ) : null}
-      </label>
+      </Field>
 
-      <label className={formStyles.field}>
-        <span>Район</span>
-        <select className={styles.select} {...register('districtId')}>
-          <option value="" disabled>
-            Выберите район
-          </option>
-          {districts.map((district) => (
-            <option key={district.id} value={district.id}>
-              {district.name}
-            </option>
-          ))}
-        </select>
-        {errors.districtId ? (
-          <span className={formStyles.fieldError}>{errors.districtId.message}</span>
-        ) : null}
-      </label>
+      <Field
+        label="Район"
+        htmlFor="onboarding-district"
+        error={errors.districtId?.message}
+      >
+        <FormSelect
+          id="onboarding-district"
+          control={control}
+          name="districtId"
+          options={districtOptions}
+          placeholder="Выберите район"
+        />
+      </Field>
 
       <fieldset className={styles.fieldset}>
         <legend className={styles.legend}>Формат работы</legend>
-        <Controller
-          name="locationType"
-          control={control}
-          render={({ field }) => (
-            <div className={styles.radioGroup}>
-              {LOCATION_TYPE_OPTIONS.map((option) => (
-                <label key={option.value} className={styles.radioOption}>
-                  <input
-                    className={styles.radioInput}
-                    type="radio"
-                    value={option.value}
-                    checked={field.value === option.value}
-                    onChange={() => field.onChange(option.value)}
-                  />
-                  <span>{option.label}</span>
-                </label>
-              ))}
-            </div>
-          )}
-        />
+        <div className={styles.radioGroup}>
+          {LOCATION_TYPE_OPTIONS.map((option) => (
+            <label key={option.value} className={styles.radioOption}>
+              <input
+                className={styles.radioInput}
+                type="radio"
+                value={option.value}
+                {...locationTypeRegister}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
         {errors.locationType ? (
-          <span className={formStyles.fieldError}>{errors.locationType.message}</span>
+          <span className={styles.fieldError}>{errors.locationType.message}</span>
         ) : null}
       </fieldset>
 
-      <label className={formStyles.field}>
-        <span>Короткий заголовок</span>
-        <input
+      <Field
+        label="Короткий заголовок"
+        htmlFor="onboarding-headline"
+        error={errors.headline?.message}
+      >
+        <TextInput
+          id="onboarding-headline"
           type="text"
           placeholder="Мастер маникюра, 5 лет опыта"
           maxLength={120}
-          {...register('headline')}
+          invalid={Boolean(errors.headline)}
+          {...headlineRegister}
         />
-        {errors.headline ? (
-          <span className={formStyles.fieldError}>{errors.headline.message}</span>
-        ) : null}
-      </label>
+      </Field>
 
       {formError ? (
-        <p className={formStyles.error} role="alert">
+        <p className={styles.formError} role="alert">
           {formError}
         </p>
       ) : null}
 
-      <Button type="submit" disabled={isSubmitting || !values.districtId} fullWidth>
-        {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
-      </Button>
+      <div className={styles.actions}>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onSkip}
+          disabled={isSubmitting}
+        >
+          Пропустить
+        </Button>
+        <Button
+          type="submit"
+          className={styles.actionsGrow}
+          disabled={isSubmitting || !values.districtId}
+        >
+          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
+        </Button>
+      </div>
     </form>
   )
 }

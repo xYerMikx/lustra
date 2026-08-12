@@ -11,6 +11,7 @@ import {
 } from '@lustra/contracts'
 
 import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
+import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { RoleSegment } from '@/features/auth/ui/role-segment'
 import { register as registerAccount } from '@/shared/api/auth-client'
@@ -58,6 +59,7 @@ export function RegisterForm() {
         return
       }
 
+      clearSessionCache()
       router.push(resolvePostAuthPath(session.user, nextPath))
       router.refresh()
     } catch (err) {

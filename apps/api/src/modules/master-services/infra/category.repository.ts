@@ -27,4 +27,18 @@ export class CategoryRepository {
       select: { id: true, slug: true },
     })
   }
+
+  findBySlug(slug: string): Promise<ServiceCategoryView | null> {
+    return this.prisma.serviceCategory.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        icon: true,
+        sort: true,
+        parentId: true,
+      },
+    })
+  }
 }

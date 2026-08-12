@@ -114,6 +114,15 @@ export {
 } from './public-master'
 
 export {
+  SearchMastersQuerySchema,
+  CatalogMasterCardSchema,
+  SearchMastersResponseSchema,
+  type SearchMastersQuery,
+  type CatalogMasterCard,
+  type SearchMastersResponse,
+} from './catalog'
+
+export {
   BookingStatusSchema,
   HoldSlotInputSchema,
   ConfirmBookingInputSchema,

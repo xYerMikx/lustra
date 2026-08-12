@@ -13,13 +13,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main className={styles.page}>
-      <SiteChrome
-        navItems={[
-          { href: '/', label: 'Главная' },
-          { href: '/catalog', label: 'Каталог' },
-          { href: '/app/register', label: 'Регистрация' },
-        ]}
-      >
+      <SiteChrome>
         <div className={styles.panelWrap}>
           <section className={styles.panel}>
             <p className={styles.eyebrow}>Аккаунт</p>

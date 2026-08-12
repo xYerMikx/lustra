@@ -19,14 +19,7 @@ export default function MasterBookingsPage() {
       }
     >
       <main className={styles.page}>
-        <SiteChrome
-          navItems={[
-            { href: '/catalog', label: 'Каталог' },
-            { href: '/app', label: 'Кабинет' },
-            { href: '/app/master/bookings', label: 'Записи' },
-            { href: '/app/master/calendar', label: 'Календарь' },
-          ]}
-        >
+        <SiteChrome>
           <MasterBookingsShell />
         </SiteChrome>
       </main>

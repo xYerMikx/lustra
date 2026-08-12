@@ -1,0 +1,115 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-border));
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.triggerOpen {
+  border-color: var(--color-accent);
+}
+
+.triggerInvalid {
+  border-color: var(--color-danger);
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--color-text-3);
+}
+
+.chevron {
+  flex-shrink: 0;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-right: 2px solid var(--color-text-3);
+  border-bottom: 2px solid var(--color-text-3);
+  transform: rotate(45deg);
+  transition: transform var(--duration-150) ease;
+}
+
+.chevronOpen {
+  transform: rotate(225deg);
+}
+
+.list {
+  position: absolute;
+  z-index: var(--z-30);
+  top: calc(100% + var(--spacing-4));
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: var(--spacing-4);
+  list-style: none;
+  max-height: calc(6 * var(--spacing-40));
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--spacing-12);
+  border: 0;
+  border-radius: var(--radius-4);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
+.option:hover,
+.optionActive {
+  background: var(--color-surface-2);
+}
+
+.optionSelected {
+  color: var(--color-accent-700);
+  font-weight: var(--font-weight-600);
+}

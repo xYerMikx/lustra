@@ -21,6 +21,7 @@ describe('GetPublicMasterBySlugUseCase', () => {
         contact: null,
         stats: null,
       }),
+      searchPublished: vi.fn(),
     }
 
     const useCase = new GetPublicMasterBySlugUseCase(masters)
@@ -34,6 +35,7 @@ describe('GetPublicMasterBySlugUseCase', () => {
   it('returns NOT_FOUND for missing or non-public masters', async () => {
     const masters: PublicMasterStore = {
       findPublicBySlug: vi.fn().mockResolvedValue(null),
+      searchPublished: vi.fn(),
     }
 
     const useCase = new GetPublicMasterBySlugUseCase(masters)

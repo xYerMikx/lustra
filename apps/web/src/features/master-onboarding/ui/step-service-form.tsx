@@ -10,17 +10,20 @@ import {
   type ServiceTemplateView,
   type ServiceView,
 } from '@lustra/contracts'
+import cn from 'classnames'
 
-import formStyles from '@/features/auth/ui/auth-form.module.css'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import { listServiceTemplates } from '@/shared/api/master-services-client'
 import { Button } from '@/shared/ui/button'
+import { Field, TextInput } from '@/shared/ui/field'
+import { FormSelect } from '@/shared/ui/select'
 
 type StepServiceFormProps = {
   categories: ServiceCategoryView[]
   onSave: (input: CreateServiceInput) => Promise<ServiceView>
   onBack: () => void
+  onSkip: () => void
 }
 
 const DURATION_OPTIONS = [30, 45, 60, 75, 90, 120, 150, 180] as const
@@ -29,11 +32,14 @@ export function StepServiceForm({
   categories,
   onSave,
   onBack,
+  onSkip,
 }: StepServiceFormProps) {
   const [templates, setTemplates] = useState<ServiceTemplateView[]>([])
   const [templatesLoading, setTemplatesLoading] = useState(false)
+  const [activeTemplateKey, setActiveTemplateKey] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const {
+    control,
     register,
     handleSubmit,
     watch,
@@ -52,6 +58,8 @@ export function StepServiceForm({
 
   const categoryId = watch('categoryId')
   const selectedCategory = categories.find((item) => item.id === categoryId)
+  const titleRegister = register('title')
+  const priceRegister = register('price', { valueAsNumber: true })
 
   useEffect(() => {
     if (!selectedCategory) {
@@ -98,6 +106,7 @@ export function StepServiceForm({
     setValue('durationMin', template.durationMin, { shouldValidate: true })
     setValue('price', template.price, { shouldValidate: true })
     setValue('priceType', template.priceType, { shouldValidate: true })
+    setActiveTemplateKey(`${template.categorySlug}-${template.title}`)
     setFormError(null)
   }
 
@@ -117,24 +126,35 @@ export function StepServiceForm({
     }
   }
 
+  const categoryOptions = categories.map((category) => ({
+    value: category.id,
+    label: category.name,
+  }))
+
+  const durationOptions = DURATION_OPTIONS.map((minutes) => ({
+    value: String(minutes),
+    label: `${minutes} мин`,
+  }))
+
   return (
-    <form className={formStyles.form} onSubmit={handleSubmit(submitForm)} noValidate>
-      <label className={formStyles.field}>
-        <span>Категория</span>
-        <select className={styles.select} {...register('categoryId')}>
-          <option value="" disabled>
-            Выберите категорию
-          </option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        {errors.categoryId ? (
-          <span className={formStyles.fieldError}>{errors.categoryId.message}</span>
-        ) : null}
-      </label>
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit(submitForm)}
+      noValidate
+    >
+      <Field
+        label="Категория"
+        htmlFor="onboarding-category"
+        error={errors.categoryId?.message}
+      >
+        <FormSelect
+          id="onboarding-category"
+          control={control}
+          name="categoryId"
+          options={categoryOptions}
+          placeholder="Выберите категорию"
+        />
+      </Field>
 
       <div className={styles.templateBlock}>
         <p className={styles.legend}>Шаблоны</p>
@@ -148,64 +168,74 @@ export function StepServiceForm({
         ) : null}
         {!templatesLoading && templates.length > 0 ? (
           <div className={styles.templateList}>
-            {templates.map((template) => (
-              <button
-                key={`${template.categorySlug}-${template.title}`}
-                type="button"
-                className={styles.templateChip}
-                onClick={() => applyTemplate(template)}
-              >
-                {template.title}, {template.durationMin} мин, {template.price} BYN
-              </button>
-            ))}
+            {templates.map((template) => {
+              const key = `${template.categorySlug}-${template.title}`
+
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={cn(
+                    styles.templateChip,
+                    activeTemplateKey === key && styles.templateChipActive,
+                  )}
+                  onClick={() => applyTemplate(template)}
+                >
+                  {template.title}
+                  <br />
+                  {template.durationMin} мин · {template.price} BYN
+                </button>
+              )
+            })}
           </div>
         ) : null}
       </div>
 
-      <label className={formStyles.field}>
-        <span>Название услуги</span>
-        <input
+      <Field
+        label="Название услуги"
+        htmlFor="onboarding-service-title"
+        error={errors.title?.message}
+      >
+        <TextInput
+          id="onboarding-service-title"
           type="text"
           placeholder="Маникюр комбинированный"
-          {...register('title')}
+          invalid={Boolean(errors.title)}
+          {...titleRegister}
         />
-        {errors.title ? (
-          <span className={formStyles.fieldError}>{errors.title.message}</span>
-        ) : null}
-      </label>
+      </Field>
 
-      <label className={formStyles.field}>
-        <span>Длительность</span>
-        <select
-          className={styles.select}
-          {...register('durationMin', { valueAsNumber: true })}
-        >
-          {DURATION_OPTIONS.map((minutes) => (
-            <option key={minutes} value={minutes}>
-              {minutes} мин
-            </option>
-          ))}
-        </select>
-        {errors.durationMin ? (
-          <span className={formStyles.fieldError}>{errors.durationMin.message}</span>
-        ) : null}
-      </label>
+      <Field
+        label="Длительность"
+        htmlFor="onboarding-duration"
+        error={errors.durationMin?.message}
+      >
+        <FormSelect
+          id="onboarding-duration"
+          control={control}
+          name="durationMin"
+          options={durationOptions}
+          valueAsNumber
+        />
+      </Field>
 
-      <label className={formStyles.field}>
-        <span>Цена, BYN</span>
-        <input
+      <Field
+        label="Цена, BYN"
+        htmlFor="onboarding-price"
+        error={errors.price?.message}
+      >
+        <TextInput
+          id="onboarding-price"
           type="number"
           min={1}
           step={1}
-          {...register('price', { valueAsNumber: true })}
+          invalid={Boolean(errors.price)}
+          {...priceRegister}
         />
-        {errors.price ? (
-          <span className={formStyles.fieldError}>{errors.price.message}</span>
-        ) : null}
-      </label>
+      </Field>
 
       {formError ? (
-        <p className={formStyles.error} role="alert">
+        <p className={styles.formError} role="alert">
           {formError}
         </p>
       ) : null}
@@ -214,7 +244,14 @@ export function StepServiceForm({
         <Button type="button" variant="ghost" onClick={onBack} disabled={isSubmitting}>
           Назад
         </Button>
-        <Button type="submit" disabled={isSubmitting || !categoryId}>
+        <Button type="button" variant="ghost" onClick={onSkip} disabled={isSubmitting}>
+          Пропустить
+        </Button>
+        <Button
+          type="submit"
+          className={styles.actionsGrow}
+          disabled={isSubmitting || !categoryId}
+        >
           {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
         </Button>
       </div>

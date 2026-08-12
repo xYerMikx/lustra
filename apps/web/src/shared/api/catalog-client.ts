@@ -1,7 +1,10 @@
 import type {
+  SearchMastersQuery,
+  SearchMastersResponse,
+  ServiceCategoryListResponse,
+  PublicMasterView,
   AvailabilityQuery,
   AvailabilityResponse,
-  PublicMasterView,
 } from '@lustra/contracts'
 
 import {
@@ -38,6 +41,26 @@ async function serverFetchJson<T>(path: string, init?: RequestInit): Promise<T> 
   }
 
   return payload as T
+}
+
+export function searchMasters(query: SearchMastersQuery = {}) {
+  const params = new URLSearchParams()
+
+  if (query.category) {
+    params.set('category', query.category)
+  }
+
+  if (query.district) {
+    params.set('district', query.district)
+  }
+
+  const suffix = params.size > 0 ? `?${params.toString()}` : ''
+
+  return serverFetchJson<SearchMastersResponse>(`/catalog/masters${suffix}`)
+}
+
+export function listCatalogCategories() {
+  return serverFetchJson<ServiceCategoryListResponse>('/catalog/categories')
 }
 
 export function getPublicMasterBySlug(slug: string) {

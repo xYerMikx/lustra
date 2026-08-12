@@ -46,6 +46,7 @@ describe('CreateServiceUseCase', () => {
     const categories: CategoryStore = {
       listAll: vi.fn(),
       findById: vi.fn().mockResolvedValue({ id: 'cat-1', slug: 'nogti' }),
+      findBySlug: vi.fn(),
     }
 
     const useCase = new CreateServiceUseCase(services, categories)
@@ -80,6 +81,7 @@ describe('CreateServiceUseCase', () => {
     const categories: CategoryStore = {
       listAll: vi.fn(),
       findById: vi.fn().mockResolvedValue(null),
+      findBySlug: vi.fn(),
     }
 
     const useCase = new CreateServiceUseCase(services, categories)
@@ -111,6 +113,7 @@ describe('UpdateServiceUseCase', () => {
     const categories: CategoryStore = {
       listAll: vi.fn(),
       findById: vi.fn(),
+      findBySlug: vi.fn(),
     }
 
     const useCase = new UpdateServiceUseCase(services, categories)
@@ -135,6 +138,7 @@ describe('UpdateServiceUseCase', () => {
     const categories: CategoryStore = {
       listAll: vi.fn(),
       findById: vi.fn(),
+      findBySlug: vi.fn(),
     }
 
     const useCase = new UpdateServiceUseCase(services, categories)

@@ -1,3 +1,8 @@
+import {
+  refreshAccessSession,
+  shouldAttemptSessionRefresh,
+} from '@/shared/api/session-refresh'
+
 export type ApiErrorBody = {
   error: {
     code: string
@@ -77,10 +82,10 @@ export function toApiError(status: number, payload: unknown): ApiError {
   return new ApiError(status, FALLBACK_ERROR)
 }
 
-export async function apiFetch<T = undefined>(
+async function rawApiFetch(
   path: string,
   init: RequestInit = {},
-): Promise<T | undefined> {
+): Promise<{ response: Response; payload: unknown }> {
   const headers = new Headers(init.headers)
 
   if (init.body && !headers.has('Content-Type')) {
@@ -104,14 +109,45 @@ export async function apiFetch<T = undefined>(
   })
 
   if (response.status === 204) {
-    return undefined
+    return { response, payload: null }
   }
 
   const payload = await readJsonBody(response)
 
-  if (!response.ok) {
-    throw toApiError(response.status, payload)
+  return { response, payload }
+}
+
+export async function apiFetch<T = undefined>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T | undefined> {
+  const first = await rawApiFetch(path, init)
+
+  if (first.response.status === 204) {
+    return undefined
   }
 
-  return payload as T
+  if (first.response.ok) {
+    return first.payload as T
+  }
+
+  if (shouldAttemptSessionRefresh(path, first.response.status, false)) {
+    const refreshed = await refreshAccessSession()
+
+    if (refreshed) {
+      const retry = await rawApiFetch(path, init)
+
+      if (retry.response.status === 204) {
+        return undefined
+      }
+
+      if (retry.response.ok) {
+        return retry.payload as T
+      }
+
+      throw toApiError(retry.response.status, retry.payload)
+    }
+  }
+
+  throw toApiError(first.response.status, first.payload)
 }

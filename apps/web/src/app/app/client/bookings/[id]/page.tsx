@@ -27,13 +27,7 @@ export default async function ClientBookingDetailPage({
       }
     >
       <main className={styles.page}>
-        <SiteChrome
-          navItems={[
-            { href: '/catalog', label: 'Каталог' },
-            { href: '/app', label: 'Кабинет' },
-            { href: '/app/client/bookings', label: 'Записи' },
-          ]}
-        >
+        <SiteChrome>
           <ClientBookingDetailShell bookingId={id} />
         </SiteChrome>
       </main>

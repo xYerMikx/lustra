@@ -8,6 +8,7 @@ import { MasterProfileController } from '@/modules/master-profile/api/master-pro
 import { GetMasterProfileUseCase } from '@/modules/master-profile/app/get-master-profile.usecase'
 import { GetPublicMasterBySlugUseCase } from '@/modules/master-profile/app/get-public-master-by-slug.usecase'
 import { ListDistrictsUseCase } from '@/modules/master-profile/app/list-districts.usecase'
+import { SearchMastersUseCase } from '@/modules/master-profile/app/search-masters.usecase'
 import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 import { DistrictRepository } from '@/modules/master-profile/infra/district.repository'
 import { MasterProfileRepository } from '@/modules/master-profile/infra/master-profile.repository'
@@ -26,6 +27,7 @@ import { PublicMasterRepository } from '@/modules/master-profile/infra/public-ma
     DistrictRepository,
     GetMasterProfileUseCase,
     GetPublicMasterBySlugUseCase,
+    SearchMastersUseCase,
     UpdateMasterProfileUseCase,
     ListDistrictsUseCase,
   ],

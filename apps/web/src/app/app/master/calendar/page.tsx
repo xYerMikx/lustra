@@ -19,13 +19,7 @@ export default function MasterCalendarPage() {
       }
     >
       <main className={styles.page}>
-        <SiteChrome
-          navItems={[
-            { href: '/catalog', label: 'Каталог' },
-            { href: '/app', label: 'Кабинет' },
-            { href: '/app/master/calendar', label: 'Календарь' },
-          ]}
-        >
+        <SiteChrome>
           <CalendarShell />
         </SiteChrome>
       </main>

@@ -8,8 +8,8 @@ import {
   type MasterScheduleView,
   type PutMasterScheduleInput,
 } from '@lustra/contracts'
+import cn from 'classnames'
 
-import formStyles from '@/features/auth/ui/auth-form.module.css'
 import { buildStepScheduleDefaults } from '@/features/master-onboarding/model/build-step-schedule-defaults'
 import {
   SCHEDULE_PRESETS,
@@ -24,17 +24,21 @@ import {
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { Field, TextInput } from '@/shared/ui/field'
+import { FormSelect } from '@/shared/ui/select'
 
 type StepScheduleFormProps = {
   initialSchedule: MasterScheduleView | null
   onSave: (input: PutMasterScheduleInput) => Promise<MasterScheduleView>
   onBack: () => void
+  onSkip: () => void
 }
 
 export function StepScheduleForm({
   initialSchedule,
   onSave,
   onBack,
+  onSkip,
 }: StepScheduleFormProps) {
   const [formError, setFormError] = useState<string | null>(null)
   const defaults = buildStepScheduleDefaults(initialSchedule)
@@ -43,6 +47,7 @@ export function StepScheduleForm({
   )
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
@@ -51,6 +56,9 @@ export function StepScheduleForm({
     resolver: zodResolver(PutMasterScheduleInputSchema),
     defaultValues: defaults,
   })
+
+  const leadRegister = register('policy.leadTimeHours', { valueAsNumber: true })
+  const horizonRegister = register('policy.horizonDays', { valueAsNumber: true })
 
   const syncRules = (nextDrafts: Record<number, DayScheduleDraft>) => {
     setDayDrafts(nextDrafts)
@@ -127,8 +135,18 @@ export function StepScheduleForm({
     }
   }
 
+  const granularityOptions = [
+    { value: '15', label: '15 мин' },
+    { value: '30', label: '30 мин' },
+    { value: '60', label: '60 мин' },
+  ]
+
   return (
-    <form className={formStyles.form} onSubmit={handleSubmit(submitForm)} noValidate>
+    <form
+      className={styles.form}
+      onSubmit={handleSubmit(submitForm)}
+      noValidate
+    >
       <div className={styles.templateBlock}>
         <p className={styles.legend}>Быстрый выбор</p>
         <div className={styles.templateList}>
@@ -156,11 +174,17 @@ export function StepScheduleForm({
             }
 
             return (
-              <div key={day.weekday} className={styles.dayRow}>
+              <div
+                key={day.weekday}
+                className={cn(
+                  styles.dayRow,
+                  !draft.enabled && styles.dayRowDisabled,
+                )}
+              >
                 <label className={styles.dayToggle}>
                   <input
                     type="checkbox"
-                    className={styles.radioInput}
+                    className={styles.dayCheck}
                     checked={draft.enabled}
                     onChange={(event) =>
                       toggleDay(day.weekday, event.target.checked)
@@ -168,85 +192,88 @@ export function StepScheduleForm({
                   />
                   <span>{day.label}</span>
                 </label>
-                <label className={styles.dayTimeField}>
-                  <span className={styles.dayTimeLabel}>с</span>
+                <div className={styles.dayTimes}>
                   <input
                     type="time"
                     className={styles.timeInput}
+                    aria-label={`${day.label}, с`}
                     value={minutesToTimeInput(draft.startMin)}
                     disabled={!draft.enabled}
                     onChange={(event) =>
                       changeDayTime(day.weekday, 'startMin', event.target.value)
                     }
                   />
-                </label>
-                <label className={styles.dayTimeField}>
-                  <span className={styles.dayTimeLabel}>до</span>
+                  <span className={styles.dayTimeSep} aria-hidden>
+                    —
+                  </span>
                   <input
                     type="time"
                     className={styles.timeInput}
+                    aria-label={`${day.label}, до`}
                     value={minutesToTimeInput(draft.endMin)}
                     disabled={!draft.enabled}
                     onChange={(event) =>
                       changeDayTime(day.weekday, 'endMin', event.target.value)
                     }
                   />
-                </label>
+                </div>
               </div>
             )
           })}
         </div>
         {errors.rules ? (
-          <span className={formStyles.fieldError}>
+          <span className={styles.fieldError}>
             {errors.rules.message ?? 'Проверьте интервалы'}
           </span>
         ) : null}
       </fieldset>
 
-      <label className={formStyles.field}>
-        <span>Шаг сетки, мин</span>
-        <select
-          className={styles.select}
-          {...register('policy.granularityMin', { valueAsNumber: true })}
-        >
-          <option value={15}>15</option>
-          <option value={30}>30</option>
-          <option value={60}>60</option>
-        </select>
-      </label>
+      <Field
+        label="Шаг сетки"
+        htmlFor="onboarding-granularity"
+        error={errors.policy?.granularityMin?.message}
+      >
+        <FormSelect
+          id="onboarding-granularity"
+          control={control}
+          name="policy.granularityMin"
+          options={granularityOptions}
+          valueAsNumber
+        />
+      </Field>
 
-      <label className={formStyles.field}>
-        <span>Лид-тайм, часов</span>
-        <input
+      <Field
+        label="Лид-тайм, часов"
+        htmlFor="onboarding-lead"
+        error={errors.policy?.leadTimeHours?.message}
+      >
+        <TextInput
+          id="onboarding-lead"
           type="number"
           min={0}
           max={168}
-          {...register('policy.leadTimeHours', { valueAsNumber: true })}
+          invalid={Boolean(errors.policy?.leadTimeHours)}
+          {...leadRegister}
         />
-        {errors.policy?.leadTimeHours ? (
-          <span className={formStyles.fieldError}>
-            {errors.policy.leadTimeHours.message}
-          </span>
-        ) : null}
-      </label>
+      </Field>
 
-      <label className={formStyles.field}>
-        <span>Горизонт бронирования, дней</span>
-        <input
+      <Field
+        label="Горизонт бронирования, дней"
+        htmlFor="onboarding-horizon"
+        error={errors.policy?.horizonDays?.message}
+      >
+        <TextInput
+          id="onboarding-horizon"
           type="number"
           min={1}
           max={90}
-          {...register('policy.horizonDays', { valueAsNumber: true })}
+          invalid={Boolean(errors.policy?.horizonDays)}
+          {...horizonRegister}
         />
-        {errors.policy?.horizonDays ? (
-          <span className={formStyles.fieldError}>
-            {errors.policy.horizonDays.message}
-          </span>
-        ) : null}
-      </label>
+      </Field>
 
       {formError ? (
-        <p className={formStyles.error} role="alert">
+        <p className={styles.formError} role="alert">
           {formError}
         </p>
       ) : null}
@@ -255,8 +282,11 @@ export function StepScheduleForm({
         <Button type="button" variant="ghost" onClick={onBack} disabled={isSubmitting}>
           Назад
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и перейти в кабинет'}
+        <Button type="button" variant="ghost" onClick={onSkip} disabled={isSubmitting}>
+          Пропустить
+        </Button>
+        <Button type="submit" className={styles.actionsGrow} disabled={isSubmitting}>
+          {isSubmitting ? 'Сохраняем…' : 'Сохранить и в кабинет'}
         </Button>
       </div>
     </form>

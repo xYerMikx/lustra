@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/navigation'
 import type { MeResponse } from '@lustra/contracts'
 
-import { getMe } from '@/shared/api/auth-client'
+import { loadSession } from '@/features/auth/model/load-session'
 
 const SessionContext = createContext<MeResponse | null>(null)
 
@@ -27,7 +27,7 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
   useEffect(() => {
     let cancelled = false
 
-    getMe()
+    loadSession()
       .then((me) => {
         if (cancelled) {
           return

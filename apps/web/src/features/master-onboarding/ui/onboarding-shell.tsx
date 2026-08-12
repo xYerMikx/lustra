@@ -16,9 +16,9 @@ import {
 } from '@/features/master-onboarding/model/onboarding-data-reducer'
 import {
   ONBOARDING_STEPS,
-  stepStatus,
   type OnboardingStepId,
 } from '@/features/master-onboarding/model/onboarding-steps'
+import { OnboardingProgress } from '@/features/master-onboarding/ui/onboarding-progress'
 import { StepBasicsForm } from '@/features/master-onboarding/ui/step-basics-form'
 import { StepScheduleForm } from '@/features/master-onboarding/ui/step-schedule-form'
 import { StepServiceForm } from '@/features/master-onboarding/ui/step-service-form'
@@ -44,31 +44,25 @@ type OnboardingShellProps = {
 
 const INITIAL_DATA_STATE: OnboardingDataState = { status: 'loading' }
 
-const STEP_CLASS = {
-  done: styles.stepDone,
-  active: styles.stepActive,
-  pending: styles.stepPending,
-} as const
-
 const STEP_COPY: Record<
   OnboardingStepId,
   { title: string; description: string }
 > = {
   profile: {
     title: 'Расскажите о себе',
-    description: 'имя, район и короткий заголовок для страницы',
+    description: 'Имя, район и короткий заголовок для публичной страницы',
   },
   services: {
     title: 'Добавьте первую услугу',
-    description: 'выберите шаблон или задайте название, длительность и цену',
+    description: 'Шаблон или своё название, длительность и цена',
   },
   schedule: {
     title: 'Настройте график',
-    description: 'рабочие дни, шаг сетки, лид-тайм и горизонт бронирования',
+    description: 'Рабочие дни, шаг сетки и правила записи',
   },
   portfolio: {
     title: 'Портфолио',
-    description: 'этот шаг подключим позже',
+    description: 'Этот шаг подключим позже',
   },
 }
 
@@ -133,6 +127,11 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
   }, [])
 
+  const goToCabinet = () => {
+    router.push('/app')
+    router.refresh()
+  }
+
   const saveStepBasics = async (
     input: PatchMasterProfileInput,
   ): Promise<MasterProfileView> => {
@@ -177,28 +176,30 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
 
     dispatchData({ type: 'schedule_updated', schedule: saved })
-
-    router.push('/app')
-    router.refresh()
+    goToCabinet()
 
     return saved
   }
 
   if (dataState.status === 'loading') {
     return (
-      <section className={styles.panel}>
-        <p className={styles.copy}>Загружаем профиль…</p>
-      </section>
+      <div className={styles.panelWrap}>
+        <section className={styles.panel}>
+          <p className={styles.copy}>Загружаем профиль…</p>
+        </section>
+      </div>
     )
   }
 
   if (dataState.status === 'error') {
     return (
-      <section className={styles.panel}>
-        <p className={styles.error} role="alert">
-          {dataState.message}
-        </p>
-      </section>
+      <div className={styles.panelWrap}>
+        <section className={styles.panel}>
+          <p className={styles.error} role="alert">
+            {dataState.message}
+          </p>
+        </section>
+      </div>
     )
   }
 
@@ -209,61 +210,57 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
   const stepCopy = STEP_COPY[currentStepId]
 
   return (
-    <section className={styles.panel}>
-      <p className={styles.eyebrow}>Онбординг мастера</p>
-      <h1 className={styles.title}>{stepCopy.title}</h1>
-      <p className={styles.copy}>
-        Шаг {currentStepIndex + 1} из {ONBOARDING_STEPS.length} —{' '}
+    <div className={styles.panelWrap}>
+      <section className={styles.panel}>
+        <p className={styles.eyebrow}>Быстрый онбординг · 4 шага</p>
+        <h1 className={styles.title}>{stepCopy.title}</h1>
+        <p className={styles.copy}>
+          Шаг {currentStepIndex + 1} из {ONBOARDING_STEPS.length}.{' '}
+          {currentStepId === 'profile' ? (
+            <>
+              {stepCopy.description}{' '}
+              <span className={styles.slugHint}>/m/{profile.slug}</span>
+            </>
+          ) : (
+            stepCopy.description
+          )}
+        </p>
+
+        <p className={styles.skipNote}>
+          Все шаги можно пропустить и заполнить позже в кабинете — услуги,
+          график и профиль останутся доступны для редактирования.
+        </p>
+
+        <OnboardingProgress currentStepId={currentStepId} />
+
         {currentStepId === 'profile' ? (
-          <>
-            {stepCopy.description}{' '}
-            <span className={styles.slugHint}>/m/{profile.slug}</span>
-          </>
-        ) : (
-          stepCopy.description
-        )}
-      </p>
+          <StepBasicsForm
+            profile={profile}
+            districts={districts}
+            userFirstName={user.firstName}
+            onSave={saveStepBasics}
+            onSkip={goToCabinet}
+          />
+        ) : null}
 
-      <ol className={styles.steps} aria-label="Прогресс онбординга">
-        {ONBOARDING_STEPS.map((step) => {
-          const status = stepStatus(step.id, currentStepId)
+        {currentStepId === 'services' ? (
+          <StepServiceForm
+            categories={categories}
+            onSave={saveStepService}
+            onBack={() => setCurrentStepId('profile')}
+            onSkip={goToCabinet}
+          />
+        ) : null}
 
-          return (
-            <li
-              key={step.id}
-              className={STEP_CLASS[status]}
-              aria-current={status === 'active' ? 'step' : undefined}
-            >
-              {step.label}
-            </li>
-          )
-        })}
-      </ol>
-
-      {currentStepId === 'profile' ? (
-        <StepBasicsForm
-          profile={profile}
-          districts={districts}
-          userFirstName={user.firstName}
-          onSave={saveStepBasics}
-        />
-      ) : null}
-
-      {currentStepId === 'services' ? (
-        <StepServiceForm
-          categories={categories}
-          onSave={saveStepService}
-          onBack={() => setCurrentStepId('profile')}
-        />
-      ) : null}
-
-      {currentStepId === 'schedule' ? (
-        <StepScheduleForm
-          initialSchedule={schedule}
-          onSave={saveStepSchedule}
-          onBack={() => setCurrentStepId('services')}
-        />
-      ) : null}
-    </section>
+        {currentStepId === 'schedule' ? (
+          <StepScheduleForm
+            initialSchedule={schedule}
+            onSave={saveStepSchedule}
+            onBack={() => setCurrentStepId('services')}
+            onSkip={goToCabinet}
+          />
+        ) : null}
+      </section>
+    </div>
   )
 }

@@ -19,12 +19,7 @@ export default function CabinetPage() {
       }
     >
       <main className={styles.page}>
-        <SiteChrome
-          navItems={[
-            { href: '/catalog', label: 'Каталог' },
-            { href: '/app', label: 'Кабинет' },
-          ]}
-        >
+        <SiteChrome>
           <CabinetHomePanel />
         </SiteChrome>
       </main>

@@ -10,7 +10,7 @@ export function OnboardingPageClient() {
 
   return (
     <main className={styles.page}>
-      <SiteChrome navItems={[{ href: '/catalog', label: 'Каталог' }]}>
+      <SiteChrome>
         <OnboardingShell user={user} />
       </SiteChrome>
     </main>

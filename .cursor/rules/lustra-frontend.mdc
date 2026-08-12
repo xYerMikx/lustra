@@ -16,6 +16,7 @@ alwaysApply: false
 - Exported components/hooks: PascalCase / `use*` camelCase in source.
 - Event handler **props** only: `onSubmit`, `onChange`. Internal functions / consts: `submitForm`, `handleChange` — never `on*` unless it is a prop.
 - Prefer arrow functions for handlers declared inside components.
+- **No negative margins** (`margin-top: -N`) — fix layout with flex/grid/gap/padding instead.
 
 ## Imports & CSS modules
 

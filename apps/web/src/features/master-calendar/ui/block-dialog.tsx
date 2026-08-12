@@ -13,6 +13,7 @@ import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
 import { zonedLocalToUtc } from '@/shared/lib/tz'
 import { Button } from '@/shared/ui/button'
+import { FormSelect } from '@/shared/ui/select'
 
 type BlockDialogProps = {
   defaultDate: string
@@ -48,6 +49,7 @@ export function BlockDialog({
   const [formError, setFormError] = useState<string | null>(null)
 
   const {
+    control,
     register,
     handleSubmit,
     watch,
@@ -159,17 +161,15 @@ export function BlockDialog({
             <label className={styles.label} htmlFor="block-reason">
               Причина
             </label>
-            <select
+            <FormSelect
               id="block-reason"
-              className={styles.select}
-              {...register('reason')}
-            >
-              {REASON_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              control={control}
+              name="reason"
+              options={REASON_OPTIONS.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+            />
             {errors.reason ? (
               <span className={styles.fieldError}>{errors.reason.message}</span>
             ) : null}

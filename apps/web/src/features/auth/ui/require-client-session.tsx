@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/navigation'
 import type { MeResponse } from '@lustra/contracts'
 
-import { getMe } from '@/shared/api/auth-client'
+import { loadSession } from '@/features/auth/model/load-session'
 
 const ClientSessionContext = createContext<MeResponse | null>(null)
 
@@ -30,10 +30,8 @@ export function RequireClientSession({
   useEffect(() => {
     let cancelled = false
 
-    const loadSession = async () => {
-      try {
-        const me = await getMe()
-
+    loadSession()
+      .then((me) => {
         if (cancelled) {
           return
         }
@@ -52,16 +50,14 @@ export function RequireClientSession({
 
         setUser(me)
         setReady(true)
-      } catch {
+      })
+      .catch(() => {
         if (cancelled) {
           return
         }
 
         router.replace('/app/login')
-      }
-    }
-
-    void loadSession()
+      })
 
     return () => {
       cancelled = true

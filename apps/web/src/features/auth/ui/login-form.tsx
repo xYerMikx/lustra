@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { LoginInputSchema, type LoginInput } from '@lustra/contracts'
 
 import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
+import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { login } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
@@ -41,6 +42,7 @@ export function LoginForm() {
         return
       }
 
+      clearSessionCache()
       router.push(resolvePostAuthPath(session.user, nextPath))
       router.refresh()
     } catch (err) {

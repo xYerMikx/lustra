@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { Throttle } from '@nestjs/throttler'
+import { SkipThrottle, Throttle } from '@nestjs/throttler'
 import {
   LoginInputSchema,
   RegisterInputSchema,
@@ -31,7 +31,6 @@ import { RegisterUseCase } from '@/modules/auth/app/register.usecase'
 import { AuthCookieService } from '@/modules/auth/infra/auth-cookie.service'
 
 @Controller('auth')
-@Throttle({ default: { limit: 10, ttl: 60_000 } })
 export class AuthController {
   constructor(
     private readonly registerUseCase: RegisterUseCase,
@@ -43,6 +42,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async register(
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
@@ -59,6 +59,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async login(
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
@@ -75,6 +76,7 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(200)
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
   async refresh(
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
@@ -94,6 +96,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(204)
+  @Throttle({ default: { limit: 30, ttl: 60_000 } })
   async logout(
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
@@ -104,6 +107,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @SkipThrottle()
   @UseGuards(JwtGuard, RolesGuard)
   @Roles('client', 'master', 'admin')
   me(@CurrentUser() user: AuthUser) {

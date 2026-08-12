@@ -1,8 +1,50 @@
+import type { Prisma } from '@lustra/db'
+import type { SearchMastersQuery } from '@lustra/contracts'
 import { Injectable } from '@nestjs/common'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type { PublicMasterStore } from '@/modules/master-profile/app/public-master.ports'
+import type { CatalogMasterRecord } from '@/modules/master-profile/domain/map-catalog-master'
 import type { PublicMasterRecord } from '@/modules/master-profile/domain/map-public-master'
+
+const CATALOG_CARD_SELECT = {
+  id: true,
+  slug: true,
+  displayName: true,
+  headline: true,
+  boostPriority: true,
+  locations: {
+    select: {
+      isPrimary: true,
+      district: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+    orderBy: [{ isPrimary: 'desc' as const }],
+  },
+  services: {
+    where: { isActive: true },
+    select: {
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
+    orderBy: [{ sort: 'asc' as const }, { createdAt: 'asc' as const }],
+  },
+  stats: {
+    select: {
+      ratingAvg: true,
+      ratingCount: true,
+      priceMin: true,
+    },
+  },
+} satisfies Prisma.MasterProfileSelect
 
 @Injectable()
 export class PublicMasterRepository implements PublicMasterStore {
@@ -78,5 +120,41 @@ export class PublicMasterRepository implements PublicMasterStore {
     })
 
     return row
+  }
+
+  async searchPublished(
+    query: SearchMastersQuery,
+  ): Promise<CatalogMasterRecord[]> {
+    const where: Prisma.MasterProfileWhereInput = {
+      status: 'published',
+    }
+
+    if (query.category) {
+      where.services = {
+        some: {
+          isActive: true,
+          category: { slug: query.category },
+        },
+      }
+    }
+
+    if (query.district) {
+      where.locations = {
+        some: {
+          district: { slug: query.district },
+        },
+      }
+    }
+
+    return this.prisma.masterProfile.findMany({
+      where,
+      select: CATALOG_CARD_SELECT,
+      orderBy: [
+        { boostPriority: 'desc' },
+        { stats: { ratingAvg: 'desc' } },
+        { publishedAt: 'desc' },
+      ],
+      take: 48,
+    })
   }
 }

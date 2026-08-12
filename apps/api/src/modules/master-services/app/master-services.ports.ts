@@ -20,4 +20,5 @@ export type ServiceStore = {
 export type CategoryStore = {
   listAll(): Promise<ServiceCategoryView[]>
   findById(id: string): Promise<{ id: string; slug: string } | null>
+  findBySlug(slug: string): Promise<ServiceCategoryView | null>
 }

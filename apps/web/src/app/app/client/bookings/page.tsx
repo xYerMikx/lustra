@@ -19,13 +19,7 @@ export default function ClientBookingsPage() {
       }
     >
       <main className={styles.page}>
-        <SiteChrome
-          navItems={[
-            { href: '/catalog', label: 'Каталог' },
-            { href: '/app', label: 'Кабинет' },
-            { href: '/app/client/bookings', label: 'Записи' },
-          ]}
-        >
+        <SiteChrome>
           <ClientBookingsShell />
         </SiteChrome>
       </main>

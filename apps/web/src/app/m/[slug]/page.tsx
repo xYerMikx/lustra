@@ -46,12 +46,7 @@ export default async function MasterPage({ params }: PageProps) {
 
   return (
     <main className={styles.page}>
-      <SiteChrome
-        navItems={[
-          { href: '/catalog', label: 'Каталог' },
-          { href: '/app', label: 'Кабинет' },
-        ]}
-      >
+      <SiteChrome>
         <MasterHero master={master} />
         <MasterServicesList services={master.services} />
         <SlotPicker

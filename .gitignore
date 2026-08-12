@@ -33,3 +33,4 @@ Thumbs.db
 .eslintcache
 
 /packages/db/generated/
+.worktrees/
