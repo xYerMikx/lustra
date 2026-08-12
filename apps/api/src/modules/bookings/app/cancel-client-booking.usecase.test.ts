@@ -7,7 +7,7 @@ import type {
 } from '@/common/prisma/transaction-manager.service'
 import { FixedClock } from '@/common/time/clock.service'
 import type { BookingStore } from '@/modules/bookings/app/booking.ports'
-import { ConfirmBookingUseCase } from '@/modules/bookings/app/confirm-booking.usecase'
+import { CancelClientBookingUseCase } from '@/modules/bookings/app/cancel-client-booking.usecase'
 import { sampleBookingRecord } from '@/modules/bookings/domain/sample-booking-record'
 
 const currentUser: AuthUser = {
@@ -49,12 +49,9 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
         id: 'b1',
         masterId: 'm1',
         clientUserId: 'c1',
-        serviceId: 'svc1',
-        serviceTitle: 'Маникюр',
-        serviceDurationMin: 60,
-        priceAmount: '40.00',
-        status: 'hold',
-        holdExpiresAt: new Date('2026-08-12T12:10:00.000Z'),
+        status: 'confirmed',
+        holdExpiresAt: null,
+        confirmedAt: new Date('2026-08-12T11:00:00.000Z'),
         startsAt: new Date('2026-08-20T10:00:00.000Z'),
         endsAt: new Date('2026-08-20T11:00:00.000Z'),
       }),
@@ -65,66 +62,86 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     upsertMasterClient: vi.fn(),
     listGranulesInRange: vi.fn(),
     createHold: vi.fn(),
-    confirmHold: vi.fn().mockResolvedValue(
+    confirmHold: vi.fn(),
+    cancelBooking: vi.fn().mockResolvedValue(
       sampleBookingRecord({
         id: 'b1',
         masterId: 'm1',
         clientUserId: 'c1',
-        serviceId: 'svc1',
-        serviceTitle: 'Маникюр',
-        serviceDurationMin: 60,
-        priceAmount: '40.00',
-        status: 'confirmed',
+        status: 'cancelled_by_client',
         holdExpiresAt: null,
-        clientComment: 'ок',
-        confirmedAt: new Date('2026-08-12T12:00:00.000Z'),
+        confirmedAt: new Date('2026-08-12T11:00:00.000Z'),
         startsAt: new Date('2026-08-20T10:00:00.000Z'),
         endsAt: new Date('2026-08-20T11:00:00.000Z'),
+        addressExact: null,
       }),
     ),
-    cancelBooking: vi.fn(),
     confirmPending: vi.fn(),
     ...overrides,
   }
 }
 
-describe('ConfirmBookingUseCase', () => {
+describe('CancelClientBookingUseCase', () => {
   const clock = new FixedClock(new Date('2026-08-12T12:00:00.000Z'))
 
-  it('confirms own hold and strips private fields', async () => {
+  it('cancels own booking before cutoff', async () => {
     const store = buildStore()
-    const useCase = new ConfirmBookingUseCase(
+    const useCase = new CancelClientBookingUseCase(
       store,
       createTransactions(),
       clock,
     )
 
-    const result = await useCase.execute(currentUser, 'b1', { comment: 'ок' })
+    const result = await useCase.execute(currentUser, 'b1', { reason: 'перенос' })
 
-    expect(result.booking.status).toBe('confirmed')
-    expect(result.booking).not.toHaveProperty('masterNote')
-    expect(store.confirmHold).toHaveBeenCalledWith(
+    expect(result.booking.status).toBe('cancelled_by_client')
+    expect(store.cancelBooking).toHaveBeenCalledWith(
       expect.objectContaining({
         bookingId: 'b1',
-        toStatus: 'confirmed',
-        clientComment: 'ок',
+        toStatus: 'cancelled_by_client',
+        cancelledByType: 'client',
+        reason: 'перенос',
       }),
     )
   })
 
-  it('hides foreign bookings as not found', async () => {
+  it('returns CANCEL_CUTOFF_PASSED after cutoff', async () => {
     const store = buildStore({
       findBookingById: vi.fn().mockResolvedValue(
         sampleBookingRecord({
           id: 'b1',
           masterId: 'm1',
-          clientUserId: 'other',
-          status: 'hold',
-          holdExpiresAt: new Date('2026-08-12T12:10:00.000Z'),
+          clientUserId: 'c1',
+          status: 'confirmed',
+          holdExpiresAt: null,
+          startsAt: new Date('2026-08-12T18:00:00.000Z'),
+          endsAt: new Date('2026-08-12T19:00:00.000Z'),
         }),
       ),
     })
-    const useCase = new ConfirmBookingUseCase(
+    const useCase = new CancelClientBookingUseCase(
+      store,
+      createTransactions(),
+      clock,
+    )
+
+    await expect(useCase.execute(currentUser, 'b1', {})).rejects.toMatchObject({
+      code: 'CANCEL_CUTOFF_PASSED',
+    })
+  })
+
+  it('hides foreign bookings', async () => {
+    const store = buildStore({
+      findBookingById: vi.fn().mockResolvedValue(
+        sampleBookingRecord({
+          id: 'b1',
+          clientUserId: 'other',
+          status: 'confirmed',
+          holdExpiresAt: null,
+        }),
+      ),
+    })
+    const useCase = new CancelClientBookingUseCase(
       store,
       createTransactions(),
       clock,
@@ -132,29 +149,6 @@ describe('ConfirmBookingUseCase', () => {
 
     await expect(useCase.execute(currentUser, 'b1', {})).rejects.toMatchObject({
       code: 'NOT_FOUND',
-    })
-  })
-
-  it('rejects expired holds', async () => {
-    const store = buildStore({
-      findBookingById: vi.fn().mockResolvedValue(
-        sampleBookingRecord({
-          id: 'b1',
-          masterId: 'm1',
-          clientUserId: 'c1',
-          status: 'hold',
-          holdExpiresAt: new Date('2026-08-12T11:59:00.000Z'),
-        }),
-      ),
-    })
-    const useCase = new ConfirmBookingUseCase(
-      store,
-      createTransactions(),
-      clock,
-    )
-
-    await expect(useCase.execute(currentUser, 'b1', {})).rejects.toMatchObject({
-      code: 'HOLD_EXPIRED',
     })
   })
 })

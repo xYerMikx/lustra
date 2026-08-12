@@ -1,4 +1,8 @@
-import type { BookingClientView, BookingStatus } from '@lustra/contracts'
+import type {
+  BookingClientView,
+  BookingMasterView,
+  BookingStatus,
+} from '@lustra/contracts'
 
 export type BookingRecord = {
   id: string
@@ -16,11 +20,44 @@ export type BookingRecord = {
   clientComment: string | null
   confirmedAt: Date | null
   masterNote: string | null
+  masterDisplayName: string
+  addressHint: string | null
+  addressExact: string | null
+  clientName: string
+  clientPhone: string | null
+  clientNote: string | null
 }
 
-const PRIVATE_BOOKING_KEYS = ['masterNote', 'trustScore'] as const
+const PRIVATE_CLIENT_KEYS = ['masterNote', 'trustScore'] as const
 
 export function toBookingClientView(record: BookingRecord): BookingClientView {
+  const showExact = record.status === 'confirmed'
+
+  return {
+    id: record.id,
+    masterId: record.masterId,
+    masterDisplayName: record.masterDisplayName,
+    serviceId: record.serviceId,
+    serviceTitle: record.serviceTitle,
+    serviceDurationMin: record.serviceDurationMin,
+    priceAmount: String(record.priceAmount),
+    currency: record.currency,
+    startsAt: record.startsAt.toISOString(),
+    endsAt: record.endsAt.toISOString(),
+    status: record.status,
+    holdExpiresAt: record.holdExpiresAt
+      ? record.holdExpiresAt.toISOString()
+      : null,
+    clientComment: record.clientComment,
+    confirmedAt: record.confirmedAt
+      ? record.confirmedAt.toISOString()
+      : null,
+    addressHint: record.addressHint,
+    addressExact: showExact ? record.addressExact : null,
+  }
+}
+
+export function toBookingMasterView(record: BookingRecord): BookingMasterView {
   return {
     id: record.id,
     masterId: record.masterId,
@@ -39,13 +76,19 @@ export function toBookingClientView(record: BookingRecord): BookingClientView {
     confirmedAt: record.confirmedAt
       ? record.confirmedAt.toISOString()
       : null,
+    masterNote: record.masterNote,
+    client: {
+      name: record.clientName,
+      phone: record.clientPhone,
+      note: record.clientNote,
+    },
   }
 }
 
 export function assertNoPrivateBookingKeys(view: BookingClientView): void {
   const keys = Object.keys(view)
 
-  for (const privateKey of PRIVATE_BOOKING_KEYS) {
+  for (const privateKey of PRIVATE_CLIENT_KEYS) {
     if (keys.includes(privateKey)) {
       throw new Error(`Private key leaked: ${privateKey}`)
     }

@@ -46,6 +46,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
   }
 
   return {
+    findMasterIdByUserId: vi.fn(),
     findMasterPubliclyVisible: vi.fn().mockResolvedValue(true),
     findService: vi.fn().mockResolvedValue({
       id: 'svc1',
@@ -65,6 +66,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
       holdTtlSec: 600,
       autoConfirm: false,
       maxActiveBookingsPerClient: 3,
+      clientCancelCutoffMin: 720,
     }),
     findClientUser: vi.fn().mockResolvedValue({
       id: 'c1',
@@ -73,6 +75,8 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     }),
     findBookingByIdempotencyKey: vi.fn().mockResolvedValue(null),
     findBookingById: vi.fn(),
+    listBookingsForClient: vi.fn(),
+    listBookingsForMaster: vi.fn(),
     countActiveBookingsForClient: vi.fn().mockResolvedValue(0),
     upsertMasterClient: vi.fn().mockResolvedValue({ id: 'mc1', isBlocked: false }),
     listGranulesInRange: vi.fn().mockResolvedValue([slotA, slotB]),
@@ -92,8 +96,16 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
       clientComment: null,
       confirmedAt: null,
       masterNote: null,
+      masterDisplayName: 'Мастер',
+      addressHint: null,
+      addressExact: null,
+      clientName: 'Анна',
+      clientPhone: null,
+      clientNote: null,
     }),
     confirmHold: vi.fn(),
+    cancelBooking: vi.fn(),
+    confirmPending: vi.fn(),
     ...overrides,
   }
 }
@@ -142,6 +154,12 @@ describe('HoldSlotUseCase', () => {
         clientComment: null,
         confirmedAt: null,
         masterNote: 'secret',
+        masterDisplayName: 'Мастер',
+        addressHint: null,
+        addressExact: null,
+        clientName: 'Анна',
+        clientPhone: null,
+        clientNote: null,
       }),
     })
     const ensureSlots = {
@@ -264,6 +282,12 @@ describe('HoldSlotUseCase', () => {
         clientComment: null,
         confirmedAt: null,
         masterNote: null,
+        masterDisplayName: 'Мастер',
+        addressHint: null,
+        addressExact: null,
+        clientName: 'Анна',
+        clientPhone: null,
+        clientNote: null,
       }),
     })
     const ensureSlots = {

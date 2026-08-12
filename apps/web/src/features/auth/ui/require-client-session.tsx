@@ -12,14 +12,17 @@ import type { MeResponse } from '@lustra/contracts'
 
 import { getMe } from '@/shared/api/auth-client'
 
-const SessionContext = createContext<MeResponse | null>(null)
+const ClientSessionContext = createContext<MeResponse | null>(null)
 
-type RequireSessionProps = {
+type RequireClientSessionProps = {
   children: ReactNode
   fallback?: ReactNode
 }
 
-export function RequireSession({ children, fallback = null }: RequireSessionProps) {
+export function RequireClientSession({
+  children,
+  fallback = null,
+}: RequireClientSessionProps) {
   const router = useRouter()
   const [user, setUser] = useState<MeResponse | null>(null)
   const [ready, setReady] = useState(false)
@@ -27,8 +30,10 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
   useEffect(() => {
     let cancelled = false
 
-    getMe()
-      .then((me) => {
+    const loadSession = async () => {
+      try {
+        const me = await getMe()
+
         if (cancelled) {
           return
         }
@@ -39,16 +44,24 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
           return
         }
 
+        if (me.role !== 'client') {
+          router.replace('/app')
+
+          return
+        }
+
         setUser(me)
         setReady(true)
-      })
-      .catch(() => {
+      } catch {
         if (cancelled) {
           return
         }
 
         router.replace('/app/login')
-      })
+      }
+    }
+
+    void loadSession()
 
     return () => {
       cancelled = true
@@ -60,15 +73,17 @@ export function RequireSession({ children, fallback = null }: RequireSessionProp
   }
 
   return (
-    <SessionContext.Provider value={user}>{children}</SessionContext.Provider>
+    <ClientSessionContext.Provider value={user}>
+      {children}
+    </ClientSessionContext.Provider>
   )
 }
 
-export function useSession(): MeResponse {
-  const user = useContext(SessionContext)
+export function useClientSession(): MeResponse {
+  const user = useContext(ClientSessionContext)
 
   if (!user) {
-    throw new Error('useSession must be used within RequireSession')
+    throw new Error('useClientSession must be used within RequireClientSession')
   }
 
   return user

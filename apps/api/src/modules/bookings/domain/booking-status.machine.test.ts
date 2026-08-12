@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { resolveConfirmFromHold } from '@/modules/bookings/domain/booking-status.machine'
+import {
+  resolveClientCancel,
+  resolveConfirmFromHold,
+  resolveMasterCancel,
+  resolveMasterConfirmPending,
+} from '@/modules/bookings/domain/booking-status.machine'
 
 describe('resolveConfirmFromHold', () => {
   const now = new Date('2026-08-12T12:00:00.000Z')
@@ -45,5 +50,64 @@ describe('resolveConfirmFromHold', () => {
         autoConfirm: true,
       }),
     ).toEqual({ ok: false, reason: 'not_hold' })
+  })
+})
+
+describe('resolveClientCancel', () => {
+  const now = new Date('2026-08-12T12:00:00.000Z')
+
+  it('allows cancel before cutoff', () => {
+    expect(
+      resolveClientCancel({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-13T12:00:00.000Z'),
+        now,
+        clientCancelCutoffMin: 720,
+      }),
+    ).toEqual({ ok: true, toStatus: 'cancelled_by_client' })
+  })
+
+  it('blocks cancel after cutoff', () => {
+    expect(
+      resolveClientCancel({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-12T18:00:00.000Z'),
+        now,
+        clientCancelCutoffMin: 720,
+      }),
+    ).toEqual({ ok: false, reason: 'cutoff_passed' })
+  })
+
+  it('rejects terminal statuses', () => {
+    expect(
+      resolveClientCancel({
+        status: 'completed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+        clientCancelCutoffMin: 720,
+      }),
+    ).toEqual({ ok: false, reason: 'invalid_state' })
+  })
+})
+
+describe('resolveMasterCancel', () => {
+  it('cancels active bookings', () => {
+    expect(resolveMasterCancel({ status: 'pending' })).toEqual({
+      ok: true,
+      toStatus: 'cancelled_by_master',
+    })
+  })
+})
+
+describe('resolveMasterConfirmPending', () => {
+  it('only confirms pending', () => {
+    expect(resolveMasterConfirmPending({ status: 'pending' })).toEqual({
+      ok: true,
+    })
+
+    expect(resolveMasterConfirmPending({ status: 'hold' })).toEqual({
+      ok: false,
+      reason: 'not_pending',
+    })
   })
 })
