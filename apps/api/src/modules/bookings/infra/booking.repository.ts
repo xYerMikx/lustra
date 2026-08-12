@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@lustra/db'
 
+import { DomainError } from '@/common/errors/domain-error'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import type {
-  BookingClientActor,
+  BookingClientUser,
   BookingPolicyRecord,
   BookingServiceRecord,
   BookingStore,
@@ -12,14 +13,6 @@ import type {
 } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
-
-type SlotLockRow = {
-  id: string
-  startsAt: Date
-  endsAt: Date
-  status: HoldableSlotRow['status']
-  holdExpiresAt: Date | null
-}
 
 const BOOKING_SELECT = {
   id: true,
@@ -89,7 +82,7 @@ export class BookingRepository implements BookingStore {
     })
   }
 
-  async findClientActor(userId: string): Promise<BookingClientActor | null> {
+  async findClientUser(userId: string): Promise<BookingClientUser | null> {
     const row = await this.tx.getClient().user.findUnique({
       where: { id: userId },
       select: {
@@ -170,29 +163,44 @@ export class BookingRepository implements BookingStore {
     })
   }
 
-  async lockGranulesForUpdate(input: {
+  async listGranulesInRange(input: {
     masterId: string
     rangeStart: Date
     rangeEndExclusive: Date
   }): Promise<HoldableSlotRow[]> {
-    const rows = await this.tx.getClient().$queryRaw<SlotLockRow[]>`
-      SELECT id, "startsAt", "endsAt", status, "holdExpiresAt"
-      FROM "TimeSlot"
-      WHERE "masterId" = ${input.masterId}
-        AND "startsAt" >= ${input.rangeStart}
-        AND "startsAt" < ${input.rangeEndExclusive}
-      ORDER BY "startsAt"
-      FOR UPDATE
-    `
-
-    return rows
+    return this.tx.getClient().timeSlot.findMany({
+      where: {
+        masterId: input.masterId,
+        startsAt: {
+          gte: input.rangeStart,
+          lt: input.rangeEndExclusive,
+        },
+      },
+      orderBy: { startsAt: 'asc' },
+      select: {
+        id: true,
+        startsAt: true,
+        endsAt: true,
+        status: true,
+        holdExpiresAt: true,
+      },
+    })
   }
 
   async createHold(input: CreateHoldInput): Promise<BookingRecord> {
-    const client = this.tx.getClient()
+    const db = this.tx.getClient()
 
-    await client.timeSlot.updateMany({
-      where: { id: { in: input.slotIds } },
+    const claimed = await db.timeSlot.updateMany({
+      where: {
+        id: { in: input.slotIds },
+        OR: [
+          { status: 'open' },
+          {
+            status: 'held',
+            holdExpiresAt: { lte: input.now },
+          },
+        ],
+      },
       data: {
         status: 'held',
         holdId: input.holdId,
@@ -201,7 +209,11 @@ export class BookingRepository implements BookingStore {
       },
     })
 
-    const booking = await client.booking.create({
+    if (claimed.count !== input.slotIds.length) {
+      throw DomainError.slotTaken()
+    }
+
+    return db.booking.create({
       data: {
         masterId: input.masterId,
         masterClientId: input.masterClientId,
@@ -235,14 +247,12 @@ export class BookingRepository implements BookingStore {
       },
       select: BOOKING_SELECT,
     })
-
-    return booking
   }
 
   async confirmHold(input: ConfirmHoldInput): Promise<BookingRecord | null> {
-    const client = this.tx.getClient()
+    const db = this.tx.getClient()
 
-    const updated = await client.booking.updateMany({
+    const updated = await db.booking.updateMany({
       where: {
         id: input.bookingId,
         status: 'hold',
@@ -261,7 +271,7 @@ export class BookingRepository implements BookingStore {
       return null
     }
 
-    const links = await client.bookingSlot.findMany({
+    const links = await db.bookingSlot.findMany({
       where: { bookingId: input.bookingId },
       select: { slotId: true },
     })
@@ -269,7 +279,7 @@ export class BookingRepository implements BookingStore {
     const slotIds = links.map((link) => link.slotId)
 
     if (slotIds.length > 0) {
-      await client.timeSlot.updateMany({
+      await db.timeSlot.updateMany({
         where: { id: { in: slotIds } },
         data: {
           status: 'booked',
@@ -281,7 +291,7 @@ export class BookingRepository implements BookingStore {
       })
     }
 
-    await client.bookingEvent.create({
+    await db.bookingEvent.create({
       data: {
         bookingId: input.bookingId,
         actorType: 'client',
@@ -292,7 +302,7 @@ export class BookingRepository implements BookingStore {
       },
     })
 
-    await client.outboxEvent.create({
+    await db.outboxEvent.create({
       data: {
         type: 'booking.created',
         aggregate: `booking:${input.bookingId}`,

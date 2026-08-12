@@ -14,11 +14,11 @@ import { ClockService } from '@/common/time/clock.service'
 import type { BookingStore } from '@/modules/bookings/app/booking.ports'
 import { toBookingClientView } from '@/modules/bookings/domain/map-booking'
 import {
+  appointmentEndsAt,
   areSlotsConsecutive,
   granuleNeedCount,
+  holdCoverageEndsAt,
   isSlotHoldable,
-  occupancyEndsAt,
-  serviceEndsAt,
 } from '@/modules/bookings/domain/slot-holdability'
 import { BookingRepository } from '@/modules/bookings/infra/booking.repository'
 import { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
@@ -39,7 +39,7 @@ export class HoldSlotUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     input: HoldSlotInput,
     idempotencyKey: string,
   ): Promise<HoldSlotResponse> {
@@ -52,7 +52,7 @@ export class HoldSlotUseCase {
     const existing = await this.bookings.findBookingByIdempotencyKey(idempotencyKey)
 
     if (existing) {
-      if (existing.clientUserId !== actor.id) {
+      if (existing.clientUserId !== currentUser.id) {
         throw new DomainError('FORBIDDEN', 'Ключ идемпотентности уже использован')
       }
 
@@ -89,9 +89,9 @@ export class HoldSlotUseCase {
       throw new DomainError('VALIDATION_FAILED', 'Некорректный шаг сетки')
     }
 
-    const client = await this.bookings.findClientActor(actor.id)
+    const clientUser = await this.bookings.findClientUser(currentUser.id)
 
-    if (!client) {
+    if (!clientUser) {
       throw DomainError.forbidden('Бронировать может только клиент')
     }
 
@@ -129,22 +129,22 @@ export class HoldSlotUseCase {
       bufferAfterMin,
       policy.granularityMin,
     )
-    const rangeEndExclusive = occupancyEndsAt(
+    const rangeEndExclusive = holdCoverageEndsAt(
       startsAt,
       service.durationMin,
       bufferAfterMin,
     )
     const holdId = randomUUID()
     const holdExpiresAt = new Date(now.getTime() + policy.holdTtlSec * 1000)
-    const endsAt = serviceEndsAt(startsAt, service.durationMin)
+    const endsAt = appointmentEndsAt(startsAt, service.durationMin)
 
     try {
       const booking = await this.tx.run(async () => {
         const masterClient = await this.bookings.upsertMasterClient({
           masterId: input.masterId,
-          userId: client.id,
-          name: client.firstName,
-          phone: client.phone,
+          userId: clientUser.id,
+          name: clientUser.firstName,
+          phone: clientUser.phone,
         })
 
         if (masterClient.isBlocked) {
@@ -153,7 +153,7 @@ export class HoldSlotUseCase {
 
         const activeCount = await this.bookings.countActiveBookingsForClient(
           input.masterId,
-          client.id,
+          clientUser.id,
         )
 
         if (activeCount >= policy.maxActiveBookingsPerClient) {
@@ -163,7 +163,7 @@ export class HoldSlotUseCase {
           )
         }
 
-        const granules = await this.bookings.lockGranulesForUpdate({
+        const granules = await this.bookings.listGranulesInRange({
           masterId: input.masterId,
           rangeStart: startsAt,
           rangeEndExclusive,
@@ -191,7 +191,7 @@ export class HoldSlotUseCase {
         return this.bookings.createHold({
           masterId: input.masterId,
           masterClientId: masterClient.id,
-          clientUserId: client.id,
+          clientUserId: clientUser.id,
           serviceId: service.id,
           serviceTitle: service.title,
           serviceDurationMin: service.durationMin,
@@ -204,6 +204,7 @@ export class HoldSlotUseCase {
           holdExpiresAt,
           idempotencyKey,
           slotIds: granules.map((slot) => slot.id),
+          now,
         })
       })
 

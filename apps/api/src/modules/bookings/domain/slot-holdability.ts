@@ -39,7 +39,7 @@ export function areSlotsConsecutive(
 
   const stepMs = granularityMin * 60_000
 
-  for (let i = 1; i < slots.length; i += 1) {
+  for (let i = 1; i < slots.length; i++) {
     const prev = slots[i - 1]
     const current = slots[i]
 
@@ -65,7 +65,7 @@ export function granuleNeedCount(
   return Math.ceil(needMin / granularityMin)
 }
 
-export function occupancyEndsAt(
+export function holdCoverageEndsAt(
   startsAt: Date,
   durationMin: number,
   bufferAfterMin: number,
@@ -73,6 +73,6 @@ export function occupancyEndsAt(
   return new Date(startsAt.getTime() + (durationMin + bufferAfterMin) * 60_000)
 }
 
-export function serviceEndsAt(startsAt: Date, durationMin: number): Date {
+export function appointmentEndsAt(startsAt: Date, durationMin: number): Date {
   return new Date(startsAt.getTime() + durationMin * 60_000)
 }

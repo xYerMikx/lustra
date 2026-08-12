@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import type {
   AvailabilityDayView,
@@ -33,6 +34,7 @@ export function useSlotPicker(input: {
   masterSlug: string
   services: PublicServiceView[]
 }) {
+  const router = useRouter()
   const [serviceId, setServiceId] = useState<string | null>(
     input.services[0]?.id ?? null,
   )
@@ -156,6 +158,12 @@ export function useSlotPicker(input: {
     setJustTakenStartsAt(null)
   }, [])
 
+  const redirectToLogin = useCallback(() => {
+    const next = `/m/${input.masterSlug}#booking`
+
+    router.push(`/app/login?next=${encodeURIComponent(next)}`)
+  }, [input.masterSlug, router])
+
   const startHold = useCallback(async () => {
     if (!serviceId || !selectedSlot) {
       return
@@ -175,9 +183,7 @@ export function useSlotPicker(input: {
       const me = await getMe()
 
       if (!me) {
-        window.location.assign(
-          `/app/login?next=${encodeURIComponent(`/m/${input.masterSlug}#booking`)}`,
-        )
+        redirectToLogin()
 
         return
       }
@@ -212,9 +218,7 @@ export function useSlotPicker(input: {
       setHoldRemainingMs(remainingHoldMs(response.holdExpiresAt))
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        window.location.assign(
-          `/app/login?next=${encodeURIComponent(`/m/${input.masterSlug}#booking`)}`,
-        )
+        redirectToLogin()
 
         return
       }
@@ -239,6 +243,7 @@ export function useSlotPicker(input: {
   }, [
     input.masterId,
     input.masterSlug,
+    redirectToLogin,
     reloadAvailability,
     selectedSlot,
     serviceId,

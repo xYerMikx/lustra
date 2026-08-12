@@ -23,13 +23,13 @@ export class ConfirmBookingUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     bookingId: string,
     input: ConfirmBookingInput,
   ): Promise<ConfirmBookingResponse> {
     const booking = await this.bookings.findBookingById(bookingId)
 
-    if (!booking || booking.clientUserId !== actor.id) {
+    if (!booking || booking.clientUserId !== currentUser.id) {
       throw DomainError.notFound('Бронь не найдена')
     }
 
@@ -58,7 +58,7 @@ export class ConfirmBookingUseCase {
     const confirmed = await this.tx.run(async () => {
       return this.bookings.confirmHold({
         bookingId,
-        clientUserId: actor.id,
+        clientUserId: currentUser.id,
         toStatus: transition.toStatus,
         clientComment: input.comment?.trim() ? input.comment.trim() : null,
         confirmedAt:

@@ -1,13 +1,29 @@
 import { describe, expect, it, vi } from 'vitest'
 
+import type { AuthUser } from '@/common/auth/auth-user'
+import type {
+  PrismaTx,
+  TransactionManager,
+} from '@/common/prisma/transaction-manager.service'
 import { FixedClock } from '@/common/time/clock.service'
-import { ConfirmBookingUseCase } from '@/modules/bookings/app/confirm-booking.usecase'
 import type { BookingStore } from '@/modules/bookings/app/booking.ports'
+import { ConfirmBookingUseCase } from '@/modules/bookings/app/confirm-booking.usecase'
 
-const actor = {
+const currentUser: AuthUser = {
   id: 'c1',
-  role: 'client' as const,
+  role: 'client',
   email: 'client.smoke.1@example.com',
+}
+
+const unusedTx = {} as PrismaTx
+
+function createTransactions(): TransactionManager {
+  const transactions: Pick<TransactionManager, 'run' | 'getClient'> = {
+    run: async <T>(work: (tx: PrismaTx) => Promise<T>) => work(unusedTx),
+    getClient: () => unusedTx,
+  }
+
+  return transactions as TransactionManager
 }
 
 function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
@@ -23,7 +39,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
       autoConfirm: true,
       maxActiveBookingsPerClient: 3,
     }),
-    findClientActor: vi.fn(),
+    findClientUser: vi.fn(),
     findBookingByIdempotencyKey: vi.fn(),
     findBookingById: vi.fn().mockResolvedValue({
       id: 'b1',
@@ -44,7 +60,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     }),
     countActiveBookingsForClient: vi.fn(),
     upsertMasterClient: vi.fn(),
-    lockGranulesForUpdate: vi.fn(),
+    listGranulesInRange: vi.fn(),
     createHold: vi.fn(),
     confirmHold: vi.fn().mockResolvedValue({
       id: 'b1',
@@ -74,11 +90,11 @@ describe('ConfirmBookingUseCase', () => {
     const store = buildStore()
     const useCase = new ConfirmBookingUseCase(
       store,
-      { run: vi.fn(async (fn) => fn({})) } as never,
+      createTransactions(),
       clock,
     )
 
-    const result = await useCase.execute(actor, 'b1', { comment: 'ок' })
+    const result = await useCase.execute(currentUser, 'b1', { comment: 'ок' })
 
     expect(result.booking.status).toBe('confirmed')
     expect(result.booking).not.toHaveProperty('masterNote')
@@ -113,11 +129,11 @@ describe('ConfirmBookingUseCase', () => {
     })
     const useCase = new ConfirmBookingUseCase(
       store,
-      { run: vi.fn(async (fn) => fn({})) } as never,
+      createTransactions(),
       clock,
     )
 
-    await expect(useCase.execute(actor, 'b1', {})).rejects.toMatchObject({
+    await expect(useCase.execute(currentUser, 'b1', {})).rejects.toMatchObject({
       code: 'NOT_FOUND',
     })
   })
@@ -144,11 +160,11 @@ describe('ConfirmBookingUseCase', () => {
     })
     const useCase = new ConfirmBookingUseCase(
       store,
-      { run: vi.fn(async (fn) => fn({})) } as never,
+      createTransactions(),
       clock,
     )
 
-    await expect(useCase.execute(actor, 'b1', {})).rejects.toMatchObject({
+    await expect(useCase.execute(currentUser, 'b1', {})).rejects.toMatchObject({
       code: 'HOLD_EXPIRED',
     })
   })

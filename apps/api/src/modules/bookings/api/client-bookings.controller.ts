@@ -36,21 +36,21 @@ export class ClientBookingsController {
   @Post('holds')
   @HttpCode(201)
   createHold(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() currentUser: AuthUser,
     @Body(new ZodValidationPipe(HoldSlotInputSchema)) body: HoldSlotInput,
     @Headers('idempotency-key') idempotencyKey?: string,
   ) {
-    return this.holdSlot.execute(user, body, idempotencyKey ?? '')
+    return this.holdSlot.execute(currentUser, body, idempotencyKey ?? '')
   }
 
   @Post(':id/confirm')
   @HttpCode(200)
   confirm(
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() currentUser: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body(new ZodValidationPipe(ConfirmBookingInputSchema))
     body: ConfirmBookingInput,
   ) {
-    return this.confirmBooking.execute(user, id, body)
+    return this.confirmBooking.execute(currentUser, id, body)
   }
 }

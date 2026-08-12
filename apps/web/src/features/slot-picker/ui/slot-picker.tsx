@@ -77,7 +77,7 @@ export function SlotPicker({
         <div className={styles.confirmActions}>
           <Button
             type="button"
-            onClick={() => void picker.submitConfirm()}
+            onClick={picker.submitConfirm}
             disabled={picker.submitting || picker.holdRemainingMs <= 0}
           >
             {picker.submitting ? 'Отправляем…' : 'Подтвердить запись'}
@@ -151,7 +151,7 @@ export function SlotPicker({
           </p>
           <Button
             type="button"
-            onClick={() => void picker.startHold()}
+            onClick={picker.startHold}
             disabled={picker.submitting}
           >
             {picker.submitting ? 'Удерживаем…' : 'Записаться'}

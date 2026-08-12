@@ -24,7 +24,7 @@ export type BookingServiceRecord = {
   isActive: boolean
 }
 
-export type BookingClientActor = {
+export type BookingClientUser = {
   id: string
   firstName: string
   phone: string | null
@@ -46,6 +46,7 @@ export type CreateHoldInput = {
   holdExpiresAt: Date
   idempotencyKey: string
   slotIds: string[]
+  now: Date
 }
 
 export type ConfirmHoldInput = {
@@ -64,7 +65,7 @@ export type BookingStore = {
     serviceId: string,
   ): Promise<BookingServiceRecord | null>
   getPolicy(masterId: string): Promise<BookingPolicyRecord | null>
-  findClientActor(userId: string): Promise<BookingClientActor | null>
+  findClientUser(userId: string): Promise<BookingClientUser | null>
   findBookingByIdempotencyKey(key: string): Promise<BookingRecord | null>
   findBookingById(id: string): Promise<BookingRecord | null>
   countActiveBookingsForClient(
@@ -77,7 +78,7 @@ export type BookingStore = {
     name: string
     phone: string | null
   }): Promise<{ id: string; isBlocked: boolean }>
-  lockGranulesForUpdate(input: {
+  listGranulesInRange(input: {
     masterId: string
     rangeStart: Date
     rangeEndExclusive: Date

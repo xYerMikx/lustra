@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  appointmentEndsAt,
   areSlotsConsecutive,
   granuleNeedCount,
+  holdCoverageEndsAt,
   isSlotHoldable,
-  occupancyEndsAt,
-  serviceEndsAt,
 } from '@/modules/bookings/domain/slot-holdability'
 
 describe('slot-holdability', () => {
@@ -101,10 +101,10 @@ describe('slot-holdability', () => {
 
     const start = new Date('2026-08-12T10:00:00.000Z')
 
-    expect(serviceEndsAt(start, 90).toISOString()).toBe(
+    expect(appointmentEndsAt(start, 90).toISOString()).toBe(
       '2026-08-12T11:30:00.000Z',
     )
-    expect(occupancyEndsAt(start, 90, 30).toISOString()).toBe(
+    expect(holdCoverageEndsAt(start, 90, 30).toISOString()).toBe(
       '2026-08-12T12:00:00.000Z',
     )
   })
