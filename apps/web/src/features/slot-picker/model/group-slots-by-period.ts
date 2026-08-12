@@ -16,6 +16,8 @@ const PERIOD_LABELS: Record<SlotPeriod, string> = {
   evening: 'Вечер',
 }
 
+const SLOT_PERIODS: readonly SlotPeriod[] = ['morning', 'day', 'evening']
+
 export function periodForHour(hour: number): SlotPeriod {
   if (hour < 12) {
     return 'morning'
@@ -50,13 +52,13 @@ export function groupSlotsByPeriod(
     buckets[period].push(slot)
   }
 
-  return (['morning', 'day', 'evening'] as const)
-    .filter((period) => buckets[period].length > 0)
-    .map((period) => ({
+  return SLOT_PERIODS.filter((period) => buckets[period].length > 0).map(
+    (period) => ({
       period,
       label: PERIOD_LABELS[period],
       slots: buckets[period],
-    }))
+    }),
+  )
 }
 
 export function slotTimeLabel(

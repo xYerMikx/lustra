@@ -7,7 +7,6 @@ import {
 } from './master-profile'
 import { PriceTypeSchema } from './master-services'
 
-/** Public service card — no internal buffer / sort noise beyond what's needed to book. */
 export const PublicServiceViewSchema = z.object({
   id: z.string().uuid(),
   categoryName: z.string(),
@@ -29,11 +28,6 @@ export const PublicMasterContactViewSchema = z.object({
 })
 export type PublicMasterContactView = z.infer<typeof PublicMasterContactViewSchema>
 
-/**
- * Public master page DTO.
- * Intentionally omits: addressExact, lat/lng, boostPriority, trustScore,
- * masterNote, verification docs, internal stats (noShowRate, profileViews…).
- */
 export const PublicMasterViewSchema = z.object({
   id: z.string().uuid(),
   slug: z.string(),

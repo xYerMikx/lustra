@@ -61,7 +61,7 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   return typeof value.error.code === 'string' && typeof value.error.message === 'string'
 }
 
-async function readJsonBody(response: Response): Promise<unknown> {
+export async function readJsonBody(response: Response): Promise<unknown> {
   try {
     return await response.json()
   } catch {
@@ -69,7 +69,7 @@ async function readJsonBody(response: Response): Promise<unknown> {
   }
 }
 
-function toApiError(status: number, payload: unknown): ApiError {
+export function toApiError(status: number, payload: unknown): ApiError {
   if (isApiErrorBody(payload)) {
     return new ApiError(status, payload.error)
   }

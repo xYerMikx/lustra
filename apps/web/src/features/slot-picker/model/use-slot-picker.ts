@@ -78,9 +78,9 @@ export function useSlotPicker(input: {
         const firstOpen = response.days.find((day) => day.hasOpen)
         setSelectedDate(firstOpen?.date ?? response.days[0]?.date ?? null)
 
-        setStatus(
-          response.days.some((day) => day.hasOpen) ? 'success' : 'empty',
-        )
+        const hasOpenSlots = response.days.some((day) => day.hasOpen)
+
+        setStatus(hasOpenSlots ? 'success' : 'empty')
       } catch (error) {
         if (cancelled) {
           return
