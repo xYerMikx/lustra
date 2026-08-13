@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -21,6 +22,7 @@ import { RolesGuard } from '@/common/auth/roles.guard'
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { CheckSlugAvailabilityUseCase } from '@/modules/master-profile/app/check-slug-availability.usecase'
 import { GetMasterProfileUseCase } from '@/modules/master-profile/app/get-master-profile.usecase'
+import { PublishMasterProfileUseCase } from '@/modules/master-profile/app/publish-master-profile.usecase'
 import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 
 @Controller('master/profile')
@@ -31,6 +33,7 @@ export class MasterProfileController {
     private readonly getProfile: GetMasterProfileUseCase,
     private readonly updateProfile: UpdateMasterProfileUseCase,
     private readonly checkSlugAvailability: CheckSlugAvailabilityUseCase,
+    private readonly publishProfile: PublishMasterProfileUseCase,
   ) {}
 
   @Get()
@@ -54,5 +57,10 @@ export class MasterProfileController {
     body: PatchMasterProfileInput,
   ) {
     return this.updateProfile.execute(user, body)
+  }
+
+  @Post('publish')
+  publish(@CurrentUser() user: AuthUser) {
+    return this.publishProfile.execute(user)
   }
 }

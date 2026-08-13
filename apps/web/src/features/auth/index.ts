@@ -6,4 +6,5 @@ export {
   RequireClientSession,
   useClientSession,
 } from './ui/require-client-session'
+export { RequireAdminSession, useAdminSession } from './ui/require-admin-session'
 export { resolvePostAuthPath } from './lib/resolve-post-auth-path'

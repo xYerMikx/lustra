@@ -18,6 +18,12 @@ export function patchMasterProfile(input: PatchMasterProfileInput) {
   })
 }
 
+export function publishMasterProfile() {
+  return apiFetch<MasterProfileView>('/master/profile/publish', {
+    method: 'POST',
+  })
+}
+
 export function checkSlugAvailability(slug: string) {
   const params = new URLSearchParams({ slug })
 

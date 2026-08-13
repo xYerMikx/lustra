@@ -7,6 +7,7 @@ export type ProfileUpdateData = {
   headline?: string | null
   bio?: string | null
   slug?: string
+  status?: 'draft' | 'pending_review' | 'published' | 'hidden' | 'banned'
 }
 
 export type PrimaryLocationInput = {
