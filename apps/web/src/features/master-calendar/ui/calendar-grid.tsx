@@ -11,6 +11,7 @@ export type CalendarGridProps = {
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
+  onRemoveException: (ymdDate: string) => void
 }
 
 export function CalendarGrid({
@@ -19,6 +20,7 @@ export function CalendarGrid({
   onSelectDay,
   onSelectSlot,
   onRemoveBlock,
+  onRemoveException,
 }: CalendarGridProps) {
   if (mode === 'week') {
     return <WeekGrid days={days} onSelectDay={onSelectDay} />
@@ -35,8 +37,10 @@ export function CalendarGrid({
       date={dayView.date}
       openSlots={dayView.openSlots}
       blocks={dayView.blocks}
+      exception={dayView.exception}
       onSelectSlot={onSelectSlot}
       onRemoveBlock={onRemoveBlock}
+      onRemoveException={onRemoveException}
     />
   )
 }

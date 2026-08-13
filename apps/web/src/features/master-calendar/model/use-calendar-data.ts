@@ -6,6 +6,7 @@ import type {
   CreateTimeBlockInput,
   MasterCalendarView,
   MasterClientView,
+  PutScheduleExceptionInput,
 } from '@lustra/contracts'
 
 import {
@@ -21,6 +22,10 @@ import {
   deleteTimeBlock,
   getMasterCalendar,
 } from '@/shared/api/master-calendar-client'
+import {
+  deleteScheduleException,
+  putScheduleException,
+} from '@/shared/api/master-schedule-client'
 import { listMasterClients } from '@/shared/api/master-clients-client'
 import { listMasterServices } from '@/shared/api/master-services-client'
 
@@ -61,7 +66,9 @@ export function useCalendarData() {
         setData(response)
 
         const isEmpty =
-          response.slots.length === 0 && response.blocks.length === 0
+          response.slots.length === 0 &&
+          response.blocks.length === 0 &&
+          response.exceptions.length === 0
 
         setStatus(isEmpty ? 'empty' : 'success')
       } catch (error) {
@@ -124,6 +131,19 @@ export function useCalendarData() {
     setReloadToken((value) => value + 1)
   }, [])
 
+  const addException = useCallback(
+    async (date: string, input: PutScheduleExceptionInput) => {
+      await putScheduleException(date, input)
+      setReloadToken((value) => value + 1)
+    },
+    [],
+  )
+
+  const removeException = useCallback(async (date: string) => {
+    await deleteScheduleException(date)
+    setReloadToken((value) => value + 1)
+  }, [])
+
   const loadManualContext = useCallback(async () => {
     const [servicesResponse, clientsResponse] = await Promise.all([
       listMasterServices(),
@@ -161,6 +181,8 @@ export function useCalendarData() {
     reloadCalendar,
     addBlock,
     removeBlock,
+    addException,
+    removeException,
     loadManualContext,
     addManualBooking,
   }

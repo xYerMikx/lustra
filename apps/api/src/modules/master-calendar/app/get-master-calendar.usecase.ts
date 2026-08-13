@@ -10,6 +10,7 @@ import { DomainError } from '@/common/errors/domain-error'
 import type { MasterCalendarStore } from '@/modules/master-calendar/app/master-calendar.ports'
 import {
   toCalendarBlockView,
+  toCalendarExceptionView,
   toCalendarSlotView,
 } from '@/modules/master-calendar/app/master-calendar.ports'
 import { MasterCalendarRepository } from '@/modules/master-calendar/infra/master-calendar.repository'
@@ -56,9 +57,10 @@ export class GetMasterCalendarUseCase {
       master.timezone,
     )
 
-    const [slots, blocks] = await Promise.all([
+    const [slots, blocks, exceptions] = await Promise.all([
       this.calendar.listSlots(master.id, rangeFrom, rangeTo),
       this.calendar.listBlocks(master.id, rangeFrom, rangeTo),
+      this.calendar.listExceptions(master.id, query.from, query.to),
     ])
 
     return {
@@ -68,6 +70,7 @@ export class GetMasterCalendarUseCase {
       to: query.to,
       slots: slots.map(toCalendarSlotView),
       blocks: blocks.map(toCalendarBlockView),
+      exceptions: exceptions.map(toCalendarExceptionView),
     }
   }
 }

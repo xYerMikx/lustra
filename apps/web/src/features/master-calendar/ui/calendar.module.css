@@ -125,6 +125,13 @@
   background: var(--color-warning);
 }
 
+.swatchException {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-4);
+  background: var(--color-accent);
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
@@ -181,6 +188,28 @@
   border: none;
   cursor: pointer;
   min-height: 32px;
+}
+
+.exceptionChip {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-4);
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  color: var(--color-text);
+}
+
+.exceptionBanner {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-8);
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  text-align: left;
 }
 
 .weekGrid {

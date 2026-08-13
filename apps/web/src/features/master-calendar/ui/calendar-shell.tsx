@@ -9,6 +9,7 @@ import { useCalendarData } from '@/features/master-calendar/model/use-calendar-d
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
+import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
 import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
@@ -22,6 +23,7 @@ type ManualDialogState = {
 export function CalendarShell() {
   const calendar = useCalendarData()
   const [blockOpen, setBlockOpen] = useState(false)
+  const [exceptionOpen, setExceptionOpen] = useState(false)
   const [manual, setManual] = useState<ManualDialogState | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
@@ -42,6 +44,20 @@ export function CalendarShell() {
     } catch (error) {
       setActionError(
         error instanceof ApiError ? error.message : 'Не удалось снять блок',
+      )
+    }
+  }
+
+  const handleRemoveException = async (ymdDate: string) => {
+    setActionError(null)
+
+    try {
+      await calendar.removeException(ymdDate)
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось снять исключение',
       )
     }
   }
@@ -119,6 +135,9 @@ export function CalendarShell() {
           <Button type="button" onClick={() => setBlockOpen(true)}>
             Блок / обед
           </Button>
+          <Button type="button" onClick={() => setExceptionOpen(true)}>
+            Исключение
+          </Button>
         </div>
         <div className={styles.legend}>
           <span className={styles.legendItem}>
@@ -126,6 +145,9 @@ export function CalendarShell() {
           </span>
           <span className={styles.legendItem}>
             <span className={styles.swatchBlock} /> блок
+          </span>
+          <span className={styles.legendItem}>
+            <span className={styles.swatchException} /> исключение
           </span>
         </div>
       </header>
@@ -141,6 +163,7 @@ export function CalendarShell() {
         onSelectDay={calendar.selectDay}
         onSelectSlot={handleOpenManual}
         onRemoveBlock={handleRemoveBlock}
+        onRemoveException={handleRemoveException}
       />
 
       {blockOpen ? (
@@ -148,6 +171,14 @@ export function CalendarShell() {
           defaultDate={calendar.anchorDate}
           onClose={() => setBlockOpen(false)}
           onSubmit={calendar.addBlock}
+        />
+      ) : null}
+
+      {exceptionOpen ? (
+        <ExceptionDialog
+          defaultDate={calendar.anchorDate}
+          onClose={() => setExceptionOpen(false)}
+          onSubmit={calendar.addException}
         />
       ) : null}
 

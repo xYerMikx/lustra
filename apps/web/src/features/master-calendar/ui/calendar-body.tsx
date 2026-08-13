@@ -14,6 +14,7 @@ export type CalendarBodyProps = {
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
+  onRemoveException: (ymdDate: string) => void
 }
 
 export function CalendarBody({
@@ -25,6 +26,7 @@ export function CalendarBody({
   onSelectDay,
   onSelectSlot,
   onRemoveBlock,
+  onRemoveException,
 }: CalendarBodyProps) {
   if (status === 'loading') {
     return <div className={styles.stateBox}>Загружаем сетку…</div>
@@ -55,6 +57,7 @@ export function CalendarBody({
         onSelectDay={onSelectDay}
         onSelectSlot={onSelectSlot}
         onRemoveBlock={onRemoveBlock}
+        onRemoveException={onRemoveException}
       />
     </>
   )

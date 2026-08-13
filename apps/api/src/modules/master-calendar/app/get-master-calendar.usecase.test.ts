@@ -32,6 +32,16 @@ describe('GetMasterCalendarUseCase', () => {
           note: null,
         },
       ]),
+      listExceptions: vi.fn().mockResolvedValue([
+        {
+          id: 'e1',
+          date: new Date('2026-08-11T00:00:00.000Z'),
+          type: 'day_off',
+          startMin: null,
+          endMin: null,
+          note: null,
+        },
+      ]),
     }
     const ensureSlots = {
       execute: vi.fn().mockResolvedValue({ createdHint: 2 }),
@@ -53,6 +63,7 @@ describe('GetMasterCalendarUseCase', () => {
     expect(result.granularityMin).toBe(30)
     expect(result.slots).toHaveLength(1)
     expect(result.blocks[0]?.reason).toBe('lunch')
+    expect(result.exceptions[0]?.type).toBe('day_off')
   })
 
   it('rejects when master profile is missing', async () => {
@@ -61,6 +72,7 @@ describe('GetMasterCalendarUseCase', () => {
       getGranularityMin: vi.fn(),
       listSlots: vi.fn(),
       listBlocks: vi.fn(),
+      listExceptions: vi.fn(),
     }
     const ensureSlots = {
       execute: vi.fn(),

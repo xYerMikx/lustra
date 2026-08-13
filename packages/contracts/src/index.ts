@@ -68,6 +68,7 @@ export {
 } from './master-services'
 
 export {
+  YmdDateSchema,
   WeekdaySchema,
   GranularityMinSchema,
   isGranularityMin,
@@ -76,6 +77,12 @@ export {
   MasterScheduleViewSchema,
   AvailabilityRuleInputSchema,
   PutMasterScheduleInputSchema,
+  ExceptionTypeSchema,
+  ScheduleExceptionViewSchema,
+  ScheduleExceptionListResponseSchema,
+  ListScheduleExceptionsQuerySchema,
+  PutScheduleExceptionInputSchema,
+  type YmdDate,
   type Weekday,
   type GranularityMin,
   type AvailabilityRuleView,
@@ -83,6 +90,11 @@ export {
   type MasterScheduleView,
   type AvailabilityRuleInput,
   type PutMasterScheduleInput,
+  type ExceptionType,
+  type ScheduleExceptionView,
+  type ScheduleExceptionListResponse,
+  type ListScheduleExceptionsQuery,
+  type PutScheduleExceptionInput,
 } from './master-schedule'
 
 export {
