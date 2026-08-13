@@ -2,6 +2,7 @@ import type { PublicMasterView } from '@lustra/contracts'
 import cn from 'classnames'
 
 import styles from '@/app/m/[slug]/master.module.css'
+import { FavoriteToggle } from '@/features/favorites'
 import { pickCoverItem } from '@/features/master-portfolio/model/pick-cover-item'
 import { ButtonLink } from '@/shared/ui/button'
 
@@ -34,7 +35,10 @@ export function MasterHero({ master }: MasterHeroProps) {
       <h1 className={styles.name}>{master.displayName}</h1>
       {master.headline ? <p className={styles.headline}>{master.headline}</p> : null}
       {master.bio ? <p className={styles.bio}>{master.bio}</p> : null}
-      <ButtonLink href="#booking">Записаться</ButtonLink>
+      <div className={styles.heroActions}>
+        <ButtonLink href="#booking">Записаться</ButtonLink>
+        <FavoriteToggle masterId={master.id} masterSlug={master.slug} />
+      </div>
     </section>
   )
 }

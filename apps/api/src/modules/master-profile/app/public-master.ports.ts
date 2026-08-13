@@ -5,5 +5,7 @@ import type { PublicMasterRecord } from '@/modules/master-profile/domain/map-pub
 
 export type PublicMasterStore = {
   findPublicBySlug(slug: string): Promise<PublicMasterRecord | null>
+  findPublishedById(id: string): Promise<CatalogMasterRecord | null>
+  listPublishedByIds(ids: string[]): Promise<CatalogMasterRecord[]>
   searchPublished(query: SearchMastersQuery): Promise<CatalogMasterRecord[]>
 }

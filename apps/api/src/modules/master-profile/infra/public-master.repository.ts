@@ -143,6 +143,27 @@ export class PublicMasterRepository implements PublicMasterStore {
     return row
   }
 
+  async findPublishedById(id: string): Promise<CatalogMasterRecord | null> {
+    return this.prisma.masterProfile.findFirst({
+      where: { id, status: 'published' },
+      select: CATALOG_CARD_SELECT,
+    })
+  }
+
+  async listPublishedByIds(ids: string[]): Promise<CatalogMasterRecord[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
+    return this.prisma.masterProfile.findMany({
+      where: {
+        id: { in: ids },
+        status: 'published',
+      },
+      select: CATALOG_CARD_SELECT,
+    })
+  }
+
   async searchPublished(
     query: SearchMastersQuery,
   ): Promise<CatalogMasterRecord[]> {

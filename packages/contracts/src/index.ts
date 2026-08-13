@@ -134,6 +134,13 @@ export {
   type SearchMastersResponse,
 } from './catalog'
 
+export {
+  FavoriteListResponseSchema,
+  FavoriteStatusResponseSchema,
+  type FavoriteListResponse,
+  type FavoriteStatusResponse,
+} from './favorites'
+
 export { ByPhoneSchema, normalizeByPhone } from './phone'
 
 export {

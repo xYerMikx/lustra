@@ -22,6 +22,8 @@ describe('GetPublicMasterBySlugUseCase', () => {
         stats: null,
         portfolio: [],
       }),
+      findPublishedById: vi.fn(),
+      listPublishedByIds: vi.fn(),
       searchPublished: vi.fn(),
     }
 
@@ -36,6 +38,8 @@ describe('GetPublicMasterBySlugUseCase', () => {
   it('returns NOT_FOUND for missing or non-public masters', async () => {
     const masters: PublicMasterStore = {
       findPublicBySlug: vi.fn().mockResolvedValue(null),
+      findPublishedById: vi.fn(),
+      listPublishedByIds: vi.fn(),
       searchPublished: vi.fn(),
     }
 
