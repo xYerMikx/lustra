@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --incremental false",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "ensure-admin": "../db/node_modules/.bin/tsx src/scripts/ensure-admin.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.1",

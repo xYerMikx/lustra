@@ -41,6 +41,19 @@ pnpm dev
 | Landing | 4321 | Astro |
 
 Полезное: `make help` · `make status` · `make studio` · `make test`
+
+Админ (не через регистрацию):
+
+```bash
+# в apps/api/.env
+ADMIN_BOOTSTRAP_EMAIL=admin@example.com
+ADMIN_BOOTSTRAP_PASSWORD='at-least-8-chars'
+# опционально: ADMIN_IP_ALLOWLIST=127.0.0.1
+
+pnpm --filter @lustra/api ensure-admin
+```
+
+Вход → `/admin`. Роль `admin` нельзя получить через `/auth/register`.
 ## Структура
 
 ```

@@ -100,7 +100,10 @@
 }
 
 .error {
+  margin-top: var(--spacing-8);
   color: var(--color-accent-700);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
 }
 
 .slotList {

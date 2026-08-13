@@ -31,6 +31,10 @@ export function buildAppNavItems(user: MeResponse | null): AppNavItem[] {
     if (user.role === 'master') {
       items.push({ href: '/app/master/calendar', label: 'Календарь' })
     }
+
+    if (user.role === 'admin') {
+      items.push({ href: '/admin', label: 'Админка' })
+    }
   }
 
   items.push({ href: '/app', label: 'Кабинет' })

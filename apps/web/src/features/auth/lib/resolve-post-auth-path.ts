@@ -16,5 +16,9 @@ export function resolvePostAuthPath(
     return '/app/onboarding'
   }
 
+  if (user.role === 'admin') {
+    return '/admin'
+  }
+
   return '/app'
 }
