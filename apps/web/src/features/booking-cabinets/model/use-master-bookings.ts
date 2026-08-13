@@ -9,6 +9,7 @@ import {
   confirmMasterBooking,
   getMasterBooking,
   listMasterBookings,
+  markMasterNoShow,
   rescheduleMasterBooking,
 } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
@@ -160,6 +161,27 @@ export function useMasterBookingDetail(bookingId: string) {
     }
   }
 
+  const markNoShow = async () => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await markMasterNoShow(bookingId)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+      }
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось отметить неявку',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const cancel = async (reason: string) => {
     setBusy(true)
     setActionError(null)
@@ -206,6 +228,7 @@ export function useMasterBookingDetail(bookingId: string) {
     busy,
     confirm,
     complete,
+    markNoShow,
     cancel,
     reschedule,
   }

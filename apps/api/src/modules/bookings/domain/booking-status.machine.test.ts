@@ -6,6 +6,7 @@ import {
   resolveMasterCancel,
   resolveMasterComplete,
   resolveMasterConfirmPending,
+  resolveMasterNoShow,
   resolveMasterReschedule,
 } from '@/modules/bookings/domain/booking-status.machine'
 
@@ -175,5 +176,45 @@ describe('resolveMasterConfirmPending', () => {
       ok: false,
       reason: 'not_pending',
     })
+  })
+})
+
+describe('resolveMasterNoShow', () => {
+  const now = new Date('2026-08-12T12:00:00.000Z')
+
+  it('marks pending or confirmed after the visit started', () => {
+    expect(
+      resolveMasterNoShow({
+        status: 'pending',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+
+    expect(
+      resolveMasterNoShow({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-12T11:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects a future visit and terminal statuses', () => {
+    expect(
+      resolveMasterNoShow({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'visit_not_started' })
+
+    expect(
+      resolveMasterNoShow({
+        status: 'completed',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'invalid_state' })
   })
 })

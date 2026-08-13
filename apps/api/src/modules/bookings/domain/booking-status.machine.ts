@@ -120,3 +120,25 @@ export function resolveMasterComplete(input: {
 
   return { ok: true }
 }
+
+const NO_SHOWABLE: BookingStatus[] = ['pending', 'confirmed']
+
+export type MasterNoShowResult =
+  | { ok: true }
+  | { ok: false; reason: 'invalid_state' | 'visit_not_started' }
+
+export function resolveMasterNoShow(input: {
+  status: BookingStatus
+  startsAt: Date
+  now: Date
+}): MasterNoShowResult {
+  if (!NO_SHOWABLE.includes(input.status)) {
+    return { ok: false, reason: 'invalid_state' }
+  }
+
+  if (input.now.getTime() < input.startsAt.getTime()) {
+    return { ok: false, reason: 'visit_not_started' }
+  }
+
+  return { ok: true }
+}

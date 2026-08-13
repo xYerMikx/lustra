@@ -32,6 +32,7 @@ import { ConfirmMasterBookingUseCase } from '@/modules/bookings/app/confirm-mast
 import { CreateManualBookingUseCase } from '@/modules/bookings/app/create-manual-booking.usecase'
 import { GetMasterBookingUseCase } from '@/modules/bookings/app/get-master-booking.usecase'
 import { ListMasterBookingsUseCase } from '@/modules/bookings/app/list-master-bookings.usecase'
+import { MarkNoShowUseCase } from '@/modules/bookings/app/mark-no-show.usecase'
 import { RescheduleBookingUseCase } from '@/modules/bookings/app/reschedule-booking.usecase'
 
 @Controller('master/bookings')
@@ -44,6 +45,7 @@ export class MasterBookingsController {
     private readonly createManual: CreateManualBookingUseCase,
     private readonly confirmBooking: ConfirmMasterBookingUseCase,
     private readonly completeBooking: CompleteBookingUseCase,
+    private readonly markNoShow: MarkNoShowUseCase,
     private readonly cancelBooking: CancelMasterBookingUseCase,
     private readonly rescheduleBooking: RescheduleBookingUseCase,
   ) {}
@@ -91,6 +93,15 @@ export class MasterBookingsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.completeBooking.execute(currentUser, id)
+  }
+
+  @Post(':id/no-show')
+  @HttpCode(200)
+  noShow(
+    @CurrentUser() currentUser: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.markNoShow.execute(currentUser, id)
   }
 
   @Post(':id/cancel')

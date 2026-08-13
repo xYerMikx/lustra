@@ -13,6 +13,7 @@ import type {
   CreateHoldInput,
   CreateManualBookingStoreInput,
   ListBookingsScope,
+  MarkNoShowStoreInput,
   MasterClientRecord,
   RescheduleBookingStoreInput,
 } from '@/modules/bookings/app/booking.ports'
@@ -20,6 +21,7 @@ import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
 import { cancelBookingInStore } from '@/modules/bookings/infra/cancel-booking-in-store'
 import { completeBookingInStore } from '@/modules/bookings/infra/complete-booking-in-store'
+import { markNoShowInStore } from '@/modules/bookings/infra/mark-no-show-in-store'
 import { confirmHoldInStore } from '@/modules/bookings/infra/confirm-hold-in-store'
 import { createHoldInStore } from '@/modules/bookings/infra/create-hold-in-store'
 import { createManualBookingInStore } from '@/modules/bookings/infra/create-manual-booking-in-store'
@@ -293,5 +295,9 @@ export class BookingRepository implements BookingStore {
     input: CompleteBookingStoreInput,
   ): Promise<BookingRecord | null> {
     return completeBookingInStore(this.tx.getClient(), input)
+  }
+
+  markNoShow(input: MarkNoShowStoreInput): Promise<BookingRecord | null> {
+    return markNoShowInStore(this.tx.getClient(), input)
   }
 }

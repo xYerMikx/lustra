@@ -3,6 +3,7 @@ export const OutboxEventType = {
   BookingCreatedManual: 'booking.created_manual',
   BookingCancelled: 'booking.cancelled',
   BookingCompleted: 'booking.completed',
+  BookingNoShow: 'booking.no_show',
   ReviewCreated: 'review.created',
   ReviewPublished: 'review.published',
 } as const

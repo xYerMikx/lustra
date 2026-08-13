@@ -82,6 +82,15 @@ export type CompleteBookingStoreInput = {
   now: Date
 }
 
+export type MarkNoShowStoreInput = {
+  bookingId: string
+  masterId: string
+  currentUserId: string
+  fromStatus: Extract<BookingStatus, 'pending' | 'confirmed'>
+  clientUserId: string | null
+  now: Date
+}
+
 export type CreateManualBookingStoreInput = {
   masterId: string
   currentUserId: string
@@ -167,6 +176,7 @@ export type BookingStore = {
   cancelBooking(input: CancelBookingStoreInput): Promise<BookingRecord | null>
   confirmPending(input: ConfirmPendingStoreInput): Promise<BookingRecord | null>
   completeBooking(input: CompleteBookingStoreInput): Promise<BookingRecord | null>
+  markNoShow(input: MarkNoShowStoreInput): Promise<BookingRecord | null>
   listMasterClients(input: {
     masterId: string
     query: string

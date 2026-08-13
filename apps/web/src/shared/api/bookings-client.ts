@@ -98,6 +98,13 @@ export function completeMasterBooking(bookingId: string) {
   )
 }
 
+export function markMasterNoShow(bookingId: string) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/no-show`,
+    { method: 'POST' },
+  )
+}
+
 export function cancelMasterBooking(
   bookingId: string,
   input: MasterCancelBookingInput,

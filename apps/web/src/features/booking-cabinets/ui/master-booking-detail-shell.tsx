@@ -10,6 +10,7 @@ import {
   bookingStatusLabel,
   formatBookingWhen,
 } from '@/features/booking-cabinets/model/booking-labels'
+import { canMarkNoShow } from '@/features/booking-cabinets/model/can-mark-no-show'
 import { canRescheduleBooking } from '@/features/booking-cabinets/model/can-reschedule-booking'
 import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-master-bookings'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
@@ -57,6 +58,7 @@ export function MasterBookingDetailShell({
   const canCancel = CANCELABLE.has(booking.status)
   const canConfirm = booking.status === 'pending'
   const canComplete = booking.status === 'confirmed'
+  const canNoShow = canMarkNoShow(booking.status)
   const canReschedule = canRescheduleBooking(booking.status)
 
   return (
@@ -119,6 +121,16 @@ export function MasterBookingDetailShell({
               onClick={() => void detail.complete()}
             >
               Завершить визит
+            </Button>
+          ) : null}
+          {canNoShow ? (
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={detail.busy}
+              onClick={() => void detail.markNoShow()}
+            >
+              Неявка
             </Button>
           ) : null}
         </div>

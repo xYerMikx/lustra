@@ -8,7 +8,7 @@ import type {
 } from '@/common/prisma/transaction-manager.service'
 import { FixedClock } from '@/common/time/clock.service'
 import type { BookingStore } from '@/modules/bookings/app/booking.ports'
-import { CompleteBookingUseCase } from '@/modules/bookings/app/complete-booking.usecase'
+import { MarkNoShowUseCase } from '@/modules/bookings/app/mark-no-show.usecase'
 import { sampleBookingRecord } from '@/modules/bookings/domain/sample-booking-record'
 
 const currentUser: AuthUser = {
@@ -54,17 +54,16 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     confirmHold: vi.fn(),
     cancelBooking: vi.fn(),
     confirmPending: vi.fn(),
-    completeBooking: vi.fn().mockResolvedValue(
+    completeBooking: vi.fn(),
+    markNoShow: vi.fn().mockResolvedValue(
       sampleBookingRecord({
         id: 'b1',
         masterId: 'm1',
-        status: 'completed',
-        completedAt: new Date('2026-08-12T12:00:00.000Z'),
+        status: 'no_show',
         startsAt: new Date('2026-08-12T10:00:00.000Z'),
         endsAt: new Date('2026-08-12T11:00:00.000Z'),
       }),
     ),
-    markNoShow: vi.fn(),
     listMasterClients: vi.fn(),
     createManualBooking: vi.fn(),
     rescheduleBooking: vi.fn(),
@@ -72,25 +71,27 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
   }
 }
 
-describe('CompleteBookingUseCase', () => {
+describe('MarkNoShowUseCase', () => {
   const clock = new FixedClock(new Date('2026-08-12T12:00:00.000Z'))
 
-  it('completes a confirmed booking after the visit started', async () => {
+  it('marks a confirmed booking after the visit started', async () => {
     const store = buildStore()
-    const useCase = new CompleteBookingUseCase(store, createTransactions(), clock)
+    const useCase = new MarkNoShowUseCase(store, createTransactions(), clock)
 
     const result = await useCase.execute(currentUser, 'b1')
 
-    expect(result.booking.status).toBe('completed')
-    expect(store.completeBooking).toHaveBeenCalledWith({
+    expect(result.booking.status).toBe('no_show')
+    expect(store.markNoShow).toHaveBeenCalledWith({
       bookingId: 'b1',
       masterId: 'm1',
       currentUserId: currentUser.id,
+      fromStatus: 'confirmed',
+      clientUserId: '33333333-3333-3333-3333-333333333333',
       now: clock.now(),
     })
   })
 
-  it('rejects completing a future visit', async () => {
+  it('rejects marking a future visit', async () => {
     const store = buildStore({
       findBookingById: vi.fn().mockResolvedValue(
         sampleBookingRecord({
@@ -101,12 +102,12 @@ describe('CompleteBookingUseCase', () => {
         }),
       ),
     })
-    const useCase = new CompleteBookingUseCase(store, createTransactions(), clock)
+    const useCase = new MarkNoShowUseCase(store, createTransactions(), clock)
 
     await expect(useCase.execute(currentUser, 'b1')).rejects.toMatchObject({
       code: 'INVALID_STATE',
     } satisfies Partial<DomainError>)
-    expect(store.completeBooking).not.toHaveBeenCalled()
+    expect(store.markNoShow).not.toHaveBeenCalled()
   })
 
   it('hides another master booking as not found', async () => {
@@ -119,7 +120,7 @@ describe('CompleteBookingUseCase', () => {
         }),
       ),
     })
-    const useCase = new CompleteBookingUseCase(store, createTransactions(), clock)
+    const useCase = new MarkNoShowUseCase(store, createTransactions(), clock)
 
     await expect(useCase.execute(currentUser, 'b1')).rejects.toMatchObject({
       code: 'NOT_FOUND',
