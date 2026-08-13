@@ -286,7 +286,7 @@ export function StepScheduleForm({
           Пропустить
         </Button>
         <Button type="submit" className={styles.actionsGrow} disabled={isSubmitting}>
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и в кабинет'}
+          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
         </Button>
       </div>
     </form>

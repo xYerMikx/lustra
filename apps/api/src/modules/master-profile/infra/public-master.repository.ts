@@ -116,6 +116,27 @@ export class PublicMasterRepository implements PublicMasterStore {
             ratingCount: true,
           },
         },
+        portfolio: {
+          where: {
+            deletedAt: null,
+            media: { deletedAt: null, moderation: { not: 'rejected' } },
+          },
+          select: {
+            id: true,
+            serviceId: true,
+            caption: true,
+            sort: true,
+            isCover: true,
+            media: {
+              select: {
+                storageKey: true,
+                width: true,
+                height: true,
+              },
+            },
+          },
+          orderBy: [{ isCover: 'desc' }, { sort: 'asc' }, { createdAt: 'asc' }],
+        },
       },
     })
 

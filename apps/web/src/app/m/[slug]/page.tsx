@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { MasterHero } from '@/app/m/[slug]/master-hero'
 import { MasterServicesList } from '@/app/m/[slug]/master-services-list'
 import styles from '@/app/m/[slug]/master.module.css'
+import { PublicPortfolioGallery } from '@/features/master-portfolio'
 import { SlotPicker } from '@/features/slot-picker'
 import { ApiError } from '@/shared/api/http'
 import { getPublicMasterBySlug } from '@/shared/api/catalog-client'
@@ -48,6 +49,7 @@ export default async function MasterPage({ params }: PageProps) {
     <main className={styles.page}>
       <SiteChrome>
         <MasterHero master={master} />
+        <PublicPortfolioGallery items={master.portfolio} />
         <MasterServicesList services={master.services} />
         <SlotPicker
           masterId={master.id}

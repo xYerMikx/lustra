@@ -65,6 +65,9 @@ export function MasterCabinetHub() {
 
         <div className={styles.actions}>
           <ButtonLink href="/app/master/profile">Редактировать профиль</ButtonLink>
+          <ButtonLink href="/app/master/portfolio" variant="ghost">
+            Портфолио
+          </ButtonLink>
           <ButtonLink href="/app/master/bookings" variant="ghost">
             Записи
           </ButtonLink>

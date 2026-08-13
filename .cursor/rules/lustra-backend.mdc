@@ -29,6 +29,7 @@ modules/<name>/
 - Imports: `@/` aliases **everywhere** (e.g. `@/modules/master-profile/app/...`) — no `../` across folders.
 - Env checks: use shared `isProduction` helper — never inline `process.env.NODE_ENV === 'production'`.
 - Magic strings/codes (`P2002`, race markers): named constants / maps.
+- Never `as never` — even in tests. Use `as unknown as ConcreteType` for partial doubles, or a `Pick<>` port.
 
 ## Nest patterns to use
 

@@ -20,6 +20,7 @@ describe('GetPublicMasterBySlugUseCase', () => {
         services: [],
         contact: null,
         stats: null,
+        portfolio: [],
       }),
       searchPublished: vi.fn(),
     }

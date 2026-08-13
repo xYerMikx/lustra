@@ -5,12 +5,14 @@ import { LoggerModule } from 'nestjs-pino'
 
 import { isProduction } from '@/common/env/is-production'
 import { PrismaModule } from '@/common/prisma/prisma.module'
+import { StorageModule } from '@/common/storage/storage.module'
 import { TimeModule } from '@/common/time/time.module'
 import { HealthModule } from '@/health/health.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { AdminModerationModule } from '@/modules/admin-moderation/admin-moderation.module'
 import { BookingsModule } from '@/modules/bookings/bookings.module'
 import { MasterCalendarModule } from '@/modules/master-calendar/master-calendar.module'
+import { MasterPortfolioModule } from '@/modules/master-portfolio/master-portfolio.module'
 import { MasterProfileModule } from '@/modules/master-profile/master-profile.module'
 import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.module'
 import { MasterServicesModule } from '@/modules/master-services/master-services.module'
@@ -29,12 +31,14 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     }),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
     PrismaModule,
+    StorageModule,
     TimeModule,
     HealthModule,
     AuthModule,
     AdminModerationModule,
     MasterProfileModule,
     MasterServicesModule,
+    MasterPortfolioModule,
     MasterScheduleModule,
     MasterCalendarModule,
     SchedulingModule,

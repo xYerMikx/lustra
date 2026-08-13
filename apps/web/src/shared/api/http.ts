@@ -66,6 +66,22 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   return typeof value.error.code === 'string' && typeof value.error.message === 'string'
 }
 
+function isBlobBody(body: BodyInit | null | undefined): body is Blob {
+  return typeof Blob !== 'undefined' && body instanceof Blob
+}
+
+function isBinaryBody(body: BodyInit | null | undefined): boolean {
+  if (!body) {
+    return false
+  }
+
+  if (typeof FormData !== 'undefined' && body instanceof FormData) {
+    return true
+  }
+
+  return isBlobBody(body)
+}
+
 export async function readJsonBody(response: Response): Promise<unknown> {
   try {
     return await response.json()
@@ -88,8 +104,12 @@ async function rawApiFetch(
 ): Promise<{ response: Response; payload: unknown }> {
   const headers = new Headers(init.headers)
 
-  if (init.body && !headers.has('Content-Type')) {
+  if (init.body && !headers.has('Content-Type') && !isBinaryBody(init.body)) {
     headers.set('Content-Type', 'application/json')
+  }
+
+  if (isBlobBody(init.body) && !headers.has('Content-Type')) {
+    headers.set('Content-Type', init.body.type || 'application/octet-stream')
   }
 
   const method = init.method ?? 'GET'

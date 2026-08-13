@@ -1,14 +1,14 @@
-import { ForbiddenException } from '@nestjs/common'
+import { ForbiddenException, type ExecutionContext } from '@nestjs/common'
 import { describe, expect, it, afterEach } from 'vitest'
 
 import { AdminIpAllowlistGuard } from '@/common/auth/admin-ip-allowlist.guard'
 
-function fakeContext(ip: string) {
+function fakeContext(ip: string): ExecutionContext {
   return {
     switchToHttp: () => ({
       getRequest: () => ({ ip }),
     }),
-  } as never
+  } as unknown as ExecutionContext
 }
 
 describe('AdminIpAllowlistGuard', () => {

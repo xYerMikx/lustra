@@ -34,3 +34,4 @@ Thumbs.db
 
 /packages/db/generated/
 .worktrees/
+.data/
