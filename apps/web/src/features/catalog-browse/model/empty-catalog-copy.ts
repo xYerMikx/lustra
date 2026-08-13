@@ -5,7 +5,7 @@ export function emptyCatalogCopy(
   filtersActive: boolean,
 ): string {
   if (filtersActive) {
-    return 'Никого не нашли по этим фильтрам. Уберите район или расширьте цену.'
+    return 'Никого не нашли по этим фильтрам. Уберите район, услугу или день.'
   }
 
   if (query.category) {

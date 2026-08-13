@@ -6,17 +6,20 @@ import { parseCatalogSearchParams } from '@/features/catalog-browse/model/parse-
 import {
   listCatalogCategories,
   listCatalogDistricts,
+  listCatalogServiceTemplates,
   searchMasters,
 } from '@/shared/api/catalog-client'
 
 type PageProps = {
   params: Promise<{ category: string }>
   searchParams: Promise<{
-    district?: string
+    district?: string | string[]
+    service?: string
     priceMin?: string
     priceMax?: string
     ratingMin?: string
     locationType?: string
+    availableOn?: string
     sort?: string
   }>
 }
@@ -51,9 +54,10 @@ export default async function CatalogCategoryPage({
   }
 
   const query = parseCatalogSearchParams(raw, category.slug)
-  const [mastersResponse, districtsResponse] = await Promise.all([
+  const [mastersResponse, districtsResponse, templatesResponse] = await Promise.all([
     searchMasters(query),
     listCatalogDistricts(),
+    listCatalogServiceTemplates(category.slug),
   ])
 
   return (
@@ -61,6 +65,7 @@ export default async function CatalogCategoryPage({
       masters={mastersResponse.items}
       categories={categoriesResponse.categories}
       districts={districtsResponse.districts}
+      templates={templatesResponse.templates}
       query={query}
     />
   )

@@ -15,7 +15,7 @@ describe('catalogHref', () => {
   it('keeps price, district and sort in the query', () => {
     expect(
       catalogHref({
-        district: 'centr',
+        district: ['centr'],
         priceMin: 40,
         sort: 'price_asc',
       }),
@@ -27,10 +27,10 @@ describe('hrefForCategory', () => {
   it('builds catalog and category paths with optional district', () => {
     expect(hrefForCategory(undefined)).toBe('/catalog')
     expect(hrefForCategory('depilyatsiya')).toBe('/catalog/depilyatsiya')
-    expect(hrefForCategory('depilyatsiya', { district: 'centr' })).toBe(
+    expect(hrefForCategory('depilyatsiya', { district: ['centr'] })).toBe(
       '/catalog/depilyatsiya?district=centr',
     )
-    expect(hrefForCategory(undefined, { district: 'centr' })).toBe(
+    expect(hrefForCategory(undefined, { district: ['centr'] })).toBe(
       '/catalog?district=centr',
     )
   })

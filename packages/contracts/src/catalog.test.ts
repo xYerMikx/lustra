@@ -29,12 +29,26 @@ describe('SearchMastersQuerySchema', () => {
       }),
     ).toEqual({
       category: 'nogti',
-      district: 'centr',
+      district: ['centr'],
       priceMin: 40,
       priceMax: 90,
       ratingMin: 4,
       locationType: 'salon',
       sort: 'price_asc',
+    })
+  })
+
+  it('accepts several districts, a service title, and a calendar day', () => {
+    expect(
+      SearchMastersQuerySchema.parse({
+        service: 'Маникюр классический',
+        district: ['centr', 'frunzenskiy'],
+        availableOn: '2026-08-14',
+      }),
+    ).toEqual({
+      service: 'Маникюр классический',
+      district: ['centr', 'frunzenskiy'],
+      availableOn: '2026-08-14',
     })
   })
 })

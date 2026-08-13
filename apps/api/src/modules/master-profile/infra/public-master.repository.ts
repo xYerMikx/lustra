@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type { PublicMasterStore } from '@/modules/master-profile/app/public-master.ports'
+import { catalogDayUtcRange } from '@/modules/master-profile/domain/catalog-day-range'
 import type { CatalogMasterRecord } from '@/modules/master-profile/domain/map-catalog-master'
 import type { PublicMasterRecord } from '@/modules/master-profile/domain/map-public-master'
 import { catalogOrderBy } from '@/modules/master-profile/infra/catalog-order-by'
@@ -172,22 +173,37 @@ export class PublicMasterRepository implements PublicMasterStore {
       status: 'published',
     }
 
-    if (query.category) {
+    if (query.category || query.service) {
       where.services = {
         some: {
           isActive: true,
-          category: { slug: query.category },
+          ...(query.category
+            ? { category: { slug: query.category } }
+            : {}),
+          ...(query.service
+            ? { title: { contains: query.service, mode: 'insensitive' } }
+            : {}),
         },
       }
     }
 
-    if (query.district || query.locationType) {
+    if (query.district?.length || query.locationType) {
       where.locations = {
         some: {
-          ...(query.district
-            ? { district: { slug: query.district } }
+          ...(query.district?.length
+            ? { district: { slug: { in: query.district } } }
             : {}),
           ...(query.locationType ? { type: query.locationType } : {}),
+        },
+      }
+    }
+
+    if (query.availableOn) {
+      const day = catalogDayUtcRange(query.availableOn)
+      where.slots = {
+        some: {
+          status: 'open',
+          startsAt: { gte: day.start, lt: day.end },
         },
       }
     }

@@ -23,3 +23,28 @@
   gap: var(--spacing-12);
   align-items: center;
 }
+
+.checks {
+  display: grid;
+  gap: var(--spacing-8);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+  margin-bottom: var(--spacing-8);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  min-height: 44px;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}

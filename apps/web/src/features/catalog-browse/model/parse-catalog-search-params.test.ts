@@ -19,7 +19,7 @@ describe('parseCatalogSearchParams', () => {
       ),
     ).toEqual({
       category: 'nogti',
-      district: 'centr',
+      district: ['centr'],
       priceMin: 35,
       ratingMin: 4,
       sort: 'rating',
@@ -38,6 +38,6 @@ describe('hasActiveCatalogFilters', () => {
     expect(hasActiveCatalogFilters({ category: 'nogti', sort: 'recommended' })).toBe(
       false,
     )
-    expect(hasActiveCatalogFilters({ district: 'centr' })).toBe(true)
+    expect(hasActiveCatalogFilters({ district: ['centr'] })).toBe(true)
   })
 })

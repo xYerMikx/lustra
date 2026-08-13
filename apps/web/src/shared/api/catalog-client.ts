@@ -2,6 +2,7 @@ import type {
   SearchMastersQuery,
   SearchMastersResponse,
   ServiceCategoryListResponse,
+  ServiceTemplateListResponse,
   DistrictListResponse,
   PublicMasterView,
   PublicReviewListResponse,
@@ -59,6 +60,20 @@ export function listCatalogDistricts() {
 
 export function listCatalogCategories() {
   return serverFetchJson<ServiceCategoryListResponse>('/catalog/categories')
+}
+
+export function listCatalogServiceTemplates(categorySlug?: string) {
+  const params = new URLSearchParams()
+
+  if (categorySlug) {
+    params.set('categorySlug', categorySlug)
+  }
+
+  const suffix = params.toString()
+
+  return serverFetchJson<ServiceTemplateListResponse>(
+    `/catalog/service-templates${suffix ? `?${suffix}` : ''}`,
+  )
 }
 
 export function getPublicMasterBySlug(slug: string) {

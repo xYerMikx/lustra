@@ -1,14 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import type { DistrictView, SearchMastersQuery } from '@lustra/contracts'
+import type {
+  DistrictView,
+  SearchMastersQuery,
+  ServiceTemplateView,
+} from '@lustra/contracts'
 
+import { catalogAvailableOnOptions } from '@/features/catalog-browse/model/catalog-available-on-options'
 import {
   CATALOG_LOCATION_OPTIONS,
   CATALOG_RATING_OPTIONS,
   CATALOG_SORT_OPTIONS,
 } from '@/features/catalog-browse/model/catalog-filter-options'
 import { catalogHref } from '@/features/catalog-browse/model/href-for-category'
+import { CatalogDistrictChecks } from '@/features/catalog-browse/ui/catalog-district-checks'
 import styles from '@/features/catalog-browse/ui/catalog-filters.module.css'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
@@ -17,24 +23,33 @@ import { Select } from '@/shared/ui/select'
 type CatalogFiltersProps = {
   query: SearchMastersQuery
   districts: DistrictView[]
+  templates: ServiceTemplateView[]
 }
 
-export function CatalogFilters({ query, districts }: CatalogFiltersProps) {
+export function CatalogFilters({
+  query,
+  districts,
+  templates,
+}: CatalogFiltersProps) {
   const action = query.category ? `/catalog/${query.category}` : '/catalog'
   const resetHref = catalogHref({ category: query.category })
-  const [district, setDistrict] = useState(query.district ?? '')
+  const [district, setDistrict] = useState(query.district ?? [])
   const [locationType, setLocationType] = useState(query.locationType ?? '')
+  const [service, setService] = useState(query.service ?? '')
+  const [availableOn, setAvailableOn] = useState(query.availableOn ?? '')
   const [ratingMin, setRatingMin] = useState(
     query.ratingMin != null ? String(query.ratingMin) : '',
   )
   const [sort, setSort] = useState(query.sort ?? 'recommended')
 
-  const districtOptions = [
-    { value: '', label: 'Все районы' },
-    ...districts.map((item) => ({
-      value: item.slug,
-      label: item.name,
-    })),
+  const serviceOptions = [
+    { value: '', label: 'Любая услуга' },
+    ...templates
+      .filter((item) => !query.category || item.categorySlug === query.category)
+      .map((item) => ({
+        value: item.title,
+        label: item.title,
+      })),
   ]
   const locationOptions = [
     { value: '', label: 'Любой' },
@@ -44,13 +59,27 @@ export function CatalogFilters({ query, districts }: CatalogFiltersProps) {
   return (
     <form className={styles.form} method="get" action={action}>
       <div className={styles.fields}>
-        <Field label="Район" htmlFor="catalog-district">
+        <CatalogDistrictChecks
+          districts={districts}
+          selected={district}
+          onChange={setDistrict}
+        />
+        <Field label="Услуга" htmlFor="catalog-service">
           <Select
-            id="catalog-district"
-            name="district"
-            value={district}
-            options={districtOptions}
-            onChange={setDistrict}
+            id="catalog-service"
+            name="service"
+            value={service}
+            options={serviceOptions}
+            onChange={setService}
+          />
+        </Field>
+        <Field label="Свободно" htmlFor="catalog-available-on">
+          <Select
+            id="catalog-available-on"
+            name="availableOn"
+            value={availableOn}
+            options={catalogAvailableOnOptions(new Date(), query.availableOn)}
+            onChange={setAvailableOn}
           />
         </Field>
         <Field label="Тип локации" htmlFor="catalog-location">

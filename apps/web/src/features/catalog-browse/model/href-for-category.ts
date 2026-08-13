@@ -3,8 +3,12 @@ import type { SearchMastersQuery } from '@lustra/contracts'
 export function catalogSearchParams(query: SearchMastersQuery): URLSearchParams {
   const params = new URLSearchParams()
 
-  if (query.district) {
-    params.set('district', query.district)
+  for (const slug of query.district ?? []) {
+    params.append('district', slug)
+  }
+
+  if (query.service) {
+    params.set('service', query.service)
   }
 
   if (query.priceMin != null) {
@@ -21,6 +25,10 @@ export function catalogSearchParams(query: SearchMastersQuery): URLSearchParams 
 
   if (query.locationType) {
     params.set('locationType', query.locationType)
+  }
+
+  if (query.availableOn) {
+    params.set('availableOn', query.availableOn)
   }
 
   if (query.sort && query.sort !== 'recommended') {

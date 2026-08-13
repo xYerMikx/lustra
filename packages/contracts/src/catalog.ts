@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { LocationTypeSchema } from './master-profile'
+import { YmdDateSchema } from './master-schedule'
 
 export const CATALOG_SORTS = [
   'recommended',
@@ -44,14 +45,49 @@ const OptionalCatalogSort = z.preprocess(
   CatalogSortSchema.optional(),
 )
 
+function toDistrictList(value: unknown): string[] | undefined {
+  if (value === '' || value == null) {
+    return undefined
+  }
+
+  const raw = Array.isArray(value) ? value : [value]
+  const slugs = raw
+    .map((item) => (typeof item === 'string' ? item.trim() : ''))
+    .filter((item) => item.length > 0)
+    .slice(0, 3)
+
+  if (slugs.length === 0) {
+    return undefined
+  }
+
+  return slugs
+}
+
+const OptionalDistricts = z.preprocess(
+  toDistrictList,
+  z.array(z.string().min(1).max(64)).max(3).optional(),
+)
+
+const OptionalAvailableOn = z.preprocess(
+  blankToUndefined,
+  YmdDateSchema.optional(),
+)
+
+const OptionalService = z.preprocess(
+  blankToUndefined,
+  z.string().trim().min(1).max(120).optional(),
+)
+
 export const SearchMastersQuerySchema = z
   .object({
     category: OptionalQueryText,
-    district: OptionalQueryText,
+    service: OptionalService,
+    district: OptionalDistricts,
     priceMin: OptionalQueryPrice,
     priceMax: OptionalQueryPrice,
     ratingMin: OptionalQueryRating,
     locationType: OptionalLocationType,
+    availableOn: OptionalAvailableOn,
     sort: OptionalCatalogSort,
   })
   .strict()

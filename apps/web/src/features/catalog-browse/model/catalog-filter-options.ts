@@ -16,6 +16,8 @@ export const CATALOG_LOCATION_OPTIONS: Array<{
   { value: 'client_home', label: 'С выездом' },
 ]
 
+export const CATALOG_MAX_DISTRICTS = 3
+
 export const CATALOG_RATING_OPTIONS: Array<{ value: string; label: string }> = [
   { value: '', label: 'Любой' },
   { value: '4', label: 'от 4.0' },

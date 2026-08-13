@@ -3,6 +3,7 @@ import type {
   DistrictView,
   SearchMastersQuery,
   ServiceCategoryView,
+  ServiceTemplateView,
 } from '@lustra/contracts'
 
 import { MasterCard } from '@/entities/master'
@@ -19,6 +20,7 @@ type CatalogBrowseProps = {
   masters: CatalogMasterCard[]
   categories: ServiceCategoryView[]
   districts: DistrictView[]
+  templates: ServiceTemplateView[]
   query: SearchMastersQuery
 }
 
@@ -26,6 +28,7 @@ export function CatalogBrowse({
   masters,
   categories,
   districts,
+  templates,
   query,
 }: CatalogBrowseProps) {
   const activeCategoryName = categories.find(
@@ -42,7 +45,7 @@ export function CatalogBrowse({
         <section className={styles.intro}>
           <h1 className={styles.heading}>{heading}</h1>
           <p className={styles.sub}>
-            {query.district
+            {query.district?.length
               ? 'Подборка по району и фильтрам.'
               : 'Опубликованные мастера Минска.'}
           </p>
@@ -53,6 +56,7 @@ export function CatalogBrowse({
           key={catalogHref(query)}
           query={query}
           districts={districts}
+          templates={templates}
         />
 
         {masters.length === 0 ? (
