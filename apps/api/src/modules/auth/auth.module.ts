@@ -8,10 +8,15 @@ import { AuthController } from '@/modules/auth/api/auth.controller'
 import { GetMeUseCase } from '@/modules/auth/app/get-me.usecase'
 import { LoginUseCase } from '@/modules/auth/app/login.usecase'
 import { LogoutUseCase } from '@/modules/auth/app/logout.usecase'
+import { MAILER } from '@/modules/auth/app/mailer.port'
 import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
 import { RegisterUseCase } from '@/modules/auth/app/register.usecase'
+import { RequestPasswordResetUseCase } from '@/modules/auth/app/request-password-reset.usecase'
+import { ResetPasswordUseCase } from '@/modules/auth/app/reset-password.usecase'
 import { AuthCookieService } from '@/modules/auth/infra/auth-cookie.service'
+import { AuthTokenRepository } from '@/modules/auth/infra/auth-token.repository'
 import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
+import { createMailerFromEnv } from '@/modules/auth/infra/create-mailer'
 import { PasswordHasher } from '@/modules/auth/infra/password-hasher'
 import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.repository'
 
@@ -25,12 +30,19 @@ import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.r
     AuthCookieService,
     PasswordHasher,
     AuthUserRepository,
+    AuthTokenRepository,
     RefreshSessionRepository,
+    {
+      provide: MAILER,
+      useFactory: createMailerFromEnv,
+    },
     RegisterUseCase,
     LoginUseCase,
     RefreshTokensUseCase,
     LogoutUseCase,
     GetMeUseCase,
+    RequestPasswordResetUseCase,
+    ResetPasswordUseCase,
   ],
   exports: [JwtTokenService, JwtGuard, RolesGuard],
 })

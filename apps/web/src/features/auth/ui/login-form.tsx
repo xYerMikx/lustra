@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -83,6 +84,12 @@ export function LoginForm() {
           <span className={styles.fieldError}>{errors.password.message}</span>
         ) : null}
       </label>
+
+      <p className={styles.forgotRow}>
+        <Link className={styles.forgotLink} href="/app/forgot">
+          Забыли пароль?
+        </Link>
+      </p>
 
       {formError ? (
         <p className={styles.error} role="alert">

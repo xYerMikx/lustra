@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { RefreshSession } from '@lustra/db'
 
 import { REFRESH_TTL_SEC } from '@/common/auth/cookie.constants'
-import { PrismaService } from '@/common/prisma/prisma.service'
+import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import { REFRESH_ROTATE_RACE } from '@/modules/auth/domain/refresh-errors'
 import {
   generateFamilyId,
@@ -24,7 +24,7 @@ type CreateSessionInput = {
 
 @Injectable()
 export class RefreshSessionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly tx: TransactionManager) {}
 
   async create(input: CreateSessionInput): Promise<CreatedRefreshSession> {
     const rawToken = generateRefreshToken()
@@ -32,7 +32,7 @@ export class RefreshSessionRepository {
     const familyId = input.familyId ?? generateFamilyId()
     const expiresAt = new Date(Date.now() + REFRESH_TTL_SEC * 1000)
 
-    const session = await this.prisma.refreshSession.create({
+    const session = await this.tx.getClient().refreshSession.create({
       data: {
         userId: input.userId,
         tokenHash,
@@ -47,7 +47,7 @@ export class RefreshSessionRepository {
   }
 
   findByTokenHash(tokenHash: string): Promise<RefreshSession | null> {
-    return this.prisma.refreshSession.findUnique({ where: { tokenHash } })
+    return this.tx.getClient().refreshSession.findUnique({ where: { tokenHash } })
   }
 
   async rotate(params: {
@@ -59,8 +59,8 @@ export class RefreshSessionRepository {
     const tokenHash = hashToken(rawToken)
     const expiresAt = new Date(Date.now() + REFRESH_TTL_SEC * 1000)
 
-    const session = await this.prisma.$transaction(async (tx) => {
-      const next = await tx.refreshSession.create({
+    const session = await this.tx.run(async (db) => {
+      const next = await db.refreshSession.create({
         data: {
           userId: params.current.userId,
           tokenHash,
@@ -71,7 +71,7 @@ export class RefreshSessionRepository {
         },
       })
 
-      const revoked = await tx.refreshSession.updateMany({
+      const revoked = await db.refreshSession.updateMany({
         where: {
           id: params.current.id,
           revokedAt: null,
@@ -93,16 +93,23 @@ export class RefreshSessionRepository {
   }
 
   async revoke(sessionId: string): Promise<void> {
-    await this.prisma.refreshSession.update({
+    await this.tx.getClient().refreshSession.update({
       where: { id: sessionId },
       data: { revokedAt: new Date() },
     })
   }
 
   async revokeFamily(familyId: string): Promise<void> {
-    await this.prisma.refreshSession.updateMany({
+    await this.tx.getClient().refreshSession.updateMany({
       where: { familyId, revokedAt: null },
       data: { revokedAt: new Date() },
+    })
+  }
+
+  async revokeAllForUser(userId: string, now: Date): Promise<void> {
+    await this.tx.getClient().refreshSession.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: now },
     })
   }
 }

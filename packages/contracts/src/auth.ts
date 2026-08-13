@@ -44,6 +44,26 @@ export const LoginInputSchema = z
   .strict()
 export type LoginInput = z.infer<typeof LoginInputSchema>
 
+export const ForgotPasswordInputSchema = z
+  .object({
+    email: EmailSchema,
+  })
+  .strict()
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordInputSchema>
+
+export const ResetPasswordInputSchema = z
+  .object({
+    token: z.string().trim().min(1).max(200),
+    password: z.string().min(8, 'Пароль не короче 8 символов').max(128),
+  })
+  .strict()
+export type ResetPasswordInput = z.infer<typeof ResetPasswordInputSchema>
+
+export const OkResponseSchema = z.object({
+  ok: z.literal(true),
+})
+export type OkResponse = z.infer<typeof OkResponseSchema>
+
 export const AuthUserViewSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),

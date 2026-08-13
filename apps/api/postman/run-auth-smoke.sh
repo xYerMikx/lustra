@@ -108,6 +108,24 @@ code="$(curl -sS -o /tmp/lustra-dup.json -w '%{http_code}' \
   "${BASE_URL}/auth/register")"
 assert_status 'email normalize conflict' 400 "$code"
 
+code="$(curl -sS -o /tmp/lustra-forgot-unknown.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d "{\"email\":\"nobody.smoke.${STAMP}@example.com\"}" \
+  "${BASE_URL}/auth/password/forgot")"
+assert_status 'forgot unknown email' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-forgot-known.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d "{\"email\":\"${CLIENT_EMAIL}\"}" \
+  "${BASE_URL}/auth/password/forgot")"
+assert_status 'forgot known email' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-reset-bad.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d '{"token":"not-a-real-token","password":"Password2!"}' \
+  "${BASE_URL}/auth/password/reset")"
+assert_status 'reset invalid token' 409 "$code"
+
 if [[ "$FAIL" -ne 0 ]]; then
   echo "== FAILED =="
   exit 1
