@@ -4,7 +4,6 @@ import { useState } from 'react'
 
 import { buildPublicProfileUrl } from '@/features/master-cabinet/model/public-profile-url'
 import { Button } from '@/shared/ui/button'
-import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
 type CopyProfileLinkButtonProps = {
   slug: string
