@@ -113,4 +113,17 @@ export class AuthUserRepository {
       data: { passwordHash },
     })
   }
+
+  async markEmailVerified(userId: string): Promise<void> {
+    await this.tx.getClient().user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
+    })
+  }
+
+  async isEmailVerified(userId: string): Promise<boolean> {
+    const user = await this.findById(userId)
+
+    return Boolean(user?.emailVerified)
+  }
 }

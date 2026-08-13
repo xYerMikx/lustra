@@ -70,9 +70,19 @@ assert_status 'register master' 201 "$code"
 python3 - <<'PY' || FAIL=1
 import json
 u=json.load(open("/tmp/lustra-reg-master.json"))["user"]
-assert u["role"]=="master" and u["profileStatus"]=="draft", u
+assert u["role"]=="master" and u["profileStatus"]=="draft" and u["emailVerified"] is False, u
 print("PASS  register master draft")
 PY
+
+code="$(curl -sS -c "$JAR" -b "$JAR" -o /tmp/lustra-email-resend.json -w '%{http_code}' \
+  -X POST "${BASE_URL}/auth/email/resend")"
+assert_status 'email resend' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-email-verify-bad.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d '{"token":"not-a-real-token"}' \
+  "${BASE_URL}/auth/email/verify")"
+assert_status 'verify invalid token' 409 "$code"
 
 code="$(curl -sS -c "$JAR" -b "$JAR" -o /tmp/lustra-login.json -w '%{http_code}' \
   -H 'Content-Type: application/json' \

@@ -59,6 +59,13 @@ export const ResetPasswordInputSchema = z
   .strict()
 export type ResetPasswordInput = z.infer<typeof ResetPasswordInputSchema>
 
+export const VerifyEmailInputSchema = z
+  .object({
+    token: z.string().trim().min(1).max(200),
+  })
+  .strict()
+export type VerifyEmailInput = z.infer<typeof VerifyEmailInputSchema>
+
 export const OkResponseSchema = z.object({
   ok: z.literal(true),
 })

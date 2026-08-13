@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common'
 
-import type { Mailer, PasswordResetMail } from '@/modules/auth/app/mailer.port'
+import type { EmailVerifyMail, Mailer, PasswordResetMail } from '@/modules/auth/app/mailer.port'
+import { emailVerifyEmailCopy } from '@/modules/auth/domain/email-verify-email'
 import { passwordResetEmailCopy } from '@/modules/auth/domain/password-reset-email'
 import { ConsoleMailer } from '@/modules/auth/infra/console-mailer'
 
@@ -15,7 +16,18 @@ export class ResendMailer implements Mailer {
   ) {}
 
   async sendPasswordReset(mail: PasswordResetMail): Promise<void> {
-    const copy = passwordResetEmailCopy(mail)
+    await this.send(mail.to, passwordResetEmailCopy(mail), 'Failed to send password reset email')
+  }
+
+  async sendEmailVerify(mail: EmailVerifyMail): Promise<void> {
+    await this.send(mail.to, emailVerifyEmailCopy(mail), 'Failed to send email verification')
+  }
+
+  private async send(
+    to: string,
+    copy: { subject: string; html: string; text: string },
+    failMessage: string,
+  ): Promise<void> {
     const response = await fetch(RESEND_API_URL, {
       method: 'POST',
       headers: {
@@ -24,7 +36,7 @@ export class ResendMailer implements Mailer {
       },
       body: JSON.stringify({
         from: this.from,
-        to: [mail.to],
+        to: [to],
         subject: copy.subject,
         html: copy.html,
         text: copy.text,
@@ -34,7 +46,7 @@ export class ResendMailer implements Mailer {
     if (!response.ok) {
       const body = await response.text()
       this.logger.error(`Resend ${response.status}: ${body}`)
-      throw new Error('Failed to send password reset email')
+      throw new Error(failMessage)
     }
   }
 }

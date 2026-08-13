@@ -2,15 +2,18 @@
 
 import cn from 'classnames'
 
+import { useSession } from '@/features/auth'
+import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
+import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
+import { EmailVerifyBanner } from '@/features/master-cabinet/ui/email-verify-banner'
 import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-share'
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
-import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
-import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
 import { ButtonLink } from '@/shared/ui/button'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
 export function MasterCabinetHub() {
+  const session = useSession()
   const {
     profile,
     profileError,
@@ -60,6 +63,8 @@ export function MasterCabinetHub() {
           <p className={styles.headline}>{profile.headline}</p>
         ) : null}
 
+        {!session.emailVerified ? <EmailVerifyBanner /> : null}
+
         <div className={styles.actions}>
           <ButtonLink href="/app/master/profile">Редактировать профиль</ButtonLink>
           <ButtonLink href="/app/master/portfolio" variant="ghost">
@@ -85,7 +90,7 @@ export function MasterCabinetHub() {
             slug={profile.slug}
             displayName={profile.displayName}
           />
-          {canSubmit ? (
+          {canSubmit && session.emailVerified ? (
             <div className={cn(styles.actions, styles.actionsAfter)}>
               <SubmitForReviewButton onPublished={setProfile} />
             </div>

@@ -13,6 +13,8 @@ import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
 import { RegisterUseCase } from '@/modules/auth/app/register.usecase'
 import { RequestPasswordResetUseCase } from '@/modules/auth/app/request-password-reset.usecase'
 import { ResetPasswordUseCase } from '@/modules/auth/app/reset-password.usecase'
+import { SendEmailVerifyUseCase } from '@/modules/auth/app/send-email-verify.usecase'
+import { VerifyEmailUseCase } from '@/modules/auth/app/verify-email.usecase'
 import { AuthCookieService } from '@/modules/auth/infra/auth-cookie.service'
 import { AuthTokenRepository } from '@/modules/auth/infra/auth-token.repository'
 import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
@@ -43,7 +45,9 @@ import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.r
     GetMeUseCase,
     RequestPasswordResetUseCase,
     ResetPasswordUseCase,
+    SendEmailVerifyUseCase,
+    VerifyEmailUseCase,
   ],
-  exports: [JwtTokenService, JwtGuard, RolesGuard],
+  exports: [JwtTokenService, JwtGuard, RolesGuard, AuthUserRepository],
 })
 export class AuthModule {}

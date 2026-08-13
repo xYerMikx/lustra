@@ -6,6 +6,7 @@ import type {
   OkResponse,
   RegisterInput,
   ResetPasswordInput,
+  VerifyEmailInput,
 } from '@lustra/contracts'
 
 import { apiFetch } from './http'
@@ -35,6 +36,19 @@ export function resetPassword(input: ResetPasswordInput) {
   return apiFetch<OkResponse>('/auth/password/reset', {
     method: 'POST',
     body: JSON.stringify(input),
+  })
+}
+
+export function verifyEmail(input: VerifyEmailInput) {
+  return apiFetch<OkResponse>('/auth/email/verify', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
+export function resendEmailVerify() {
+  return apiFetch<OkResponse>('/auth/email/resend', {
+    method: 'POST',
   })
 }
 
