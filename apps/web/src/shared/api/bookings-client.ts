@@ -90,6 +90,13 @@ export function confirmMasterBooking(bookingId: string) {
   )
 }
 
+export function completeMasterBooking(bookingId: string) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/complete`,
+    { method: 'POST' },
+  )
+}
+
 export function cancelMasterBooking(
   bookingId: string,
   input: MasterCancelBookingInput,

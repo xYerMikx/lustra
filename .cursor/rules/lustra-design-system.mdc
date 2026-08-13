@@ -27,8 +27,9 @@ Tokens live in `packages/ui/tokens.css` (TECH-DESIGN §23). Use **only** scale v
 - Warm nude paper atmosphere — gradients/grain OK; **no** purple-indigo SaaS gradients, neon glow, glassmorphism stacks.
 - Landing/public: brand-first hero; one composition; full-bleed hero plane; no card clutter in first viewport.
 - Cards only when they wrap a real interaction; otherwise drop border/shadow/radius.
+- Icons: custom inline SVG (`currentColor` + tokens). No emoji for UI glyphs (`★` `⭐` `✅`).
 - Motion: 2–3 intentional motions; respect `prefers-reduced-motion`; animate transform/opacity only.
 
 ## Components
 
-Compose from small primitives (`Button`, `SlotChip`, …). New UI must reuse tokens — no hardcoded hex in feature CSS unless introducing a token.
+Compose from small primitives (`Button`, `RatingStars`, …). New UI must reuse tokens — no hardcoded hex in feature CSS unless introducing a token.

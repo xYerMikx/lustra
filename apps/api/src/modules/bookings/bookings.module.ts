@@ -7,6 +7,7 @@ import { MasterBookingsController } from '@/modules/bookings/api/master-bookings
 import { MasterClientsController } from '@/modules/bookings/api/master-clients.controller'
 import { CancelClientBookingUseCase } from '@/modules/bookings/app/cancel-client-booking.usecase'
 import { CancelMasterBookingUseCase } from '@/modules/bookings/app/cancel-master-booking.usecase'
+import { CompleteBookingUseCase } from '@/modules/bookings/app/complete-booking.usecase'
 import { ConfirmBookingUseCase } from '@/modules/bookings/app/confirm-booking.usecase'
 import { ConfirmMasterBookingUseCase } from '@/modules/bookings/app/confirm-master-booking.usecase'
 import { CreateManualBookingUseCase } from '@/modules/bookings/app/create-manual-booking.usecase'
@@ -37,6 +38,7 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     GetMasterBookingUseCase,
     CreateManualBookingUseCase,
     ConfirmMasterBookingUseCase,
+    CompleteBookingUseCase,
     CancelMasterBookingUseCase,
     ListMasterClientsUseCase,
   ],

@@ -9,6 +9,7 @@ import type {
   CancelBookingStoreInput,
   ConfirmHoldInput,
   ConfirmPendingStoreInput,
+  CompleteBookingStoreInput,
   CreateHoldInput,
   CreateManualBookingStoreInput,
   ListBookingsScope,
@@ -17,6 +18,7 @@ import type {
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
 import { cancelBookingInStore } from '@/modules/bookings/infra/cancel-booking-in-store'
+import { completeBookingInStore } from '@/modules/bookings/infra/complete-booking-in-store'
 import { confirmHoldInStore } from '@/modules/bookings/infra/confirm-hold-in-store'
 import { createHoldInStore } from '@/modules/bookings/infra/create-hold-in-store'
 import { createManualBookingInStore } from '@/modules/bookings/infra/create-manual-booking-in-store'
@@ -277,5 +279,11 @@ export class BookingRepository implements BookingStore {
     })
 
     return this.findBookingById(input.bookingId)
+  }
+
+  completeBooking(
+    input: CompleteBookingStoreInput,
+  ): Promise<BookingRecord | null> {
+    return completeBookingInStore(this.tx.getClient(), input)
   }
 }

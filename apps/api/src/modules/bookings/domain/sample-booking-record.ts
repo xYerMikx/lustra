@@ -18,6 +18,8 @@ export function sampleBookingRecord(
     holdExpiresAt: new Date('2026-08-12T10:10:00.000Z'),
     clientComment: null,
     confirmedAt: null,
+    completedAt: null,
+    review: null,
     masterNote: 'secret',
     masterDisplayName: 'Анна',
     addressHint: 'возле метро',

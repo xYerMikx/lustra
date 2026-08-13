@@ -3,6 +3,7 @@ import type {
   SearchMastersResponse,
   ServiceCategoryListResponse,
   PublicMasterView,
+  PublicReviewListResponse,
   AvailabilityQuery,
   AvailabilityResponse,
 } from '@lustra/contracts'
@@ -66,6 +67,12 @@ export function listCatalogCategories() {
 export function getPublicMasterBySlug(slug: string) {
   return serverFetchJson<PublicMasterView>(
     `/catalog/masters/${encodeURIComponent(slug)}`,
+  )
+}
+
+export function getPublicMasterReviews(slug: string) {
+  return serverFetchJson<PublicReviewListResponse>(
+    `/catalog/masters/${encodeURIComponent(slug)}/reviews`,
   )
 }
 

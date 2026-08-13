@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { ByPhoneSchema } from './phone'
+import { BookingReviewRefSchema } from './review'
 
 export const BookingStatusSchema = z.enum([
   'hold',
@@ -137,6 +138,8 @@ export const BookingClientViewSchema = z.object({
   holdExpiresAt: z.string().datetime().nullable(),
   clientComment: z.string().nullable(),
   confirmedAt: z.string().datetime().nullable(),
+  completedAt: z.string().datetime().nullable(),
+  review: BookingReviewRefSchema.nullable(),
   addressHint: z.string().nullable(),
   /** Exact address only when status is confirmed. */
   addressExact: z.string().nullable(),
@@ -164,6 +167,7 @@ export const BookingMasterViewSchema = z.object({
   holdExpiresAt: z.string().datetime().nullable(),
   clientComment: z.string().nullable(),
   confirmedAt: z.string().datetime().nullable(),
+  completedAt: z.string().datetime().nullable(),
   masterNote: z.string().nullable(),
   client: BookingMasterClientSchema,
 })

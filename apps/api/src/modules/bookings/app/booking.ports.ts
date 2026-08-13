@@ -75,6 +75,13 @@ export type ConfirmPendingStoreInput = {
   now: Date
 }
 
+export type CompleteBookingStoreInput = {
+  bookingId: string
+  masterId: string
+  currentUserId: string
+  now: Date
+}
+
 export type CreateManualBookingStoreInput = {
   masterId: string
   currentUserId: string
@@ -146,6 +153,7 @@ export type BookingStore = {
   confirmHold(input: ConfirmHoldInput): Promise<BookingRecord | null>
   cancelBooking(input: CancelBookingStoreInput): Promise<BookingRecord | null>
   confirmPending(input: ConfirmPendingStoreInput): Promise<BookingRecord | null>
+  completeBooking(input: CompleteBookingStoreInput): Promise<BookingRecord | null>
   listMasterClients(input: {
     masterId: string
     query: string

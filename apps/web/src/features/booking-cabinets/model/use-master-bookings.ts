@@ -5,6 +5,7 @@ import type { BookingMasterView } from '@lustra/contracts'
 
 import {
   cancelMasterBooking,
+  completeMasterBooking,
   confirmMasterBooking,
   getMasterBooking,
   listMasterBookings,
@@ -137,6 +138,27 @@ export function useMasterBookingDetail(bookingId: string) {
     }
   }
 
+  const complete = async () => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await completeMasterBooking(bookingId)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+      }
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось завершить запись',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const cancel = async (reason: string) => {
     setBusy(true)
     setActionError(null)
@@ -163,6 +185,7 @@ export function useMasterBookingDetail(bookingId: string) {
     actionError,
     busy,
     confirm,
+    complete,
     cancel,
   }
 }

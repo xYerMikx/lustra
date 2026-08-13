@@ -76,3 +76,23 @@ export function resolveMasterConfirmPending(input: {
 
   return { ok: true }
 }
+
+export type CompleteBookingResult =
+  | { ok: true }
+  | { ok: false; reason: 'not_confirmed' | 'visit_not_started' }
+
+export function resolveMasterComplete(input: {
+  status: BookingStatus
+  startsAt: Date
+  now: Date
+}): CompleteBookingResult {
+  if (input.status !== 'confirmed') {
+    return { ok: false, reason: 'not_confirmed' }
+  }
+
+  if (input.now.getTime() < input.startsAt.getTime()) {
+    return { ok: false, reason: 'visit_not_started' }
+  }
+
+  return { ok: true }
+}

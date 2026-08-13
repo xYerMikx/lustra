@@ -25,6 +25,7 @@ import { Roles } from '@/common/auth/roles.decorator'
 import { RolesGuard } from '@/common/auth/roles.guard'
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { CancelMasterBookingUseCase } from '@/modules/bookings/app/cancel-master-booking.usecase'
+import { CompleteBookingUseCase } from '@/modules/bookings/app/complete-booking.usecase'
 import { ConfirmMasterBookingUseCase } from '@/modules/bookings/app/confirm-master-booking.usecase'
 import { CreateManualBookingUseCase } from '@/modules/bookings/app/create-manual-booking.usecase'
 import { GetMasterBookingUseCase } from '@/modules/bookings/app/get-master-booking.usecase'
@@ -39,6 +40,7 @@ export class MasterBookingsController {
     private readonly getBooking: GetMasterBookingUseCase,
     private readonly createManual: CreateManualBookingUseCase,
     private readonly confirmBooking: ConfirmMasterBookingUseCase,
+    private readonly completeBooking: CompleteBookingUseCase,
     private readonly cancelBooking: CancelMasterBookingUseCase,
   ) {}
 
@@ -76,6 +78,15 @@ export class MasterBookingsController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.confirmBooking.execute(currentUser, id)
+  }
+
+  @Post(':id/complete')
+  @HttpCode(200)
+  complete(
+    @CurrentUser() currentUser: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.completeBooking.execute(currentUser, id)
   }
 
   @Post(':id/cancel')

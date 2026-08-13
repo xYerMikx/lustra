@@ -42,6 +42,7 @@ export function MasterBookingDetailShell({
   const booking = detail.booking
   const canCancel = CANCELABLE.has(booking.status)
   const canConfirm = booking.status === 'pending'
+  const canComplete = booking.status === 'confirmed'
 
   return (
     <section className={styles.shell}>
@@ -94,6 +95,15 @@ export function MasterBookingDetailShell({
               onClick={() => void detail.confirm()}
             >
               Подтвердить
+            </Button>
+          ) : null}
+          {canComplete ? (
+            <Button
+              type="button"
+              disabled={detail.busy}
+              onClick={() => void detail.complete()}
+            >
+              Завершить визит
             </Button>
           ) : null}
         </div>

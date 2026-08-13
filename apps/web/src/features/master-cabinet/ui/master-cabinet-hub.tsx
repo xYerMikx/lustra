@@ -74,6 +74,9 @@ export function MasterCabinetHub() {
           <ButtonLink href="/app/master/calendar" variant="ghost">
             Календарь
           </ButtonLink>
+          <ButtonLink href="/app/master/reviews" variant="ghost">
+            Отзывы
+          </ButtonLink>
           <ButtonLink href="/app/onboarding" variant="ghost">
             Онбординг
           </ButtonLink>

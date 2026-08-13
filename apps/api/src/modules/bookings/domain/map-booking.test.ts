@@ -16,6 +16,8 @@ describe('toBookingClientView', () => {
     expect(view.serviceTitle).toBe('Маникюр')
     expect(view.priceAmount).toBe('50.00')
     expect(view.masterDisplayName).toBe('Анна')
+    expect(view.completedAt).toBeNull()
+    expect(view.review).toBeNull()
     expect(view.addressExact).toBeNull()
 
     expect(() => assertNoPrivateBookingKeys(view)).not.toThrow()

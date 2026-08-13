@@ -4,6 +4,7 @@ import {
   resolveClientCancel,
   resolveConfirmFromHold,
   resolveMasterCancel,
+  resolveMasterComplete,
   resolveMasterConfirmPending,
 } from '@/modules/bookings/domain/booking-status.machine'
 
@@ -96,6 +97,40 @@ describe('resolveMasterCancel', () => {
       ok: true,
       toStatus: 'cancelled_by_master',
     })
+  })
+})
+
+describe('resolveMasterComplete', () => {
+  const now = new Date('2026-08-12T12:00:00.000Z')
+
+  it('completes a confirmed visit that has started', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects a future confirmed booking', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'visit_not_started' })
+  })
+
+  it('rejects non-confirmed statuses', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'pending',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'not_confirmed' })
   })
 })
 

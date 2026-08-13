@@ -14,6 +14,7 @@ import { BookingsModule } from '@/modules/bookings/bookings.module'
 import { MasterCalendarModule } from '@/modules/master-calendar/master-calendar.module'
 import { MasterPortfolioModule } from '@/modules/master-portfolio/master-portfolio.module'
 import { MasterProfileModule } from '@/modules/master-profile/master-profile.module'
+import { ReviewsModule } from '@/modules/reviews/reviews.module'
 import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.module'
 import { MasterServicesModule } from '@/modules/master-services/master-services.module'
 import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
@@ -37,6 +38,7 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     AuthModule,
     AdminModerationModule,
     MasterProfileModule,
+    ReviewsModule,
     MasterServicesModule,
     MasterPortfolioModule,
     MasterScheduleModule,
