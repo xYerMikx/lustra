@@ -2,25 +2,24 @@
 
 import Link from 'next/link'
 
-import { useAdminMastersQueue } from '@/features/admin-moderation/model/use-admin-masters-queue'
+import { useAdminReviewsQueue } from '@/features/admin-moderation/model/use-admin-reviews-queue'
 import { AdminQueueNav } from '@/features/admin-moderation/ui/admin-queue-nav'
-import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
-import { Button } from '@/shared/ui/button'
 import styles from '@/features/admin-moderation/ui/admin-moderation.module.css'
+import { Button } from '@/shared/ui/button'
 
-export function AdminMastersQueueShell() {
-  const queue = useAdminMastersQueue('pending_review')
+export function AdminReviewsQueueShell() {
+  const queue = useAdminReviewsQueue('pending_review')
 
   return (
     <div className={styles.wrap}>
       <section className={styles.panel}>
         <p className={styles.eyebrow}>Админка</p>
-        <h1 className={styles.title}>Модерация мастеров</h1>
+        <h1 className={styles.title}>Модерация отзывов</h1>
         <p className={styles.copy}>
-          Очередь профилей со статусом «На проверке». Одобрение публикует
-          профиль в каталог; отклонение возвращает в черновик.
+          В очереди отзывы, которые автопроверка отправила на ручной просмотр.
+          Одобрение публикует отзыв и пересчитывает рейтинг.
         </p>
-        <AdminQueueNav active="masters" />
+        <AdminQueueNav active="reviews" />
 
         {queue.listStatus === 'loading' ? (
           <p className={styles.muted}>Загружаем очередь…</p>
@@ -49,33 +48,37 @@ export function AdminMastersQueueShell() {
 
         {queue.listStatus === 'success' ? (
           <ul className={styles.list}>
-            {queue.items.map((master) => {
-              const busy = queue.busyId === master.id
+            {queue.items.map((item) => {
+              const busy = queue.busyId === item.id
 
               return (
-                <li key={master.id} className={styles.card}>
+                <li key={item.id} className={styles.card}>
                   <div>
-                    <div className={styles.cardTitle}>{master.displayName}</div>
+                    <div className={styles.cardTitle}>
+                      {item.rating} из 5 · {item.clientFirstName}
+                    </div>
                     <div className={styles.cardMeta}>
-                      {profileStatusLabel(master.status)}
-                      {master.districtName ? ` · ${master.districtName}` : ''}
+                      {item.masterDisplayName}
                       {' · '}
                       <Link
                         className={styles.slugLink}
-                        href={`/m/${master.slug}`}
+                        href={`/m/${item.masterSlug}`}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        /m/{master.slug}
+                        /m/{item.masterSlug}
                       </Link>
                     </div>
+                    {item.text ? (
+                      <p className={styles.reviewText}>{item.text}</p>
+                    ) : null}
                   </div>
                   <div className={styles.actions}>
                     <Button
                       type="button"
                       disabled={busy}
                       onClick={() => {
-                        void queue.runModerate(master.id, 'approve')
+                        void queue.runModerate(item.id, 'approve')
                       }}
                     >
                       Одобрить
@@ -85,7 +88,7 @@ export function AdminMastersQueueShell() {
                       variant="ghost"
                       disabled={busy}
                       onClick={() => {
-                        void queue.runModerate(master.id, 'reject')
+                        void queue.runModerate(item.id, 'reject')
                       }}
                     >
                       Отклонить
@@ -95,20 +98,10 @@ export function AdminMastersQueueShell() {
                       variant="ghost"
                       disabled={busy}
                       onClick={() => {
-                        void queue.runModerate(master.id, 'hide')
+                        void queue.runModerate(item.id, 'hide')
                       }}
                     >
                       Скрыть
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() => {
-                        void queue.runModerate(master.id, 'ban')
-                      }}
-                    >
-                      Бан
                     </Button>
                   </div>
                 </li>

@@ -13,5 +13,6 @@ export function toPortfolioItemView(record: PortfolioItemRecord): PortfolioItemV
     serviceId: record.serviceId,
     sort: record.sort,
     isCover: record.isCover,
+    moderation: record.media.moderation,
   }
 }

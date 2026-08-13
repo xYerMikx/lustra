@@ -120,7 +120,7 @@ export class PublicMasterRepository implements PublicMasterStore {
         portfolio: {
           where: {
             deletedAt: null,
-            media: { deletedAt: null, moderation: { not: 'rejected' } },
+            media: { deletedAt: null, moderation: 'approved' },
           },
           select: {
             id: true,

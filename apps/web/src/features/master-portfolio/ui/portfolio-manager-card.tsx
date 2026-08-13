@@ -3,6 +3,7 @@
 import cn from 'classnames'
 import type { PortfolioItemView } from '@lustra/contracts'
 
+import { portfolioModerationLabel } from '@/features/master-portfolio/model/portfolio-moderation-label'
 import { portfolioRatioClass } from '@/features/master-portfolio/model/portfolio-ratio-class'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 import { Button } from '@/shared/ui/button'
@@ -21,6 +22,7 @@ export function PortfolioManagerCard({
   onRemove,
 }: PortfolioManagerCardProps) {
   const ratioClass = styles[portfolioRatioClass(item.width, item.height)]
+  const moderationLabel = portfolioModerationLabel(item.moderation)
 
   return (
     <article className={styles.card}>
@@ -34,6 +36,9 @@ export function PortfolioManagerCard({
         />
         {item.isCover ? (
           <span className={styles.coverBadge}>Обложка</span>
+        ) : null}
+        {moderationLabel ? (
+          <span className={styles.moderationBadge}>{moderationLabel}</span>
         ) : null}
       </div>
       <div className={styles.cardActions}>

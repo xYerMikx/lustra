@@ -73,6 +73,7 @@ describe('CreatePortfolioItemUseCase', () => {
         width: 1,
         height: 1,
         mimeType: 'image/png',
+        moderation: 'pending',
       },
     }
 

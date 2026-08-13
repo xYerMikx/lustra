@@ -37,6 +37,7 @@ export type PortfolioItemRecord = {
     width: number
     height: number
     mimeType: string
+    moderation: 'pending' | 'approved' | 'rejected'
   }
 }
 
@@ -47,6 +48,7 @@ const ITEM_INCLUDE = {
       width: true,
       height: true,
       mimeType: true,
+      moderation: true,
     },
   },
 } satisfies Prisma.PortfolioItemInclude
@@ -117,7 +119,7 @@ export class PortfolioRepository {
         bytes: media.bytes,
         width: media.width,
         height: media.height,
-        moderation: 'approved',
+        moderation: 'pending',
       },
     })
 

@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import type {
-  AdminMasterCard,
-  MasterProfileStatus,
-  ModerateMasterAction,
+  AdminPortfolioCard,
+  MediaModerationStatus,
+  ModeratePortfolioAction,
 } from '@lustra/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import {
-  listAdminMasters,
-  moderateMaster,
+  listAdminPortfolio,
+  moderatePortfolio,
 } from '@/shared/api/admin-client'
 
 type ListStatus = 'loading' | 'error' | 'empty' | 'success'
 
-export function useAdminMastersQueue(
-  status: MasterProfileStatus = 'pending_review',
+export function useAdminPortfolioQueue(
+  status: MediaModerationStatus = 'pending',
 ) {
-  const [items, setItems] = useState<AdminMasterCard[]>([])
+  const [items, setItems] = useState<AdminPortfolioCard[]>([])
   const [listStatus, setListStatus] = useState<ListStatus>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
@@ -33,15 +33,15 @@ export function useAdminMastersQueue(
       setErrorMessage(null)
 
       try {
-        const response = await listAdminMasters(status)
+        const response = await listAdminPortfolio(status)
 
         if (cancelled) {
           return
         }
 
-        const nextItems = response?.items ?? []
-        setItems(nextItems)
-        setListStatus(nextItems.length === 0 ? 'empty' : 'success')
+        const items = response?.items ?? []
+        setItems(items)
+        setListStatus(items.length === 0 ? 'empty' : 'success')
       } catch (error) {
         if (cancelled) {
           return
@@ -69,12 +69,12 @@ export function useAdminMastersQueue(
   }, [])
 
   const runModerate = useCallback(
-    async (masterId: string, action: ModerateMasterAction) => {
-      setBusyId(masterId)
+    async (itemId: string, action: ModeratePortfolioAction) => {
+      setBusyId(itemId)
       setActionError(null)
 
       try {
-        await moderateMaster(masterId, action)
+        await moderatePortfolio(itemId, action)
         setReloadToken((value) => value + 1)
       } catch (error) {
         setActionError(

@@ -166,6 +166,7 @@ function toPublicPortfolioItem(
     serviceId: item.serviceId,
     sort: item.sort,
     isCover: item.isCover,
+    moderation: 'approved',
   }
 }
 

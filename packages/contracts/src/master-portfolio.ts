@@ -3,6 +3,13 @@ import { z } from 'zod'
 export const PORTFOLIO_MAX_ITEMS = 60
 export const PORTFOLIO_MAX_BYTES = 8 * 1024 * 1024
 
+export const MediaModerationStatusSchema = z.enum([
+  'pending',
+  'approved',
+  'rejected',
+])
+export type MediaModerationStatus = z.infer<typeof MediaModerationStatusSchema>
+
 export const CreatePortfolioQuerySchema = z
   .object({
     caption: z.string().trim().max(200).optional(),
@@ -36,6 +43,7 @@ export const PortfolioItemViewSchema = z.object({
   serviceId: z.string().uuid().nullable(),
   sort: z.number().int(),
   isCover: z.boolean(),
+  moderation: MediaModerationStatusSchema,
 })
 export type PortfolioItemView = z.infer<typeof PortfolioItemViewSchema>
 

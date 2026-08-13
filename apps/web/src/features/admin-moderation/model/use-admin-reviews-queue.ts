@@ -2,23 +2,18 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import type {
-  AdminMasterCard,
-  MasterProfileStatus,
-  ModerateMasterAction,
+  AdminReviewCard,
+  ModerateReviewAction,
+  ReviewStatus,
 } from '@lustra/contracts'
 
 import { ApiError } from '@/shared/api/http'
-import {
-  listAdminMasters,
-  moderateMaster,
-} from '@/shared/api/admin-client'
+import { listAdminReviews, moderateReview } from '@/shared/api/admin-client'
 
 type ListStatus = 'loading' | 'error' | 'empty' | 'success'
 
-export function useAdminMastersQueue(
-  status: MasterProfileStatus = 'pending_review',
-) {
-  const [items, setItems] = useState<AdminMasterCard[]>([])
+export function useAdminReviewsQueue(status: ReviewStatus = 'pending_review') {
+  const [items, setItems] = useState<AdminReviewCard[]>([])
   const [listStatus, setListStatus] = useState<ListStatus>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
@@ -33,15 +28,15 @@ export function useAdminMastersQueue(
       setErrorMessage(null)
 
       try {
-        const response = await listAdminMasters(status)
+        const response = await listAdminReviews(status)
 
         if (cancelled) {
           return
         }
 
-        const nextItems = response?.items ?? []
-        setItems(nextItems)
-        setListStatus(nextItems.length === 0 ? 'empty' : 'success')
+        const items = response?.items ?? []
+        setItems(items)
+        setListStatus(items.length === 0 ? 'empty' : 'success')
       } catch (error) {
         if (cancelled) {
           return
@@ -69,12 +64,12 @@ export function useAdminMastersQueue(
   }, [])
 
   const runModerate = useCallback(
-    async (masterId: string, action: ModerateMasterAction) => {
-      setBusyId(masterId)
+    async (reviewId: string, action: ModerateReviewAction) => {
+      setBusyId(reviewId)
       setActionError(null)
 
       try {
-        await moderateMaster(masterId, action)
+        await moderateReview(reviewId, action)
         setReloadToken((value) => value + 1)
       } catch (error) {
         setActionError(
