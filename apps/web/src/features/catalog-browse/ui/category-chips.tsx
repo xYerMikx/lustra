@@ -1,21 +1,16 @@
 import Link from 'next/link'
 import cn from 'classnames'
-import type { ServiceCategoryView } from '@lustra/contracts'
+import type { SearchMastersQuery, ServiceCategoryView } from '@lustra/contracts'
 
 import { hrefForCategory } from '@/features/catalog-browse/model/href-for-category'
 import styles from '@/features/catalog-browse/ui/category-chips.module.css'
 
 type CategoryChipsProps = {
   categories: ServiceCategoryView[]
-  activeSlug?: string
-  district?: string
+  query: SearchMastersQuery
 }
 
-export function CategoryChips({
-  categories,
-  activeSlug,
-  district,
-}: CategoryChipsProps) {
+export function CategoryChips({ categories, query }: CategoryChipsProps) {
   return (
     <section className={styles.section} aria-labelledby="catalog-categories">
       <h2 id="catalog-categories" className={styles.heading}>
@@ -24,20 +19,20 @@ export function CategoryChips({
       <ul className={styles.list}>
         <li>
           <Link
-            href={hrefForCategory(undefined, district)}
-            className={cn(styles.chip, !activeSlug && styles.active)}
-            aria-current={activeSlug ? undefined : 'page'}
+            href={hrefForCategory(undefined, query)}
+            className={cn(styles.chip, !query.category && styles.active)}
+            aria-current={query.category ? undefined : 'page'}
           >
             Все
           </Link>
         </li>
         {categories.map((category) => {
-          const isActive = category.slug === activeSlug
+          const isActive = category.slug === query.category
 
           return (
             <li key={category.id}>
               <Link
-                href={hrefForCategory(category.slug, district)}
+                href={hrefForCategory(category.slug, query)}
                 className={cn(styles.chip, isActive && styles.active)}
                 aria-current={isActive ? 'page' : undefined}
               >

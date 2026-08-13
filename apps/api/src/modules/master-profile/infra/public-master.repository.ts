@@ -6,6 +6,7 @@ import { PrismaService } from '@/common/prisma/prisma.service'
 import type { PublicMasterStore } from '@/modules/master-profile/app/public-master.ports'
 import type { CatalogMasterRecord } from '@/modules/master-profile/domain/map-catalog-master'
 import type { PublicMasterRecord } from '@/modules/master-profile/domain/map-public-master'
+import { catalogOrderBy } from '@/modules/master-profile/infra/catalog-order-by'
 
 const CATALOG_CARD_SELECT = {
   id: true,
@@ -180,22 +181,38 @@ export class PublicMasterRepository implements PublicMasterStore {
       }
     }
 
-    if (query.district) {
+    if (query.district || query.locationType) {
       where.locations = {
         some: {
-          district: { slug: query.district },
+          ...(query.district
+            ? { district: { slug: query.district } }
+            : {}),
+          ...(query.locationType ? { type: query.locationType } : {}),
         },
       }
+    }
+
+    const statsFilter: Prisma.MasterStatsWhereInput = {}
+
+    if (query.priceMin != null || query.priceMax != null) {
+      statsFilter.priceMin = {
+        ...(query.priceMin != null ? { gte: query.priceMin } : {}),
+        ...(query.priceMax != null ? { lte: query.priceMax } : {}),
+      }
+    }
+
+    if (query.ratingMin != null) {
+      statsFilter.ratingAvg = { gte: query.ratingMin }
+    }
+
+    if (Object.keys(statsFilter).length > 0) {
+      where.stats = { is: statsFilter }
     }
 
     return this.prisma.masterProfile.findMany({
       where,
       select: CATALOG_CARD_SELECT,
-      orderBy: [
-        { boostPriority: 'desc' },
-        { stats: { ratingAvg: 'desc' } },
-        { publishedAt: 'desc' },
-      ],
+      orderBy: catalogOrderBy(query.sort),
       take: 48,
     })
   }

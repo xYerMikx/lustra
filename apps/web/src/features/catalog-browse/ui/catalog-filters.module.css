@@ -1,0 +1,25 @@
+.form {
+  display: grid;
+  gap: var(--spacing-12);
+  margin-bottom: var(--spacing-24);
+  max-width: 720px;
+}
+
+.fields {
+  display: grid;
+  gap: var(--spacing-12);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 720px) {
+  .fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+  align-items: center;
+}

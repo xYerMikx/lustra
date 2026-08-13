@@ -1,9 +1,58 @@
 import { z } from 'zod'
 
+import { LocationTypeSchema } from './master-profile'
+
+export const CATALOG_SORTS = [
+  'recommended',
+  'price_asc',
+  'price_desc',
+  'rating',
+] as const
+export const CatalogSortSchema = z.enum(CATALOG_SORTS)
+export type CatalogSort = z.infer<typeof CatalogSortSchema>
+
+function blankToUndefined(value: unknown): unknown {
+  if (value === '' || value === null) {
+    return undefined
+  }
+
+  return value
+}
+
+const OptionalQueryText = z.preprocess(
+  blankToUndefined,
+  z.string().trim().min(1).max(64).optional(),
+)
+
+const OptionalQueryPrice = z.preprocess(
+  blankToUndefined,
+  z.coerce.number().nonnegative().max(10_000).optional(),
+)
+
+const OptionalQueryRating = z.preprocess(
+  blankToUndefined,
+  z.coerce.number().min(0).max(5).optional(),
+)
+
+const OptionalLocationType = z.preprocess(
+  blankToUndefined,
+  LocationTypeSchema.optional(),
+)
+
+const OptionalCatalogSort = z.preprocess(
+  blankToUndefined,
+  CatalogSortSchema.optional(),
+)
+
 export const SearchMastersQuerySchema = z
   .object({
-    category: z.string().trim().min(1).max(64).optional(),
-    district: z.string().trim().min(1).max(64).optional(),
+    category: OptionalQueryText,
+    district: OptionalQueryText,
+    priceMin: OptionalQueryPrice,
+    priceMax: OptionalQueryPrice,
+    ratingMin: OptionalQueryRating,
+    locationType: OptionalLocationType,
+    sort: OptionalCatalogSort,
   })
   .strict()
   .default({})

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 
 import { CatalogBrowse } from '@/features/catalog-browse'
+import { parseCatalogSearchParams } from '@/features/catalog-browse/model/parse-catalog-search-params'
 import {
   listCatalogCategories,
+  listCatalogDistricts,
   searchMasters,
 } from '@/shared/api/catalog-client'
 
@@ -11,23 +13,33 @@ export const metadata: Metadata = {
 }
 
 type PageProps = {
-  searchParams: Promise<{ district?: string }>
+  searchParams: Promise<{
+    district?: string
+    priceMin?: string
+    priceMax?: string
+    ratingMin?: string
+    locationType?: string
+    sort?: string
+  }>
 }
 
 export default async function CatalogPage({ searchParams }: PageProps) {
-  const { district } = await searchParams
-  const districtSlug = district?.trim() || undefined
+  const raw = await searchParams
+  const query = parseCatalogSearchParams(raw)
 
-  const [mastersResponse, categoriesResponse] = await Promise.all([
-    searchMasters({ district: districtSlug }),
-    listCatalogCategories(),
-  ])
+  const [mastersResponse, categoriesResponse, districtsResponse] =
+    await Promise.all([
+      searchMasters(query),
+      listCatalogCategories(),
+      listCatalogDistricts(),
+    ])
 
   return (
     <CatalogBrowse
       masters={mastersResponse.items}
       categories={categoriesResponse.categories}
-      district={districtSlug}
+      districts={districtsResponse.districts}
+      query={query}
     />
   )
 }

@@ -126,9 +126,12 @@ export {
 } from './public-master'
 
 export {
+  CATALOG_SORTS,
+  CatalogSortSchema,
   SearchMastersQuerySchema,
   CatalogMasterCardSchema,
   SearchMastersResponseSchema,
+  type CatalogSort,
   type SearchMastersQuery,
   type CatalogMasterCard,
   type SearchMastersResponse,
