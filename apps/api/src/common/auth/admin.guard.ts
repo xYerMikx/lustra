@@ -18,14 +18,14 @@ export class AdminGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthedRequest>()
-    const actor = request.user
+    const currentUser = request.user
 
-    if (!actor) {
+    if (!currentUser) {
       throw new UnauthorizedException('Требуется вход')
     }
 
     const user = await this.prisma.user.findUnique({
-      where: { id: actor.id },
+      where: { id: currentUser.id },
       select: {
         id: true,
         email: true,

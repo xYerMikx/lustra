@@ -18,8 +18,8 @@ export class DeleteTimeBlockUseCase {
     private readonly ensureSlots: EnsureSlotsUseCase,
   ) {}
 
-  async execute(actor: AuthUser, blockId: string): Promise<void> {
-    const masterId = await this.blocks.findMasterIdByUserId(actor.id)
+  async execute(currentUser: AuthUser, blockId: string): Promise<void> {
+    const masterId = await this.blocks.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

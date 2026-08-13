@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus, ContactChannel, ManualBookingChannel } from '@lustra/contracts'
 
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
@@ -63,7 +63,7 @@ export type CancelBookingStoreInput = {
   bookingId: string
   toStatus: Extract<BookingStatus, 'cancelled_by_client' | 'cancelled_by_master'>
   cancelledByType: 'client' | 'master'
-  actorId: string
+  currentUserId: string
   reason: string | null
   now: Date
 }
@@ -71,8 +71,35 @@ export type CancelBookingStoreInput = {
 export type ConfirmPendingStoreInput = {
   bookingId: string
   masterId: string
-  actorId: string
+  currentUserId: string
   now: Date
+}
+
+export type CreateManualBookingStoreInput = {
+  masterId: string
+  currentUserId: string
+  serviceId: string
+  serviceTitle: string
+  serviceDurationMin: number
+  bufferMin: number
+  priceAmount: string
+  currency: string
+  startsAt: Date
+  endsAt: Date
+  coverageEnd: Date
+  granularityMin: number
+  channel: ManualBookingChannel
+  clientName: string
+  phone: string
+  masterNote: string | null
+  now: Date
+}
+
+export type MasterClientRecord = {
+  id: string
+  name: string
+  phone: string | null
+  source: ContactChannel | null
 }
 
 export type ListBookingsScope = 'upcoming' | 'past' | 'pending'
@@ -119,4 +146,12 @@ export type BookingStore = {
   confirmHold(input: ConfirmHoldInput): Promise<BookingRecord | null>
   cancelBooking(input: CancelBookingStoreInput): Promise<BookingRecord | null>
   confirmPending(input: ConfirmPendingStoreInput): Promise<BookingRecord | null>
+  listMasterClients(input: {
+    masterId: string
+    query: string
+    limit?: number
+  }): Promise<MasterClientRecord[]>
+  createManualBooking(
+    input: CreateManualBookingStoreInput,
+  ): Promise<BookingRecord>
 }

@@ -16,7 +16,7 @@ export type AdminMasterRecord = {
 }
 
 export type AuditLogInput = {
-  actorId: string
+  currentUserId: string
   action: string
   entity: string
   entityId: string
@@ -108,7 +108,7 @@ export class AdminModerationRepository {
   writeAuditLog(input: AuditLogInput): Promise<unknown> {
     return this.prisma.auditLog.create({
       data: {
-        actorId: input.actorId,
+        actorId: input.currentUserId,
         actorType: 'admin',
         action: input.action,
         entity: input.entity,

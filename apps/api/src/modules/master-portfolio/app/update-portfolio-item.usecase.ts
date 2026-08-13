@@ -14,15 +14,15 @@ export class UpdatePortfolioItemUseCase {
   constructor(private readonly portfolio: PortfolioRepository) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     itemId: string,
     input: PatchPortfolioItemInput,
   ): Promise<PortfolioItemView> {
-    if (actor.role !== 'master') {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
-    const masterId = await this.portfolio.findMasterIdByUserId(actor.id)
+    const masterId = await this.portfolio.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

@@ -1,5 +1,6 @@
 import type { Prisma } from '@lustra/db'
 
+import { OutboxEventType } from '@/common/events/outbox-event-type'
 import type { CancelBookingStoreInput } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import {
@@ -71,7 +72,7 @@ export async function cancelBookingInStore(
     data: {
       bookingId: input.bookingId,
       actorType: input.cancelledByType,
-      actorId: input.actorId,
+      actorId: input.currentUserId,
       fromStatus,
       toStatus: input.toStatus,
       payload: { reason: input.reason },
@@ -80,7 +81,7 @@ export async function cancelBookingInStore(
 
   await db.outboxEvent.create({
     data: {
-      type: 'booking.cancelled',
+      type: OutboxEventType.BookingCancelled,
       aggregate: `booking:${input.bookingId}`,
       payload: {
         bookingId: input.bookingId,

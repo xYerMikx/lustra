@@ -1,7 +1,12 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import type { CreateTimeBlockInput, MasterCalendarView } from '@lustra/contracts'
+import type {
+  CreateManualBookingInput,
+  CreateTimeBlockInput,
+  MasterCalendarView,
+  MasterClientView,
+} from '@lustra/contracts'
 
 import {
   rangeForMode,
@@ -9,12 +14,15 @@ import {
   todayYmdDate,
   type CalendarViewMode,
 } from '@/features/master-calendar/model/calendar-range'
+import { createManualBooking } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
 import {
   createTimeBlock,
   deleteTimeBlock,
   getMasterCalendar,
 } from '@/shared/api/master-calendar-client'
+import { listMasterClients } from '@/shared/api/master-clients-client'
+import { listMasterServices } from '@/shared/api/master-services-client'
 
 type CalendarStatus = 'loading' | 'error' | 'empty' | 'success'
 
@@ -116,6 +124,28 @@ export function useCalendarData() {
     setReloadToken((value) => value + 1)
   }, [])
 
+  const loadManualContext = useCallback(async () => {
+    const [servicesResponse, clientsResponse] = await Promise.all([
+      listMasterServices(),
+      listMasterClients(),
+    ])
+
+    const services = (servicesResponse?.services ?? []).filter(
+      (service) => service.isActive,
+    )
+    const clients: MasterClientView[] = clientsResponse?.items ?? []
+
+    return { services, clients }
+  }, [])
+
+  const addManualBooking = useCallback(
+    async (input: CreateManualBookingInput) => {
+      await createManualBooking(input)
+      setReloadToken((value) => value + 1)
+    },
+    [],
+  )
+
   return {
     mode,
     anchorDate,
@@ -131,5 +161,7 @@ export function useCalendarData() {
     reloadCalendar,
     addBlock,
     removeBlock,
+    loadManualContext,
+    addManualBooking,
   }
 }

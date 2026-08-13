@@ -128,12 +128,21 @@ export {
   type SearchMastersResponse,
 } from './catalog'
 
+export { ByPhoneSchema, normalizeByPhone } from './phone'
+
 export {
   BookingStatusSchema,
   HoldSlotInputSchema,
   ConfirmBookingInputSchema,
   CancelBookingInputSchema,
   MasterCancelBookingInputSchema,
+  MANUAL_BOOKING_CHANNELS,
+  ManualBookingChannelSchema,
+  ContactChannelSchema,
+  CreateManualBookingInputSchema,
+  ListMasterClientsQuerySchema,
+  MasterClientViewSchema,
+  MasterClientListResponseSchema,
   ListBookingsQuerySchema,
   MasterListBookingsQuerySchema,
   BookingClientViewSchema,
@@ -150,6 +159,12 @@ export {
   type ConfirmBookingInput,
   type CancelBookingInput,
   type MasterCancelBookingInput,
+  type ManualBookingChannel,
+  type ContactChannel,
+  type CreateManualBookingInput,
+  type ListMasterClientsQuery,
+  type MasterClientView,
+  type MasterClientListResponse,
   type ListBookingsQuery,
   type MasterListBookingsQuery,
   type BookingClientView,

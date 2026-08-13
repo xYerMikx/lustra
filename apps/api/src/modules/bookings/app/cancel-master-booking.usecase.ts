@@ -50,7 +50,7 @@ export class CancelMasterBookingUseCase {
         bookingId,
         toStatus: decision.toStatus,
         cancelledByType: 'master',
-        actorId: currentUser.id,
+        currentUserId: currentUser.id,
         reason: input.reason.trim(),
         now: this.clock.now(),
       })

@@ -14,12 +14,12 @@ export class PublishMasterProfileUseCase {
     private readonly profiles: MasterProfileStore,
   ) {}
 
-  async execute(actor: AuthUser): Promise<MasterProfileView> {
-    if (actor.role !== 'master') {
+  async execute(currentUser: AuthUser): Promise<MasterProfileView> {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
-    const profile = await this.profiles.findByUserId(actor.id)
+    const profile = await this.profiles.findByUserId(currentUser.id)
 
     if (!profile) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

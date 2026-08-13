@@ -10,13 +10,17 @@ import type {
   ConfirmHoldInput,
   ConfirmPendingStoreInput,
   CreateHoldInput,
+  CreateManualBookingStoreInput,
   ListBookingsScope,
+  MasterClientRecord,
 } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
 import { cancelBookingInStore } from '@/modules/bookings/infra/cancel-booking-in-store'
 import { confirmHoldInStore } from '@/modules/bookings/infra/confirm-hold-in-store'
 import { createHoldInStore } from '@/modules/bookings/infra/create-hold-in-store'
+import { createManualBookingInStore } from '@/modules/bookings/infra/create-manual-booking-in-store'
+import { listMasterClientsInStore } from '@/modules/bookings/infra/list-master-clients-in-store'
 import {
   listBookingsForClientInStore,
   listBookingsForMasterInStore,
@@ -225,6 +229,20 @@ export class BookingRepository implements BookingStore {
     return cancelBookingInStore(this.tx.getClient(), input)
   }
 
+  createManualBooking(
+    input: CreateManualBookingStoreInput,
+  ): Promise<BookingRecord> {
+    return createManualBookingInStore(this.tx.getClient(), input)
+  }
+
+  listMasterClients(input: {
+    masterId: string
+    query: string
+    limit?: number
+  }): Promise<MasterClientRecord[]> {
+    return listMasterClientsInStore(this.tx.getClient(), input)
+  }
+
   async confirmPending(
     input: ConfirmPendingStoreInput,
   ): Promise<BookingRecord | null> {
@@ -251,7 +269,7 @@ export class BookingRepository implements BookingStore {
       data: {
         bookingId: input.bookingId,
         actorType: 'master',
-        actorId: input.actorId,
+        actorId: input.currentUserId,
         fromStatus: 'pending',
         toStatus: 'confirmed',
         payload: {},

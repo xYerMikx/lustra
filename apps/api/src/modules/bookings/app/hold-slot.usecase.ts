@@ -4,14 +4,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { isGranularityMin, type HoldSlotInput, type HoldSlotResponse } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
-import {
-  BOOKING_NO_OVERLAP,
-  PRISMA_ERROR,
-} from '@/common/db/prisma-error-codes'
 import { DomainError } from '@/common/errors/domain-error'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import { ClockService } from '@/common/time/clock.service'
 import type { BookingStore } from '@/modules/bookings/app/booking.ports'
+import { isBookingRaceConstraint } from '@/modules/bookings/domain/booking-race'
 import { toBookingClientView } from '@/modules/bookings/domain/map-booking'
 import {
   appointmentEndsAt,
@@ -225,39 +222,4 @@ export class HoldSlotUseCase {
       throw error
     }
   }
-}
-
-function isBookingRaceConstraint(error: unknown): boolean {
-  if (typeof error !== 'object' || error === null) {
-    return false
-  }
-
-  const known = error as {
-    code?: unknown
-    meta?: { constraint?: unknown; target?: unknown }
-    message?: unknown
-  }
-
-  if (known.code === PRISMA_ERROR.UNIQUE_CONSTRAINT) {
-    return true
-  }
-
-  if (known.code !== PRISMA_ERROR.CONSTRAINT_FAILED) {
-    return false
-  }
-
-  const constraint = known.meta?.constraint
-
-  if (Array.isArray(constraint)) {
-    return constraint.includes(BOOKING_NO_OVERLAP)
-  }
-
-  if (typeof constraint === 'string') {
-    return constraint === BOOKING_NO_OVERLAP
-  }
-
-  return (
-    typeof known.message === 'string' &&
-    known.message.includes(BOOKING_NO_OVERLAP)
-  )
 }

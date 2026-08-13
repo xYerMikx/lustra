@@ -12,12 +12,12 @@ export class DeletePortfolioItemUseCase {
     private readonly tx: TransactionManager,
   ) {}
 
-  async execute(actor: AuthUser, itemId: string): Promise<void> {
-    if (actor.role !== 'master') {
+  async execute(currentUser: AuthUser, itemId: string): Promise<void> {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
-    const masterId = await this.portfolio.findMasterIdByUserId(actor.id)
+    const masterId = await this.portfolio.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

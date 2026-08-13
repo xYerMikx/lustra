@@ -29,11 +29,11 @@ export class CreatePortfolioItemUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     bytes: Buffer,
     query: CreatePortfolioQuery,
   ): Promise<PortfolioItemView> {
-    if (actor.role !== 'master') {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
@@ -50,7 +50,7 @@ export class CreatePortfolioItemUseCase {
     }
 
     const image = sniffImage(bytes)
-    const masterId = await this.portfolio.findMasterIdByUserId(actor.id)
+    const masterId = await this.portfolio.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')
@@ -76,13 +76,13 @@ export class CreatePortfolioItemUseCase {
     }
 
     const assetId = randomUUID()
-    const storageKey = `${actor.id}/${assetId}.${image.extension}`
+    const storageKey = `${currentUser.id}/${assetId}.${image.extension}`
     await this.storage.put(storageKey, bytes, image.mimeType)
 
     const created = await this.tx.run(() =>
       this.portfolio.createItem(
         {
-          ownerUserId: actor.id,
+          ownerUserId: currentUser.id,
           storageKey,
           mimeType: image.mimeType,
           bytes: bytes.length,

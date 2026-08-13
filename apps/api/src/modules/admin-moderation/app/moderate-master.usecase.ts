@@ -5,6 +5,7 @@ import type {
 } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
+import { MASTER_MODERATE_AUDIT_ACTION } from '@/common/events/audit-action-type'
 import { DomainError } from '@/common/errors/domain-error'
 import { toAdminMasterCard } from '@/modules/admin-moderation/domain/map-admin-master'
 import { resolveModerationTransition } from '@/modules/admin-moderation/domain/resolve-moderation-transition'
@@ -15,12 +16,12 @@ export class ModerateMasterUseCase {
   constructor(private readonly masters: AdminModerationRepository) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     masterId: string,
     input: ModerateMasterInput,
     meta: { ip?: string } = {},
   ): Promise<ModerateMasterResponse> {
-    if (actor.role !== 'admin') {
+    if (currentUser.role !== 'admin') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
@@ -38,8 +39,8 @@ export class ModerateMasterUseCase {
     })
 
     await this.masters.writeAuditLog({
-      actorId: actor.id,
-      action: `master.moderate.${input.action}`,
+      currentUserId: currentUser.id,
+      action: MASTER_MODERATE_AUDIT_ACTION[input.action],
       entity: 'MasterProfile',
       entityId: masterId,
       ip: meta.ip,

@@ -6,6 +6,7 @@ import type {
   CancelBookingResponse,
   ConfirmBookingInput,
   ConfirmBookingResponse,
+  CreateManualBookingInput,
   HoldSlotInput,
   HoldSlotResponse,
   MasterBookingListResponse,
@@ -100,6 +101,13 @@ export function cancelMasterBooking(
       body: JSON.stringify(input),
     },
   )
+}
+
+export function createManualBooking(input: CreateManualBookingInput) {
+  return apiFetch<MasterBookingResponse>('/master/bookings', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
 }
 
 export type { BookingClientView, BookingMasterView }

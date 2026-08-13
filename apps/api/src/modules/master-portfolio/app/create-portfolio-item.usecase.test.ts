@@ -14,7 +14,7 @@ const PNG_1X1 = Buffer.from(
   'base64',
 )
 
-const actor = {
+const currentUser = {
   id: '11111111-1111-4111-8111-111111111111',
   role: 'master' as const,
   email: 'master@example.com',
@@ -25,7 +25,7 @@ function stubTx(run: TransactionManager['run'] = vi.fn()): TransactionManager {
 }
 
 describe('CreatePortfolioItemUseCase', () => {
-  it('rejects non-master actors', async () => {
+  it('rejects a non-master user', async () => {
     const useCase = new CreatePortfolioItemUseCase(
       {} as unknown as PortfolioRepository,
       {} as unknown as MediaStorage,
@@ -34,7 +34,7 @@ describe('CreatePortfolioItemUseCase', () => {
 
     await expect(
       useCase.execute(
-        { ...actor, role: 'client' },
+        { ...currentUser, role: 'client' },
         PNG_1X1,
         {},
       ),
@@ -52,7 +52,7 @@ describe('CreatePortfolioItemUseCase', () => {
     const storage = { put: vi.fn(), read: vi.fn() } as unknown as MediaStorage
     const useCase = new CreatePortfolioItemUseCase(portfolio, storage, stubTx())
 
-    await expect(useCase.execute(actor, PNG_1X1, {})).rejects.toMatchObject({
+    await expect(useCase.execute(currentUser, PNG_1X1, {})).rejects.toMatchObject({
       code: 'LIMIT_EXCEEDED',
     })
 
@@ -93,12 +93,12 @@ describe('CreatePortfolioItemUseCase', () => {
 
     const useCase = new CreatePortfolioItemUseCase(portfolio, storage, tx)
 
-    const result = await useCase.execute(actor, PNG_1X1, { caption: 'ногти' })
+    const result = await useCase.execute(currentUser, PNG_1X1, { caption: 'ногти' })
 
     expect(storage.put).toHaveBeenCalledOnce()
     expect(portfolio.createItem).toHaveBeenCalledWith(
       expect.objectContaining({
-        ownerUserId: actor.id,
+        ownerUserId: currentUser.id,
         mimeType: 'image/png',
         width: 1,
         height: 1,

@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { ByPhoneSchema } from './phone'
+
 export const BookingStatusSchema = z.enum([
   'hold',
   'pending',
@@ -42,6 +44,65 @@ export const MasterCancelBookingInputSchema = z
   .strict()
 export type MasterCancelBookingInput = z.infer<
   typeof MasterCancelBookingInputSchema
+>
+
+export const MANUAL_BOOKING_CHANNELS = [
+  'instagram',
+  'telegram',
+  'phone',
+  'walk_in',
+  'other',
+] as const
+
+export const ManualBookingChannelSchema = z.enum(MANUAL_BOOKING_CHANNELS)
+export type ManualBookingChannel = z.infer<typeof ManualBookingChannelSchema>
+
+export const ContactChannelSchema = z.enum([
+  'instagram',
+  'telegram',
+  'phone',
+  'walk_in',
+  'site',
+  'other',
+])
+export type ContactChannel = z.infer<typeof ContactChannelSchema>
+
+export const CreateManualBookingInputSchema = z
+  .object({
+    serviceId: z.string().uuid(),
+    startsAt: z.string().datetime(),
+    clientName: z.string().trim().min(1).max(80),
+    phone: ByPhoneSchema,
+    channel: ManualBookingChannelSchema,
+    note: z.string().trim().max(500).optional(),
+  })
+  .strict()
+export type CreateManualBookingInput = z.infer<
+  typeof CreateManualBookingInputSchema
+>
+
+export const ListMasterClientsQuerySchema = z
+  .object({
+    query: z.string().trim().max(80).default(''),
+  })
+  .strict()
+export type ListMasterClientsQuery = z.infer<
+  typeof ListMasterClientsQuerySchema
+>
+
+export const MasterClientViewSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  phone: z.string().nullable(),
+  source: ContactChannelSchema.nullable(),
+})
+export type MasterClientView = z.infer<typeof MasterClientViewSchema>
+
+export const MasterClientListResponseSchema = z.object({
+  items: z.array(MasterClientViewSchema),
+})
+export type MasterClientListResponse = z.infer<
+  typeof MasterClientListResponseSchema
 >
 
 export const ListBookingsQuerySchema = z

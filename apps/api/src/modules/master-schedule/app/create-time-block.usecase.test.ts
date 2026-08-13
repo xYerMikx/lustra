@@ -6,7 +6,7 @@ import type { TimeBlockStore } from '@/modules/master-schedule/app/time-block.po
 import { DeleteTimeBlockUseCase } from '@/modules/master-schedule/app/delete-time-block.usecase'
 import type { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
 
-const actor = { id: 'u1', role: 'master' as const, email: 'master.smoke.1@example.com' }
+const currentUser = { id: 'u1', role: 'master' as const, email: 'master.smoke.1@example.com' }
 
 function buildBlockStore(
   overrides: Partial<TimeBlockStore> = {},
@@ -38,7 +38,7 @@ describe('CreateTimeBlockUseCase', () => {
 
     const useCase = new CreateTimeBlockUseCase(blocks, ensureSlots)
 
-    const result = await useCase.execute(actor, {
+    const result = await useCase.execute(currentUser, {
       startsAt: '2026-08-11T10:00:00.000Z',
       endsAt: '2026-08-11T11:00:00.000Z',
       reason: 'lunch',
@@ -74,7 +74,7 @@ describe('CreateTimeBlockUseCase', () => {
     const useCase = new CreateTimeBlockUseCase(blocks, ensureSlots)
 
     await expect(
-      useCase.execute(actor, {
+      useCase.execute(currentUser, {
         startsAt: '2026-08-11T10:00:00.000Z',
         endsAt: '2026-08-11T11:00:00.000Z',
         reason: 'lunch',
@@ -96,7 +96,7 @@ describe('CreateTimeBlockUseCase', () => {
     const useCase = new CreateTimeBlockUseCase(blocks, ensureSlots)
 
     await expect(
-      useCase.execute(actor, {
+      useCase.execute(currentUser, {
         startsAt: '2026-08-11T10:00:00.000Z',
         endsAt: '2026-08-11T11:00:00.000Z',
         reason: 'personal',
@@ -125,7 +125,7 @@ describe('DeleteTimeBlockUseCase', () => {
 
     const useCase = new DeleteTimeBlockUseCase(blocks, ensureSlots)
 
-    await useCase.execute(actor, 'b1')
+    await useCase.execute(currentUser, 'b1')
 
     expect(blocks.delete).toHaveBeenCalledWith('b1', 'm1')
     expect(ensureSlots.execute).toHaveBeenCalled()
@@ -148,7 +148,7 @@ describe('DeleteTimeBlockUseCase', () => {
 
     const useCase = new DeleteTimeBlockUseCase(blocks, ensureSlots)
 
-    await expect(useCase.execute(actor, 'b1')).rejects.toMatchObject({
+    await expect(useCase.execute(currentUser, 'b1')).rejects.toMatchObject({
       code: 'NOT_FOUND',
     } satisfies Partial<DomainError>)
 

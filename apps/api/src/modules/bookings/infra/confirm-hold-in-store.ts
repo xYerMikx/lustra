@@ -1,5 +1,6 @@
 import type { Prisma } from '@lustra/db'
 
+import { OutboxEventType } from '@/common/events/outbox-event-type'
 import type { ConfirmHoldInput } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import {
@@ -65,7 +66,7 @@ export async function confirmHoldInStore(
 
   await db.outboxEvent.create({
     data: {
-      type: 'booking.created',
+      type: OutboxEventType.BookingCreated,
       aggregate: `booking:${input.bookingId}`,
       payload: {
         bookingId: input.bookingId,

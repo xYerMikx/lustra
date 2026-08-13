@@ -45,7 +45,7 @@ export class ConfirmMasterBookingUseCase {
       return this.bookings.confirmPending({
         bookingId,
         masterId,
-        actorId: currentUser.id,
+        currentUserId: currentUser.id,
         now: this.clock.now(),
       })
     })

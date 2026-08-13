@@ -14,10 +14,10 @@ export class CheckSlugAvailabilityUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     slug: string,
   ): Promise<CheckSlugAvailabilityResponse> {
-    const profile = await this.profiles.findByUserId(actor.id)
+    const profile = await this.profiles.findByUserId(currentUser.id)
 
     if (!profile) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

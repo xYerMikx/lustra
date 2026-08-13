@@ -28,10 +28,10 @@ export class GetMasterCalendarUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     query: MasterCalendarQuery,
   ): Promise<MasterCalendarView> {
-    const master = await this.calendar.findMasterByUserId(actor.id)
+    const master = await this.calendar.findMasterByUserId(currentUser.id)
 
     if (!master) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

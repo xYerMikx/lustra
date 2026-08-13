@@ -12,6 +12,7 @@ export type CalendarBodyProps = {
   days: DayItems[]
   onReload: () => void
   onSelectDay: (ymdDate: string) => void
+  onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
 }
 
@@ -22,6 +23,7 @@ export function CalendarBody({
   days,
   onReload,
   onSelectDay,
+  onSelectSlot,
   onRemoveBlock,
 }: CalendarBodyProps) {
   if (status === 'loading') {
@@ -51,6 +53,7 @@ export function CalendarBody({
         mode={mode}
         days={days}
         onSelectDay={onSelectDay}
+        onSelectSlot={onSelectSlot}
         onRemoveBlock={onRemoveBlock}
       />
     </>

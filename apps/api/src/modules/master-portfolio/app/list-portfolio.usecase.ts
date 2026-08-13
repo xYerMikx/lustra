@@ -10,12 +10,12 @@ import { PortfolioRepository } from '@/modules/master-portfolio/infra/portfolio.
 export class ListPortfolioUseCase {
   constructor(private readonly portfolio: PortfolioRepository) {}
 
-  async execute(actor: AuthUser): Promise<PortfolioListResponse> {
-    if (actor.role !== 'master') {
+  async execute(currentUser: AuthUser): Promise<PortfolioListResponse> {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
-    const masterId = await this.portfolio.findMasterIdByUserId(actor.id)
+    const masterId = await this.portfolio.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

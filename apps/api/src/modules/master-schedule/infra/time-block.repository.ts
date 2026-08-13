@@ -77,7 +77,7 @@ export class TimeBlockRepository implements TimeBlockStore {
 
   async create(
     masterId: string,
-    actorUserId: string,
+    currentUserId: string,
     input: {
       startsAt: Date
       endsAt: Date
@@ -92,7 +92,7 @@ export class TimeBlockRepository implements TimeBlockStore {
         endsAt: input.endsAt,
         reason: input.reason,
         note: input.note,
-        createdById: actorUserId,
+        createdById: currentUserId,
       },
       select: {
         id: true,

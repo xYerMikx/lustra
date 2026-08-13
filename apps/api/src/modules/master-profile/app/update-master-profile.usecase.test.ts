@@ -8,7 +8,7 @@ import type {
 import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 
 describe('UpdateMasterProfileUseCase', () => {
-  const actor = { id: 'u1', role: 'master' as const, email: 'm@example.com' }
+  const currentUser = { id: 'u1', role: 'master' as const, email: 'm@example.com' }
 
   function buildProfile(
     overrides: Partial<{
@@ -59,7 +59,7 @@ describe('UpdateMasterProfileUseCase', () => {
 
     const useCase = new UpdateMasterProfileUseCase(profiles, districts)
 
-    const result = await useCase.execute(actor, {
+    const result = await useCase.execute(currentUser, {
       displayName: 'Anna Nails',
     })
 
@@ -93,7 +93,7 @@ describe('UpdateMasterProfileUseCase', () => {
       findById: vi.fn(),
     })
 
-    const result = await useCase.execute(actor, {
+    const result = await useCase.execute(currentUser, {
       displayName: 'Anna Nails',
       slug: 'anna-custom',
     })
@@ -124,7 +124,7 @@ describe('UpdateMasterProfileUseCase', () => {
     })
 
     await expect(
-      useCase.execute(actor, { slug: 'taken-slug' }),
+      useCase.execute(currentUser, { slug: 'taken-slug' }),
     ).rejects.toBeInstanceOf(DomainError)
 
     expect(profiles.updateProfile).not.toHaveBeenCalled()

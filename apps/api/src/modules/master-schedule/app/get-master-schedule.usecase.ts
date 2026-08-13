@@ -14,8 +14,8 @@ export class GetMasterScheduleUseCase {
     private readonly schedule: MasterScheduleStore,
   ) {}
 
-  async execute(actor: AuthUser): Promise<MasterScheduleView> {
-    const masterId = await this.schedule.findMasterIdByUserId(actor.id)
+  async execute(currentUser: AuthUser): Promise<MasterScheduleView> {
+    const masterId = await this.schedule.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

@@ -5,7 +5,7 @@ import { GetMasterCalendarUseCase } from '@/modules/master-calendar/app/get-mast
 import type { MasterCalendarStore } from '@/modules/master-calendar/app/master-calendar.ports'
 import type { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
 
-const actor = { id: 'u1', role: 'master' as const, email: 'master.smoke.1@example.com' }
+const currentUser = { id: 'u1', role: 'master' as const, email: 'master.smoke.1@example.com' }
 
 describe('GetMasterCalendarUseCase', () => {
   it('returns slots and blocks for the JWT master after ensuring projection', async () => {
@@ -39,7 +39,7 @@ describe('GetMasterCalendarUseCase', () => {
 
     const useCase = new GetMasterCalendarUseCase(calendar, ensureSlots)
 
-    const result = await useCase.execute(actor, {
+    const result = await useCase.execute(currentUser, {
       from: '2026-08-11',
       to: '2026-08-11',
     })
@@ -69,7 +69,7 @@ describe('GetMasterCalendarUseCase', () => {
     const useCase = new GetMasterCalendarUseCase(calendar, ensureSlots)
 
     await expect(
-      useCase.execute(actor, { from: '2026-08-11', to: '2026-08-11' }),
+      useCase.execute(currentUser, { from: '2026-08-11', to: '2026-08-11' }),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' } satisfies Partial<DomainError>)
 
     expect(ensureSlots.execute).not.toHaveBeenCalled()

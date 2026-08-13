@@ -25,10 +25,10 @@ export class PutMasterScheduleUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     input: PutMasterScheduleInput,
   ): Promise<MasterScheduleView> {
-    const masterId = await this.schedule.findMasterIdByUserId(actor.id)
+    const masterId = await this.schedule.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

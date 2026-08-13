@@ -25,8 +25,8 @@ export class CreateServiceUseCase {
     private readonly categories: CategoryStore,
   ) {}
 
-  async execute(actor: AuthUser, input: CreateServiceInput): Promise<ServiceView> {
-    const masterId = await this.services.findMasterIdByUserId(actor.id)
+  async execute(currentUser: AuthUser, input: CreateServiceInput): Promise<ServiceView> {
+    const masterId = await this.services.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')
