@@ -17,6 +17,7 @@ import { HoldSlotUseCase } from '@/modules/bookings/app/hold-slot.usecase'
 import { ListClientBookingsUseCase } from '@/modules/bookings/app/list-client-bookings.usecase'
 import { ListMasterBookingsUseCase } from '@/modules/bookings/app/list-master-bookings.usecase'
 import { ListMasterClientsUseCase } from '@/modules/bookings/app/list-master-clients.usecase'
+import { RescheduleBookingUseCase } from '@/modules/bookings/app/reschedule-booking.usecase'
 import { BookingRepository } from '@/modules/bookings/infra/booking.repository'
 import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
 
@@ -40,6 +41,7 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     ConfirmMasterBookingUseCase,
     CompleteBookingUseCase,
     CancelMasterBookingUseCase,
+    RescheduleBookingUseCase,
     ListMasterClientsUseCase,
   ],
 })

@@ -14,6 +14,7 @@ import type {
   CreateManualBookingStoreInput,
   ListBookingsScope,
   MasterClientRecord,
+  RescheduleBookingStoreInput,
 } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'
@@ -23,6 +24,7 @@ import { confirmHoldInStore } from '@/modules/bookings/infra/confirm-hold-in-sto
 import { createHoldInStore } from '@/modules/bookings/infra/create-hold-in-store'
 import { createManualBookingInStore } from '@/modules/bookings/infra/create-manual-booking-in-store'
 import { listMasterClientsInStore } from '@/modules/bookings/infra/list-master-clients-in-store'
+import { rescheduleBookingInStore } from '@/modules/bookings/infra/reschedule-booking-in-store'
 import {
   listBookingsForClientInStore,
   listBookingsForMasterInStore,
@@ -235,6 +237,12 @@ export class BookingRepository implements BookingStore {
     input: CreateManualBookingStoreInput,
   ): Promise<BookingRecord> {
     return createManualBookingInStore(this.tx.getClient(), input)
+  }
+
+  rescheduleBooking(
+    input: RescheduleBookingStoreInput,
+  ): Promise<BookingRecord | null> {
+    return rescheduleBookingInStore(this.tx.getClient(), input)
   }
 
   listMasterClients(input: {

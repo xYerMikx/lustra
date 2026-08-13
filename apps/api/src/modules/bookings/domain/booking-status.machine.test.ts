@@ -6,6 +6,7 @@ import {
   resolveMasterCancel,
   resolveMasterComplete,
   resolveMasterConfirmPending,
+  resolveMasterReschedule,
 } from '@/modules/bookings/domain/booking-status.machine'
 
 describe('resolveConfirmFromHold', () => {
@@ -131,6 +132,36 @@ describe('resolveMasterComplete', () => {
         now,
       }),
     ).toEqual({ ok: false, reason: 'not_confirmed' })
+  })
+})
+
+describe('resolveMasterReschedule', () => {
+  it('allows pending and confirmed to move to a new time', () => {
+    expect(
+      resolveMasterReschedule({
+        status: 'confirmed',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-21T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects the same instant and terminal statuses', () => {
+    expect(
+      resolveMasterReschedule({
+        status: 'confirmed',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: false, reason: 'same_time' })
+
+    expect(
+      resolveMasterReschedule({
+        status: 'hold',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-21T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: false, reason: 'invalid_state' })
   })
 })
 

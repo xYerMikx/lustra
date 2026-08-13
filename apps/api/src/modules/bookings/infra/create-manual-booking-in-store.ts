@@ -4,8 +4,7 @@ import { OutboxEventType } from '@/common/events/outbox-event-type'
 import { DomainError } from '@/common/errors/domain-error'
 import type { CreateManualBookingStoreInput } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
-import { missingGranuleStarts } from '@/modules/bookings/domain/missing-granule-starts'
-import { isSlotHoldable } from '@/modules/bookings/domain/slot-holdability'
+import { attachBookingToGranules } from '@/modules/bookings/infra/attach-booking-to-granules'
 import {
   BOOKING_CABINET_SELECT,
   mapBookingRow,
@@ -17,35 +16,6 @@ export async function createManualBookingInStore(
   db: TxClient,
   input: CreateManualBookingStoreInput,
 ): Promise<BookingRecord> {
-  await lockOverlappingGranules(
-    db,
-    input.masterId,
-    input.startsAt,
-    input.coverageEnd,
-  )
-
-  const granules = await db.timeSlot.findMany({
-    where: {
-      masterId: input.masterId,
-      startsAt: { lt: input.coverageEnd },
-      endsAt: { gt: input.startsAt },
-    },
-    orderBy: { startsAt: 'asc' },
-    select: {
-      id: true,
-      startsAt: true,
-      endsAt: true,
-      status: true,
-      holdExpiresAt: true,
-    },
-  })
-
-  for (const slot of granules) {
-    if (!isSlotHoldable(slot, input.now)) {
-      throw DomainError.slotTaken()
-    }
-  }
-
   const guest = await upsertGuestMasterClient(db, {
     masterId: input.masterId,
     name: input.clientName,
@@ -57,13 +27,6 @@ export async function createManualBookingInStore(
   if (guest.isBlocked) {
     throw DomainError.forbidden('Этот клиент в чёрном списке')
   }
-
-  const extraStarts = missingGranuleStarts(
-    input.startsAt,
-    input.coverageEnd,
-    input.granularityMin,
-    granules.map((slot) => slot.startsAt),
-  )
 
   const created = await db.booking.create({
     data: {
@@ -97,68 +60,14 @@ export async function createManualBookingInStore(
     select: { id: true },
   })
 
-  const existingIds = granules.map((slot) => slot.id)
-
-  if (existingIds.length > 0) {
-    const claimed = await db.timeSlot.updateMany({
-      where: {
-        id: { in: existingIds },
-        OR: [
-          { status: 'open' },
-          {
-            status: 'held',
-            holdExpiresAt: { lte: input.now },
-          },
-        ],
-      },
-      data: {
-        status: 'booked',
-        bookingId: created.id,
-        holdId: null,
-        holdExpiresAt: null,
-        version: { increment: 1 },
-      },
-    })
-
-    if (claimed.count !== existingIds.length) {
-      throw DomainError.slotTaken()
-    }
-
-    await db.bookingSlot.createMany({
-      data: existingIds.map((slotId) => ({
-        bookingId: created.id,
-        slotId,
-      })),
-    })
-  }
-
-  const extraIds: string[] = []
-
-  for (const extraStart of extraStarts) {
-    const extra = await db.timeSlot.create({
-      data: {
-        masterId: input.masterId,
-        startsAt: extraStart,
-        endsAt: new Date(extraStart.getTime() + input.granularityMin * 60_000),
-        status: 'booked',
-        bookingId: created.id,
-        isExtra: true,
-        outsideSchedule: true,
-      },
-      select: { id: true },
-    })
-
-    extraIds.push(extra.id)
-  }
-
-  if (extraIds.length > 0) {
-    await db.bookingSlot.createMany({
-      data: extraIds.map((slotId) => ({
-        bookingId: created.id,
-        slotId,
-      })),
-    })
-  }
+  await attachBookingToGranules(db, {
+    masterId: input.masterId,
+    bookingId: created.id,
+    startsAt: input.startsAt,
+    coverageEnd: input.coverageEnd,
+    granularityMin: input.granularityMin,
+    now: input.now,
+  })
 
   await db.outboxEvent.create({
     data: {
@@ -182,24 +91,6 @@ export async function createManualBookingInStore(
   }
 
   return mapBookingRow(row)
-}
-
-async function lockOverlappingGranules(
-  db: TxClient,
-  masterId: string,
-  startsAt: Date,
-  coverageEnd: Date,
-): Promise<void> {
-  await db.timeSlot.updateMany({
-    where: {
-      masterId,
-      startsAt: { lt: coverageEnd },
-      endsAt: { gt: startsAt },
-    },
-    data: {
-      version: { increment: 1 },
-    },
-  })
 }
 
 async function upsertGuestMasterClient(

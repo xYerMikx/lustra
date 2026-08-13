@@ -47,6 +47,14 @@ export type MasterCancelBookingInput = z.infer<
   typeof MasterCancelBookingInputSchema
 >
 
+export const RescheduleBookingInputSchema = z
+  .object({
+    startsAt: z.string().datetime(),
+    reason: z.string().trim().min(1).max(500),
+  })
+  .strict()
+export type RescheduleBookingInput = z.infer<typeof RescheduleBookingInputSchema>
+
 export const MANUAL_BOOKING_CHANNELS = [
   'instagram',
   'telegram',

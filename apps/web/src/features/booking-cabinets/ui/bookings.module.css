@@ -107,12 +107,25 @@
 .reasonField {
   width: 100%;
   max-width: 420px;
+  min-height: 44px;
   padding: var(--spacing-12);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-10);
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
+}
+
+.fieldLabel,
+.rescheduleTitle {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.rescheduleTitle {
+  font-weight: var(--font-weight-600);
+  color: var(--color-text);
 }
 
 .backLink {

@@ -88,6 +88,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
         clientPhone: '+375291112233',
       }),
     ),
+    rescheduleBooking: vi.fn(),
     ...overrides,
   }
 }

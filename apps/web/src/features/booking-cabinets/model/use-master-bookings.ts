@@ -9,6 +9,7 @@ import {
   confirmMasterBooking,
   getMasterBooking,
   listMasterBookings,
+  rescheduleMasterBooking,
 } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
 
@@ -178,6 +179,25 @@ export function useMasterBookingDetail(bookingId: string) {
     }
   }
 
+  const reschedule = async (input: { startsAt: string; reason: string }) => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await rescheduleMasterBooking(bookingId, input)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+
+        return response.booking
+      }
+    } finally {
+      setBusy(false)
+    }
+
+    return null
+  }
+
   return {
     booking,
     status,
@@ -187,5 +207,6 @@ export function useMasterBookingDetail(bookingId: string) {
     confirm,
     complete,
     cancel,
+    reschedule,
   }
 }

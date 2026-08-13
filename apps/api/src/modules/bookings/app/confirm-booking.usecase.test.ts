@@ -87,6 +87,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     completeBooking: vi.fn(),
     listMasterClients: vi.fn(),
     createManualBooking: vi.fn(),
+    rescheduleBooking: vi.fn(),
     ...overrides,
   }
 }

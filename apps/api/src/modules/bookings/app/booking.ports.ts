@@ -102,6 +102,19 @@ export type CreateManualBookingStoreInput = {
   now: Date
 }
 
+export type RescheduleBookingStoreInput = {
+  bookingId: string
+  masterId: string
+  currentUserId: string
+  startsAt: Date
+  endsAt: Date
+  coverageEnd: Date
+  granularityMin: number
+  bufferMin: number
+  reason: string
+  now: Date
+}
+
 export type MasterClientRecord = {
   id: string
   name: string
@@ -162,4 +175,7 @@ export type BookingStore = {
   createManualBooking(
     input: CreateManualBookingStoreInput,
   ): Promise<BookingRecord>
+  rescheduleBooking(
+    input: RescheduleBookingStoreInput,
+  ): Promise<BookingRecord | null>
 }

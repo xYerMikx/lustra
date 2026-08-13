@@ -12,6 +12,7 @@ import type {
   MasterBookingListResponse,
   MasterBookingResponse,
   MasterCancelBookingInput,
+  RescheduleBookingInput,
 } from '@lustra/contracts'
 
 import { apiFetch } from '@/shared/api/http'
@@ -115,6 +116,19 @@ export function createManualBooking(input: CreateManualBookingInput) {
     method: 'POST',
     body: JSON.stringify(input),
   })
+}
+
+export function rescheduleMasterBooking(
+  bookingId: string,
+  input: RescheduleBookingInput,
+) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/reschedule`,
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
 }
 
 export type { BookingClientView, BookingMasterView }
