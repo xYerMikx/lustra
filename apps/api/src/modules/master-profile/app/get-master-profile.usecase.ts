@@ -14,8 +14,8 @@ export class GetMasterProfileUseCase {
     private readonly profiles: MasterProfileStore,
   ) {}
 
-  async execute(actor: AuthUser): Promise<MasterProfileView> {
-    const profile = await this.profiles.findByUserId(actor.id)
+  async execute(currentUser: AuthUser): Promise<MasterProfileView> {
+    const profile = await this.profiles.findByUserId(currentUser.id)
 
     if (!profile) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

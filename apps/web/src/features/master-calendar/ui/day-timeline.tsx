@@ -2,9 +2,11 @@
 
 import type {
   MasterCalendarSlotView,
+  ScheduleExceptionView,
   TimeBlockView,
 } from '@lustra/contracts'
 
+import { exceptionSummary } from '@/features/master-calendar/model/exception-summary'
 import {
   blockOverlapsHour,
   slotsForHour,
@@ -28,17 +30,34 @@ type DayTimelineProps = {
   date: string
   openSlots: MasterCalendarSlotView[]
   blocks: TimeBlockView[]
+  exception: ScheduleExceptionView | null
+  onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
+  onRemoveException: (ymdDate: string) => void
 }
 
 export function DayTimeline({
   date,
   openSlots,
   blocks,
+  exception,
+  onSelectSlot,
   onRemoveBlock,
+  onRemoveException,
 }: DayTimelineProps) {
   return (
     <div className={styles.timeline} role="list">
+      {exception ? (
+        <button
+          type="button"
+          className={styles.exceptionBanner}
+          onClick={() => onRemoveException(exception.date)}
+          title="Снять исключение"
+        >
+          {exceptionSummary(exception)}
+          {exception.note ? ` · ${exception.note}` : ''}
+        </button>
+      ) : null}
       {HOURS.map((hour) => {
         const hourSlots = slotsForHour(openSlots, date, hour)
         const hourBlocks = blocks.filter((block) =>
@@ -52,9 +71,14 @@ export function DayTimeline({
             </div>
             <div className={styles.hourCell}>
               {hourSlots.map((slot) => (
-                <span key={slot.id} className={styles.slotChip}>
+                <button
+                  key={slot.id}
+                  type="button"
+                  className={styles.slotChip}
+                  onClick={() => onSelectSlot(slot.startsAt)}
+                >
                   {formatTimeInTimeZone(new Date(slot.startsAt))}
-                </span>
+                </button>
               ))}
               {hourBlocks.map((block) => (
                 <button

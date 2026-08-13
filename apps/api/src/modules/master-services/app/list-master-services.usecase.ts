@@ -14,8 +14,8 @@ export class ListMasterServicesUseCase {
     private readonly services: ServiceStore,
   ) {}
 
-  async execute(actor: AuthUser): Promise<ServiceListResponse> {
-    const masterId = await this.services.findMasterIdByUserId(actor.id)
+  async execute(currentUser: AuthUser): Promise<ServiceListResponse> {
+    const masterId = await this.services.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

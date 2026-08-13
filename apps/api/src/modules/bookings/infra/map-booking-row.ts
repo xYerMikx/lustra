@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingReviewRef, BookingStatus } from '@lustra/contracts'
 
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 
@@ -17,6 +17,14 @@ export const BOOKING_CABINET_SELECT = {
   holdExpiresAt: true,
   clientComment: true,
   confirmedAt: true,
+  completedAt: true,
+  review: {
+    select: {
+      id: true,
+      status: true,
+      rating: true,
+    },
+  },
   masterNote: true,
   master: {
     select: {
@@ -55,6 +63,8 @@ type BookingCabinetRow = {
   holdExpiresAt: Date | null
   clientComment: string | null
   confirmedAt: Date | null
+  completedAt: Date | null
+  review: BookingReviewRef | null
   masterNote: string | null
   master: {
     displayName: string
@@ -88,6 +98,8 @@ export function mapBookingRow(row: BookingCabinetRow): BookingRecord {
     holdExpiresAt: row.holdExpiresAt,
     clientComment: row.clientComment,
     confirmedAt: row.confirmedAt,
+    completedAt: row.completedAt,
+    review: row.review,
     masterNote: row.masterNote,
     masterDisplayName: row.master.displayName,
     addressHint: location?.addressHint ?? null,

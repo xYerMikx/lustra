@@ -3,6 +3,7 @@
 import cn from 'classnames'
 
 import { todayYmdDate } from '@/features/master-calendar/model/calendar-range'
+import { exceptionSummary } from '@/features/master-calendar/model/exception-summary'
 import type { DayItems } from '@/features/master-calendar/model/group-calendar'
 import { dateLabel } from '@/features/master-calendar/model/group-calendar'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
@@ -31,6 +32,11 @@ export function WeekGrid({ days, onSelectDay }: WeekGridProps) {
           <span className={styles.weekMeta}>
             свободно: {day.openSlots.length}
           </span>
+          {day.exception ? (
+            <span className={styles.exceptionChip}>
+              {exceptionSummary(day.exception)}
+            </span>
+          ) : null}
           {day.blocks.length > 0 ? (
             <div className={styles.weekBlocks}>
               {day.blocks.map((block) => (

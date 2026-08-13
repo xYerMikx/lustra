@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
-import { GranularityMinSchema } from './master-schedule'
-
-const YmdSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Дата должна быть в формате YYYY-MM-DD')
+import {
+  GranularityMinSchema,
+  ScheduleExceptionViewSchema,
+  YmdDateSchema,
+} from './master-schedule'
 
 export const BlockReasonSchema = z.enum([
   'break',
@@ -47,8 +47,8 @@ export type CreateTimeBlockInput = z.infer<typeof CreateTimeBlockInputSchema>
 
 export const MasterCalendarQuerySchema = z
   .object({
-    from: YmdSchema,
-    to: YmdSchema,
+    from: YmdDateSchema,
+    to: YmdDateSchema,
   })
   .strict()
   .superRefine((value, ctx) => {
@@ -83,9 +83,10 @@ export type MasterCalendarSlotView = z.infer<typeof MasterCalendarSlotViewSchema
 export const MasterCalendarViewSchema = z.object({
   timezone: z.string(),
   granularityMin: GranularityMinSchema,
-  from: YmdSchema,
-  to: YmdSchema,
+  from: YmdDateSchema,
+  to: YmdDateSchema,
   slots: z.array(MasterCalendarSlotViewSchema),
   blocks: z.array(TimeBlockViewSchema),
+  exceptions: z.array(ScheduleExceptionViewSchema),
 })
 export type MasterCalendarView = z.infer<typeof MasterCalendarViewSchema>

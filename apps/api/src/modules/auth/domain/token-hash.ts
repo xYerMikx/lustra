@@ -9,6 +9,8 @@ export function generateRefreshToken(): string {
   return randomBytes(48).toString('base64url')
 }
 
+export const generateAuthToken = generateRefreshToken
+
 export function generateFamilyId(): string {
   return randomUUID()
 }

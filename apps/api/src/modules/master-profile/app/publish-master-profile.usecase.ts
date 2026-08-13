@@ -3,7 +3,11 @@ import type { MasterProfileView } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'
-import type { MasterProfileStore } from '@/modules/master-profile/app/master-profile.ports'
+import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
+import type {
+  EmailVerificationReader,
+  MasterProfileStore,
+} from '@/modules/master-profile/app/master-profile.ports'
 import { toMasterProfileView } from '@/modules/master-profile/domain/map-master-profile'
 import { MasterProfileRepository } from '@/modules/master-profile/infra/master-profile.repository'
 
@@ -12,14 +16,16 @@ export class PublishMasterProfileUseCase {
   constructor(
     @Inject(MasterProfileRepository)
     private readonly profiles: MasterProfileStore,
+    @Inject(AuthUserRepository)
+    private readonly emails: EmailVerificationReader,
   ) {}
 
-  async execute(actor: AuthUser): Promise<MasterProfileView> {
-    if (actor.role !== 'master') {
+  async execute(currentUser: AuthUser): Promise<MasterProfileView> {
+    if (currentUser.role !== 'master') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 
-    const profile = await this.profiles.findByUserId(actor.id)
+    const profile = await this.profiles.findByUserId(currentUser.id)
 
     if (!profile) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')
@@ -33,6 +39,14 @@ export class PublishMasterProfileUseCase {
       throw new DomainError(
         'INVALID_STATE',
         'На проверку можно отправить только черновик',
+      )
+    }
+
+    const emailVerified = await this.emails.isEmailVerified(currentUser.id)
+
+    if (!emailVerified) {
+      throw DomainError.invalidState(
+        'Подтвердите email, чтобы отправить профиль на проверку',
       )
     }
 

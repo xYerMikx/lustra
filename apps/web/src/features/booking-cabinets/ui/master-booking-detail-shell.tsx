@@ -1,16 +1,22 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
+import type { RescheduleBookingInput } from '@lustra/contracts'
 
 import {
   bookingStatusLabel,
   formatBookingWhen,
 } from '@/features/booking-cabinets/model/booking-labels'
+import { canMarkNoShow } from '@/features/booking-cabinets/model/can-mark-no-show'
+import { canRescheduleBooking } from '@/features/booking-cabinets/model/can-reschedule-booking'
 import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-master-bookings'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
-import { Button } from '@/shared/ui/button'
+import { RescheduleBookingForm } from '@/features/booking-cabinets/ui/reschedule-booking-form'
 import { formatByn } from '@/shared/lib/money'
+import { Button } from '@/shared/ui/button'
 
 const CANCELABLE = new Set(['hold', 'pending', 'confirmed'])
 
@@ -21,8 +27,17 @@ type MasterBookingDetailShellProps = {
 export function MasterBookingDetailShell({
   bookingId,
 }: MasterBookingDetailShellProps) {
+  const router = useRouter()
   const detail = useMasterBookingDetail(bookingId)
   const [reason, setReason] = useState('')
+
+  const submitReschedule = async (input: RescheduleBookingInput) => {
+    const next = await detail.reschedule(input)
+
+    if (next) {
+      router.push(`/app/master/bookings/${next.id}`)
+    }
+  }
 
   if (detail.status === 'loading') {
     return <p className={styles.message}>Загружаем запись…</p>
@@ -42,6 +57,9 @@ export function MasterBookingDetailShell({
   const booking = detail.booking
   const canCancel = CANCELABLE.has(booking.status)
   const canConfirm = booking.status === 'pending'
+  const canComplete = booking.status === 'confirmed'
+  const canNoShow = canMarkNoShow(booking.status)
+  const canReschedule = canRescheduleBooking(booking.status)
 
   return (
     <section className={styles.shell}>
@@ -96,7 +114,34 @@ export function MasterBookingDetailShell({
               Подтвердить
             </Button>
           ) : null}
+          {canComplete ? (
+            <Button
+              type="button"
+              disabled={detail.busy}
+              onClick={() => void detail.complete()}
+            >
+              Завершить визит
+            </Button>
+          ) : null}
+          {canNoShow ? (
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={detail.busy}
+              onClick={() => void detail.markNoShow()}
+            >
+              Неявка
+            </Button>
+          ) : null}
         </div>
+
+        {canReschedule ? (
+          <RescheduleBookingForm
+            currentStartsAt={booking.startsAt}
+            busy={detail.busy}
+            onSubmit={submitReschedule}
+          />
+        ) : null}
 
         {canCancel ? (
           <div className={styles.detailBlock}>

@@ -9,6 +9,7 @@ import {
 } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingDetail } from '@/features/booking-cabinets/model/use-client-bookings'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
+import { ClientReviewPanel } from '@/features/reviews/ui/client-review-panel'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
 
@@ -109,6 +110,8 @@ export function ClientBookingDetailShell({
             </div>
           </div>
         ) : null}
+
+        <ClientReviewPanel booking={booking} />
 
         {detail.actionError ? (
           <p className={styles.error}>{detail.actionError}</p>

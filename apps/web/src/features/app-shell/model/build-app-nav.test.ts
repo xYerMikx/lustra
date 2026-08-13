@@ -37,6 +37,7 @@ describe('buildAppNavItems', () => {
     expect(buildAppNavItems(user({ role: 'client', email: 'client@example.com' }))).toEqual([
       { href: '/catalog', label: 'Каталог' },
       { href: '/app/client/bookings', label: 'Записи' },
+      { href: '/app/client/favorites', label: 'Избранное' },
       { href: '/app', label: 'Кабинет' },
     ])
   })

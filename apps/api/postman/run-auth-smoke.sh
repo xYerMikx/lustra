@@ -70,9 +70,19 @@ assert_status 'register master' 201 "$code"
 python3 - <<'PY' || FAIL=1
 import json
 u=json.load(open("/tmp/lustra-reg-master.json"))["user"]
-assert u["role"]=="master" and u["profileStatus"]=="draft", u
+assert u["role"]=="master" and u["profileStatus"]=="draft" and u["emailVerified"] is False, u
 print("PASS  register master draft")
 PY
+
+code="$(curl -sS -c "$JAR" -b "$JAR" -o /tmp/lustra-email-resend.json -w '%{http_code}' \
+  -X POST "${BASE_URL}/auth/email/resend")"
+assert_status 'email resend' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-email-verify-bad.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d '{"token":"not-a-real-token"}' \
+  "${BASE_URL}/auth/email/verify")"
+assert_status 'verify invalid token' 409 "$code"
 
 code="$(curl -sS -c "$JAR" -b "$JAR" -o /tmp/lustra-login.json -w '%{http_code}' \
   -H 'Content-Type: application/json' \
@@ -107,6 +117,24 @@ code="$(curl -sS -o /tmp/lustra-dup.json -w '%{http_code}' \
   -d "{\"email\":\"${MIXED}\",\"password\":\"${PASS}\",\"firstName\":\"Case\",\"role\":\"client\",\"acceptTerms\":true}" \
   "${BASE_URL}/auth/register")"
 assert_status 'email normalize conflict' 400 "$code"
+
+code="$(curl -sS -o /tmp/lustra-forgot-unknown.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d "{\"email\":\"nobody.smoke.${STAMP}@example.com\"}" \
+  "${BASE_URL}/auth/password/forgot")"
+assert_status 'forgot unknown email' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-forgot-known.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d "{\"email\":\"${CLIENT_EMAIL}\"}" \
+  "${BASE_URL}/auth/password/forgot")"
+assert_status 'forgot known email' 200 "$code"
+
+code="$(curl -sS -o /tmp/lustra-reset-bad.json -w '%{http_code}' \
+  -H 'Content-Type: application/json' \
+  -d '{"token":"not-a-real-token","password":"Password2!"}' \
+  "${BASE_URL}/auth/password/reset")"
+assert_status 'reset invalid token' 409 "$code"
 
 if [[ "$FAIL" -ne 0 ]]; then
   echo "== FAILED =="

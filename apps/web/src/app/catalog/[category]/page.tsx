@@ -2,14 +2,26 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { CatalogBrowse } from '@/features/catalog-browse'
+import { parseCatalogSearchParams } from '@/features/catalog-browse/model/parse-catalog-search-params'
 import {
   listCatalogCategories,
+  listCatalogDistricts,
+  listCatalogServiceTemplates,
   searchMasters,
 } from '@/shared/api/catalog-client'
 
 type PageProps = {
   params: Promise<{ category: string }>
-  searchParams: Promise<{ district?: string }>
+  searchParams: Promise<{
+    district?: string | string[]
+    service?: string
+    priceMin?: string
+    priceMax?: string
+    ratingMin?: string
+    locationType?: string
+    availableOn?: string
+    sort?: string
+  }>
 }
 
 export async function generateMetadata({
@@ -31,9 +43,7 @@ export default async function CatalogCategoryPage({
   searchParams,
 }: PageProps) {
   const { category: categorySlug } = await params
-  const { district } = await searchParams
-  const districtSlug = district?.trim() || undefined
-
+  const raw = await searchParams
   const categoriesResponse = await listCatalogCategories()
   const category = categoriesResponse.categories.find(
     (item) => item.slug === categorySlug,
@@ -43,18 +53,20 @@ export default async function CatalogCategoryPage({
     notFound()
   }
 
-  const mastersResponse = await searchMasters({
-    category: category.slug,
-    district: districtSlug,
-  })
+  const query = parseCatalogSearchParams(raw, category.slug)
+  const [mastersResponse, districtsResponse, templatesResponse] = await Promise.all([
+    searchMasters(query),
+    listCatalogDistricts(),
+    listCatalogServiceTemplates(category.slug),
+  ])
 
   return (
     <CatalogBrowse
       masters={mastersResponse.items}
       categories={categoriesResponse.categories}
-      activeCategorySlug={category.slug}
-      activeCategoryName={category.name}
-      district={districtSlug}
+      districts={districtsResponse.districts}
+      templates={templatesResponse.templates}
+      query={query}
     />
   )
 }

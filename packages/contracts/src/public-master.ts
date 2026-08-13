@@ -5,6 +5,7 @@ import {
   LocationTypeSchema,
   MasterLocationViewSchema,
 } from './master-profile'
+import { PortfolioItemViewSchema } from './master-portfolio'
 import { PriceTypeSchema } from './master-services'
 
 export const PublicServiceViewSchema = z.object({
@@ -42,6 +43,7 @@ export const PublicMasterViewSchema = z.object({
   ratingCount: z.number().int().nonnegative(),
   contact: PublicMasterContactViewSchema.nullable(),
   services: z.array(PublicServiceViewSchema),
+  portfolio: z.array(PortfolioItemViewSchema),
 })
 export type PublicMasterView = z.infer<typeof PublicMasterViewSchema>
 

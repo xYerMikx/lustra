@@ -3,6 +3,7 @@
 import Link from 'next/link'
 
 import { useAdminMastersQueue } from '@/features/admin-moderation/model/use-admin-masters-queue'
+import { AdminQueueNav } from '@/features/admin-moderation/ui/admin-queue-nav'
 import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
 import { Button } from '@/shared/ui/button'
 import styles from '@/features/admin-moderation/ui/admin-moderation.module.css'
@@ -19,6 +20,7 @@ export function AdminMastersQueueShell() {
           Очередь профилей со статусом «На проверке». Одобрение публикует
           профиль в каталог; отклонение возвращает в черновик.
         </p>
+        <AdminQueueNav active="masters" />
 
         {queue.listStatus === 'loading' ? (
           <p className={styles.muted}>Загружаем очередь…</p>

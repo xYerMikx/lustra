@@ -6,11 +6,13 @@ import type {
   CancelBookingResponse,
   ConfirmBookingInput,
   ConfirmBookingResponse,
+  CreateManualBookingInput,
   HoldSlotInput,
   HoldSlotResponse,
   MasterBookingListResponse,
   MasterBookingResponse,
   MasterCancelBookingInput,
+  RescheduleBookingInput,
 } from '@lustra/contracts'
 
 import { apiFetch } from '@/shared/api/http'
@@ -89,12 +91,46 @@ export function confirmMasterBooking(bookingId: string) {
   )
 }
 
+export function completeMasterBooking(bookingId: string) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/complete`,
+    { method: 'POST' },
+  )
+}
+
+export function markMasterNoShow(bookingId: string) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/no-show`,
+    { method: 'POST' },
+  )
+}
+
 export function cancelMasterBooking(
   bookingId: string,
   input: MasterCancelBookingInput,
 ) {
   return apiFetch<MasterBookingResponse>(
     `/master/bookings/${encodeURIComponent(bookingId)}/cancel`,
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export function createManualBooking(input: CreateManualBookingInput) {
+  return apiFetch<MasterBookingResponse>('/master/bookings', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
+export function rescheduleMasterBooking(
+  bookingId: string,
+  input: RescheduleBookingInput,
+) {
+  return apiFetch<MasterBookingResponse>(
+    `/master/bookings/${encodeURIComponent(bookingId)}/reschedule`,
     {
       method: 'POST',
       body: JSON.stringify(input),

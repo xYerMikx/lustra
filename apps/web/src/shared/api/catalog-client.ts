@@ -2,10 +2,15 @@ import type {
   SearchMastersQuery,
   SearchMastersResponse,
   ServiceCategoryListResponse,
+  ServiceTemplateListResponse,
+  DistrictListResponse,
   PublicMasterView,
+  PublicReviewListResponse,
   AvailabilityQuery,
   AvailabilityResponse,
 } from '@lustra/contracts'
+
+import { catalogApiQuery } from '@/features/catalog-browse/model/href-for-category'
 
 import {
   ApiError,
@@ -44,28 +49,42 @@ async function serverFetchJson<T>(path: string, init?: RequestInit): Promise<T> 
 }
 
 export function searchMasters(query: SearchMastersQuery = {}) {
-  const params = new URLSearchParams()
+  return serverFetchJson<SearchMastersResponse>(
+    `/catalog/masters${catalogApiQuery(query)}`,
+  )
+}
 
-  if (query.category) {
-    params.set('category', query.category)
-  }
-
-  if (query.district) {
-    params.set('district', query.district)
-  }
-
-  const suffix = params.size > 0 ? `?${params.toString()}` : ''
-
-  return serverFetchJson<SearchMastersResponse>(`/catalog/masters${suffix}`)
+export function listCatalogDistricts() {
+  return serverFetchJson<DistrictListResponse>('/catalog/districts')
 }
 
 export function listCatalogCategories() {
   return serverFetchJson<ServiceCategoryListResponse>('/catalog/categories')
 }
 
+export function listCatalogServiceTemplates(categorySlug?: string) {
+  const params = new URLSearchParams()
+
+  if (categorySlug) {
+    params.set('categorySlug', categorySlug)
+  }
+
+  const suffix = params.toString()
+
+  return serverFetchJson<ServiceTemplateListResponse>(
+    `/catalog/service-templates${suffix ? `?${suffix}` : ''}`,
+  )
+}
+
 export function getPublicMasterBySlug(slug: string) {
   return serverFetchJson<PublicMasterView>(
     `/catalog/masters/${encodeURIComponent(slug)}`,
+  )
+}
+
+export function getPublicMasterReviews(slug: string) {
+  return serverFetchJson<PublicReviewListResponse>(
+    `/catalog/masters/${encodeURIComponent(slug)}/reviews`,
   )
 }
 

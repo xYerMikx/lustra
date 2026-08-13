@@ -1,6 +1,7 @@
 import type {
   MasterCalendarSlotStatus,
   MasterCalendarSlotView,
+  ScheduleExceptionView,
   TimeBlockView,
 } from '@lustra/contracts'
 
@@ -24,6 +25,15 @@ export type CalendarBlockRecord = {
   note: string | null
 }
 
+export type CalendarExceptionRecord = {
+  id: string
+  date: Date
+  type: ScheduleExceptionView['type']
+  startMin: number | null
+  endMin: number | null
+  note: string | null
+}
+
 export type MasterCalendarStore = {
   findMasterByUserId(userId: string): Promise<CalendarMasterRecord | null>
   getGranularityMin(masterId: string): Promise<number | null>
@@ -37,6 +47,11 @@ export type MasterCalendarStore = {
     from: Date,
     to: Date,
   ): Promise<CalendarBlockRecord[]>
+  listExceptions(
+    masterId: string,
+    fromYmdDate: string,
+    toYmdDate: string,
+  ): Promise<CalendarExceptionRecord[]>
 }
 
 export function toCalendarSlotView(
@@ -56,6 +71,19 @@ export function toCalendarBlockView(record: CalendarBlockRecord): TimeBlockView 
     startsAt: record.startsAt.toISOString(),
     endsAt: record.endsAt.toISOString(),
     reason: record.reason,
+    note: record.note,
+  }
+}
+
+export function toCalendarExceptionView(
+  record: CalendarExceptionRecord,
+): ScheduleExceptionView {
+  return {
+    id: record.id,
+    date: record.date.toISOString().slice(0, 10),
+    type: record.type,
+    startMin: record.startMin,
+    endMin: record.endMin,
     note: record.note,
   }
 }

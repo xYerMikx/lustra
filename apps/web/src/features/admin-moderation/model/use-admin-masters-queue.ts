@@ -39,8 +39,9 @@ export function useAdminMastersQueue(
           return
         }
 
-        setItems(response.items)
-        setListStatus(response.items.length === 0 ? 'empty' : 'success')
+        const nextItems = response?.items ?? []
+        setItems(nextItems)
+        setListStatus(nextItems.length === 0 ? 'empty' : 'success')
       } catch (error) {
         if (cancelled) {
           return

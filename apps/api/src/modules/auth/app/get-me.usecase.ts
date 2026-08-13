@@ -10,8 +10,8 @@ import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
 export class GetMeUseCase {
   constructor(private readonly users: AuthUserRepository) {}
 
-  async execute(actor: AuthUser): Promise<MeResponse> {
-    const user = await this.users.findById(actor.id)
+  async execute(currentUser: AuthUser): Promise<MeResponse> {
+    const user = await this.users.findById(currentUser.id)
 
     if (!user || user.status !== 'active' || user.deletedAt) {
       throw new DomainError('UNAUTHENTICATED', 'Требуется вход')

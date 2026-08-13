@@ -10,7 +10,7 @@ import { CreateServiceUseCase } from '@/modules/master-services/app/create-servi
 import { UpdateServiceUseCase } from '@/modules/master-services/app/update-service.usecase'
 import type { ServiceRecord } from '@/modules/master-services/domain/map-service'
 
-const actor = { id: 'u1', role: 'master' as const, email: 'm@example.com' }
+const currentUser = { id: 'u1', role: 'master' as const, email: 'm@example.com' }
 
 function buildServiceRecord(overrides: Partial<ServiceRecord> = {}): ServiceRecord {
   return {
@@ -51,7 +51,7 @@ describe('CreateServiceUseCase', () => {
 
     const useCase = new CreateServiceUseCase(services, categories)
 
-    const result = await useCase.execute(actor, {
+    const result = await useCase.execute(currentUser, {
       categoryId: 'cat-1',
       title: 'Маникюр комбинированный',
       durationMin: 90,
@@ -87,7 +87,7 @@ describe('CreateServiceUseCase', () => {
     const useCase = new CreateServiceUseCase(services, categories)
 
     await expect(
-      useCase.execute(actor, {
+      useCase.execute(currentUser, {
         categoryId: '00000000-0000-4000-8000-000000000099',
         title: 'X',
         durationMin: 60,
@@ -119,7 +119,7 @@ describe('UpdateServiceUseCase', () => {
     const useCase = new UpdateServiceUseCase(services, categories)
 
     await expect(
-      useCase.execute(actor, 'svc-1', { title: 'Чужая услуга' }),
+      useCase.execute(currentUser, 'svc-1', { title: 'Чужая услуга' }),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' } satisfies Partial<DomainError>)
 
     expect(services.update).not.toHaveBeenCalled()
@@ -143,7 +143,7 @@ describe('UpdateServiceUseCase', () => {
 
     const useCase = new UpdateServiceUseCase(services, categories)
 
-    const result = await useCase.execute(actor, 'svc-1', {
+    const result = await useCase.execute(currentUser, 'svc-1', {
       title: 'Маникюр обновлённый',
     })
 

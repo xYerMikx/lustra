@@ -7,7 +7,7 @@ import {
   PRIVACY_CONSENT_VERSION,
   TERMS_CONSENT_VERSION,
 } from '@/common/auth/cookie.constants'
-import { PrismaService } from '@/common/prisma/prisma.service'
+import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import { buildMasterSlug } from '@/modules/auth/domain/slugify'
 
 export type AuthUserRecord = Prisma.UserGetPayload<{
@@ -73,17 +73,17 @@ function buildCreateUserData(input: CreateUserInput, slug: string): Prisma.UserC
 
 @Injectable()
 export class AuthUserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly tx: TransactionManager) {}
 
   findByEmail(email: string): Promise<AuthUserRecord | null> {
-    return this.prisma.user.findUnique({
+    return this.tx.getClient().user.findUnique({
       where: { email },
       include: AUTH_USER_INCLUDE,
     })
   }
 
   findById(id: string): Promise<AuthUserRecord | null> {
-    return this.prisma.user.findUnique({
+    return this.tx.getClient().user.findUnique({
       where: { id },
       include: AUTH_USER_INCLUDE,
     })
@@ -94,16 +94,36 @@ export class AuthUserRepository {
     const slug = buildMasterSlug(input.firstName, suffix)
     const data = buildCreateUserData(input, slug)
 
-    return this.prisma.user.create({
+    return this.tx.getClient().user.create({
       data,
       include: AUTH_USER_INCLUDE,
     })
   }
 
   touchLastLogin(userId: string): Promise<unknown> {
-    return this.prisma.user.update({
+    return this.tx.getClient().user.update({
       where: { id: userId },
       data: { lastLoginAt: new Date() },
     })
+  }
+
+  async updatePasswordHash(userId: string, passwordHash: string): Promise<void> {
+    await this.tx.getClient().user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    })
+  }
+
+  async markEmailVerified(userId: string): Promise<void> {
+    await this.tx.getClient().user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
+    })
+  }
+
+  async isEmailVerified(userId: string): Promise<boolean> {
+    const user = await this.findById(userId)
+
+    return Boolean(user?.emailVerified)
   }
 }

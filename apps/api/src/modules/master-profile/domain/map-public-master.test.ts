@@ -55,6 +55,7 @@ function buildRecord(
       ratingAvg: 4.9,
       ratingCount: 12,
     },
+    portfolio: [],
     ...overrides,
   }
 }
@@ -67,6 +68,34 @@ describe('toPublicMasterView', () => {
     expect(view.primaryLocation?.addressHint).toBe('возле метро')
     expect(view.services[0]?.price).toBe(55)
     expect(view.ratingAvg).toBe(4.9)
+    expect(view.portfolio).toEqual([])
+  })
+
+  it('maps portfolio media to a public url', () => {
+    const view = toPublicMasterView(
+      buildRecord({
+        portfolio: [
+          {
+            id: '55555555-5555-4555-8555-555555555555',
+            serviceId: null,
+            caption: 'френч',
+            sort: 0,
+            isCover: true,
+            media: {
+              storageKey: '11111111-1111-4111-8111-111111111111/a.webp',
+              width: 1200,
+              height: 1500,
+            },
+          },
+        ],
+      }),
+    )
+
+    expect(view.portfolio).toHaveLength(1)
+    expect(view.portfolio[0]?.url).toContain(
+      '/media/11111111-1111-4111-8111-111111111111/a.webp',
+    )
+    expect(view.portfolio[0]?.isCover).toBe(true)
   })
 
   it('never serializes private keys', () => {

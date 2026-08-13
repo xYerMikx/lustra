@@ -11,7 +11,7 @@ describe('ModerateMasterUseCase', () => {
     email: 'admin@example.com',
   }
 
-  it('forbids non-admin actor', async () => {
+  it('forbids a non-admin user', async () => {
     const masters = {
       findById: vi.fn(),
       updateStatus: vi.fn(),
@@ -68,7 +68,7 @@ describe('ModerateMasterUseCase', () => {
     )
     expect(masters.writeAuditLog).toHaveBeenCalledWith(
       expect.objectContaining({
-        actorId: 'a1',
+        currentUserId: 'a1',
         action: 'master.moderate.approve',
         entityId: 'm1',
       }),

@@ -24,7 +24,7 @@ export type TimeBlockStore = {
   ): Promise<number>
   create(
     masterId: string,
-    actorUserId: string,
+    currentUserId: string,
     input: {
       startsAt: Date
       endsAt: Date

@@ -28,6 +28,10 @@ export function buildAppNavItems(user: MeResponse | null): AppNavItem[] {
       items.push({ href: bookings, label: 'Записи' })
     }
 
+    if (user.role === 'client') {
+      items.push({ href: '/app/client/favorites', label: 'Избранное' })
+    }
+
     if (user.role === 'master') {
       items.push({ href: '/app/master/calendar', label: 'Календарь' })
     }

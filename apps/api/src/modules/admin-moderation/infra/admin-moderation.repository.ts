@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import type { MasterStatus, Prisma } from '@lustra/db'
+import type { MasterStatus, ModerationStatus, Prisma, ReviewStatus } from '@lustra/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
+import { recalculateMasterRatingInStore } from '@/modules/reviews/infra/create-review-in-store'
 
 export type AdminMasterRecord = {
   id: string
@@ -15,8 +16,39 @@ export type AdminMasterRecord = {
   }>
 }
 
+export type AdminPortfolioRecord = {
+  id: string
+  caption: string | null
+  createdAt: Date
+  master: {
+    id: string
+    slug: string
+    displayName: string
+  }
+  media: {
+    storageKey: string
+    moderation: ModerationStatus
+  }
+}
+
+export type AdminReviewRecord = {
+  id: string
+  rating: number
+  text: string | null
+  status: ReviewStatus
+  createdAt: Date
+  masterId: string
+  master: {
+    slug: string
+    displayName: string
+  }
+  client: {
+    firstName: string
+  }
+}
+
 export type AuditLogInput = {
-  actorId: string
+  currentUserId: string
   action: string
   entity: string
   entityId: string
@@ -108,7 +140,7 @@ export class AdminModerationRepository {
   writeAuditLog(input: AuditLogInput): Promise<unknown> {
     return this.prisma.auditLog.create({
       data: {
-        actorId: input.actorId,
+        actorId: input.currentUserId,
         actorType: 'admin',
         action: input.action,
         entity: input.entity,
@@ -118,4 +150,122 @@ export class AdminModerationRepository {
       },
     })
   }
+
+  listPortfolioByModeration(
+    status: ModerationStatus,
+    limit: number,
+  ): Promise<AdminPortfolioRecord[]> {
+    return this.prisma.portfolioItem.findMany({
+      where: {
+        deletedAt: null,
+        media: { deletedAt: null, moderation: status },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      select: PORTFOLIO_SELECT,
+    })
+  }
+
+  findPortfolioById(itemId: string): Promise<AdminPortfolioRecord | null> {
+    return this.prisma.portfolioItem.findFirst({
+      where: { id: itemId, deletedAt: null },
+      select: PORTFOLIO_SELECT,
+    })
+  }
+
+  async updatePortfolioModeration(
+    itemId: string,
+    moderation: ModerationStatus,
+  ): Promise<AdminPortfolioRecord> {
+    const current = await this.prisma.portfolioItem.findFirstOrThrow({
+      where: { id: itemId, deletedAt: null },
+      select: { mediaId: true },
+    })
+
+    await this.prisma.mediaAsset.update({
+      where: { id: current.mediaId },
+      data: { moderation },
+    })
+
+    return this.prisma.portfolioItem.findFirstOrThrow({
+      where: { id: itemId },
+      select: PORTFOLIO_SELECT,
+    })
+  }
+
+  listReviewsByStatus(
+    status: ReviewStatus,
+    limit: number,
+  ): Promise<AdminReviewRecord[]> {
+    return this.prisma.review.findMany({
+      where: { status },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      select: REVIEW_SELECT,
+    })
+  }
+
+  findReviewById(reviewId: string): Promise<AdminReviewRecord | null> {
+    return this.prisma.review.findUnique({
+      where: { id: reviewId },
+      select: REVIEW_SELECT,
+    })
+  }
+
+  async updateReviewStatus(
+    reviewId: string,
+    status: ReviewStatus,
+    now: Date,
+  ): Promise<AdminReviewRecord> {
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.review.update({
+        where: { id: reviewId },
+        data: { status },
+        select: REVIEW_SELECT,
+      })
+
+      await recalculateMasterRatingInStore(tx, updated.masterId, now)
+
+      return updated
+    })
+  }
 }
+
+const PORTFOLIO_SELECT = {
+  id: true,
+  caption: true,
+  createdAt: true,
+  master: {
+    select: {
+      id: true,
+      slug: true,
+      displayName: true,
+    },
+  },
+  media: {
+    select: {
+      storageKey: true,
+      moderation: true,
+    },
+  },
+} as const satisfies Prisma.PortfolioItemSelect
+
+const REVIEW_SELECT = {
+  id: true,
+  rating: true,
+  text: true,
+  status: true,
+  createdAt: true,
+  masterId: true,
+  master: {
+    select: {
+      slug: true,
+      displayName: true,
+    },
+  },
+  client: {
+    select: {
+      firstName: true,
+    },
+  },
+} as const satisfies Prisma.ReviewSelect

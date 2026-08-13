@@ -4,7 +4,10 @@ import {
   resolveClientCancel,
   resolveConfirmFromHold,
   resolveMasterCancel,
+  resolveMasterComplete,
   resolveMasterConfirmPending,
+  resolveMasterNoShow,
+  resolveMasterReschedule,
 } from '@/modules/bookings/domain/booking-status.machine'
 
 describe('resolveConfirmFromHold', () => {
@@ -99,6 +102,70 @@ describe('resolveMasterCancel', () => {
   })
 })
 
+describe('resolveMasterComplete', () => {
+  const now = new Date('2026-08-12T12:00:00.000Z')
+
+  it('completes a confirmed visit that has started', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects a future confirmed booking', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'visit_not_started' })
+  })
+
+  it('rejects non-confirmed statuses', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'pending',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'not_confirmed' })
+  })
+})
+
+describe('resolveMasterReschedule', () => {
+  it('allows pending and confirmed to move to a new time', () => {
+    expect(
+      resolveMasterReschedule({
+        status: 'confirmed',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-21T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects the same instant and terminal statuses', () => {
+    expect(
+      resolveMasterReschedule({
+        status: 'confirmed',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: false, reason: 'same_time' })
+
+    expect(
+      resolveMasterReschedule({
+        status: 'hold',
+        currentStartsAt: new Date('2026-08-20T10:00:00.000Z'),
+        nextStartsAt: new Date('2026-08-21T10:00:00.000Z'),
+      }),
+    ).toEqual({ ok: false, reason: 'invalid_state' })
+  })
+})
+
 describe('resolveMasterConfirmPending', () => {
   it('only confirms pending', () => {
     expect(resolveMasterConfirmPending({ status: 'pending' })).toEqual({
@@ -109,5 +176,45 @@ describe('resolveMasterConfirmPending', () => {
       ok: false,
       reason: 'not_pending',
     })
+  })
+})
+
+describe('resolveMasterNoShow', () => {
+  const now = new Date('2026-08-12T12:00:00.000Z')
+
+  it('marks pending or confirmed after the visit started', () => {
+    expect(
+      resolveMasterNoShow({
+        status: 'pending',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+
+    expect(
+      resolveMasterNoShow({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-12T11:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: true })
+  })
+
+  it('rejects a future visit and terminal statuses', () => {
+    expect(
+      resolveMasterNoShow({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'visit_not_started' })
+
+    expect(
+      resolveMasterNoShow({
+        status: 'completed',
+        startsAt: new Date('2026-08-12T10:00:00.000Z'),
+        now,
+      }),
+    ).toEqual({ ok: false, reason: 'invalid_state' })
   })
 })

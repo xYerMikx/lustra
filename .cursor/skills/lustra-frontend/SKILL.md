@@ -63,6 +63,8 @@ Prefer `useEffectEvent` for stable effect bodies that call latest handlers (Reac
 
 Never hide-only security: still call guarded APIs.
 
+Icons: inline SVG in `shared/ui`, never emoji or icon fonts.
+
 ## Done when
 
 - [ ] No component > 300 lines

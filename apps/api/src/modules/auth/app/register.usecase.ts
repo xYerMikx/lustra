@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import type { RegisterInput, AuthSessionResponse } from '@lustra/contracts'
 import { Prisma } from '@lustra/db'
 
 import { JwtTokenService } from '@/common/auth/jwt-token.service'
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'
 import { DomainError } from '@/common/errors/domain-error'
+import { SendEmailVerifyUseCase } from '@/modules/auth/app/send-email-verify.usecase'
 import { toAuthUserView } from '@/modules/auth/domain/map-auth-user'
 import { assertPasswordPolicy } from '@/modules/auth/domain/password-policy'
 import {
@@ -21,11 +22,14 @@ export type RegisterResult = AuthSessionResponse & {
 
 @Injectable()
 export class RegisterUseCase {
+  private readonly logger = new Logger(RegisterUseCase.name)
+
   constructor(
     private readonly users: AuthUserRepository,
     private readonly sessions: RefreshSessionRepository,
     private readonly passwords: PasswordHasher,
     private readonly jwt: JwtTokenService,
+    private readonly sendEmailVerify: SendEmailVerifyUseCase,
   ) {}
 
   async execute(
@@ -81,6 +85,12 @@ export class RegisterUseCase {
     })
 
     await this.users.touchLastLogin(user.id)
+
+    try {
+      await this.sendEmailVerify.execute(user.id)
+    } catch (error) {
+      this.logger.error(error, 'email verify send failed')
+    }
 
     return {
       user: toAuthUserView(user),

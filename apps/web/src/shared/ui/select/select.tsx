@@ -20,6 +20,7 @@ type SelectProps = {
   value: string
   options: SelectOption[]
   onChange: (value: string) => void
+  name?: string
   placeholder?: string
   disabled?: boolean
   invalid?: boolean
@@ -31,6 +32,7 @@ export function Select({
   value,
   options,
   onChange,
+  name,
   placeholder = 'Выберите',
   disabled = false,
   invalid = false,
@@ -140,6 +142,7 @@ export function Select({
 
   return (
     <div className={styles.root} ref={rootRef}>
+      {name ? <input type="hidden" name={name} value={value} /> : null}
       <button
         id={id}
         type="button"

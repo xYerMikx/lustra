@@ -12,6 +12,22 @@
   padding: var(--spacing-40) 0 var(--spacing-56);
 }
 
+.cover {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-14);
+  margin-bottom: var(--spacing-24);
+  background: var(--color-surface-2);
+}
+
+.heroWithCover {
+  min-height: 0;
+  justify-content: flex-start;
+}
+
 .place {
   margin-bottom: var(--spacing-12);
   font-size: var(--text-13);
@@ -42,6 +58,13 @@
   font-size: var(--text-16);
   line-height: var(--text-16--line-height);
   margin-bottom: var(--spacing-24);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+  align-items: center;
 }
 
 .services {

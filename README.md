@@ -8,7 +8,7 @@
 
 - Node ≥ 20.11
 - pnpm 9.15 (`packageManager` в корневом `package.json`)
-- Docker (Postgres 16 + Redis 7)
+- Docker (Postgres 16 + Redis 7 + MinIO)
 
 ## Быстрый старт
 
@@ -16,7 +16,7 @@
 
 ```bash
 make setup    # один раз: install + .env + docker + migrate + seed
-make start    # Postgres/Redis + api + web + landing
+make start    # Postgres/Redis/MinIO + api + web + landing
 ```
 
 `make start` блокирует терминал (turbo dev). Стоп приложений — `Ctrl+C`; контейнеры: `make down`.
@@ -36,6 +36,7 @@ pnpm dev
 |---|---|---|
 | Postgres | 5432 | `lustra` / `lustra` / `lustra_dev` |
 | Redis | 6379 | очереди / кэш |
+| MinIO | 9000 | S3-хранилище (консоль http://localhost:9001, `lustra` / `lustra-minio`) |
 | API | 3333 | NestJS (Fastify) — `/health`, `/health/deep` |
 | Web | 3000 | Next.js 15 |
 | Landing | 4321 | Astro |

@@ -1,18 +1,19 @@
 'use client'
 
-import Link from 'next/link'
 import cn from 'classnames'
 
-import { CopyProfileLinkButton } from '@/features/master-cabinet/ui/copy-profile-link-button'
+import { useSession } from '@/features/auth'
+import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
+import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
+import { EmailVerifyBanner } from '@/features/master-cabinet/ui/email-verify-banner'
+import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-share'
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
-import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
-import { buildPublicProfilePath } from '@/features/master-cabinet/model/public-profile-url'
-import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
 import { ButtonLink } from '@/shared/ui/button'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
 export function MasterCabinetHub() {
+  const session = useSession()
   const {
     profile,
     profileError,
@@ -44,7 +45,6 @@ export function MasterCabinetHub() {
     )
   }
 
-  const publicPath = buildPublicProfilePath(profile.slug)
   const district = profile.primaryLocation?.districtName
   const isPublic =
     profile.status === 'published' || profile.status === 'pending_review'
@@ -63,13 +63,21 @@ export function MasterCabinetHub() {
           <p className={styles.headline}>{profile.headline}</p>
         ) : null}
 
+        {!session.emailVerified ? <EmailVerifyBanner /> : null}
+
         <div className={styles.actions}>
           <ButtonLink href="/app/master/profile">Редактировать профиль</ButtonLink>
+          <ButtonLink href="/app/master/portfolio" variant="ghost">
+            Портфолио
+          </ButtonLink>
           <ButtonLink href="/app/master/bookings" variant="ghost">
             Записи
           </ButtonLink>
           <ButtonLink href="/app/master/calendar" variant="ghost">
             Календарь
+          </ButtonLink>
+          <ButtonLink href="/app/master/reviews" variant="ghost">
+            Отзывы
           </ButtonLink>
           <ButtonLink href="/app/onboarding" variant="ghost">
             Онбординг
@@ -78,13 +86,11 @@ export function MasterCabinetHub() {
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Публичная страница</h2>
-          <div className={styles.linkRow}>
-            <Link className={styles.publicPath} href={publicPath}>
-              {publicPath}
-            </Link>
-            <CopyProfileLinkButton slug={profile.slug} />
-          </div>
-          {canSubmit ? (
+          <PublicProfileShare
+            slug={profile.slug}
+            displayName={profile.displayName}
+          />
+          {canSubmit && session.emailVerified ? (
             <div className={cn(styles.actions, styles.actionsAfter)}>
               <SubmitForReviewButton onPublished={setProfile} />
             </div>

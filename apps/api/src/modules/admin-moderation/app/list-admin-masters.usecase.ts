@@ -14,10 +14,10 @@ export class ListAdminMastersUseCase {
   constructor(private readonly masters: AdminModerationRepository) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     query: AdminListMastersQuery,
   ): Promise<AdminListMastersResponse> {
-    if (actor.role !== 'admin') {
+    if (currentUser.role !== 'admin') {
       throw new DomainError('FORBIDDEN', 'Недостаточно прав')
     }
 

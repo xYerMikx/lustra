@@ -7,6 +7,8 @@ describe('SearchMastersUseCase', () => {
   it('maps published masters from the store', async () => {
     const masters: PublicMasterStore = {
       findPublicBySlug: vi.fn(),
+      findPublishedById: vi.fn(),
+      listPublishedByIds: vi.fn(),
       searchPublished: vi.fn().mockResolvedValue([
         {
           id: '11111111-1111-4111-8111-111111111111',

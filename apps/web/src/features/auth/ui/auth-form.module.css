@@ -103,3 +103,26 @@
   font-size: var(--text-13);
   line-height: var(--text-13--line-height);
 }
+
+.forgotRow {
+  margin: 0;
+  text-align: right;
+}
+
+.forgotLink,
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-600);
+}
+
+.success {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}

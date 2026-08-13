@@ -34,7 +34,8 @@ alwaysApply: false
 - **No render props** (`children={(x) => ...}`). Prefer context, hooks, or plain `children: ReactNode`.
 - Four UI states where data loads: `loading` (skeleton), `empty`, `error` (+ retry), `success`.
 - No cards in hero; avoid generic dashboard chrome on marketing/public pages.
-- Shared interactive UI (`Button`, …) from `shared/ui` — never raw `btn btn-primary` string classes in features.
+- Shared interactive UI (`Button`, `RatingStars`, …) from `shared/ui` — never raw `btn btn-primary` string classes in features.
+- **Icons are inline SVG** in a kebab-case component (`rating-stars.tsx`). Do not use emoji (`★`, `⭐`, `✅`), icon fonts, or `<img>` for glyphs. Fill/stroke via `currentColor` + tokens. Decorative SVG: `aria-hidden="true"`; meaning on a wrapper `aria-label`.
 - **No nested ternaries in JSX** — extract a small child component (own file) or early `if` returns.
 - **Pure helpers never live inside UI components** (`ui/*.tsx`). Put them in `model/` or `shared/lib/` (kebab-case file) and import. Same for date/money/formatters and form mappers.
 

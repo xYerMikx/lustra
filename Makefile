@@ -27,9 +27,9 @@ env: ## скопировать .env из example, если ещё нет
 	@test -f apps/landing/.env || cp apps/landing/.env.example apps/landing/.env
 	@echo ".env на месте"
 
-up: ## поднять Postgres + Redis
+up: ## поднять Postgres + Redis + MinIO
 	$(COMPOSE) up -d
-	@echo "Postgres :5432  Redis :6379"
+	@echo "Postgres :5432  Redis :6379  MinIO :9000 (console :9001)"
 
 infra: up ## алиас на up
 

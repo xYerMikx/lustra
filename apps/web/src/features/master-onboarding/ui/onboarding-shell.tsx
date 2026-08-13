@@ -20,6 +20,7 @@ import {
 } from '@/features/master-onboarding/model/onboarding-steps'
 import { OnboardingProgress } from '@/features/master-onboarding/ui/onboarding-progress'
 import { StepBasicsForm } from '@/features/master-onboarding/ui/step-basics-form'
+import { StepPortfolioCta } from '@/features/master-onboarding/ui/step-portfolio-cta'
 import { StepScheduleForm } from '@/features/master-onboarding/ui/step-schedule-form'
 import { StepServiceForm } from '@/features/master-onboarding/ui/step-service-form'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
@@ -61,8 +62,8 @@ const STEP_COPY: Record<
     description: 'Рабочие дни, шаг сетки и правила записи',
   },
   portfolio: {
-    title: 'Портфолио',
-    description: 'Этот шаг подключим позже',
+    title: 'Покажите работы',
+    description: 'Фото с телефона — клиенты выбирают глазами',
   },
 }
 
@@ -176,7 +177,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
 
     dispatchData({ type: 'schedule_updated', schedule: saved })
-    goToCabinet()
+    setCurrentStepId('portfolio')
 
     return saved
   }
@@ -257,6 +258,13 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
             initialSchedule={schedule}
             onSave={saveStepSchedule}
             onBack={() => setCurrentStepId('services')}
+            onSkip={() => setCurrentStepId('portfolio')}
+          />
+        ) : null}
+
+        {currentStepId === 'portfolio' ? (
+          <StepPortfolioCta
+            onBack={() => setCurrentStepId('schedule')}
             onSkip={goToCabinet}
           />
         ) : null}

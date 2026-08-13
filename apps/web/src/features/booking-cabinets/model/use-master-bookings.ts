@@ -5,9 +5,12 @@ import type { BookingMasterView } from '@lustra/contracts'
 
 import {
   cancelMasterBooking,
+  completeMasterBooking,
   confirmMasterBooking,
   getMasterBooking,
   listMasterBookings,
+  markMasterNoShow,
+  rescheduleMasterBooking,
 } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
 
@@ -137,6 +140,48 @@ export function useMasterBookingDetail(bookingId: string) {
     }
   }
 
+  const complete = async () => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await completeMasterBooking(bookingId)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+      }
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось завершить запись',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const markNoShow = async () => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await markMasterNoShow(bookingId)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+      }
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось отметить неявку',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const cancel = async (reason: string) => {
     setBusy(true)
     setActionError(null)
@@ -156,6 +201,25 @@ export function useMasterBookingDetail(bookingId: string) {
     }
   }
 
+  const reschedule = async (input: { startsAt: string; reason: string }) => {
+    setBusy(true)
+    setActionError(null)
+
+    try {
+      const response = await rescheduleMasterBooking(bookingId, input)
+
+      if (response?.booking) {
+        setBooking(response.booking)
+
+        return response.booking
+      }
+    } finally {
+      setBusy(false)
+    }
+
+    return null
+  }
+
   return {
     booking,
     status,
@@ -163,6 +227,9 @@ export function useMasterBookingDetail(bookingId: string) {
     actionError,
     busy,
     confirm,
+    complete,
+    markNoShow,
     cancel,
+    reschedule,
   }
 }

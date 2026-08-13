@@ -40,3 +40,7 @@ export type DistrictStore = {
   listAll(): Promise<DistrictListItem[]>
   findById(id: string): Promise<{ id: string } | null>
 }
+
+export type EmailVerificationReader = {
+  isEmailVerified(userId: string): Promise<boolean>
+}

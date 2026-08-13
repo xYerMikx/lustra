@@ -1,6 +1,7 @@
 import type {
   BookingClientView,
   BookingMasterView,
+  BookingReviewRef,
   BookingStatus,
 } from '@lustra/contracts'
 
@@ -19,6 +20,8 @@ export type BookingRecord = {
   holdExpiresAt: Date | null
   clientComment: string | null
   confirmedAt: Date | null
+  completedAt: Date | null
+  review: BookingReviewRef | null
   masterNote: string | null
   masterDisplayName: string
   addressHint: string | null
@@ -52,6 +55,10 @@ export function toBookingClientView(record: BookingRecord): BookingClientView {
     confirmedAt: record.confirmedAt
       ? record.confirmedAt.toISOString()
       : null,
+    completedAt: record.completedAt
+      ? record.completedAt.toISOString()
+      : null,
+    review: record.review,
     addressHint: record.addressHint,
     addressExact: showExact ? record.addressExact : null,
   }
@@ -75,6 +82,9 @@ export function toBookingMasterView(record: BookingRecord): BookingMasterView {
     clientComment: record.clientComment,
     confirmedAt: record.confirmedAt
       ? record.confirmedAt.toISOString()
+      : null,
+    completedAt: record.completedAt
+      ? record.completedAt.toISOString()
       : null,
     masterNote: record.masterNote,
     client: {

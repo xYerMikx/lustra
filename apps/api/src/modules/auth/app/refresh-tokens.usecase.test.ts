@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { DomainError } from '@/common/errors/domain-error'
+import { JwtTokenService } from '@/common/auth/jwt-token.service'
 import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
+import { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
+import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.repository'
 
 describe('RefreshTokensUseCase', () => {
   it('revokes the whole family when a revoked refresh token is reused', async () => {
@@ -22,7 +25,11 @@ describe('RefreshTokensUseCase', () => {
     const users = { findById: vi.fn() }
     const jwt = { signAccess: vi.fn() }
 
-    const useCase = new RefreshTokensUseCase(users as never, sessions as never, jwt as never)
+    const useCase = new RefreshTokensUseCase(
+      users as unknown as AuthUserRepository,
+      sessions as unknown as RefreshSessionRepository,
+      jwt as unknown as JwtTokenService,
+    )
 
     await expect(useCase.execute('stolen-token', {})).rejects.toMatchObject({
       code: 'UNAUTHENTICATED',

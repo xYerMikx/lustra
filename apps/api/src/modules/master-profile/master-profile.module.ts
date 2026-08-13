@@ -35,5 +35,6 @@ import { PublicMasterRepository } from '@/modules/master-profile/infra/public-ma
     PublishMasterProfileUseCase,
     ListDistrictsUseCase,
   ],
+  exports: [PublicMasterRepository],
 })
 export class MasterProfileModule {}

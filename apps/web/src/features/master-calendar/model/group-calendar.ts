@@ -1,6 +1,7 @@
 import type {
   MasterCalendarSlotView,
   MasterCalendarView,
+  ScheduleExceptionView,
   TimeBlockView,
 } from '@lustra/contracts'
 
@@ -14,6 +15,7 @@ export type DayItems = {
   date: string
   openSlots: MasterCalendarSlotView[]
   blocks: TimeBlockView[]
+  exception: ScheduleExceptionView | null
 }
 
 export function groupCalendarByDay(
@@ -42,6 +44,8 @@ export function groupCalendarByDay(
 
         return startsAt < dayEnd && endsAt > dayStart
       }),
+      exception:
+        data.exceptions.find((item) => item.date === cursor) ?? null,
     })
 
     cursor = addDaysToYmdDate(cursor, 1)

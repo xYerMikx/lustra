@@ -10,10 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import {
+  CreateManualBookingInputSchema,
   MasterCancelBookingInputSchema,
   MasterListBookingsQuerySchema,
+  RescheduleBookingInputSchema,
+  type CreateManualBookingInput,
   type MasterCancelBookingInput,
   type MasterListBookingsQuery,
+  type RescheduleBookingInput,
 } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
@@ -23,9 +27,13 @@ import { Roles } from '@/common/auth/roles.decorator'
 import { RolesGuard } from '@/common/auth/roles.guard'
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { CancelMasterBookingUseCase } from '@/modules/bookings/app/cancel-master-booking.usecase'
+import { CompleteBookingUseCase } from '@/modules/bookings/app/complete-booking.usecase'
 import { ConfirmMasterBookingUseCase } from '@/modules/bookings/app/confirm-master-booking.usecase'
+import { CreateManualBookingUseCase } from '@/modules/bookings/app/create-manual-booking.usecase'
 import { GetMasterBookingUseCase } from '@/modules/bookings/app/get-master-booking.usecase'
 import { ListMasterBookingsUseCase } from '@/modules/bookings/app/list-master-bookings.usecase'
+import { MarkNoShowUseCase } from '@/modules/bookings/app/mark-no-show.usecase'
+import { RescheduleBookingUseCase } from '@/modules/bookings/app/reschedule-booking.usecase'
 
 @Controller('master/bookings')
 @UseGuards(JwtGuard, RolesGuard)
@@ -34,8 +42,12 @@ export class MasterBookingsController {
   constructor(
     private readonly listBookings: ListMasterBookingsUseCase,
     private readonly getBooking: GetMasterBookingUseCase,
+    private readonly createManual: CreateManualBookingUseCase,
     private readonly confirmBooking: ConfirmMasterBookingUseCase,
+    private readonly completeBooking: CompleteBookingUseCase,
+    private readonly markNoShow: MarkNoShowUseCase,
     private readonly cancelBooking: CancelMasterBookingUseCase,
+    private readonly rescheduleBooking: RescheduleBookingUseCase,
   ) {}
 
   @Get()
@@ -45,6 +57,16 @@ export class MasterBookingsController {
     query: MasterListBookingsQuery,
   ) {
     return this.listBookings.execute(currentUser, query)
+  }
+
+  @Post()
+  @HttpCode(201)
+  create(
+    @CurrentUser() currentUser: AuthUser,
+    @Body(new ZodValidationPipe(CreateManualBookingInputSchema))
+    body: CreateManualBookingInput,
+  ) {
+    return this.createManual.execute(currentUser, body)
   }
 
   @Get(':id')
@@ -64,6 +86,24 @@ export class MasterBookingsController {
     return this.confirmBooking.execute(currentUser, id)
   }
 
+  @Post(':id/complete')
+  @HttpCode(200)
+  complete(
+    @CurrentUser() currentUser: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.completeBooking.execute(currentUser, id)
+  }
+
+  @Post(':id/no-show')
+  @HttpCode(200)
+  noShow(
+    @CurrentUser() currentUser: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.markNoShow.execute(currentUser, id)
+  }
+
   @Post(':id/cancel')
   @HttpCode(200)
   cancel(
@@ -73,5 +113,16 @@ export class MasterBookingsController {
     body: MasterCancelBookingInput,
   ) {
     return this.cancelBooking.execute(currentUser, id, body)
+  }
+
+  @Post(':id/reschedule')
+  @HttpCode(200)
+  reschedule(
+    @CurrentUser() currentUser: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body(new ZodValidationPipe(RescheduleBookingInputSchema))
+    body: RescheduleBookingInput,
+  ) {
+    return this.rescheduleBooking.execute(currentUser, id, body)
   }
 }

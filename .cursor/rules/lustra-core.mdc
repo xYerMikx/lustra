@@ -78,6 +78,21 @@ return true
 - Same-folder `./foo` is OK; never `../` across folders.
 - API: Nest `compilerOptions.builder = "webpack"` resolves `@/` from `tsconfig` paths.
 
+## TypeScript (hard)
+
+Never write `as never`. It deletes type checking. In tests, type a partial double as the real class:
+
+```ts
+// ❌ BAD
+const tx = { run: vi.fn() } as never
+new UseCase(repo as never)
+
+// ✅ GOOD — only in tests, and only for a named type
+const tx = { run: vi.fn() } as unknown as TransactionManager
+```
+
+Prefer a narrow port (`Pick<T, 'run'>`) so the stub needs no cast.
+
 ## Docs / agent
 
 - Before non-trivial features: read relevant TECH-DESIGN § and apply matching `.cursor/skills/`.

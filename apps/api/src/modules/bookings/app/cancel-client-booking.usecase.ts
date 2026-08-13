@@ -60,7 +60,7 @@ export class CancelClientBookingUseCase {
         bookingId,
         toStatus: decision.toStatus,
         cancelledByType: 'client',
-        actorId: currentUser.id,
+        currentUserId: currentUser.id,
         reason: input.reason?.trim() ? input.reason.trim() : null,
         now,
       })

@@ -39,6 +39,19 @@ Minimum forever-green:
 
 Skip “testing for coverage %” of trivial JSX wrappers.
 
+## Type doubles
+
+Never `as never`. If a use-case needs a partial mock, name the class:
+
+```ts
+const sessions = { findByTokenHash: vi.fn(), revokeFamily: vi.fn() }
+new RefreshTokensUseCase(
+  users as unknown as AuthUserRepository,
+  sessions as unknown as RefreshSessionRepository,
+  jwt as unknown as JwtTokenService,
+)
+```
+
 ## Smoke / manual API probes
 
 - Markers and cleanup policy: `.cursor/rules/lustra-smoke-data.mdc`

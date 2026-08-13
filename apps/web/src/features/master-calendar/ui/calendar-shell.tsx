@@ -2,18 +2,29 @@
 
 import { useState } from 'react'
 import cn from 'classnames'
+import type { MasterClientView, ServiceView } from '@lustra/contracts'
 
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'
 import { useCalendarData } from '@/features/master-calendar/model/use-calendar-data'
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
-import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
+import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
+import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+
+type ManualDialogState = {
+  startsAtIso: string | null
+  services: ServiceView[]
+  clients: MasterClientView[]
+}
 
 export function CalendarShell() {
   const calendar = useCalendarData()
   const [blockOpen, setBlockOpen] = useState(false)
+  const [exceptionOpen, setExceptionOpen] = useState(false)
+  const [manual, setManual] = useState<ManualDialogState | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
   const days =
@@ -33,6 +44,42 @@ export function CalendarShell() {
     } catch (error) {
       setActionError(
         error instanceof ApiError ? error.message : 'Не удалось снять блок',
+      )
+    }
+  }
+
+  const handleRemoveException = async (ymdDate: string) => {
+    setActionError(null)
+
+    try {
+      await calendar.removeException(ymdDate)
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось снять исключение',
+      )
+    }
+  }
+
+  const handleOpenManual = async (startsAtIso: string | null) => {
+    setActionError(null)
+
+    try {
+      const context = await calendar.loadManualContext()
+
+      if (context.services.length === 0) {
+        setActionError('Сначала добавьте услугу в кабинете')
+
+        return
+      }
+
+      setManual({ startsAtIso, ...context })
+    } catch (error) {
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : 'Не удалось открыть запись',
       )
     }
   }
@@ -82,8 +129,14 @@ export function CalendarShell() {
               Неделя
             </Button>
           </div>
+          <Button type="button" onClick={() => void handleOpenManual(null)}>
+            Записать клиента
+          </Button>
           <Button type="button" onClick={() => setBlockOpen(true)}>
             Блок / обед
+          </Button>
+          <Button type="button" onClick={() => setExceptionOpen(true)}>
+            Исключение
           </Button>
         </div>
         <div className={styles.legend}>
@@ -92,6 +145,9 @@ export function CalendarShell() {
           </span>
           <span className={styles.legendItem}>
             <span className={styles.swatchBlock} /> блок
+          </span>
+          <span className={styles.legendItem}>
+            <span className={styles.swatchException} /> исключение
           </span>
         </div>
       </header>
@@ -105,7 +161,9 @@ export function CalendarShell() {
         days={days}
         onReload={calendar.reloadCalendar}
         onSelectDay={calendar.selectDay}
+        onSelectSlot={handleOpenManual}
         onRemoveBlock={handleRemoveBlock}
+        onRemoveException={handleRemoveException}
       />
 
       {blockOpen ? (
@@ -113,6 +171,25 @@ export function CalendarShell() {
           defaultDate={calendar.anchorDate}
           onClose={() => setBlockOpen(false)}
           onSubmit={calendar.addBlock}
+        />
+      ) : null}
+
+      {exceptionOpen ? (
+        <ExceptionDialog
+          defaultDate={calendar.anchorDate}
+          onClose={() => setExceptionOpen(false)}
+          onSubmit={calendar.addException}
+        />
+      ) : null}
+
+      {manual ? (
+        <ManualBookingDialog
+          defaultDate={calendar.anchorDate}
+          defaultStartsAt={manual.startsAtIso}
+          services={manual.services}
+          clients={manual.clients}
+          onClose={() => setManual(null)}
+          onSubmit={calendar.addManualBooking}
         />
       ) : null}
     </section>

@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+/** Local calendar date `YYYY-MM-DD` (Europe/Minsk). */
+export const YmdDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Дата должна быть в формате YYYY-MM-DD')
+export type YmdDate = z.infer<typeof YmdDateSchema>
+
 /** 1 = Mon … 7 = Sun (ISO weekday), local Europe/Minsk minutes of day */
 export const WeekdaySchema = z.number().int().min(1).max(7)
 export type Weekday = z.infer<typeof WeekdaySchema>
@@ -72,3 +78,87 @@ export const PutMasterScheduleInputSchema = z
   })
   .strict()
 export type PutMasterScheduleInput = z.infer<typeof PutMasterScheduleInputSchema>
+
+export const ExceptionTypeSchema = z.enum(['day_off', 'custom_hours'])
+export type ExceptionType = z.infer<typeof ExceptionTypeSchema>
+
+export const ScheduleExceptionViewSchema = z.object({
+  id: z.string().uuid(),
+  date: YmdDateSchema,
+  type: ExceptionTypeSchema,
+  startMin: z.number().int().min(0).max(1439).nullable(),
+  endMin: z.number().int().min(1).max(1440).nullable(),
+  note: z.string().nullable(),
+})
+export type ScheduleExceptionView = z.infer<typeof ScheduleExceptionViewSchema>
+
+export const ScheduleExceptionListResponseSchema = z.object({
+  items: z.array(ScheduleExceptionViewSchema),
+})
+export type ScheduleExceptionListResponse = z.infer<
+  typeof ScheduleExceptionListResponseSchema
+>
+
+export const ListScheduleExceptionsQuerySchema = z
+  .object({
+    from: YmdDateSchema,
+    to: YmdDateSchema,
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.from > value.to) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['to'],
+        message: 'Дата «to» должна быть не раньше «from»',
+      })
+    }
+  })
+export type ListScheduleExceptionsQuery = z.infer<
+  typeof ListScheduleExceptionsQuerySchema
+>
+
+export const PutScheduleExceptionInputSchema = z
+  .object({
+    type: ExceptionTypeSchema,
+    startMin: z.number().int().min(0).max(1439).optional(),
+    endMin: z.number().int().min(1).max(1440).optional(),
+    note: z.string().max(500).optional(),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.type !== 'custom_hours') {
+      return
+    }
+
+    if (value.startMin == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['startMin'],
+        message: 'Укажите начало особых часов',
+      })
+    }
+
+    if (value.endMin == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endMin'],
+        message: 'Укажите конец особых часов',
+      })
+    }
+
+    if (
+      value.startMin != null &&
+      value.endMin != null &&
+      value.endMin <= value.startMin
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endMin'],
+        message: 'Конец интервала должен быть позже начала',
+      })
+    }
+  })
+export type PutScheduleExceptionInput = z.infer<
+  typeof PutScheduleExceptionInputSchema
+>

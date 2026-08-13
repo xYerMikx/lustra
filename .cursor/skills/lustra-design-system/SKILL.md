@@ -25,6 +25,7 @@ Canonical token block: TECH-DESIGN §23. Rules file: `.cursor/rules/lustra-desig
 | Full-bleed hero on landing | Inset hero cards / floating media collage |
 | One job per section | Stat strips, pill clusters, dashboard chrome on marketing |
 | Compose small primitives | 400-line styled mega-component |
+| Inline SVG icons, `currentColor` | Emoji stars/checks as UI glyphs |
 | `prefers-reduced-motion` | Endless decorative motion |
 
 ## Adding a primitive (`packages/ui` when present)

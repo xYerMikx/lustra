@@ -10,10 +10,16 @@ import {
 } from '@nestjs/common'
 import { SkipThrottle, Throttle } from '@nestjs/throttler'
 import {
+  ForgotPasswordInputSchema,
   LoginInputSchema,
   RegisterInputSchema,
+  ResetPasswordInputSchema,
+  VerifyEmailInputSchema,
+  type ForgotPasswordInput,
   type LoginInput,
   type RegisterInput,
+  type ResetPasswordInput,
+  type VerifyEmailInput,
 } from '@lustra/contracts'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 
@@ -28,6 +34,10 @@ import { LoginUseCase } from '@/modules/auth/app/login.usecase'
 import { LogoutUseCase } from '@/modules/auth/app/logout.usecase'
 import { RefreshTokensUseCase } from '@/modules/auth/app/refresh-tokens.usecase'
 import { RegisterUseCase } from '@/modules/auth/app/register.usecase'
+import { RequestPasswordResetUseCase } from '@/modules/auth/app/request-password-reset.usecase'
+import { ResetPasswordUseCase } from '@/modules/auth/app/reset-password.usecase'
+import { SendEmailVerifyUseCase } from '@/modules/auth/app/send-email-verify.usecase'
+import { VerifyEmailUseCase } from '@/modules/auth/app/verify-email.usecase'
 import { AuthCookieService } from '@/modules/auth/infra/auth-cookie.service'
 
 @Controller('auth')
@@ -38,6 +48,10 @@ export class AuthController {
     private readonly refreshUseCase: RefreshTokensUseCase,
     private readonly logoutUseCase: LogoutUseCase,
     private readonly getMeUseCase: GetMeUseCase,
+    private readonly requestPasswordResetUseCase: RequestPasswordResetUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly sendEmailVerifyUseCase: SendEmailVerifyUseCase,
+    private readonly verifyEmailUseCase: VerifyEmailUseCase,
     private readonly cookies: AuthCookieService,
   ) {}
 
@@ -72,6 +86,46 @@ export class AuthController {
     })
 
     return { user: result.user }
+  }
+
+  @Post('password/forgot')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  forgotPassword(
+    @Body(new ZodValidationPipe(ForgotPasswordInputSchema)) body: ForgotPasswordInput,
+  ) {
+
+    return this.requestPasswordResetUseCase.execute(body)
+  }
+
+  @Post('password/reset')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  resetPassword(
+    @Body(new ZodValidationPipe(ResetPasswordInputSchema)) body: ResetPasswordInput,
+  ) {
+
+    return this.resetPasswordUseCase.execute(body)
+  }
+
+  @Post('email/verify')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  verifyEmail(
+    @Body(new ZodValidationPipe(VerifyEmailInputSchema)) body: VerifyEmailInput,
+  ) {
+
+    return this.verifyEmailUseCase.execute(body)
+  }
+
+  @Post('email/resend')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles('client', 'master', 'admin')
+  resendEmailVerify(@CurrentUser() user: AuthUser) {
+
+    return this.sendEmailVerifyUseCase.execute(user.id)
   }
 
   @Post('refresh')

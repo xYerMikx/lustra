@@ -31,10 +31,10 @@ export class CreateTimeBlockUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     input: CreateTimeBlockInput,
   ): Promise<TimeBlockView> {
-    const masterId = await this.blocks.findMasterIdByUserId(actor.id)
+    const masterId = await this.blocks.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')
@@ -69,7 +69,7 @@ export class CreateTimeBlockUseCase {
     let record: TimeBlockRecord
 
     try {
-      record = await this.blocks.create(masterId, actor.id, {
+      record = await this.blocks.create(masterId, currentUser.id, {
         startsAt,
         endsAt,
         reason: input.reason,

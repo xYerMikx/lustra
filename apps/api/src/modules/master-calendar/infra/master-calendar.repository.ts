@@ -4,10 +4,12 @@ import { isGranularityMin } from '@lustra/contracts'
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {
   CalendarBlockRecord,
+  CalendarExceptionRecord,
   CalendarMasterRecord,
   CalendarSlotRecord,
   MasterCalendarStore,
 } from '@/modules/master-calendar/app/master-calendar.ports'
+import { ymdDateToUtcMidnight } from '@/modules/master-schedule/domain/map-schedule-exception'
 
 @Injectable()
 export class MasterCalendarRepository implements MasterCalendarStore {
@@ -85,6 +87,31 @@ export class MasterCalendarRepository implements MasterCalendarStore {
         note: true,
       },
       orderBy: { startsAt: 'asc' },
+    })
+  }
+
+  listExceptions(
+    masterId: string,
+    fromYmdDate: string,
+    toYmdDate: string,
+  ): Promise<CalendarExceptionRecord[]> {
+    return this.prisma.availabilityException.findMany({
+      where: {
+        masterId,
+        date: {
+          gte: ymdDateToUtcMidnight(fromYmdDate),
+          lte: ymdDateToUtcMidnight(toYmdDate),
+        },
+      },
+      select: {
+        id: true,
+        date: true,
+        type: true,
+        startMin: true,
+        endMin: true,
+        note: true,
+      },
+      orderBy: { date: 'asc' },
     })
   }
 }

@@ -15,7 +15,10 @@ import { isProduction } from '@/common/env/is-production'
 import { DomainExceptionFilter } from '@/common/errors/domain-exception.filter'
 
 async function bootstrap() {
-  const adapter = new FastifyAdapter({ trustProxy: true })
+  const adapter = new FastifyAdapter({
+    trustProxy: true,
+    bodyLimit: 9 * 1024 * 1024,
+  })
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, {
     bufferLogs: true,
@@ -35,12 +38,28 @@ async function bootstrap() {
 
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
   await app.register(fastifyCors, {
     origin: corsOrigins.length > 0 ? corsOrigins : true,
     credentials: true,
   })
   await app.register(fastifyCookie)
+
+  const fastify = app.getHttpAdapter().getInstance()
+  const parseImageBody = (
+    _request: unknown,
+    body: Buffer,
+    done: (error: Error | null, value?: Buffer) => void,
+  ) => {
+    done(null, body)
+  }
+
+  fastify.addContentTypeParser(
+    ['image/jpeg', 'image/png', 'image/webp', 'application/octet-stream'],
+    { parseAs: 'buffer' },
+    parseImageBody,
+  )
 
   app.enableShutdownHooks()
 

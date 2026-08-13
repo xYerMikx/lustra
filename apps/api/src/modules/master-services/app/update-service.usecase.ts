@@ -26,11 +26,11 @@ export class UpdateServiceUseCase {
   ) {}
 
   async execute(
-    actor: AuthUser,
+    currentUser: AuthUser,
     serviceId: string,
     input: UpdateServiceInput,
   ): Promise<ServiceView> {
-    const masterId = await this.services.findMasterIdByUserId(actor.id)
+    const masterId = await this.services.findMasterIdByUserId(currentUser.id)
 
     if (!masterId) {
       throw new DomainError('NOT_FOUND', 'Профиль мастера не найден')

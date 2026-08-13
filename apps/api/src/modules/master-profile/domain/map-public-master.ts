@@ -5,6 +5,8 @@ import type {
 } from '@lustra/contracts'
 import type { LocationType, MasterStatus, PriceType } from '@lustra/db'
 
+import { publicMediaUrl } from '@/common/media/public-media-url'
+
 export type PublicMasterLocationRecord = {
   id: string
   districtId: string
@@ -34,6 +36,19 @@ export type PublicMasterServiceRecord = {
   }
 }
 
+export type PublicPortfolioRecord = {
+  id: string
+  serviceId: string | null
+  caption: string | null
+  sort: number
+  isCover: boolean
+  media: {
+    storageKey: string
+    width: number
+    height: number
+  }
+}
+
 export type PublicMasterRecord = {
   id: string
   slug: string
@@ -54,6 +69,7 @@ export type PublicMasterRecord = {
     ratingAvg: { toString(): string } | number | string
     ratingCount: number
   } | null
+  portfolio: PublicPortfolioRecord[]
 }
 
 const PRIVATE_KEYS = [
@@ -103,6 +119,7 @@ export function toPublicMasterView(record: PublicMasterRecord): PublicMasterView
     ratingCount: record.stats?.ratingCount ?? 0,
     contact: toContactView(record.contact),
     services: record.services.map(toPublicServiceView),
+    portfolio: record.portfolio.map(toPublicPortfolioItem),
   }
 
   assertNoPrivateKeys(view)
@@ -134,6 +151,22 @@ function toPublicServiceView(
     priceMax: service.priceMax == null ? null : toNumber(service.priceMax),
     priceType: service.priceType,
     currency: service.currency,
+  }
+}
+
+function toPublicPortfolioItem(
+  item: PublicPortfolioRecord,
+): PublicMasterView['portfolio'][number] {
+  return {
+    id: item.id,
+    url: publicMediaUrl(item.media.storageKey),
+    width: item.media.width,
+    height: item.media.height,
+    caption: item.caption,
+    serviceId: item.serviceId,
+    sort: item.sort,
+    isCover: item.isCover,
+    moderation: 'approved',
   }
 }
 
