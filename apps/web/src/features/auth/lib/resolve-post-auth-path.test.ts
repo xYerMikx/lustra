@@ -38,4 +38,15 @@ describe('resolvePostAuthPath', () => {
   it('sends draft masters to onboarding', () => {
     expect(resolvePostAuthPath(draftMaster)).toBe('/app/onboarding')
   })
+
+  it('sends admins to admin queue', () => {
+    expect(
+      resolvePostAuthPath({
+        ...clientUser,
+        id: '33333333-3333-3333-3333-333333333333',
+        email: 'admin.smoke.1@example.com',
+        role: 'admin',
+      }),
+    ).toBe('/admin')
+  })
 })

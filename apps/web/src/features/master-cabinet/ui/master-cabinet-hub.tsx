@@ -4,6 +4,7 @@ import Link from 'next/link'
 import cn from 'classnames'
 
 import { CopyProfileLinkButton } from '@/features/master-cabinet/ui/copy-profile-link-button'
+import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
 import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
 import { buildPublicProfilePath } from '@/features/master-cabinet/model/public-profile-url'
@@ -18,6 +19,7 @@ export function MasterCabinetHub() {
     isProfileLoading,
     upcomingSlots,
     isCalendarLoading,
+    setProfile,
   } = useMasterCabinet()
 
   if (isProfileLoading) {
@@ -44,7 +46,9 @@ export function MasterCabinetHub() {
 
   const publicPath = buildPublicProfilePath(profile.slug)
   const district = profile.primaryLocation?.districtName
-  const isPublic = profile.status === 'published'
+  const isPublic =
+    profile.status === 'published' || profile.status === 'pending_review'
+  const canSubmit = profile.status === 'draft'
 
   return (
     <div className={styles.wrap}>
@@ -80,9 +84,24 @@ export function MasterCabinetHub() {
             </Link>
             <CopyProfileLinkButton slug={profile.slug} />
           </div>
-          {!isPublic ? (
+          {canSubmit ? (
+            <div className={cn(styles.actions, styles.actionsAfter)}>
+              <SubmitForReviewButton onPublished={setProfile} />
+            </div>
+          ) : null}
+          {profile.status === 'draft' ? (
             <p className={styles.hint}>
-              Страница станет доступна клиентам после публикации профиля.
+              Черновик не открывается по ссылке. Отправьте профиль на проверку.
+            </p>
+          ) : null}
+          {profile.status === 'pending_review' ? (
+            <p className={styles.hint}>
+              Ссылка уже работает. В каталоге появится после одобрения.
+            </p>
+          ) : null}
+          {!isPublic && profile.status !== 'draft' ? (
+            <p className={styles.hint}>
+              Страница сейчас недоступна клиентам ({profileStatusLabel(profile.status)}).
             </p>
           ) : null}
         </div>

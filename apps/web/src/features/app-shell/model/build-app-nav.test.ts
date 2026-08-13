@@ -40,6 +40,14 @@ describe('buildAppNavItems', () => {
       { href: '/app', label: 'Кабинет' },
     ])
   })
+
+  it('adds Админка only for admin', () => {
+    expect(buildAppNavItems(user({ role: 'admin', email: 'admin@example.com' }))).toEqual([
+      { href: '/catalog', label: 'Каталог' },
+      { href: '/admin', label: 'Админка' },
+      { href: '/app', label: 'Кабинет' },
+    ])
+  })
 })
 
 describe('initialsFromEmail', () => {

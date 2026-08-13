@@ -114,6 +114,7 @@ export function useMasterCabinet() {
     isProfileLoading: profileStatus === 'loading',
     upcomingSlots,
     isCalendarLoading: calendarStatus === 'loading',
+    setProfile,
   }
 }
 

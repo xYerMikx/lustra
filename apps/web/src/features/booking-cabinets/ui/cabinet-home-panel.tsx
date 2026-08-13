@@ -15,7 +15,7 @@ const CABINET_TITLE: Record<Exclude<UserRole, 'master'>, string> = {
 
 const CABINET_COPY: Record<Exclude<UserRole, 'master'>, string> = {
   client: 'Ваши записи к мастерам — предстоящие и прошлые.',
-  admin: 'Раздел личного кабинета.',
+  admin: 'Модерация мастеров и служебные действия.',
 }
 
 const CABINET_ACTIONS: Record<Exclude<UserRole, 'master'>, ReactNode> = {
@@ -27,7 +27,7 @@ const CABINET_ACTIONS: Record<Exclude<UserRole, 'master'>, ReactNode> = {
       </ButtonLink>
     </>
   ),
-  admin: null,
+  admin: <ButtonLink href="/admin">Открыть админку</ButtonLink>,
 }
 
 export function CabinetHomePanel() {
