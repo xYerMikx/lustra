@@ -51,9 +51,32 @@ export function Dialog({
         tabIndex={-1}
         data-testid={testId}
       >
-        <h2 id={titleId} className={styles.title}>
-          {title}
-        </h2>
+        <div className={styles.header}>
+          <h2 id={titleId} className={styles.title}>
+            {title}
+          </h2>
+          <button
+            type="button"
+            className={styles.close}
+            aria-label="Закрыть"
+            onClick={onClose}
+          >
+            <svg
+              className={styles.closeIcon}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                d="M6 6l12 12M18 6L6 18"
+              />
+            </svg>
+          </button>
+        </div>
         {children}
       </div>
     </div>
