@@ -18,8 +18,6 @@ RUN pnpm install --frozen-lockfile
 
 FROM deps AS build
 COPY . .
-# Dummy URLs so `prisma generate` can parse the schema. Real DATABASE_URL
-# comes from `.env.production` at container start, not baked into the image.
 ENV DATABASE_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
 ENV DIRECT_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
 RUN pnpm --filter @lustra/contracts build \
@@ -31,14 +29,17 @@ FROM node:24-bookworm-slim AS runner
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/* \
-  && npm install -g prisma@6.1.0 tsx@4.19.2
+  && npm install -g prisma@6.19.3 tsx@4.19.2
 WORKDIR /app
 ENV NODE_ENV=production
+ENV DATABASE_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
+ENV DIRECT_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
 COPY --from=build /out/ ./
 COPY --from=build /repo/apps/api/dist ./dist
 COPY --from=build /repo/packages/db/prisma ./prisma
 COPY --from=build /repo/apps/api/src/scripts/ensure-admin.ts ./scripts/ensure-admin.ts
 COPY deploy/api/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh \
+  && prisma generate --schema=/app/prisma/schema.prisma
 EXPOSE 3333
 ENTRYPOINT ["/entrypoint.sh"]

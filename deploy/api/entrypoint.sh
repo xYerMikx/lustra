@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 
+prisma generate --schema=/app/prisma/schema.prisma
 prisma migrate deploy --schema=/app/prisma/schema.prisma
 
 if [ -n "${ADMIN_BOOTSTRAP_EMAIL:-}" ] && [ -n "${ADMIN_BOOTSTRAP_PASSWORD:-}" ]; then
