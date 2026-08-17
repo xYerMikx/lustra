@@ -53,19 +53,41 @@ export class MasterCalendarRepository implements MasterCalendarStore {
     from: Date,
     to: Date,
   ): Promise<CalendarSlotRecord[]> {
-    return this.prisma.timeSlot.findMany({
-      where: {
-        masterId,
-        startsAt: { gte: from, lt: to },
-      },
-      select: {
-        id: true,
-        startsAt: true,
-        endsAt: true,
-        status: true,
-      },
-      orderBy: { startsAt: 'asc' },
-    })
+    return this.prisma.timeSlot
+      .findMany({
+        where: {
+          masterId,
+          startsAt: { gte: from, lt: to },
+        },
+        select: {
+          id: true,
+          startsAt: true,
+          endsAt: true,
+          status: true,
+          bookingLinks: {
+            take: 1,
+            select: {
+              booking: {
+                select: {
+                  masterClient: {
+                    select: { name: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: { startsAt: 'asc' },
+      })
+      .then((rows) =>
+        rows.map((row) => ({
+          id: row.id,
+          startsAt: row.startsAt,
+          endsAt: row.endsAt,
+          status: row.status,
+          clientName: row.bookingLinks[0]?.booking.masterClient.name ?? null,
+        })),
+      )
   }
 
   listBlocks(

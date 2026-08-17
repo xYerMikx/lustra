@@ -118,6 +118,12 @@ export function CalendarShell() {
             <span className={styles.swatchOpen} /> свободно
           </span>
           <span className={styles.legendItem}>
+            <span className={styles.swatchHeld} /> холд
+          </span>
+          <span className={styles.legendItem}>
+            <span className={styles.swatchBooked} /> запись
+          </span>
+          <span className={styles.legendItem}>
             <span className={styles.swatchBlock} /> блок
           </span>
           <span className={styles.legendItem}>

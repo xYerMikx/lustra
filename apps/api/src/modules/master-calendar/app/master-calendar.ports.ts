@@ -15,6 +15,7 @@ export type CalendarSlotRecord = {
   startsAt: Date
   endsAt: Date
   status: MasterCalendarSlotStatus
+  clientName: string | null
 }
 
 export type CalendarBlockRecord = {
@@ -57,11 +58,15 @@ export type MasterCalendarStore = {
 export function toCalendarSlotView(
   record: CalendarSlotRecord,
 ): MasterCalendarSlotView {
+  const showClientName =
+    record.status === 'booked' || record.status === 'held'
+
   return {
     id: record.id,
     startsAt: record.startsAt.toISOString(),
     endsAt: record.endsAt.toISOString(),
     status: record.status,
+    clientName: showClientName ? record.clientName : null,
   }
 }
 

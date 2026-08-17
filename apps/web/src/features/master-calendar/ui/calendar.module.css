@@ -135,22 +135,36 @@
 }
 
 .swatchOpen {
-  width: 12px;
-  height: 12px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   border-radius: var(--radius-4);
   background: var(--color-sage);
 }
 
+.swatchHeld {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  border-radius: var(--radius-4);
+  background: var(--color-gold);
+}
+
+.swatchBooked {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  border-radius: var(--radius-4);
+  background: var(--color-clay);
+}
+
 .swatchBlock {
-  width: 12px;
-  height: 12px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   border-radius: var(--radius-4);
   background: var(--color-warning);
 }
 
 .swatchException {
-  width: 12px;
-  height: 12px;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
   border-radius: var(--radius-4);
   background: var(--color-accent);
 }
@@ -199,6 +213,21 @@
   border: none;
   cursor: pointer;
   min-height: 44px;
+}
+
+.slotChip[data-status='held'] {
+  background: color-mix(in srgb, var(--color-gold) 24%, var(--color-surface));
+  cursor: default;
+}
+
+.slotChip[data-status='booked'] {
+  background: color-mix(in srgb, var(--color-clay) 18%, var(--color-surface));
+  cursor: default;
+}
+
+.slotChip[data-status='blocked'] {
+  background: color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+  cursor: default;
 }
 
 .blockChip {

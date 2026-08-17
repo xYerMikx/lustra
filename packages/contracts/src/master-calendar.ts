@@ -77,6 +77,7 @@ export const MasterCalendarSlotViewSchema = z.object({
   startsAt: z.string().datetime(),
   endsAt: z.string().datetime(),
   status: MasterCalendarSlotStatusSchema,
+  clientName: z.string().nullable(),
 })
 export type MasterCalendarSlotView = z.infer<typeof MasterCalendarSlotViewSchema>
 

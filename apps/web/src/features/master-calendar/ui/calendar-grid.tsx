@@ -35,7 +35,7 @@ export function CalendarGrid({
   return (
     <DayTimeline
       date={dayView.date}
-      openSlots={dayView.openSlots}
+      slots={dayView.slots}
       blocks={dayView.blocks}
       exception={dayView.exception}
       onSelectSlot={onSelectSlot}
