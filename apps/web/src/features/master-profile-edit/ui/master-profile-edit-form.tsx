@@ -18,12 +18,13 @@ import {
   slugAvailabilityCopy,
   useSlugAvailability,
 } from '@/features/master-profile-edit/model/use-slug-availability'
+import { MasterProfileContactFields } from '@/features/master-profile-edit/ui/master-profile-contact-fields'
+import styles from '@/features/master-profile-edit/ui/master-profile-edit.module.css'
 import { ApiError } from '@/shared/api/http'
 import { patchMasterProfile } from '@/shared/api/master-profile-client'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { Field, TextArea, TextInput } from '@/shared/ui/field'
 import { FormSelect } from '@/shared/ui/select'
-import styles from '@/features/master-profile-edit/ui/master-profile-edit.module.css'
 
 type MasterProfileEditFormProps = {
   profile: MasterProfileView
@@ -216,6 +217,8 @@ export function MasterProfileEditForm({
           {...bioRegister}
         />
       </Field>
+
+      <MasterProfileContactFields register={register} errors={errors} />
 
       {formError ? (
         <p className={styles.formError} role="alert">

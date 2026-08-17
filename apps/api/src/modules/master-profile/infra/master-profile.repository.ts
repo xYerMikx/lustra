@@ -3,6 +3,7 @@ import type { Prisma } from '@lustra/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {
+  ContactUpdateData,
   PrimaryLocationInput,
   ProfileUpdateData,
 } from '@/modules/master-profile/app/master-profile.ports'
@@ -15,6 +16,14 @@ const profileInclude = {
       district: {
         select: { id: true, name: true, slug: true, city: true },
       },
+    },
+  },
+  contact: {
+    select: {
+      publicPhone: true,
+      instagram: true,
+      telegramUsername: true,
+      website: true,
     },
   },
 } satisfies Prisma.MasterProfileInclude
@@ -94,6 +103,52 @@ export class MasterProfileRepository {
 
     if (!profile) {
       throw new Error('Master profile missing after location upsert')
+    }
+
+    return profile
+  }
+
+  async upsertContact(
+    masterId: string,
+    data: ContactUpdateData,
+  ): Promise<MasterProfileRecord> {
+    const existing = await this.prisma.masterContact.findUnique({
+      where: { masterId },
+      select: {
+        publicPhone: true,
+        instagram: true,
+        telegramUsername: true,
+        website: true,
+      },
+    })
+
+    const next = {
+      publicPhone:
+        data.publicPhone !== undefined
+          ? data.publicPhone
+          : (existing?.publicPhone ?? null),
+      instagram:
+        data.instagram !== undefined
+          ? data.instagram
+          : (existing?.instagram ?? null),
+      telegramUsername:
+        data.telegramUsername !== undefined
+          ? data.telegramUsername
+          : (existing?.telegramUsername ?? null),
+      website:
+        data.website !== undefined ? data.website : (existing?.website ?? null),
+    }
+
+    await this.prisma.masterContact.upsert({
+      where: { masterId },
+      create: { masterId, ...next },
+      update: next,
+    })
+
+    const profile = await this.findById(masterId)
+
+    if (!profile) {
+      throw new Error('Master profile missing after contact upsert')
     }
 
     return profile

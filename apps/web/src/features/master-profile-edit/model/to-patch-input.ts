@@ -1,7 +1,18 @@
+import type { PatchMasterProfileInput } from '@lustra/contracts'
+
 import type {
   EditMasterProfileFormValues,
 } from '@/features/master-profile-edit/model/edit-profile-form-schema'
-import type { PatchMasterProfileInput } from '@lustra/contracts'
+
+function emptyToNull(value: string): string | null {
+  const trimmed = value.trim()
+
+  if (trimmed.length === 0) {
+    return null
+  }
+
+  return trimmed
+}
 
 export function toPatchMasterProfileInput(
   values: EditMasterProfileFormValues,
@@ -9,11 +20,14 @@ export function toPatchMasterProfileInput(
   return {
     displayName: values.displayName,
     slug: values.slug,
-    headline: values.headline.length > 0 ? values.headline : null,
-    bio: values.bio.length > 0 ? values.bio : null,
+    headline: emptyToNull(values.headline),
+    bio: emptyToNull(values.bio),
     districtId: values.districtId,
     locationType: values.locationType,
-    addressHint:
-      values.addressHint.length > 0 ? values.addressHint : null,
+    addressHint: emptyToNull(values.addressHint),
+    publicPhone: emptyToNull(values.publicPhone),
+    instagram: emptyToNull(values.instagram),
+    telegramUsername: emptyToNull(values.telegramUsername),
+    website: emptyToNull(values.website),
   }
 }

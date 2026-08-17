@@ -238,6 +238,7 @@ export function createWorld(): MockWorld {
           publicPhone: '+375291000001',
           instagram: 'anna.nails',
           telegramUsername: 'anna_nails',
+          website: null,
         },
         services: [
           {
@@ -324,6 +325,12 @@ export function createWorld(): MockWorld {
           addressHint: 'Фрунзенский, ориентир ТЦ',
           isPrimary: true,
         },
+        contact: {
+          publicPhone: '+375291000001',
+          instagram: 'anna.nails',
+          telegramUsername: 'anna_nails',
+          website: null,
+        },
       },
       {
         id: DRAFT_MASTER_PROFILE_ID,
@@ -335,6 +342,7 @@ export function createWorld(): MockWorld {
         experienceSince: null,
         languages: null,
         primaryLocation: null,
+        contact: null,
       },
     ],
     services: [

@@ -50,6 +50,7 @@ function buildRecord(
       publicPhone: '+375291112233',
       instagram: 'anna.nails',
       telegramUsername: null,
+      website: null,
     },
     stats: {
       ratingAvg: 4.9,

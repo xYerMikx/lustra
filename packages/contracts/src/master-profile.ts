@@ -1,6 +1,12 @@
 import { z } from 'zod'
 
 import { MasterProfileStatusSchema } from './auth'
+import { ByPhoneSchema } from './phone'
+import {
+  InstagramHandleSchema,
+  TelegramHandleSchema,
+  WebsiteUrlSchema,
+} from './social-handle'
 
 export const LocationTypeSchema = z.enum(['salon', 'home_studio', 'client_home'])
 export type LocationType = z.infer<typeof LocationTypeSchema>
@@ -29,6 +35,14 @@ export const MasterLocationViewSchema = z.object({
 })
 export type MasterLocationView = z.infer<typeof MasterLocationViewSchema>
 
+export const MasterContactViewSchema = z.object({
+  publicPhone: z.string().nullable(),
+  instagram: z.string().nullable(),
+  telegramUsername: z.string().nullable(),
+  website: z.string().nullable(),
+})
+export type MasterContactView = z.infer<typeof MasterContactViewSchema>
+
 export const MasterProfileViewSchema = z.object({
   id: z.string().uuid(),
   slug: z.string(),
@@ -39,6 +53,7 @@ export const MasterProfileViewSchema = z.object({
   experienceSince: z.number().int().nullable(),
   languages: z.array(z.string()).nullable(),
   primaryLocation: MasterLocationViewSchema.nullable(),
+  contact: MasterContactViewSchema.nullable(),
 })
 export type MasterProfileView = z.infer<typeof MasterProfileViewSchema>
 
@@ -71,6 +86,44 @@ export type CheckSlugAvailabilityResponse = z.infer<
   typeof CheckSlugAvailabilityResponseSchema
 >
 
+const OptionalPublicPhoneSchema = z.union([
+  z.literal('').transform(() => null),
+  z.null(),
+  ByPhoneSchema,
+])
+
+const OptionalInstagramSchema = z.union([
+  z.literal('').transform(() => null),
+  z.null(),
+  InstagramHandleSchema,
+])
+
+const OptionalTelegramSchema = z.union([
+  z.literal('').transform(() => null),
+  z.null(),
+  TelegramHandleSchema,
+])
+
+const OptionalWebsiteSchema = z.union([
+  z.literal('').transform(() => null),
+  z.null(),
+  WebsiteUrlSchema,
+])
+
+export const PatchMasterContactInputSchema = z
+  .object({
+    publicPhone: OptionalPublicPhoneSchema,
+    instagram: OptionalInstagramSchema,
+    telegramUsername: OptionalTelegramSchema,
+    website: OptionalWebsiteSchema,
+  })
+  .partial()
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: 'Укажите хотя бы одно поле для обновления',
+  })
+export type PatchMasterContactInput = z.infer<typeof PatchMasterContactInputSchema>
+
 export const PatchMasterProfileInputSchema = z
   .object({
     displayName: z.string().trim().min(1).max(80),
@@ -80,6 +133,10 @@ export const PatchMasterProfileInputSchema = z
     districtId: z.string().uuid(),
     locationType: LocationTypeSchema,
     addressHint: z.string().trim().max(200).nullable(),
+    publicPhone: OptionalPublicPhoneSchema,
+    instagram: OptionalInstagramSchema,
+    telegramUsername: OptionalTelegramSchema,
+    website: OptionalWebsiteSchema,
   })
   .partial()
   .strict()

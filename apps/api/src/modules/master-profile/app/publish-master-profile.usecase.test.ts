@@ -18,6 +18,7 @@ const draftProfile = {
   experienceSince: null,
   languages: null,
   locations: [],
+  contact: null,
 }
 
 function createProfiles(
@@ -32,6 +33,7 @@ function createProfiles(
       status: 'pending_review',
     }),
     upsertPrimaryLocation: vi.fn(),
+    upsertContact: vi.fn(),
   }
 }
 

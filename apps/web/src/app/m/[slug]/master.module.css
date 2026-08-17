@@ -67,6 +67,29 @@
   align-items: center;
 }
 
+.contacts {
+  list-style: none;
+  margin: 0 0 var(--spacing-24);
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8) var(--spacing-16);
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  font-weight: var(--font-weight-600);
+}
+
+.contactLink:hover {
+  color: var(--color-accent-700);
+}
+
 .services {
   padding: var(--spacing-8) 0 var(--spacing-32);
   max-width: 640px;

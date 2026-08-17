@@ -11,6 +11,7 @@ import { GetPublicMasterBySlugUseCase } from '@/modules/master-profile/app/get-p
 import { ListDistrictsUseCase } from '@/modules/master-profile/app/list-districts.usecase'
 import { PublishMasterProfileUseCase } from '@/modules/master-profile/app/publish-master-profile.usecase'
 import { SearchMastersUseCase } from '@/modules/master-profile/app/search-masters.usecase'
+import { UpdateMasterContactsUseCase } from '@/modules/master-profile/app/update-master-contacts.usecase'
 import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 import { DistrictRepository } from '@/modules/master-profile/infra/district.repository'
 import { MasterProfileRepository } from '@/modules/master-profile/infra/master-profile.repository'
@@ -31,6 +32,7 @@ import { PublicMasterRepository } from '@/modules/master-profile/infra/public-ma
     GetPublicMasterBySlugUseCase,
     SearchMastersUseCase,
     UpdateMasterProfileUseCase,
+    UpdateMasterContactsUseCase,
     CheckSlugAvailabilityUseCase,
     PublishMasterProfileUseCase,
     ListDistrictsUseCase,

@@ -10,6 +10,13 @@ export type ProfileUpdateData = {
   status?: 'draft' | 'pending_review' | 'published' | 'hidden' | 'banned'
 }
 
+export type ContactUpdateData = {
+  publicPhone?: string | null
+  instagram?: string | null
+  telegramUsername?: string | null
+  website?: string | null
+}
+
 export type PrimaryLocationInput = {
   districtId: string
   type: LocationType
@@ -26,6 +33,10 @@ export type MasterProfileStore = {
   upsertPrimaryLocation(
     masterId: string,
     input: PrimaryLocationInput,
+  ): Promise<MasterProfileRecord>
+  upsertContact(
+    masterId: string,
+    data: ContactUpdateData,
   ): Promise<MasterProfileRecord>
 }
 

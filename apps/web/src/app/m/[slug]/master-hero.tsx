@@ -4,6 +4,7 @@ import cn from 'classnames'
 import styles from '@/app/m/[slug]/master.module.css'
 import { FavoriteToggle } from '@/features/favorites'
 import { pickCoverItem } from '@/features/master-portfolio/model/pick-cover-item'
+import { MasterContactLinks } from '@/features/public-master/ui/master-contact-links'
 import { ButtonLink } from '@/shared/ui/button'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -39,6 +40,7 @@ export function MasterHero({ master }: MasterHeroProps) {
       </h1>
       {master.headline ? <p className={styles.headline}>{master.headline}</p> : null}
       {master.bio ? <p className={styles.bio}>{master.bio}</p> : null}
+      <MasterContactLinks contact={master.contact} />
       <div className={styles.heroActions}>
         <ButtonLink href="#booking">Записаться</ButtonLink>
         <FavoriteToggle masterId={master.id} masterSlug={master.slug} />
