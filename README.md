@@ -55,6 +55,25 @@ pnpm --filter @lustra/api ensure-admin
 ```
 
 Вход → `/admin`. Роль `admin` нельзя получить через `/auth/register`.
+
+## Production (VPS)
+
+Машина: **Hetzner CX33, Helsinki (HEL1)** — 4 vCPU / 8 GB RAM / 80 GB. CX22 (4 GB) тесен для Postgres + Redis + API + Next на одном хосте.
+
+На сервере: Docker Engine + Compose, ufw: 22 (свой IP), 80, 443. В Cloudflare записи `@`, `www`, `app`, `api` на IP VPS; пока Caddy берёт Let’s Encrypt — **DNS only** (серое облако), затем прокси и SSL **Full**.
+
+Секреты — файл **`.env.production` на VPS** (`chmod 600`), не git и не панель Hetzner. Скопируй example, заполни, потом `make prod-build && make prod-up`. Когда появится CI, те же ключи положим в GitHub Environment secrets и будем заливать файл на сервер из Actions.
+
+```bash
+cp .env.production.example .env.production
+# пароли, JWT, DOMAIN, ACME_EMAIL, STORAGE_*, CORS, ADMIN_*
+make prod-build
+make prod-up
+make prod-logs
+```
+
+Стек: `deploy/docker-compose.yml` (postgres, redis, api, web, caddy + статика лендинга). Postgres и Redis **не** публикуются наружу.
+
 ## Структура
 
 ```
@@ -70,7 +89,8 @@ lustra/
 ├─ docs/
 │  ├─ PRD.md
 │  └─ TECH-DESIGN.md
-├─ docker-compose.yml
+├─ deploy/          # prod Dockerfiles + Caddy + compose
+├─ docker-compose.yml  # local Postgres/Redis/MinIO
 └─ .cursor/
    ├─ rules/        # постоянные правила агента
    └─ skills/       # скиллы по фронту / беку / дизайну / тестам

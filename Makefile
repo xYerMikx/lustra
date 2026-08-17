@@ -8,7 +8,7 @@ PNPM    ?= pnpm
 
 .PHONY: help setup install env infra up down wait-db db migrate seed \
 	start dev stop restart status studio build test test-e2e test-e2e-headed \
-	test-e2e-ui typecheck logs
+	test-e2e-ui typecheck logs prod-env prod-build prod-up prod-down prod-logs
 
 help: ## список команд
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -99,3 +99,20 @@ test-e2e-ui: ## Playwright UI Mode (таймлайн, шаги, трейсы)
 
 typecheck: ## tsc по монорепо
 	$(PNPM) typecheck
+
+prod-env: ## скопировать .env.production из example, если ещё нет
+	@test -f .env.production || cp .env.production.example .env.production
+	@echo "Заполни .env.production (пароли, JWT, DOMAIN) перед prod-up"
+
+prod-build: prod-env ## собрать prod-образы (api, web, caddy+landing)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production build
+
+prod-up: prod-env ## поднять prod-стек (нужен заполненный .env.production)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production up -d
+	@echo "Caddy :80/:443  — домен из DOMAIN в .env.production"
+
+prod-down: ## остановить prod-стек (тома сохраняются)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production down
+
+prod-logs: ## логи prod-стека
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production logs -f --tail=100
