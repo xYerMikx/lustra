@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import cn from 'classnames'
 import type { MasterClientView, ServiceView } from '@lustra/contracts'
 
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'
@@ -9,10 +8,11 @@ import { useCalendarData } from '@/features/master-calendar/model/use-calendar-d
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
+import { CalendarNotice } from '@/features/master-calendar/ui/calendar-notice'
+import { CalendarToolbar } from '@/features/master-calendar/ui/calendar-toolbar'
 import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
 import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
-import { Button } from '@/shared/ui/button'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 type ManualDialogState = {
@@ -21,12 +21,17 @@ type ManualDialogState = {
   clients: MasterClientView[]
 }
 
+type CalendarFeedback = {
+  tone: 'success' | 'error'
+  text: string
+}
+
 export function CalendarShell() {
   const calendar = useCalendarData()
   const [blockOpen, setBlockOpen] = useState(false)
   const [exceptionOpen, setExceptionOpen] = useState(false)
   const [manual, setManual] = useState<ManualDialogState | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
+  const [feedback, setFeedback] = useState<CalendarFeedback | null>(null)
 
   const days =
     calendar.data == null
@@ -37,51 +42,53 @@ export function CalendarShell() {
           calendar.range.to,
         )
 
+  const showError = (error: unknown, fallback: string) => {
+    setFeedback({
+      tone: 'error',
+      text: error instanceof ApiError ? error.message : fallback,
+    })
+  }
+
   const handleRemoveBlock = async (blockId: string) => {
-    setActionError(null)
+    setFeedback(null)
 
     try {
       await calendar.removeBlock(blockId)
+      setFeedback({ tone: 'success', text: 'Блок снят' })
     } catch (error) {
-      setActionError(
-        error instanceof ApiError ? error.message : 'Не удалось снять блок',
-      )
+      showError(error, 'Не удалось снять блок')
     }
   }
 
   const handleRemoveException = async (ymdDate: string) => {
-    setActionError(null)
+    setFeedback(null)
 
     try {
       await calendar.removeException(ymdDate)
+      setFeedback({ tone: 'success', text: 'Исключение снято' })
     } catch (error) {
-      setActionError(
-        error instanceof ApiError
-          ? error.message
-          : 'Не удалось снять исключение',
-      )
+      showError(error, 'Не удалось снять исключение')
     }
   }
 
   const handleOpenManual = async (startsAtIso: string | null) => {
-    setActionError(null)
+    setFeedback(null)
 
     try {
       const context = await calendar.loadManualContext()
 
       if (context.services.length === 0) {
-        setActionError('Сначала добавьте услугу в кабинете')
+        setFeedback({
+          tone: 'error',
+          text: 'Сначала добавьте услугу в кабинете',
+        })
 
         return
       }
 
       setManual({ startsAtIso, ...context })
     } catch (error) {
-      setActionError(
-        error instanceof ApiError
-          ? error.message
-          : 'Не удалось открыть запись',
-      )
+      showError(error, 'Не удалось открыть запись')
     }
   }
 
@@ -95,63 +102,17 @@ export function CalendarShell() {
       <header className={styles.header}>
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Календарь</h1>
-        <div className={styles.toolbar}>
-          <Button type="button" variant="ghost" onClick={calendar.goPrev}>
-            Назад
-          </Button>
-          <Button type="button" variant="ghost" onClick={calendar.goToday}>
-            Сегодня
-          </Button>
-          <Button type="button" variant="ghost" onClick={calendar.goNext}>
-            Вперёд
-          </Button>
-          <span className={styles.rangeLabel}>{rangeLabel}</span>
-          <div className={styles.modeSwitch} role="group" aria-label="Вид">
-            <Button
-              type="button"
-              variant="ghost"
-              className={cn(
-                styles.modeButton,
-                calendar.mode === 'day' && styles.modeButtonActive,
-              )}
-              onClick={() => calendar.changeMode('day')}
-            >
-              День
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className={cn(
-                styles.modeButton,
-                calendar.mode === 'week' && styles.modeButtonActive,
-              )}
-              onClick={() => calendar.changeMode('week')}
-            >
-              Неделя
-            </Button>
-          </div>
-          <Button
-            type="button"
-            onClick={() => void handleOpenManual(null)}
-            data-testid={TEST_ID.calendarManualOpen}
-          >
-            Записать клиента
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setBlockOpen(true)}
-            data-testid={TEST_ID.calendarBlockOpen}
-          >
-            Блок / обед
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setExceptionOpen(true)}
-            data-testid={TEST_ID.calendarExceptionOpen}
-          >
-            Исключение
-          </Button>
-        </div>
+        <CalendarToolbar
+          rangeLabel={rangeLabel}
+          mode={calendar.mode}
+          onPrev={calendar.goPrev}
+          onToday={calendar.goToday}
+          onNext={calendar.goNext}
+          onChangeMode={calendar.changeMode}
+          onOpenManual={() => void handleOpenManual(null)}
+          onOpenBlock={() => setBlockOpen(true)}
+          onOpenException={() => setExceptionOpen(true)}
+        />
         <div className={styles.legend}>
           <span className={styles.legendItem}>
             <span className={styles.swatchOpen} /> свободно
@@ -165,7 +126,9 @@ export function CalendarShell() {
         </div>
       </header>
 
-      {actionError ? <p className={styles.fieldError}>{actionError}</p> : null}
+      {feedback ? (
+        <CalendarNotice tone={feedback.tone} text={feedback.text} />
+      ) : null}
 
       <CalendarBody
         status={calendar.status}
@@ -183,7 +146,10 @@ export function CalendarShell() {
         <BlockDialog
           defaultDate={calendar.anchorDate}
           onClose={() => setBlockOpen(false)}
-          onSubmit={calendar.addBlock}
+          onSubmit={async (input) => {
+            await calendar.addBlock(input)
+            setFeedback({ tone: 'success', text: 'Блок сохранён' })
+          }}
         />
       ) : null}
 
@@ -191,7 +157,10 @@ export function CalendarShell() {
         <ExceptionDialog
           defaultDate={calendar.anchorDate}
           onClose={() => setExceptionOpen(false)}
-          onSubmit={calendar.addException}
+          onSubmit={async (date, input) => {
+            await calendar.addException(date, input)
+            setFeedback({ tone: 'success', text: 'Исключение сохранено' })
+          }}
         />
       ) : null}
 
@@ -202,7 +171,10 @@ export function CalendarShell() {
           services={manual.services}
           clients={manual.clients}
           onClose={() => setManual(null)}
-          onSubmit={calendar.addManualBooking}
+          onSubmit={async (input) => {
+            await calendar.addManualBooking(input)
+            setFeedback({ tone: 'success', text: 'Клиент записан' })
+          }}
         />
       ) : null}
     </section>

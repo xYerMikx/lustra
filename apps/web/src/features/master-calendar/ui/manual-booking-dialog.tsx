@@ -20,6 +20,7 @@ import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ClientSuggest } from '@/features/master-calendar/ui/client-suggest'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { Dialog } from '@/shared/ui/dialog'
 import { FormSelect } from '@/shared/ui/select'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -92,17 +93,12 @@ export function ManualBookingDialog({
   })
 
   return (
-    <div className={styles.dialogBackdrop} role="presentation">
-      <div
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="manual-booking-title"
-        data-testid={TEST_ID.dialogManual}
-      >
-        <h2 id="manual-booking-title" className={styles.dialogTitle}>
-          Записать клиента
-        </h2>
+    <Dialog
+      title="Записать клиента"
+      titleId="manual-booking-title"
+      onClose={onClose}
+      testId={TEST_ID.dialogManual}
+    >
         <form className={formStyles.form} onSubmit={submitForm}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-service">
@@ -215,7 +211,6 @@ export function ManualBookingDialog({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }
