@@ -15,9 +15,10 @@ import cn from 'classnames'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import { listServiceTemplates } from '@/shared/api/master-services-client'
-import { Button } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
 import { FormSelect } from '@/shared/ui/select'
+import { TEST_ID, onboardingTemplateTestId } from '@/shared/lib/test-id'
+import { OnboardingStepActions } from '@/features/master-onboarding/ui/onboarding-step-actions'
 
 type StepServiceFormProps = {
   categories: ServiceCategoryView[]
@@ -179,6 +180,7 @@ export function StepServiceForm({
                     styles.templateChip,
                     activeTemplateKey === key && styles.templateChipActive,
                   )}
+                  data-testid={onboardingTemplateTestId(template.title)}
                   onClick={() => applyTemplate(template)}
                 >
                   {template.title}
@@ -195,12 +197,14 @@ export function StepServiceForm({
         label="Название услуги"
         htmlFor="onboarding-service-title"
         error={errors.title?.message}
+        errorTestId={TEST_ID.onboardingServiceTitleError}
       >
         <TextInput
           id="onboarding-service-title"
           type="text"
           placeholder="Маникюр комбинированный"
           invalid={Boolean(errors.title)}
+          data-testid={TEST_ID.onboardingServiceTitle}
           {...titleRegister}
         />
       </Field>
@@ -235,26 +239,18 @@ export function StepServiceForm({
       </Field>
 
       {formError ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-testid={TEST_ID.onboardingFormError}>
           {formError}
         </p>
       ) : null}
 
-      <div className={styles.actions}>
-        <Button type="button" variant="ghost" onClick={onBack} disabled={isSubmitting}>
-          Назад
-        </Button>
-        <Button type="button" variant="ghost" onClick={onSkip} disabled={isSubmitting}>
-          Пропустить
-        </Button>
-        <Button
-          type="submit"
-          className={styles.actionsGrow}
-          disabled={isSubmitting || !categoryId}
-        >
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
-        </Button>
-      </div>
+      <OnboardingStepActions
+        submitting={isSubmitting}
+        submitDisabled={!categoryId}
+        submitLabel="Сохранить и продолжить"
+        onSkip={onSkip}
+        onBack={onBack}
+      />
     </form>
   )
 }

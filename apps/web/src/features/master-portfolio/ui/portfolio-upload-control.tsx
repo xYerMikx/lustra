@@ -5,6 +5,7 @@ import { useRef } from 'react'
 
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type PortfolioUploadControlProps = {
   busy: boolean
@@ -37,6 +38,7 @@ export function PortfolioUploadControl({
         accept="image/jpeg,image/png,image/webp"
         multiple
         disabled={busy}
+        data-testid={TEST_ID.portfolioFileInput}
         onChange={handleChange}
       />
       <Button

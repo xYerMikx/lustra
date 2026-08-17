@@ -10,6 +10,7 @@ import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
 import { ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
 export function MasterCabinetHub() {
@@ -51,7 +52,7 @@ export function MasterCabinetHub() {
   const canSubmit = profile.status === 'draft'
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} data-testid={TEST_ID.pageMasterCabinet}>
       <section className={styles.panel}>
         <p className={styles.eyebrow}>Личный кабинет</p>
         <h1 className={styles.title}>{profile.displayName}</h1>

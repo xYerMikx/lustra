@@ -5,6 +5,7 @@ import cn from 'classnames'
 
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'
 import { formatPriceLabel } from '@/shared/lib/money'
+import { serviceOptionTestId } from '@/shared/lib/test-id'
 
 type ServicePickerProps = {
   services: PublicServiceView[]
@@ -30,6 +31,7 @@ export function ServicePicker({
             service.id === selectedServiceId && styles.serviceButtonActive,
           )}
           onClick={() => onSelect(service.id)}
+          data-testid={serviceOptionTestId(service.id)}
         >
           <span>
             <span className={styles.serviceTitle}>{service.title}</span>

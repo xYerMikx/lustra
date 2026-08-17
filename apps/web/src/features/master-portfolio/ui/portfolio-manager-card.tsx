@@ -7,6 +7,12 @@ import { portfolioModerationLabel } from '@/features/master-portfolio/model/port
 import { portfolioRatioClass } from '@/features/master-portfolio/model/portfolio-ratio-class'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 import { Button } from '@/shared/ui/button'
+import {
+  TEST_ID,
+  portfolioCardTestId,
+  portfolioRemoveTestId,
+  portfolioSetCoverTestId,
+} from '@/shared/lib/test-id'
 
 type PortfolioManagerCardProps = {
   item: PortfolioItemView
@@ -25,7 +31,7 @@ export function PortfolioManagerCard({
   const moderationLabel = portfolioModerationLabel(item.moderation)
 
   return (
-    <article className={styles.card}>
+    <article className={styles.card} data-testid={portfolioCardTestId(item.id)}>
       <div className={cn(styles.shot, ratioClass)}>
         <img
           className={styles.image}
@@ -35,7 +41,9 @@ export function PortfolioManagerCard({
           height={item.height}
         />
         {item.isCover ? (
-          <span className={styles.coverBadge}>Обложка</span>
+          <span className={styles.coverBadge} data-testid={TEST_ID.portfolioCoverBadge}>
+            Обложка
+          </span>
         ) : null}
         {moderationLabel ? (
           <span className={styles.moderationBadge}>{moderationLabel}</span>
@@ -47,6 +55,7 @@ export function PortfolioManagerCard({
             type="button"
             variant="ghost"
             disabled={busy}
+            data-testid={portfolioSetCoverTestId(item.id)}
             onClick={() => onSetCover(item.id)}
           >
             Обложка
@@ -56,6 +65,7 @@ export function PortfolioManagerCard({
           type="button"
           variant="ghost"
           disabled={busy}
+          data-testid={portfolioRemoveTestId(item.id)}
           onClick={() => onRemove(item.id)}
         >
           Удалить

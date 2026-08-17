@@ -5,6 +5,7 @@ import { PORTFOLIO_MAX_ITEMS, type PortfolioItemView } from '@lustra/contracts'
 import { PortfolioManagerGrid } from '@/features/master-portfolio/ui/portfolio-manager-grid'
 import { PortfolioUploadControl } from '@/features/master-portfolio/ui/portfolio-upload-control'
 import { Button, ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 
 type MasterPortfolioBodyProps = {
@@ -62,7 +63,9 @@ export function MasterPortfolioBody({
         </p>
       ) : null}
       {status === 'empty' ? (
-        <p className={styles.muted}>Пока нет фото. Добавьте работы с телефона.</p>
+        <p className={styles.muted} data-testid={TEST_ID.portfolioEmpty}>
+          Пока нет фото. Добавьте работы с телефона.
+        </p>
       ) : (
         <PortfolioManagerGrid
           items={items}

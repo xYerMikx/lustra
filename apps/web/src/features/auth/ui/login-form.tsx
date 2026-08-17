@@ -12,6 +12,7 @@ import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { login } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 
 export function LoginForm() {
@@ -65,6 +66,7 @@ export function LoginForm() {
           className={styles.input}
           type="email"
           autoComplete="email"
+          data-testid={TEST_ID.authLoginEmail}
           {...register('email')}
         />
         {errors.email ? (
@@ -78,6 +80,7 @@ export function LoginForm() {
           className={styles.input}
           type="password"
           autoComplete="current-password"
+          data-testid={TEST_ID.authLoginPassword}
           {...register('password')}
         />
         {errors.password ? (
@@ -86,18 +89,27 @@ export function LoginForm() {
       </label>
 
       <p className={styles.forgotRow}>
-        <Link className={styles.forgotLink} href="/app/forgot">
+        <Link
+          className={styles.forgotLink}
+          href="/app/forgot"
+          data-testid={TEST_ID.authForgotLink}
+        >
           Забыли пароль?
         </Link>
       </p>
 
       {formError ? (
-        <p className={styles.error} role="alert">
+        <p className={styles.error} role="alert" data-testid={TEST_ID.authFormError}>
           {formError}
         </p>
       ) : null}
 
-      <Button type="submit" fullWidth disabled={isSubmitting}>
+      <Button
+        type="submit"
+        fullWidth
+        disabled={isSubmitting}
+        data-testid={TEST_ID.authLoginSubmit}
+      >
         {isSubmitting ? 'Входим…' : 'Войти'}
       </Button>
     </form>

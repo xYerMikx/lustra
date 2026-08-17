@@ -14,6 +14,7 @@ import { ApiError } from '@/shared/api/http'
 import { zonedLocalToUtc } from '@/shared/lib/tz'
 import { Button } from '@/shared/ui/button'
 import { FormSelect } from '@/shared/ui/select'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type BlockDialogProps = {
   defaultDate: string
@@ -108,6 +109,7 @@ export function BlockDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="block-dialog-title"
+        data-testid={TEST_ID.dialogBlock}
       >
         <h2 id="block-dialog-title" className={styles.dialogTitle}>
           Блок времени
@@ -178,7 +180,11 @@ export function BlockDialog({
           {formError ? <p className={styles.fieldError}>{formError}</p> : null}
 
           <div className={styles.dialogActions}>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              data-testid={TEST_ID.dialogBlockSubmit}
+            >
               {isSubmitting ? 'Сохраняем…' : 'Заблокировать'}
             </Button>
             <Button type="button" variant="ghost" onClick={onClose}>

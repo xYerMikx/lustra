@@ -17,6 +17,7 @@ import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { RescheduleBookingForm } from '@/features/booking-cabinets/ui/reschedule-booking-form'
 import { formatByn } from '@/shared/lib/money'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID, bookingStatusTestId } from '@/shared/lib/test-id'
 
 const CANCELABLE = new Set(['hold', 'pending', 'confirmed'])
 
@@ -62,10 +63,7 @@ export function MasterBookingDetailShell({
   const canReschedule = canRescheduleBooking(booking.status)
 
   return (
-    <section className={styles.shell}>
-      <Link className={styles.backLink} href="/app/master/bookings">
-        ← К списку
-      </Link>
+    <section className={styles.shell} data-testid={TEST_ID.pageMasterBookingDetail}>
 
       <header>
         <p className={styles.eyebrow}>Запись клиента</p>
@@ -85,7 +83,10 @@ export function MasterBookingDetailShell({
             {formatByn(Number(booking.priceAmount), booking.currency)} ·{' '}
             {booking.serviceDurationMin} мин
           </span>
-          <span className={styles.status}>
+          <span
+            className={styles.status}
+            data-testid={bookingStatusTestId(booking.status)}
+          >
             {bookingStatusLabel(booking.status)}
           </span>
         </div>
@@ -93,7 +94,9 @@ export function MasterBookingDetailShell({
         {booking.clientComment ? (
           <div className={styles.detailBlock}>
             <strong>Комментарий клиента</strong>
-            <span className={styles.rowMeta}>{booking.clientComment}</span>
+            <span className={styles.rowMeta} data-testid={TEST_ID.masterBookingComment}>
+              {booking.clientComment}
+            </span>
           </div>
         ) : null}
 
@@ -110,6 +113,7 @@ export function MasterBookingDetailShell({
               type="button"
               disabled={detail.busy}
               onClick={() => void detail.confirm()}
+              data-testid={TEST_ID.masterBookingConfirm}
             >
               Подтвердить
             </Button>
@@ -119,6 +123,7 @@ export function MasterBookingDetailShell({
               type="button"
               disabled={detail.busy}
               onClick={() => void detail.complete()}
+              data-testid={TEST_ID.masterBookingComplete}
             >
               Завершить визит
             </Button>
@@ -153,6 +158,7 @@ export function MasterBookingDetailShell({
               onChange={(event) => setReason(event.target.value)}
               maxLength={500}
               required
+              data-testid={TEST_ID.masterBookingCancelReason}
             />
             <div className={styles.actions}>
               <Button
@@ -160,6 +166,7 @@ export function MasterBookingDetailShell({
                 variant="ghost"
                 disabled={detail.busy || reason.trim().length === 0}
                 onClick={() => void detail.cancel(reason.trim())}
+                data-testid={TEST_ID.masterBookingCancelSubmit}
               >
                 Отменить запись
               </Button>

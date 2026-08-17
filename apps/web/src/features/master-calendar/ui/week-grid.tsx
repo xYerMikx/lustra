@@ -7,6 +7,7 @@ import { exceptionSummary } from '@/features/master-calendar/model/exception-sum
 import type { DayItems } from '@/features/master-calendar/model/group-calendar'
 import { dateLabel } from '@/features/master-calendar/model/group-calendar'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type WeekGridProps = {
   days: DayItems[]
@@ -33,14 +34,21 @@ export function WeekGrid({ days, onSelectDay }: WeekGridProps) {
             свободно: {day.openSlots.length}
           </span>
           {day.exception ? (
-            <span className={styles.exceptionChip}>
+            <span
+              className={styles.exceptionChip}
+              data-testid={TEST_ID.calendarExceptionChip}
+            >
               {exceptionSummary(day.exception)}
             </span>
           ) : null}
           {day.blocks.length > 0 ? (
             <div className={styles.weekBlocks}>
               {day.blocks.map((block) => (
-                <span key={block.id} className={styles.blockChip}>
+                <span
+                  key={block.id}
+                  className={styles.blockChip}
+                  data-testid={TEST_ID.calendarBlockChip}
+                >
                   блок
                 </span>
               ))}

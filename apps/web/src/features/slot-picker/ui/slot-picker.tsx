@@ -10,6 +10,7 @@ import { SlotChipGrid } from '@/features/slot-picker/ui/slot-chip-grid'
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'
 import { slotTimeLabel } from '@/features/slot-picker/model/group-slots-by-period'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type SlotPickerProps = {
   masterId: string
@@ -35,14 +36,21 @@ export function SlotPicker({
 
   if (picker.flowStep === 'success' && picker.booking) {
     return (
-      <section className={styles.picker} id="booking">
+      <section
+        className={styles.picker}
+        id="booking"
+        data-testid={TEST_ID.slotPickerSuccess}
+      >
         <h2 className={styles.title}>Запись оформлена</h2>
         <p className={styles.successText}>
           {picker.booking.serviceTitle} ·{' '}
           {slotTimeLabel(picker.booking.startsAt, picker.timezone)}
         </p>
-        <p className={styles.stateBox}>
-          Статус: {picker.booking.status === 'confirmed' ? 'подтверждена' : 'ожидает подтверждения мастера'}
+        <p className={styles.stateBox} data-testid={TEST_ID.slotStatus}>
+          Статус:{' '}
+          {picker.booking.status === 'confirmed'
+            ? 'подтверждена'
+            : 'ожидает подтверждения мастера'}
         </p>
       </section>
     )
@@ -52,7 +60,11 @@ export function SlotPicker({
     const warnLow = picker.holdRemainingMs > 0 && picker.holdRemainingMs <= 60_000
 
     return (
-      <section className={styles.picker} id="booking">
+      <section
+        className={styles.picker}
+        id="booking"
+        data-testid={TEST_ID.slotPickerConfirm}
+      >
         <h2 className={styles.title}>Подтверждение</h2>
         <p className={styles.selectedText}>
           {picker.hold.summary.serviceTitle} ·{' '}
@@ -68,17 +80,21 @@ export function SlotPicker({
             rows={3}
             maxLength={500}
             value={picker.comment}
+            data-testid={TEST_ID.slotComment}
             onChange={(event) => picker.setComment(event.target.value)}
           />
         </label>
         {picker.errorMessage ? (
-          <p className={styles.errorBox}>{picker.errorMessage}</p>
+          <p className={styles.errorBox} data-testid={TEST_ID.slotError}>
+            {picker.errorMessage}
+          </p>
         ) : null}
         <div className={styles.confirmActions}>
           <Button
             type="button"
             onClick={picker.submitConfirm}
             disabled={picker.submitting || picker.holdRemainingMs <= 0}
+            data-testid={TEST_ID.slotConfirmSubmit}
           >
             {picker.submitting ? 'Отправляем…' : 'Подтвердить запись'}
           </Button>
@@ -96,7 +112,11 @@ export function SlotPicker({
   }
 
   return (
-    <section className={styles.picker} id="booking">
+    <section
+      className={styles.picker}
+      id="booking"
+      data-testid={TEST_ID.slotPicker}
+    >
       <h2 className={styles.title}>Запись</h2>
 
       <ServicePicker
@@ -110,7 +130,9 @@ export function SlotPicker({
       ) : null}
 
       {picker.status === 'error' ? (
-        <p className={styles.errorBox}>{picker.errorMessage}</p>
+        <p className={styles.errorBox} data-testid={TEST_ID.slotError}>
+          {picker.errorMessage}
+        </p>
       ) : null}
 
       {picker.status === 'empty' ? (
@@ -120,7 +142,9 @@ export function SlotPicker({
       ) : null}
 
       {picker.errorMessage && picker.status !== 'error' ? (
-        <p className={styles.errorBox}>{picker.errorMessage}</p>
+        <p className={styles.errorBox} data-testid={TEST_ID.slotError}>
+          {picker.errorMessage}
+        </p>
       ) : null}
 
       {picker.status === 'success' || picker.status === 'empty' ? (
@@ -143,7 +167,7 @@ export function SlotPicker({
       ) : null}
 
       {picker.selectedSlot ? (
-        <div className={styles.selectedSummary}>
+        <div className={styles.selectedSummary} data-testid={TEST_ID.slotSelected}>
           <p className={styles.selectedText}>
             Выбрано:{' '}
             {slotTimeLabel(picker.selectedSlot.startsAt, picker.timezone)} ·{' '}
@@ -153,6 +177,7 @@ export function SlotPicker({
             type="button"
             onClick={picker.startHold}
             disabled={picker.submitting}
+            data-testid={TEST_ID.slotHoldSubmit}
           >
             {picker.submitting ? 'Удерживаем…' : 'Записаться'}
           </Button>

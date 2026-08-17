@@ -17,6 +17,7 @@ import {
   getPublicMasterReviews,
 } from '@/shared/api/catalog-client'
 import { SiteChrome } from '@/shared/ui/site-chrome'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -72,7 +73,7 @@ export default async function MasterPage({ params }: PageProps) {
   })
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-testid={TEST_ID.pageMasterPublic}>
       <MasterStructuredData data={structuredData} />
       <SiteChrome>
         <MasterHero master={master} />

@@ -12,6 +12,7 @@ import {
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type RescheduleBookingFormProps = {
   currentStartsAt: string
@@ -95,6 +96,7 @@ export function RescheduleBookingForm({
         id="reschedule-reason"
         className={styles.reasonField}
         maxLength={500}
+        data-testid={TEST_ID.masterRescheduleReason}
         {...register('reason', { required: true })}
       />
       {errors.reason ? (
@@ -106,7 +108,12 @@ export function RescheduleBookingForm({
         </p>
       ) : null}
       <div className={styles.actions}>
-        <Button type="submit" variant="ghost" disabled={busy || isSubmitting}>
+        <Button
+          type="submit"
+          variant="ghost"
+          disabled={busy || isSubmitting}
+          data-testid={TEST_ID.masterRescheduleSubmit}
+        >
           {isSubmitting ? 'Переносим…' : 'Перенести'}
         </Button>
       </div>

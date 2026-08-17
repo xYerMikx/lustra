@@ -6,6 +6,7 @@ import type { BookingClientView, ClientReviewView } from '@lustra/contracts'
 import { canLeaveReview } from '@/features/reviews/model/can-leave-review'
 import { LeaveReviewForm } from '@/features/reviews/ui/leave-review-form'
 import styles from '@/features/reviews/ui/reviews.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type ClientReviewPanelProps = {
   booking: BookingClientView
@@ -20,7 +21,11 @@ export function ClientReviewPanel({ booking }: ClientReviewPanelProps) {
       return <p className={styles.success}>Отзыв отправлен на проверку</p>
     }
 
-    return <p className={styles.success}>Спасибо за отзыв</p>
+    return (
+      <p className={styles.success} data-testid={TEST_ID.reviewThanks}>
+        Спасибо за отзыв
+      </p>
+    )
   }
 
   if (booking.review?.status === 'pending_review') {
@@ -41,7 +46,9 @@ export function ClientReviewPanel({ booking }: ClientReviewPanelProps) {
 
   return (
     <div className={styles.form}>
-      <p className={styles.text}>Как прошёл визит?</p>
+      <p className={styles.text} data-testid={TEST_ID.reviewPrompt}>
+        Как прошёл визит?
+      </p>
       <LeaveReviewForm
         bookingId={booking.id}
         onCreated={(response) => setCreated(response.review)}

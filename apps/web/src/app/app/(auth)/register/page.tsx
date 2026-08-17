@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 
 import { RegisterForm } from '@/features/auth'
 import styles from '@/features/auth/ui/auth-page.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { SiteChrome } from '@/shared/ui/site-chrome'
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export default function RegisterPage() {
     <main className={styles.page}>
       <SiteChrome>
         <div className={styles.panelWrap}>
-          <section className={styles.panel}>
+          <section className={styles.panel} data-testid={TEST_ID.pageRegister}>
             <p className={styles.eyebrow}>Аккаунт</p>
             <h1 className={styles.title}>Регистрация</h1>
             <Suspense fallback={null}>

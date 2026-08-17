@@ -7,7 +7,8 @@ COMPOSE ?= docker compose
 PNPM    ?= pnpm
 
 .PHONY: help setup install env infra up down wait-db db migrate seed \
-	start dev stop restart status studio build test typecheck logs
+	start dev stop restart status studio build test test-e2e test-e2e-headed \
+	test-e2e-ui typecheck logs
 
 help: ## список команд
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -86,6 +87,15 @@ build: ## production build всех пакетов
 
 test: ## unit-тесты
 	$(PNPM) test
+
+test-e2e: ## Playwright UI e2e (мок API, без Postgres)
+	$(PNPM) --filter @lustra/web test:e2e
+
+test-e2e-headed: ## те же e2e с видимым браузером
+	$(PNPM) --filter @lustra/web test:e2e:headed
+
+test-e2e-ui: ## Playwright UI Mode (таймлайн, шаги, трейсы)
+	$(PNPM) --filter @lustra/web test:e2e:ui
 
 typecheck: ## tsc по монорепо
 	$(PNPM) typecheck

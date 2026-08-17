@@ -12,6 +12,7 @@ import { useClientBookingsList } from '@/features/booking-cabinets/model/use-cli
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
+import { TEST_ID, bookingRowTestId, bookingStatusTestId } from '@/shared/lib/test-id'
 
 type Scope = 'upcoming' | 'past'
 
@@ -20,7 +21,7 @@ export function ClientBookingsShell() {
   const list = useClientBookingsList(scope)
 
   return (
-    <section className={styles.shell}>
+    <section className={styles.shell} data-testid={TEST_ID.pageClientBookings}>
       <header>
         <p className={styles.eyebrow}>Кабинет клиента</p>
         <h1 className={styles.title}>Мои записи</h1>
@@ -30,6 +31,7 @@ export function ClientBookingsShell() {
         <button
           type="button"
           className={cn(styles.tab, scope === 'upcoming' && styles.tabActive)}
+          data-testid={TEST_ID.bookingsTabUpcoming}
           onClick={() => setScope('upcoming')}
         >
           Предстоящие
@@ -37,6 +39,7 @@ export function ClientBookingsShell() {
         <button
           type="button"
           className={cn(styles.tab, scope === 'past' && styles.tabActive)}
+          data-testid={TEST_ID.bookingsTabPast}
           onClick={() => setScope('past')}
         >
           Прошлые
@@ -65,12 +68,13 @@ export function ClientBookingsShell() {
       ) : null}
 
       {list.status === 'success' ? (
-        <ul className={styles.list}>
+        <ul className={styles.list} data-testid={TEST_ID.clientBookingsList}>
           {list.items.map((item) => (
             <li key={item.id}>
               <Link
                 className={styles.row}
                 href={`/app/client/bookings/${item.id}`}
+                data-testid={bookingRowTestId(item.id)}
               >
                 <div className={styles.rowTitle}>{item.serviceTitle}</div>
                 <div className={styles.rowMeta}>
@@ -78,7 +82,10 @@ export function ClientBookingsShell() {
                   {formatBookingWhen(item.startsAt, item.endsAt)} ·{' '}
                   {formatByn(Number(item.priceAmount), item.currency)}
                 </div>
-                <div className={styles.status}>
+                <div
+                  className={styles.status}
+                  data-testid={bookingStatusTestId(item.status)}
+                >
                   {bookingStatusLabel(item.status)}
                 </div>
               </Link>

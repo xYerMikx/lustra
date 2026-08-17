@@ -14,6 +14,7 @@ import styles from '@/features/reviews/ui/reviews.module.css'
 import { createReview } from '@/shared/api/reviews-client'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID, reviewStarTestId } from '@/shared/lib/test-id'
 
 const STARS = [1, 2, 3, 4, 5] as const
 
@@ -85,6 +86,7 @@ export function LeaveReviewForm({ bookingId, onCreated }: LeaveReviewFormProps) 
                 rating === star && styles.starButtonActive,
               )}
               aria-pressed={rating === star}
+              data-testid={reviewStarTestId(star)}
               onClick={() => setValue('rating', star)}
             >
               {star}
@@ -101,6 +103,7 @@ export function LeaveReviewForm({ bookingId, onCreated }: LeaveReviewFormProps) 
         <textarea
           className={styles.textarea}
           maxLength={800}
+          data-testid={TEST_ID.reviewText}
           {...register('text')}
         />
         {errors.text ? (
@@ -110,7 +113,7 @@ export function LeaveReviewForm({ bookingId, onCreated }: LeaveReviewFormProps) 
 
       {formError ? <p className={styles.error}>{formError}</p> : null}
 
-      <Button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting} data-testid={TEST_ID.reviewSubmit}>
         Отправить отзыв
       </Button>
     </form>

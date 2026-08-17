@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { ForgotPasswordForm } from '@/features/auth'
 import styles from '@/features/auth/ui/auth-page.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { SiteChrome } from '@/shared/ui/site-chrome'
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export default function ForgotPasswordPage() {
     <main className={styles.page}>
       <SiteChrome>
         <div className={styles.panelWrap}>
-          <section className={styles.panel}>
+          <section className={styles.panel} data-testid={TEST_ID.pageForgot}>
             <p className={styles.eyebrow}>Аккаунт</p>
             <h1 className={styles.title}>Забыли пароль?</h1>
             <p className={styles.copy}>

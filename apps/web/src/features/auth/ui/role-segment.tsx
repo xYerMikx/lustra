@@ -1,15 +1,16 @@
 import type { RegisterRole } from '@lustra/contracts'
 
 import styles from '@/features/auth/ui/auth-form.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type RoleSegmentProps = {
   value: RegisterRole
   onChange: (role: RegisterRole) => void
 }
 
-const OPTIONS: { value: RegisterRole; label: string }[] = [
-  { value: 'client', label: 'Клиент' },
-  { value: 'master', label: 'Мастер' },
+const OPTIONS: { value: RegisterRole; label: string; testId: string }[] = [
+  { value: 'client', label: 'Клиент', testId: TEST_ID.authRoleClient },
+  { value: 'master', label: 'Мастер', testId: TEST_ID.authRoleMaster },
 ]
 
 export function RoleSegment({ value, onChange }: RoleSegmentProps) {
@@ -24,6 +25,7 @@ export function RoleSegment({ value, onChange }: RoleSegmentProps) {
             type="button"
             className={styles.roleSegmentOption}
             aria-pressed={selected}
+            data-testid={option.testId}
             onClick={() => onChange(option.value)}
           >
             {option.label}

@@ -3,6 +3,7 @@
 import { useFavoriteToggle } from '@/features/favorites/model/use-favorite-toggle'
 import styles from '@/features/favorites/ui/favorites.module.css'
 import { Button, ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type FavoriteToggleProps = {
   masterId: string
@@ -42,6 +43,7 @@ export function FavoriteToggle({ masterId, masterSlug }: FavoriteToggleProps) {
         variant="ghost"
         disabled={busy}
         aria-pressed={favorited}
+        data-testid={TEST_ID.favoritesToggle}
         onClick={() => void toggleFavorite()}
       >
         {favorited ? 'В избранном' : 'В избранное'}

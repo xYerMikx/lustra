@@ -8,6 +8,7 @@ import {
   slotTimeLabel,
 } from '@/features/slot-picker/model/group-slots-by-period'
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'
+import { slotChipTestId } from '@/shared/lib/test-id'
 
 type SlotChipGridProps = {
   slots: AvailabilitySlotView[]
@@ -46,6 +47,7 @@ export function SlotChipGrid({
                   slot.startsAt === justTakenStartsAt && styles.slotChipTaken,
                 )}
                 onClick={() => onSelect(slot)}
+                data-testid={slotChipTestId(slotTimeLabel(slot.startsAt, timezone))}
               >
                 {slotTimeLabel(slot.startsAt, timezone)}
               </button>

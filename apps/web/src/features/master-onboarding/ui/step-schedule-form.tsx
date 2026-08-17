@@ -23,9 +23,10 @@ import {
 } from '@/features/master-onboarding/model/schedule-presets'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
-import { Button } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
 import { FormSelect } from '@/shared/ui/select'
+import { TEST_ID, onboardingPresetTestId } from '@/shared/lib/test-id'
+import { OnboardingStepActions } from '@/features/master-onboarding/ui/onboarding-step-actions'
 
 type StepScheduleFormProps = {
   initialSchedule: MasterScheduleView | null
@@ -155,6 +156,7 @@ export function StepScheduleForm({
               key={preset.id}
               type="button"
               className={styles.templateChip}
+              data-testid={onboardingPresetTestId(preset.id)}
               onClick={() => applyPreset(preset.id)}
             >
               {preset.label}
@@ -273,22 +275,17 @@ export function StepScheduleForm({
       </Field>
 
       {formError ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-testid={TEST_ID.onboardingFormError}>
           {formError}
         </p>
       ) : null}
 
-      <div className={styles.actions}>
-        <Button type="button" variant="ghost" onClick={onBack} disabled={isSubmitting}>
-          Назад
-        </Button>
-        <Button type="button" variant="ghost" onClick={onSkip} disabled={isSubmitting}>
-          Пропустить
-        </Button>
-        <Button type="submit" className={styles.actionsGrow} disabled={isSubmitting}>
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
-        </Button>
-      </div>
+      <OnboardingStepActions
+        submitting={isSubmitting}
+        submitLabel="Сохранить и продолжить"
+        onSkip={onSkip}
+        onBack={onBack}
+      />
     </form>
   )
 }

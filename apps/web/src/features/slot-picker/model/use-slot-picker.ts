@@ -125,8 +125,9 @@ export function useSlotPicker(input: {
       if (remaining <= 0) {
         setFlowStep('pick')
         setHold(null)
-        setErrorMessage('Мы держали место 10 минут — выберите время снова')
-        void reloadAvailability()
+        void reloadAvailability().then(() => {
+          setErrorMessage('Мы держали место 10 минут — выберите время снова')
+        })
       }
     }
 
@@ -226,8 +227,8 @@ export function useSlotPicker(input: {
       if (error instanceof ApiError && error.code === 'SLOT_TAKEN') {
         setJustTakenStartsAt(selectedSlot.startsAt)
         setSelectedSlot(null)
-        setErrorMessage('Это время только что заняли — вот ближайшие окна')
         await reloadAvailability()
+        setErrorMessage('Это время только что заняли — вот ближайшие окна')
 
         return
       }
@@ -277,8 +278,8 @@ export function useSlotPicker(input: {
       if (error instanceof ApiError && error.code === 'HOLD_EXPIRED') {
         setFlowStep('pick')
         setHold(null)
-        setErrorMessage('Мы держали место 10 минут — выберите время снова')
         await reloadAvailability()
+        setErrorMessage('Мы держали место 10 минут — выберите время снова')
 
         return
       }

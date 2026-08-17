@@ -21,6 +21,7 @@ import { ClientSuggest } from '@/features/master-calendar/ui/client-suggest'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
 import { FormSelect } from '@/shared/ui/select'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type ManualBookingDialogProps = {
   defaultDate: string
@@ -97,6 +98,7 @@ export function ManualBookingDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="manual-booking-title"
+        data-testid={TEST_ID.dialogManual}
       >
         <h2 id="manual-booking-title" className={styles.dialogTitle}>
           Записать клиента
@@ -149,6 +151,7 @@ export function ManualBookingDialog({
               id="manual-name"
               value={clientName}
               clients={clients}
+              testId={TEST_ID.dialogManualName}
               onChange={(name) => setValue('clientName', name, { shouldDirty: true })}
               onPick={(client) => {
                 setValue('clientName', client.name, { shouldDirty: true })
@@ -169,6 +172,7 @@ export function ManualBookingDialog({
               className={styles.input}
               inputMode="tel"
               placeholder="+375291112233"
+              data-testid={TEST_ID.dialogManualPhone}
               {...register('phone', { required: true })}
             />
           </div>
@@ -199,7 +203,11 @@ export function ManualBookingDialog({
           {formError ? <p className={styles.fieldError}>{formError}</p> : null}
 
           <div className={styles.dialogActions}>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              data-testid={TEST_ID.dialogManualSubmit}
+            >
               {isSubmitting ? 'Сохраняем…' : 'Записать'}
             </Button>
             <Button type="button" variant="ghost" onClick={onClose}>

@@ -4,12 +4,13 @@ import { MasterCard } from '@/entities/master'
 import { useFavoritesList } from '@/features/favorites/model/use-favorites-list'
 import styles from '@/features/favorites/ui/favorites.module.css'
 import { Button, ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 export function FavoritesShell() {
   const list = useFavoritesList()
 
   return (
-    <section className={styles.shell}>
+    <section className={styles.shell} data-testid={TEST_ID.pageFavorites}>
       <header>
         <p className={styles.eyebrow}>Кабинет клиента</p>
         <h1 className={styles.title}>Избранное</h1>
@@ -40,7 +41,7 @@ export function FavoritesShell() {
       ) : null}
 
       {list.status === 'success' ? (
-        <ul className={styles.list}>
+        <ul className={styles.list} data-testid={TEST_ID.favoritesList}>
           {list.items.map((master) => (
             <li key={master.id}>
               <MasterCard master={master} />

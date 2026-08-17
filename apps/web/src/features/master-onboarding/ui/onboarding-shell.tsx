@@ -25,6 +25,7 @@ import { StepScheduleForm } from '@/features/master-onboarding/ui/step-schedule-
 import { StepServiceForm } from '@/features/master-onboarding/ui/step-service-form'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
+import { TEST_ID, onboardingStepTestId } from '@/shared/lib/test-id'
 import {
   getMasterProfile,
   listDistricts,
@@ -211,8 +212,11 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
   const stepCopy = STEP_COPY[currentStepId]
 
   return (
-    <div className={styles.panelWrap}>
-      <section className={styles.panel}>
+    <div className={styles.panelWrap} data-testid={TEST_ID.pageOnboarding}>
+      <section
+        className={styles.panel}
+        data-testid={onboardingStepTestId(currentStepId)}
+      >
         <p className={styles.eyebrow}>Быстрый онбординг · 4 шага</p>
         <h1 className={styles.title}>{stepCopy.title}</h1>
         <p className={styles.copy}>
@@ -220,7 +224,9 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
           {currentStepId === 'profile' ? (
             <>
               {stepCopy.description}{' '}
-              <span className={styles.slugHint}>/m/{profile.slug}</span>
+              <span className={styles.slugHint} data-testid={TEST_ID.onboardingSlug}>
+                /m/{profile.slug}
+              </span>
             </>
           ) : (
             stepCopy.description

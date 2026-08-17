@@ -7,6 +7,7 @@ import {
 } from '@/features/master-onboarding/model/onboarding-steps'
 import { StepCheckIcon } from '@/features/master-onboarding/ui/step-check-icon'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
+import { onboardingProgressTestId } from '@/shared/lib/test-id'
 
 type OnboardingProgressProps = {
   currentStepId: OnboardingStepId
@@ -27,6 +28,8 @@ export function OnboardingProgress({ currentStepId }: OnboardingProgressProps) {
               status === 'done' && styles.stepItemDone,
             )}
             aria-current={status === 'active' ? 'step' : undefined}
+            data-testid={onboardingProgressTestId(step.id)}
+            data-status={status}
           >
             <span className={styles.stepIndex} aria-hidden>
               {status === 'done' ? (

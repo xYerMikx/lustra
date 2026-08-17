@@ -18,6 +18,7 @@ import { CatalogDistrictChecks } from '@/features/catalog-browse/ui/catalog-dist
 import styles from '@/features/catalog-browse/ui/catalog-filters.module.css'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Select } from '@/shared/ui/select'
 
 type CatalogFiltersProps = {
@@ -111,6 +112,7 @@ export function CatalogFilters({
             max={10000}
             inputMode="numeric"
             defaultValue={query.priceMax ?? ''}
+            data-testid={TEST_ID.catalogPriceMax}
           />
         </Field>
         <Field label="Рейтинг" htmlFor="catalog-rating">
@@ -133,7 +135,9 @@ export function CatalogFilters({
         </Field>
       </div>
       <div className={styles.actions}>
-        <Button type="submit">Показать</Button>
+        <Button type="submit" data-testid={TEST_ID.catalogSubmit}>
+          Показать
+        </Button>
         <ButtonLink href={resetHref} variant="ghost">
           Сбросить
         </ButtonLink>

@@ -6,6 +6,7 @@ import { useAdminMastersQueue } from '@/features/admin-moderation/model/use-admi
 import { AdminQueueNav } from '@/features/admin-moderation/ui/admin-queue-nav'
 import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID, adminMasterCardTestId } from '@/shared/lib/test-id'
 import styles from '@/features/admin-moderation/ui/admin-moderation.module.css'
 
 export function AdminMastersQueueShell() {
@@ -13,7 +14,7 @@ export function AdminMastersQueueShell() {
 
   return (
     <div className={styles.wrap}>
-      <section className={styles.panel}>
+      <section className={styles.panel} data-testid={TEST_ID.pageAdminModeration}>
         <p className={styles.eyebrow}>Админка</p>
         <h1 className={styles.title}>Модерация мастеров</h1>
         <p className={styles.copy}>
@@ -38,7 +39,9 @@ export function AdminMastersQueueShell() {
         ) : null}
 
         {queue.listStatus === 'empty' ? (
-          <p className={styles.muted}>Очередь пуста — ждать некого.</p>
+          <p className={styles.muted} data-testid={TEST_ID.adminQueueEmpty}>
+            Очередь пуста — ждать некого.
+          </p>
         ) : null}
 
         {queue.actionError ? (
@@ -53,7 +56,11 @@ export function AdminMastersQueueShell() {
               const busy = queue.busyId === master.id
 
               return (
-                <li key={master.id} className={styles.card}>
+                <li
+                  key={master.id}
+                  className={styles.card}
+                  data-testid={adminMasterCardTestId(master.slug)}
+                >
                   <div>
                     <div className={styles.cardTitle}>{master.displayName}</div>
                     <div className={styles.cardMeta}>
@@ -74,6 +81,7 @@ export function AdminMastersQueueShell() {
                     <Button
                       type="button"
                       disabled={busy}
+                      data-testid={TEST_ID.adminApprove}
                       onClick={() => {
                         void queue.runModerate(master.id, 'approve')
                       }}

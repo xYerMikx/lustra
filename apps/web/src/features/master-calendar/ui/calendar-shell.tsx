@@ -13,6 +13,7 @@ import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
 import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type ManualDialogState = {
   startsAtIso: string | null
@@ -90,7 +91,7 @@ export function CalendarShell() {
       : `${calendar.range.from} — ${calendar.range.to}`
 
   return (
-    <section className={styles.shell}>
+    <section className={styles.shell} data-testid={TEST_ID.pageCalendar}>
       <header className={styles.header}>
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Календарь</h1>
@@ -129,13 +130,25 @@ export function CalendarShell() {
               Неделя
             </Button>
           </div>
-          <Button type="button" onClick={() => void handleOpenManual(null)}>
+          <Button
+            type="button"
+            onClick={() => void handleOpenManual(null)}
+            data-testid={TEST_ID.calendarManualOpen}
+          >
             Записать клиента
           </Button>
-          <Button type="button" onClick={() => setBlockOpen(true)}>
+          <Button
+            type="button"
+            onClick={() => setBlockOpen(true)}
+            data-testid={TEST_ID.calendarBlockOpen}
+          >
             Блок / обед
           </Button>
-          <Button type="button" onClick={() => setExceptionOpen(true)}>
+          <Button
+            type="button"
+            onClick={() => setExceptionOpen(true)}
+            data-testid={TEST_ID.calendarExceptionOpen}
+          >
             Исключение
           </Button>
         </div>

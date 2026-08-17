@@ -6,6 +6,7 @@ import type { UserRole } from '@lustra/contracts'
 import { useSession } from '@/features/auth'
 import { MasterCabinetHub } from '@/features/master-cabinet'
 import { ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/app/app/app.module.css'
 
 const CABINET_TITLE: Record<Exclude<UserRole, 'master'>, string> = {
@@ -41,7 +42,7 @@ export function CabinetHomePanel() {
   }
 
   return (
-    <section className={styles.shellPanel}>
+    <section className={styles.shellPanel} data-testid={TEST_ID.pageClientCabinet}>
       <p className={styles.eyebrow}>Личный кабинет</p>
       <h1 className={styles.title}>{CABINET_TITLE[user.role]}</h1>
       <p className={styles.copy}>{CABINET_COPY[user.role]}</p>

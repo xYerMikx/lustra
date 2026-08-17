@@ -14,6 +14,7 @@ import {
   loadSession,
 } from '@/features/auth/model/load-session'
 import { logout } from '@/shared/api/auth-client'
+import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/shared/ui/site-chrome/site-chrome.module.css'
 
 type SessionState =
@@ -108,6 +109,7 @@ export function AppHeader() {
               className={styles.logout}
               onClick={handleLogout}
               disabled={loggingOut}
+              data-testid={TEST_ID.appLogout}
             >
               {loggingOut ? 'Выходим…' : 'Выйти'}
             </button>

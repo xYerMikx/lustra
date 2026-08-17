@@ -3,12 +3,13 @@
 import { MasterPortfolioBody } from '@/features/master-portfolio/ui/master-portfolio-body'
 import { useMasterPortfolio } from '@/features/master-portfolio/model/use-master-portfolio'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 export function MasterPortfolioShell() {
   const portfolio = useMasterPortfolio()
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} data-testid={TEST_ID.pageMasterPortfolio}>
       <section className={styles.panel}>
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Портфолио</h1>

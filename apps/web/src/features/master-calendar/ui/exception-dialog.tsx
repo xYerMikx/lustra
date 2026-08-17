@@ -13,6 +13,7 @@ import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
 import { FormSelect } from '@/shared/ui/select'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type ExceptionDialogProps = {
   defaultDate: string
@@ -83,6 +84,7 @@ export function ExceptionDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="exception-dialog-title"
+        data-testid={TEST_ID.dialogException}
       >
         <h2 id="exception-dialog-title" className={styles.dialogTitle}>
           Исключение в графике
@@ -155,7 +157,11 @@ export function ExceptionDialog({
           {formError ? <p className={styles.fieldError}>{formError}</p> : null}
 
           <div className={styles.dialogActions}>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              data-testid={TEST_ID.dialogExceptionSubmit}
+            >
               {isSubmitting ? 'Сохраняем…' : 'Сохранить'}
             </Button>
             <Button type="button" variant="ghost" onClick={onClose}>

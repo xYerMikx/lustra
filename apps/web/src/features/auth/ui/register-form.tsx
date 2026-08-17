@@ -16,6 +16,7 @@ import styles from '@/features/auth/ui/auth-form.module.css'
 import { RoleSegment } from '@/features/auth/ui/role-segment'
 import { register as registerAccount } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 
 const REGISTER_INTRO: Record<RegisterRole, string> = {
@@ -94,6 +95,7 @@ export function RegisterForm() {
             className={styles.input}
             type="text"
             autoComplete="given-name"
+            data-testid={TEST_ID.authRegisterName}
             {...register('firstName')}
           />
           {errors.firstName ? (
@@ -107,6 +109,7 @@ export function RegisterForm() {
             className={styles.input}
             type="email"
             autoComplete="email"
+            data-testid={TEST_ID.authRegisterEmail}
             {...register('email')}
           />
           {errors.email ? (
@@ -120,15 +123,25 @@ export function RegisterForm() {
             className={styles.input}
             type="password"
             autoComplete="new-password"
+            data-testid={TEST_ID.authRegisterPassword}
             {...register('password')}
           />
           {errors.password ? (
-            <span className={styles.fieldError}>{errors.password.message}</span>
+            <span
+              className={styles.fieldError}
+              data-testid={TEST_ID.authRegisterPasswordError}
+            >
+              {errors.password.message}
+            </span>
           ) : null}
         </label>
 
         <label className={styles.check}>
-          <input type="checkbox" {...register('acceptTerms')} />
+          <input
+            type="checkbox"
+            data-testid={TEST_ID.authRegisterTerms}
+            {...register('acceptTerms')}
+          />
           <span>Принимаю условия использования и политику конфиденциальности</span>
         </label>
         {errors.acceptTerms ? (
@@ -136,12 +149,17 @@ export function RegisterForm() {
         ) : null}
 
         {formError ? (
-          <p className={styles.error} role="alert">
+          <p className={styles.error} role="alert" data-testid={TEST_ID.authFormError}>
             {formError}
           </p>
         ) : null}
 
-        <Button type="submit" fullWidth disabled={isSubmitting}>
+        <Button
+          type="submit"
+          fullWidth
+          disabled={isSubmitting}
+          data-testid={TEST_ID.authRegisterSubmit}
+        >
           {isSubmitting ? 'Создаём…' : 'Зарегистрироваться'}
         </Button>
       </form>

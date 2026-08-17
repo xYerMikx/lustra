@@ -8,6 +8,7 @@ import { ForgotPasswordInputSchema, type ForgotPasswordInput } from '@lustra/con
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { requestPasswordReset } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 
 export function ForgotPasswordForm() {
@@ -44,7 +45,11 @@ export function ForgotPasswordForm() {
   if (sent) {
 
     return (
-      <p className={styles.success} role="status">
+      <p
+        className={styles.success}
+        role="status"
+        data-testid={TEST_ID.authForgotSent}
+      >
         Если аккаунт есть, мы отправили письмо.
       </p>
     )
@@ -58,6 +63,7 @@ export function ForgotPasswordForm() {
           className={styles.input}
           type="email"
           autoComplete="email"
+          data-testid={TEST_ID.authForgotEmail}
           {...register('email')}
         />
         {errors.email ? (
@@ -66,12 +72,17 @@ export function ForgotPasswordForm() {
       </label>
 
       {formError ? (
-        <p className={styles.error} role="alert">
+        <p className={styles.error} role="alert" data-testid={TEST_ID.authFormError}>
           {formError}
         </p>
       ) : null}
 
-      <Button type="submit" fullWidth disabled={isSubmitting}>
+      <Button
+        type="submit"
+        fullWidth
+        disabled={isSubmitting}
+        data-testid={TEST_ID.authForgotSubmit}
+      >
         {isSubmitting ? 'Отправляем…' : 'Отправить ссылку'}
       </Button>
     </form>

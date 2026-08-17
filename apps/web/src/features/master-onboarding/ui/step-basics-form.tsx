@@ -18,9 +18,10 @@ import {
 } from '@/features/master-onboarding/model/step-basics-draft'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
-import { Button } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { FormSelect } from '@/shared/ui/select'
+import { OnboardingStepActions } from '@/features/master-onboarding/ui/onboarding-step-actions'
 
 type StepBasicsFormProps = {
   profile: MasterProfileView
@@ -109,6 +110,7 @@ export function StepBasicsForm({
           type="text"
           autoComplete="organization"
           invalid={Boolean(errors.displayName)}
+          data-testid={TEST_ID.onboardingDisplayName}
           {...displayNameRegister}
         />
       </Field>
@@ -158,33 +160,23 @@ export function StepBasicsForm({
           placeholder="Мастер маникюра, 5 лет опыта"
           maxLength={120}
           invalid={Boolean(errors.headline)}
+          data-testid={TEST_ID.onboardingHeadline}
           {...headlineRegister}
         />
       </Field>
 
       {formError ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-testid={TEST_ID.onboardingFormError}>
           {formError}
         </p>
       ) : null}
 
-      <div className={styles.actions}>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onSkip}
-          disabled={isSubmitting}
-        >
-          Пропустить
-        </Button>
-        <Button
-          type="submit"
-          className={styles.actionsGrow}
-          disabled={isSubmitting || !values.districtId}
-        >
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
-        </Button>
-      </div>
+      <OnboardingStepActions
+        submitting={isSubmitting}
+        submitDisabled={!values.districtId}
+        submitLabel="Сохранить и продолжить"
+        onSkip={onSkip}
+      />
     </form>
   )
 }

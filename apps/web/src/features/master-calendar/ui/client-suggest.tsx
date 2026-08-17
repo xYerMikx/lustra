@@ -12,6 +12,7 @@ type ClientSuggestProps = {
   clients: MasterClientView[]
   onChange: (name: string) => void
   onPick: (client: MasterClientView) => void
+  testId?: string
 }
 
 export function ClientSuggest({
@@ -20,6 +21,7 @@ export function ClientSuggest({
   clients,
   onChange,
   onPick,
+  testId,
 }: ClientSuggestProps) {
   const suggest = useClientSuggest({ value, clients, onChange, onPick })
 
@@ -35,6 +37,7 @@ export function ClientSuggest({
         aria-controls={`${id}-list`}
         aria-autocomplete="list"
         value={value}
+        data-testid={testId}
         onFocus={suggest.openList}
         onChange={(event) => suggest.handleChange(event.target.value)}
         onKeyDown={suggest.handleKeyDown}

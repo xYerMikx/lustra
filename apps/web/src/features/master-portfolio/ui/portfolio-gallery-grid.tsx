@@ -5,6 +5,7 @@ import type { PortfolioItemView } from '@lustra/contracts'
 
 import { portfolioRatioClass } from '@/features/master-portfolio/model/portfolio-ratio-class'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
+import { publicPortfolioShotTestId } from '@/shared/lib/test-id'
 
 type PortfolioGalleryGridProps = {
   items: PortfolioItemView[]
@@ -27,6 +28,7 @@ export function PortfolioGalleryGrid({
               styles[portfolioRatioClass(item.width, item.height)],
             )}
             onClick={() => onOpen(index)}
+            data-testid={publicPortfolioShotTestId(item.id)}
           >
             <img
               className={styles.image}

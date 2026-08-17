@@ -4,6 +4,7 @@ import type { DistrictView } from '@lustra/contracts'
 
 import { CATALOG_MAX_DISTRICTS } from '@/features/catalog-browse/model/catalog-filter-options'
 import styles from '@/features/catalog-browse/ui/catalog-filters.module.css'
+import { catalogDistrictTestId } from '@/shared/lib/test-id'
 
 type CatalogDistrictChecksProps = {
   districts: DistrictView[]
@@ -46,6 +47,7 @@ export function CatalogDistrictChecks({
               value={district.slug}
               checked={checked}
               disabled={disabled}
+              data-testid={catalogDistrictTestId(district.slug)}
               onChange={(event) => {
                 toggleDistrict(district.slug, event.target.checked)
               }}

@@ -35,3 +35,7 @@ Thumbs.db
 /packages/db/generated/
 .worktrees/
 .data/
+
+playwright-report/
+test-results/
+blob-report/

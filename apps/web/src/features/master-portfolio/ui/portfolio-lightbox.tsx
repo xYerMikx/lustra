@@ -7,6 +7,7 @@ import { swipeDirection } from '@/features/master-portfolio/model/swipe-directio
 import { wrapIndex } from '@/features/master-portfolio/model/wrap-index'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 import { Button } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type PortfolioLightboxProps = {
   items: PortfolioItemView[]
@@ -96,6 +97,7 @@ export function PortfolioLightbox({
       role="dialog"
       aria-modal="true"
       aria-label="Просмотр фото"
+      data-testid={TEST_ID.portfolioLightbox}
       onClick={closeUnlessSwiped}
       onTouchStart={(event) => {
         startXRef.current = event.changedTouches[0]?.clientX ?? null
@@ -127,7 +129,7 @@ export function PortfolioLightbox({
               Назад
             </Button>
           ) : null}
-          <Button type="button" onClick={onClose}>
+          <Button type="button" onClick={onClose} data-testid={TEST_ID.portfolioLightboxClose}>
             Закрыть
           </Button>
           {items.length > 1 ? (

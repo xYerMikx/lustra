@@ -4,6 +4,7 @@ import type { SearchMastersQuery, ServiceCategoryView } from '@lustra/contracts'
 
 import { hrefForCategory } from '@/features/catalog-browse/model/href-for-category'
 import styles from '@/features/catalog-browse/ui/category-chips.module.css'
+import { catalogCategoryTestId } from '@/shared/lib/test-id'
 
 type CategoryChipsProps = {
   categories: ServiceCategoryView[]
@@ -35,6 +36,7 @@ export function CategoryChips({ categories, query }: CategoryChipsProps) {
                 href={hrefForCategory(category.slug, query)}
                 className={cn(styles.chip, isActive && styles.active)}
                 aria-current={isActive ? 'page' : undefined}
+                data-testid={catalogCategoryTestId(category.slug)}
               >
                 {category.name}
               </Link>

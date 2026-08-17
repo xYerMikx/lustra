@@ -15,6 +15,7 @@ import {
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
+import { TEST_ID, bookingRowTestId, bookingStatusTestId } from '@/shared/lib/test-id'
 
 const SCOPES: Array<{ id: MasterBookingsScope; label: string }> = [
   { id: 'upcoming', label: 'Предстоящие' },
@@ -27,23 +28,36 @@ export function MasterBookingsShell() {
   const list = useMasterBookingsList(scope)
 
   return (
-    <section className={styles.shell}>
+    <section className={styles.shell} data-testid={TEST_ID.pageMasterBookings}>
       <header>
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Записи</h1>
       </header>
 
       <div className={styles.tabs} role="tablist" aria-label="Фильтр записей">
-        {SCOPES.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={cn(styles.tab, scope === item.id && styles.tabActive)}
-            onClick={() => setScope(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
+        {SCOPES.map((item) => {
+          let tabTestId = TEST_ID.bookingsTabUpcoming
+
+          if (item.id === 'pending') {
+            tabTestId = TEST_ID.bookingsTabPending
+          }
+
+          if (item.id === 'past') {
+            tabTestId = TEST_ID.bookingsTabPast
+          }
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={cn(styles.tab, scope === item.id && styles.tabActive)}
+              data-testid={tabTestId}
+              onClick={() => setScope(item.id)}
+            >
+              {item.label}
+            </button>
+          )
+        })}
       </div>
 
       {list.status === 'loading' ? (
@@ -64,12 +78,13 @@ export function MasterBookingsShell() {
       ) : null}
 
       {list.status === 'success' ? (
-        <ul className={styles.list}>
+        <ul className={styles.list} data-testid={TEST_ID.masterBookingsList}>
           {list.items.map((item) => (
             <li key={item.id}>
               <Link
                 className={styles.row}
                 href={`/app/master/bookings/${item.id}`}
+                data-testid={bookingRowTestId(item.id)}
               >
                 <div className={styles.rowTitle}>{item.serviceTitle}</div>
                 <div className={styles.rowMeta}>
@@ -78,7 +93,10 @@ export function MasterBookingsShell() {
                   {formatBookingWhen(item.startsAt, item.endsAt)} ·{' '}
                   {formatByn(Number(item.priceAmount), item.currency)}
                 </div>
-                <div className={styles.status}>
+                <div
+                  className={styles.status}
+                  data-testid={bookingStatusTestId(item.status)}
+                >
                   {bookingStatusLabel(item.status)}
                 </div>
               </Link>

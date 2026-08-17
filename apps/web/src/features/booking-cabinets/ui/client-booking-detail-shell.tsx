@@ -12,6 +12,7 @@ import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { ClientReviewPanel } from '@/features/reviews/ui/client-review-panel'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
+import { TEST_ID, bookingStatusTestId } from '@/shared/lib/test-id'
 
 const CANCELABLE = new Set(['hold', 'pending', 'confirmed'])
 
@@ -32,7 +33,12 @@ export function ClientBookingDetailShell({
   if (detail.status === 'error' || !detail.booking) {
     return (
       <section className={styles.shell}>
-        <p className={styles.error}>{detail.errorMessage ?? 'Запись не найдена'}</p>
+        <p
+          className={styles.error}
+          data-testid={TEST_ID.bookingNotFound}
+        >
+          {detail.errorMessage ?? 'Запись не найдена'}
+        </p>
         <Link className={styles.backLink} href="/app/client/bookings">
           К списку записей
         </Link>
@@ -44,10 +50,7 @@ export function ClientBookingDetailShell({
   const canCancel = CANCELABLE.has(booking.status)
 
   return (
-    <section className={styles.shell}>
-      <Link className={styles.backLink} href="/app/client/bookings">
-        ← К списку
-      </Link>
+    <section className={styles.shell} data-testid={TEST_ID.pageClientBookingDetail}>
 
       <header>
         <p className={styles.eyebrow}>Запись</p>
@@ -64,7 +67,10 @@ export function ClientBookingDetailShell({
             {formatByn(Number(booking.priceAmount), booking.currency)} ·{' '}
             {booking.serviceDurationMin} мин
           </span>
-          <span className={styles.status}>
+          <span
+            className={styles.status}
+            data-testid={bookingStatusTestId(booking.status)}
+          >
             {bookingStatusLabel(booking.status)}
           </span>
         </div>
@@ -97,6 +103,7 @@ export function ClientBookingDetailShell({
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               maxLength={500}
+              data-testid={TEST_ID.clientCancelReason}
             />
             <div className={styles.actions}>
               <Button
@@ -104,6 +111,7 @@ export function ClientBookingDetailShell({
                 variant="ghost"
                 disabled={detail.busy}
                 onClick={() => void detail.cancel(reason.trim() || undefined)}
+                data-testid={TEST_ID.clientCancelSubmit}
               >
                 Отменить запись
               </Button>

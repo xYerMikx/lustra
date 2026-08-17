@@ -10,6 +10,7 @@ import { ResetPasswordInputSchema, type ResetPasswordInput } from '@lustra/contr
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { resetPassword } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 
 export function ResetPasswordForm() {
@@ -48,7 +49,11 @@ export function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <p className={styles.error} role="alert">
+      <p
+        className={styles.error}
+        role="alert"
+        data-testid={TEST_ID.authResetInvalid}
+      >
         Ссылка недействительна или устарела
       </p>
     )
@@ -56,9 +61,17 @@ export function ResetPasswordForm() {
 
   if (done) {
     return (
-      <p className={styles.success} role="status">
+      <p
+        className={styles.success}
+        role="status"
+        data-testid={TEST_ID.authResetDone}
+      >
         Пароль обновлён.{' '}
-        <Link className={styles.inlineLink} href="/app/login">
+        <Link
+          className={styles.inlineLink}
+          href="/app/login"
+          data-testid={TEST_ID.authResetLoginLink}
+        >
           Войти
         </Link>
       </p>
@@ -74,6 +87,7 @@ export function ResetPasswordForm() {
           className={styles.input}
           type="password"
           autoComplete="new-password"
+          data-testid={TEST_ID.authResetPassword}
           {...register('password')}
         />
         {errors.password ? (
@@ -82,12 +96,17 @@ export function ResetPasswordForm() {
       </label>
 
       {formError ? (
-        <p className={styles.error} role="alert">
+        <p className={styles.error} role="alert" data-testid={TEST_ID.authFormError}>
           {formError}
         </p>
       ) : null}
 
-      <Button type="submit" fullWidth disabled={isSubmitting}>
+      <Button
+        type="submit"
+        fullWidth
+        disabled={isSubmitting}
+        data-testid={TEST_ID.authResetSubmit}
+      >
         {isSubmitting ? 'Сохраняем…' : 'Сохранить пароль'}
       </Button>
     </form>

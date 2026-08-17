@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { CatalogMasterCard } from '@lustra/contracts'
 
 import styles from '@/entities/master/ui/master-card.module.css'
+import { masterCardTestId } from '@/shared/lib/test-id'
 
 type MasterCardProps = {
   master: CatalogMasterCard
@@ -17,7 +18,11 @@ export function MasterCard({ master }: MasterCardProps) {
     master.priceFrom != null ? `от ${master.priceFrom} BYN` : 'цена по запросу'
 
   return (
-    <Link href={`/m/${master.slug}`} className={styles.card}>
+    <Link
+      href={`/m/${master.slug}`}
+      className={styles.card}
+      data-testid={masterCardTestId(master.slug)}
+    >
       <div className={styles.cardTop}>
         <h2 className={styles.name}>{master.displayName}</h2>
         <span className={styles.rating}>{ratingLabel}</span>
