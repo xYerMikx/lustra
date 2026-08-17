@@ -21,7 +21,7 @@ const draftProfile = {
 }
 
 function createProfiles(
-  profile: typeof draftProfile | { status: string } & Partial<typeof draftProfile>,
+  profile: Omit<typeof draftProfile, 'status'> & { status: string },
 ): MasterProfileStore {
   return {
     findByUserId: vi.fn().mockResolvedValue(profile),

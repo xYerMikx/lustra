@@ -32,7 +32,7 @@ describe('RequestPasswordResetUseCase', () => {
   it('returns ok without mailing when the email is unknown', async () => {
     const users = { findByEmail: vi.fn().mockResolvedValue(null) }
     const tokens = { invalidateUnused: vi.fn(), create: vi.fn() }
-    const mailer = { sendPasswordReset: vi.fn() }
+    const mailer = { sendPasswordReset: vi.fn(), sendEmailVerify: vi.fn() }
 
     const useCase = new RequestPasswordResetUseCase(
       users as unknown as AuthUserRepository,
@@ -54,7 +54,7 @@ describe('RequestPasswordResetUseCase', () => {
       findByEmail: vi.fn().mockResolvedValue({ ...activeUser, status: 'blocked' }),
     }
     const tokens = { invalidateUnused: vi.fn(), create: vi.fn() }
-    const mailer = { sendPasswordReset: vi.fn() }
+    const mailer = { sendPasswordReset: vi.fn(), sendEmailVerify: vi.fn() }
 
     const useCase = new RequestPasswordResetUseCase(
       users as unknown as AuthUserRepository,
@@ -76,7 +76,10 @@ describe('RequestPasswordResetUseCase', () => {
       invalidateUnused: vi.fn().mockResolvedValue(undefined),
       create: vi.fn().mockResolvedValue({ id: 't1' }),
     }
-    const mailer = { sendPasswordReset: vi.fn().mockResolvedValue(undefined) }
+    const mailer = {
+      sendPasswordReset: vi.fn().mockResolvedValue(undefined),
+      sendEmailVerify: vi.fn(),
+    }
 
     const useCase = new RequestPasswordResetUseCase(
       users as unknown as AuthUserRepository,
@@ -119,6 +122,7 @@ describe('RequestPasswordResetUseCase', () => {
     }
     const mailer = {
       sendPasswordReset: vi.fn().mockRejectedValue(new Error('resend down')),
+      sendEmailVerify: vi.fn(),
     }
 
     const useCase = new RequestPasswordResetUseCase(
