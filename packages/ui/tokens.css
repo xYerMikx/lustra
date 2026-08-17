@@ -84,4 +84,18 @@
   --z-30: 30;
   --z-40: 40;
   --z-50: 50;
+
+  /*
+   * Breakpoints — min-width, numeric names like --spacing-16 / --text-20.
+   * Custom properties are not valid in @media queries. In CSS modules copy
+   * the token value and name it in a comment:
+   *   @media (min-width: 768px)  -- use --breakpoint-768
+   * Prefer min-width. For "below token" use (max-width: token - 1px):
+   *   639px → below --breakpoint-640, 767px → below --breakpoint-768.
+   * Do not invent one-off widths (720px, 560px) in new code.
+   */
+  --breakpoint-375: 375px;
+  --breakpoint-640: 640px;
+  --breakpoint-768: 768px;
+  --breakpoint-1024: 1024px;
 }

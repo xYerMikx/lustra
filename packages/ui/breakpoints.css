@@ -1,0 +1,15 @@
+/**
+ * Breakpoint usage for CSS modules (see tokens.css --breakpoint-*).
+ *
+ * Values are min-width: 375 / 640 / 768 / 1024.
+ * Native CSS cannot read custom properties inside @media, so copy the px:
+ *
+ *   @media (min-width: 375px)   --breakpoint-375  phone baseline
+ *   @media (min-width: 640px)   --breakpoint-640
+ *   @media (min-width: 768px)   --breakpoint-768
+ *   @media (min-width: 1024px)  --breakpoint-1024
+ *
+ * Below a token: max-width of (token - 1px), e.g. 639px / 767px / 1023px.
+ * Do not add one-off media widths in feature CSS.
+ */
+@import './tokens.css';

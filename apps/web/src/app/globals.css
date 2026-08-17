@@ -8,6 +8,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -112,7 +113,8 @@ a.brand:hover {
   background: var(--color-danger);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
+  /* below --breakpoint-640 */
   .shell {
     padding-inline: var(--spacing-12);
   }

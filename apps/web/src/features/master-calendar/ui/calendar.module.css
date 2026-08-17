@@ -8,6 +8,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-20);
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .header {
@@ -42,7 +44,7 @@
   font-size: var(--text-16);
   line-height: var(--text-16--line-height);
   color: var(--color-text-2);
-  min-width: calc(var(--spacing-96) + var(--spacing-96));
+  min-width: 0;
 }
 
 .modeSwitch {
@@ -381,13 +383,20 @@
 }
 
 @media (min-width: 768px) {
+  /* --breakpoint-768 */
   .dialogBackdrop {
     align-items: center;
   }
 }
 
 @media (max-width: 767px) {
+  /* below --breakpoint-768 */
   .weekGrid {
     grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
   }
 }
