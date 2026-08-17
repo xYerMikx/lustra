@@ -8,11 +8,14 @@ import ComparisonTable from '../components/comparison-table.astro'
 import CategoriesDistricts from '../components/categories-districts.astro'
 import FaqSection from '../components/faq-section.astro'
 import CtaBand from '../components/cta-band.astro'
+import { SHOW_WORKS_PREVIEW } from '../lib/flags'
 import { getAppUrl } from '../lib/site'
 
 const hero = (await getEntry('sections', 'hero'))!.data
 const how = (await getEntry('sections', 'how-it-works'))!.data
-const works = (await getEntry('sections', 'works'))!.data
+const works = SHOW_WORKS_PREVIEW
+  ? (await getEntry('sections', 'works'))!.data
+  : null
 const comparison = (await getEntry('sections', 'comparison'))!.data
 const browse = (await getEntry('sections', 'browse'))!.data
 const cta = (await getEntry('sections', 'cta'))!.data
@@ -41,8 +44,8 @@ const districts = (browse.districts ?? []).map((item) => ({
 ---
 
 <BaseLayout
-  title="Lustra — бьюти-мастера Минска"
-  description="Lustra — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
+  title="Lumira — бьюти-мастера Минска"
+  description="Lumira — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
 >
   <main>
     <Hero
@@ -63,12 +66,14 @@ const districts = (browse.districts ?? []).map((item) => ({
       masterSteps={how.masterSteps!}
     />
 
-    <WorksMarquee
-      eyebrow={works.eyebrow!}
-      title={works.title!}
-      lead={works.lead!}
-      works={works.works!}
-    />
+    {works && (
+      <WorksMarquee
+        eyebrow={works.eyebrow!}
+        title={works.title!}
+        lead={works.lead!}
+        works={works.works!}
+      />
+    )}
 
     <ComparisonTable
       eyebrow={comparison.eyebrow!}

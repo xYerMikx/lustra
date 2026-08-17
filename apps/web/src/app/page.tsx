@@ -8,7 +8,7 @@ export default function HomePage() {
       <SiteChrome>
         <section className={styles.hero}>
           <p className={styles.kicker}>Минск · бьюти-мастера</p>
-          <h1 className={styles.title}>Lustra</h1>
+          <h1 className={styles.title}>Lumira</h1>
           <p className={styles.lead}>
             Находите проверенных мастеров и записывайтесь без лишних переписок.
           </p>

@@ -21,11 +21,11 @@ const { eyebrow, title, lead, rows } = Astro.props
     <h2 id="compare-title">{title}</h2>
     <p class="lead">{lead}</p>
 
-    <div class="table" role="table" aria-label="Сравнение директ и Lustra">
+    <div class="table" role="table" aria-label="Сравнение директ и Lumira">
       <div class="head" role="row">
         <span role="columnheader"></span>
         <span role="columnheader">Директ</span>
-        <span role="columnheader">Lustra</span>
+        <span role="columnheader">Lumira</span>
       </div>
       {
         rows.map((row) => (
@@ -132,7 +132,7 @@ const { eyebrow, title, lead, rows } = Astro.props
     }
 
     .lustra::before {
-      content: 'Lustra: ';
+      content: 'Lumira: ';
       color: var(--color-text-3);
       font-weight: var(--font-weight-600);
     }

@@ -6,6 +6,6 @@ describe('buildShareStoryText', () => {
   it('builds a caption with the master name and url', () => {
     expect(
       buildShareStoryText('Анна', 'http://localhost:3000/m/anna-nails'),
-    ).toBe('Записаться к Анна на Lustra\nhttp://localhost:3000/m/anna-nails')
+    ).toBe('Записаться к Анна на Lumira\nhttp://localhost:3000/m/anna-nails')
   })
 })
