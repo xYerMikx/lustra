@@ -17,10 +17,14 @@ import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
 import { TEST_ID, bookingRowTestId, bookingStatusTestId } from '@/shared/lib/test-id'
 
-const SCOPES: Array<{ id: MasterBookingsScope; label: string }> = [
-  { id: 'upcoming', label: 'Предстоящие' },
-  { id: 'pending', label: 'На подтверждение' },
-  { id: 'past', label: 'Прошлые' },
+const SCOPES: Array<{
+  id: MasterBookingsScope
+  label: string
+  testId: string
+}> = [
+  { id: 'upcoming', label: 'Предстоящие', testId: TEST_ID.bookingsTabUpcoming },
+  { id: 'pending', label: 'На подтверждение', testId: TEST_ID.bookingsTabPending },
+  { id: 'past', label: 'Прошлые', testId: TEST_ID.bookingsTabPast },
 ]
 
 export function MasterBookingsShell() {
@@ -35,29 +39,17 @@ export function MasterBookingsShell() {
       </header>
 
       <div className={styles.tabs} role="tablist" aria-label="Фильтр записей">
-        {SCOPES.map((item) => {
-          let tabTestId = TEST_ID.bookingsTabUpcoming
-
-          if (item.id === 'pending') {
-            tabTestId = TEST_ID.bookingsTabPending
-          }
-
-          if (item.id === 'past') {
-            tabTestId = TEST_ID.bookingsTabPast
-          }
-
-          return (
-            <button
-              key={item.id}
-              type="button"
-              className={cn(styles.tab, scope === item.id && styles.tabActive)}
-              data-testid={tabTestId}
-              onClick={() => setScope(item.id)}
-            >
-              {item.label}
-            </button>
-          )
-        })}
+        {SCOPES.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={cn(styles.tab, scope === item.id && styles.tabActive)}
+            data-testid={item.testId}
+            onClick={() => setScope(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
 
       {list.status === 'loading' ? (

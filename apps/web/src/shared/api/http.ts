@@ -137,14 +137,14 @@ async function rawApiFetch(
   return { response, payload }
 }
 
-export async function apiFetch<T = undefined>(
+export async function apiFetch<T = void>(
   path: string,
   init: RequestInit = {},
-): Promise<T | undefined> {
+): Promise<T> {
   const first = await rawApiFetch(path, init)
 
   if (first.response.status === 204) {
-    return undefined
+    return undefined as T
   }
 
   if (first.response.ok) {
@@ -158,7 +158,7 @@ export async function apiFetch<T = undefined>(
       const retry = await rawApiFetch(path, init)
 
       if (retry.response.status === 204) {
-        return undefined
+        return undefined as T
       }
 
       if (retry.response.ok) {

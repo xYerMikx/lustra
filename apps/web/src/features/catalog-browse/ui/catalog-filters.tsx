@@ -41,7 +41,7 @@ export function CatalogFilters({
   const [ratingMin, setRatingMin] = useState(
     query.ratingMin != null ? String(query.ratingMin) : '',
   )
-  const [sort, setSort] = useState(query.sort ?? 'recommended')
+  const [sort, setSort] = useState<string>(query.sort ?? 'recommended')
 
   const serviceOptions = [
     { value: '', label: 'Любая услуга' },
