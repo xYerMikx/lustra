@@ -11,10 +11,13 @@ dist
 build
 coverage
 node_modules
+apps/web/e2e
+apps/landing/src
+apps/landing/public
+apps/landing/dist
 playwright-report
 test-results
 blob-report
-apps/web/e2e
 **/*.md
 !README.md
 .env

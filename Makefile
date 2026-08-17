@@ -8,7 +8,7 @@ PNPM    ?= pnpm
 
 .PHONY: help setup install env infra up down wait-db db migrate seed \
 	start dev stop restart status studio build test test-e2e test-e2e-headed \
-	test-e2e-ui typecheck logs prod-env prod-build prod-up prod-down prod-logs
+	test-e2e-ui typecheck logs prod-env prod-build prod-build-api prod-up prod-down prod-logs
 
 help: ## список команд
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -106,6 +106,9 @@ prod-env: ## скопировать .env.production из example, если ещ�
 
 prod-build: prod-env ## собрать prod-образы (api, web, caddy+landing)
 	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production build
+
+prod-build-api: ## linux/amd64 api image (как Railway), без compose
+	docker build --platform linux/amd64 -f deploy/api/Dockerfile -t lumira-api:local .
 
 prod-up: prod-env ## поднять prod-стек (нужен заполненный .env.production)
 	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production up -d
