@@ -4,6 +4,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 WORKDIR /repo
+ENV HUSKY=0
 
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
@@ -14,32 +15,26 @@ COPY packages/db/package.json packages/db/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/config/package.json packages/config/
 COPY packages/ui/package.json packages/ui/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --filter @lustra/api...
 
 FROM deps AS build
 COPY . .
-ENV DATABASE_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
-ENV DIRECT_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
+ENV DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build?schema=public
+ENV DIRECT_URL=postgresql://build:build@127.0.0.1:5432/build?schema=public
 RUN pnpm --filter @lustra/contracts build \
   && pnpm --filter @lustra/db build \
   && pnpm --filter @lustra/api build
-RUN pnpm --filter @lustra/api --prod deploy /out
 
 FROM node:24-bookworm-slim AS runner
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm install -g prisma@6.19.3 tsx@4.19.2
-WORKDIR /app
+  && rm -rf /var/lib/apt/lists/*
+WORKDIR /repo
 ENV NODE_ENV=production
-ENV DATABASE_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
-ENV DIRECT_URL=postgresql://prisma:prisma@127.0.0.1:5432/prisma?schema=public
-COPY --from=build /out/ ./
-COPY --from=build /repo/apps/api/dist ./dist
-COPY --from=build /repo/packages/db/prisma ./prisma
-COPY --from=build /repo/apps/api/src/scripts/ensure-admin.ts ./scripts/ensure-admin.ts
+ENV PATH="/repo/packages/db/node_modules/.bin:/repo/node_modules/.bin:$PATH"
+COPY --from=build /repo /repo
 COPY deploy/api/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh \
-  && prisma generate --schema=/app/prisma/schema.prisma
+RUN chmod +x /entrypoint.sh
+WORKDIR /repo/apps/api
 EXPOSE 3333
 ENTRYPOINT ["/entrypoint.sh"]
