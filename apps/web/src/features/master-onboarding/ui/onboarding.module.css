@@ -1,0 +1,392 @@
+.page {
+  min-height: 100dvh;
+  padding-bottom: var(--spacing-40);
+}
+
+.fallbackCopy {
+  padding: var(--spacing-40) var(--spacing-16);
+  text-align: center;
+  color: var(--color-text-2);
+}
+
+.panelWrap {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-32) 0 var(--spacing-40);
+}
+
+.panel {
+  width: min(560px, 100%);
+  padding: var(--spacing-32) var(--spacing-24);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-14);
+  box-shadow: var(--shadow-1);
+}
+
+.form {
+  display: grid;
+  gap: var(--spacing-16);
+}
+
+.formError,
+.fieldError {
+  color: var(--color-accent-700);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.eyebrow {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+  margin-bottom: var(--spacing-12);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-32);
+  line-height: var(--text-32--line-height);
+  margin-bottom: var(--spacing-12);
+}
+
+.copy {
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  margin-bottom: var(--spacing-16);
+}
+
+.slugHint {
+  color: var(--color-text);
+  font-weight: var(--font-weight-600);
+}
+
+.skipNote {
+  margin: 0 0 var(--spacing-20);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-8);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-2);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.error {
+  color: var(--color-accent-700);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-8);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-24);
+}
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12) var(--spacing-8);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-3);
+  text-align: center;
+}
+
+.stepItemActive {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+  color: var(--color-accent-700);
+  box-shadow: var(--shadow-1);
+}
+
+.stepItemDone {
+  border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
+  color: var(--color-text-2);
+}
+
+.stepIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-24);
+  height: var(--spacing-24);
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: var(--text-13);
+  line-height: 1;
+  font-weight: var(--font-weight-600);
+}
+
+.stepCheckIcon {
+  display: block;
+}
+
+.stepItemActive .stepIndex {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.stepItemDone .stepIndex {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-on-accent);
+}
+
+.stepLabel {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-600);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+  margin-bottom: var(--spacing-8);
+}
+
+.radioGroup {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  min-height: 44px;
+  padding: 0 var(--spacing-16);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  cursor: pointer;
+}
+
+.radioOption:has(.radioInput:checked) {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+}
+
+.radioInput {
+  appearance: none;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  display: grid;
+  place-content: center;
+  flex-shrink: 0;
+}
+
+.radioInput::before {
+  content: '';
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: 50%;
+  transform: scale(0);
+  background: var(--color-accent);
+  transition: transform var(--duration-150) ease;
+}
+
+.radioInput:checked {
+  border-color: var(--color-accent);
+}
+
+.radioInput:checked::before {
+  transform: scale(1);
+}
+
+.templateBlock {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.copyMuted {
+  color: var(--color-text-3);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  margin: 0;
+}
+
+.templateList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-8);
+}
+
+@media (min-width: 560px) {
+  .templateList {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.templateChip {
+  appearance: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  font-family: var(--font-text);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  text-align: left;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+.templateChip:hover {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+}
+
+.templateChipActive {
+  border-color: var(--color-accent);
+  background: var(--color-surface-2);
+  color: var(--color-accent-700);
+  font-weight: var(--font-weight-600);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+  align-items: center;
+}
+
+.actionsGrow {
+  flex: 1;
+  min-width: 140px;
+}
+
+.dayList {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.dayRow {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: var(--spacing-12);
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+}
+
+.dayRowDisabled {
+  background: var(--color-surface-2);
+}
+
+.dayToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: 40px;
+  color: var(--color-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  font-weight: var(--font-weight-600);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dayCheck {
+  appearance: none;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-4);
+  background: var(--color-surface);
+  display: grid;
+  place-content: center;
+  flex-shrink: 0;
+}
+
+.dayCheck::before {
+  content: '';
+  width: var(--spacing-8);
+  height: var(--spacing-12);
+  border-right: 2px solid var(--color-on-accent);
+  border-bottom: 2px solid var(--color-on-accent);
+  transform: rotate(45deg) scale(0);
+  transition: transform var(--duration-150) ease;
+  justify-self: center;
+  align-self: center;
+}
+
+.dayCheck:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.dayCheck:checked::before {
+  transform: rotate(45deg) scale(1);
+}
+
+.dayTimes {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--spacing-8);
+  align-items: center;
+}
+
+.dayTimeSep {
+  color: var(--color-text-3);
+  font-size: var(--text-13);
+}
+
+.timeInput {
+  min-height: 40px;
+  width: 100%;
+  padding: 0 var(--spacing-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.timeInput:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.timeInput:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+@media (max-width: 560px) {
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dayRow {
+    grid-template-columns: 1fr;
+  }
+}

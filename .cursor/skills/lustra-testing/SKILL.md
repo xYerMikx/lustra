@@ -8,7 +8,7 @@ description: >-
 
 # Lustra testing
 
-Rules summary: `.cursor/rules/lustra-testing.mdc`. Product acceptance cases: PRD §17, TECH-DESIGN §11.6.
+Rules summary: `.cursor/rules/lustra-testing.mdc`, smoke markers: `.cursor/rules/lustra-smoke-data.mdc`. Product acceptance: PRD §17, TECH-DESIGN §29 (smoke), §28 (slices).
 
 ## What to unit-test
 
@@ -54,9 +54,27 @@ Mobile viewport default. One file per flow under future `apps/web/e2e/`.
 - Prefer deterministic seed data over random UUIDs in assertions
 - New pure util or domain policy in a PR **without** a test is incomplete
 
+## Smoke data markers (required)
+
+All manual/API smoke and future e2e seeds must be identifiable for cleanup:
+
+| Entity | Pattern |
+|---|---|
+| User email | `{role}.smoke.{runId}@example.com` |
+| Booking idempotency | `smoke:{runId}:…` |
+
+- Fresh `runId` per run (`date +%s` or `$GITHUB_RUN_ID`)
+- Domain `@example.com` only
+- Reference impl: `apps/api/postman/run-auth-smoke.sh`
+- Postman: update collection via MCP, not JSON in git
+
+**Cleanup (planned):** `packages/db/src/cleanup-smoke.ts` + `pnpm db:cleanup:smoke` with `--dry-run` / `--execute`, prod guard, FK-safe order. Implement in a dedicated PR — do not block feature PRs.
+
 ## Commands
 
 ```bash
-pnpm test          # unit via turbo
-pnpm test:e2e      # when Playwright/API e2e packages wired
+pnpm test                              # unit via turbo
+pnpm test:e2e                          # when Playwright/API e2e packages wired
+apps/api/postman/run-auth-smoke.sh     # local auth curl smoke (creates marked users)
+# pnpm db:cleanup:smoke --dry-run      # planned — not wired yet
 ```

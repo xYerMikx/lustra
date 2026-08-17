@@ -1,0 +1,58 @@
+.card {
+  display: block;
+  padding: var(--spacing-20);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-14);
+  box-shadow: var(--shadow-1);
+  transition:
+    border-color var(--duration-150) ease,
+    box-shadow var(--duration-150) ease,
+    transform var(--duration-150) ease;
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-border));
+  box-shadow: var(--shadow-2);
+  transform: translateY(-2px);
+}
+
+.cardTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  margin-bottom: var(--spacing-8);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  line-height: var(--text-20--line-height);
+  font-weight: var(--font-weight-700);
+}
+
+.rating {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-600);
+  color: var(--color-gold);
+}
+
+.specialty {
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  margin-bottom: var(--spacing-16);
+}
+
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+  padding-top: var(--spacing-12);
+  border-top: 1px solid var(--color-border);
+}

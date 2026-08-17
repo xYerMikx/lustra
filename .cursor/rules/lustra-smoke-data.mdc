@@ -1,0 +1,49 @@
+---
+description: Smoke/e2e test data markers and cleanup policy
+alwaysApply: true
+---
+
+# Lustra — smoke test data
+
+## Why markers
+
+Postman MCP, curl scripts, and Playwright create **real rows** in Postgres. Without markers, cleanup is unsafe. All smoke and e2e data must be identifiable by convention.
+
+## Markers (required)
+
+| Entity | Pattern | Example |
+|---|---|---|
+| User email | `{role}.smoke.{runId}@example.com` | `client.smoke.1723299840@example.com` |
+| `runId` | Unix timestamp or CI run id | `date +%s`, `$GITHUB_RUN_ID` |
+| Booking `Idempotency-Key` | `smoke:{runId}:…` | `smoke:1723299840:hold-1` |
+| Master slug (e2e, later) | `smoke-{runId}-…` | when onboarding e2e lands |
+
+- `role`: `client` \| `master` \| `admin`
+- Domain **`@example.com` only** — never real domains in smoke
+- Per-run fresh `runId` in scripts (see `apps/api/postman/run-auth-smoke.sh`)
+
+## Cleanup (planned — not in auth PR)
+
+Target: `packages/db/src/cleanup-smoke.ts` + `pnpm db:cleanup:smoke` in a follow-up PR.
+
+| Flag | Behavior |
+|---|---|
+| `--dry-run` | default — print counts, no deletes |
+| `--execute` | delete matching rows |
+| `--run-id=<id>` | optional filter to one run |
+
+Delete order (FK-safe): bookings/holds → refresh tokens → users (cascaded profiles).
+
+Guards:
+
+- Refuse `--execute` when `DATABASE_URL` looks like production
+- Only rows matching markers above
+- Log counts before delete
+
+Until the script lands: reset local DB via `docker compose down -v` or manual `DELETE` by email pattern.
+
+## Agents
+
+- New smoke/e2e helpers **must** use these markers
+- Do **not** add the cleanup script unless explicitly requested
+- Cross-ref: `.cursor/skills/lustra-testing/SKILL.md`, `docs/TECH-DESIGN.md` §29, `docs/PRD.md` §17

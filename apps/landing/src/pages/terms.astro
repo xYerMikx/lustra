@@ -1,0 +1,19 @@
+---
+import { getEntry } from 'astro:content'
+import BaseLayout from '../layouts/base-layout.astro'
+import LegalStub from '../components/legal-stub.astro'
+
+const content = (await getEntry('sections', 'terms'))!.data
+---
+
+<BaseLayout
+  title="Пользовательское соглашение · Lustra"
+  description="Условия использования платформы Lustra."
+  canonicalPath="/terms"
+>
+  <LegalStub
+    title={content.title!}
+    lead={content.lead}
+    paragraphs={content.body ?? []}
+  />
+</BaseLayout>

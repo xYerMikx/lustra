@@ -37,4 +37,12 @@ export class DomainError extends Error {
   static invalidState(message = 'Недопустимый переход статуса', details?: unknown) {
     return new DomainError('INVALID_STATE', message, details)
   }
+
+  static cancelCutoffPassed(details?: unknown) {
+    return new DomainError(
+      'CANCEL_CUTOFF_PASSED',
+      'Слишком поздно отменять запись — обратитесь к мастеру',
+      details,
+    )
+  }
 }

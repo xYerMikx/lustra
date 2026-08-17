@@ -8,7 +8,7 @@
 
 - Node ≥ 20.11
 - pnpm 9.15 (`packageManager` в корневом `package.json`)
-- Docker (Postgres 16 + Redis 7)
+- Docker (Postgres 16 + Redis 7 + MinIO)
 
 ## Быстрый старт
 
@@ -16,7 +16,7 @@
 
 ```bash
 make setup    # один раз: install + .env + docker + migrate + seed
-make start    # Postgres/Redis + api + web + landing
+make start    # Postgres/Redis/MinIO + api + web + landing
 ```
 
 `make start` блокирует терминал (turbo dev). Стоп приложений — `Ctrl+C`; контейнеры: `make down`.
@@ -36,11 +36,44 @@ pnpm dev
 |---|---|---|
 | Postgres | 5432 | `lustra` / `lustra` / `lustra_dev` |
 | Redis | 6379 | очереди / кэш |
+| MinIO | 9000 | S3-хранилище (консоль http://localhost:9001, `lustra` / `lustra-minio`) |
 | API | 3333 | NestJS (Fastify) — `/health`, `/health/deep` |
 | Web | 3000 | Next.js 15 |
 | Landing | 4321 | Astro |
 
 Полезное: `make help` · `make status` · `make studio` · `make test`
+
+Админ (не через регистрацию):
+
+```bash
+# в apps/api/.env
+ADMIN_BOOTSTRAP_EMAIL=admin@example.com
+ADMIN_BOOTSTRAP_PASSWORD='at-least-8-chars'
+# опционально: ADMIN_IP_ALLOWLIST=127.0.0.1
+
+pnpm --filter @lustra/api ensure-admin
+```
+
+Вход → `/admin`. Роль `admin` нельзя получить через `/auth/register`.
+
+## Production (VPS)
+
+Машина: **Hetzner CX33, Helsinki (HEL1)** — 4 vCPU / 8 GB RAM / 80 GB. CX22 (4 GB) тесен для Postgres + Redis + API + Next на одном хосте.
+
+На сервере: Docker Engine + Compose, ufw: 22 (свой IP), 80, 443. В Cloudflare записи `@`, `www`, `app`, `api` на IP VPS; пока Caddy берёт Let’s Encrypt — **DNS only** (серое облако), затем прокси и SSL **Full**.
+
+Секреты — файл **`.env.production` на VPS** (`chmod 600`), не git и не панель Hetzner. Скопируй example, заполни, потом `make prod-build && make prod-up`. Когда появится CI, те же ключи положим в GitHub Environment secrets и будем заливать файл на сервер из Actions.
+
+```bash
+cp .env.production.example .env.production
+# пароли, JWT, DOMAIN, ACME_EMAIL, STORAGE_*, CORS, ADMIN_*
+make prod-build
+make prod-up
+make prod-logs
+```
+
+Стек: `deploy/docker-compose.yml` (postgres, redis, api, web, caddy + статика лендинга). Postgres и Redis **не** публикуются наружу.
+
 ## Структура
 
 ```
@@ -56,7 +89,8 @@ lustra/
 ├─ docs/
 │  ├─ PRD.md
 │  └─ TECH-DESIGN.md
-├─ docker-compose.yml
+├─ deploy/          # prod Dockerfiles + Caddy + compose
+├─ docker-compose.yml  # local Postgres/Redis/MinIO
 └─ .cursor/
    ├─ rules/        # постоянные правила агента
    └─ skills/       # скиллы по фронту / беку / дизайну / тестам

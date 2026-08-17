@@ -1,0 +1,131 @@
+'use client'
+
+import cn from 'classnames'
+
+import { useSession } from '@/features/auth'
+import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
+import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
+import { EmailVerifyBanner } from '@/features/master-cabinet/ui/email-verify-banner'
+import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-share'
+import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
+import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
+import { ButtonLink } from '@/shared/ui/button'
+import { TEST_ID } from '@/shared/lib/test-id'
+import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
+
+export function MasterCabinetHub() {
+  const session = useSession()
+  const {
+    profile,
+    profileError,
+    isProfileLoading,
+    upcomingSlots,
+    isCalendarLoading,
+    setProfile,
+  } = useMasterCabinet()
+
+  if (isProfileLoading) {
+    return (
+      <div className={styles.wrap}>
+        <section className={styles.panel}>
+          <p className={styles.muted}>Загружаем кабинет…</p>
+        </section>
+      </div>
+    )
+  }
+
+  if (profileError || !profile) {
+    return (
+      <div className={styles.wrap}>
+        <section className={styles.panel}>
+          <p className={styles.error} role="alert">
+            Не удалось загрузить профиль мастера
+          </p>
+        </section>
+      </div>
+    )
+  }
+
+  const district = profile.primaryLocation?.districtName
+  const isPublic =
+    profile.status === 'published' || profile.status === 'pending_review'
+  const canSubmit = profile.status === 'draft'
+
+  return (
+    <div className={styles.wrap} data-testid={TEST_ID.pageMasterCabinet}>
+      <section className={styles.panel}>
+        <p className={styles.eyebrow}>Личный кабинет</p>
+        <h1 className={styles.title}>{profile.displayName}</h1>
+        <div className={styles.meta}>
+          <span>{profileStatusLabel(profile.status)}</span>
+          {district ? <span>{district}</span> : null}
+        </div>
+        {profile.headline ? (
+          <p className={styles.headline}>{profile.headline}</p>
+        ) : null}
+
+        {!session.emailVerified ? <EmailVerifyBanner /> : null}
+
+        <div className={styles.actions}>
+          <ButtonLink href="/app/master/profile">Редактировать профиль</ButtonLink>
+          <ButtonLink href="/app/master/portfolio" variant="ghost">
+            Портфолио
+          </ButtonLink>
+          <ButtonLink href="/app/master/bookings" variant="ghost">
+            Записи
+          </ButtonLink>
+          <ButtonLink href="/app/master/calendar" variant="ghost">
+            Календарь
+          </ButtonLink>
+          <ButtonLink href="/app/master/reviews" variant="ghost">
+            Отзывы
+          </ButtonLink>
+          <ButtonLink href="/app/onboarding" variant="ghost">
+            Онбординг
+          </ButtonLink>
+        </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Публичная страница</h2>
+          <PublicProfileShare
+            slug={profile.slug}
+            displayName={profile.displayName}
+          />
+          {canSubmit && session.emailVerified ? (
+            <div className={cn(styles.actions, styles.actionsAfter)}>
+              <SubmitForReviewButton onPublished={setProfile} />
+            </div>
+          ) : null}
+          {profile.status === 'draft' ? (
+            <p className={styles.hint}>
+              Черновик не открывается по ссылке. Отправьте профиль на проверку.
+            </p>
+          ) : null}
+          {profile.status === 'pending_review' ? (
+            <p className={styles.hint}>
+              Ссылка уже работает. В каталоге появится после одобрения.
+            </p>
+          ) : null}
+          {!isPublic && profile.status !== 'draft' ? (
+            <p className={styles.hint}>
+              Страница сейчас недоступна клиентам ({profileStatusLabel(profile.status)}).
+            </p>
+          ) : null}
+        </div>
+
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>Ближайшие свободные слоты</h2>
+          <UpcomingSlotsList
+            slots={upcomingSlots}
+            isLoading={isCalendarLoading}
+          />
+          <div className={cn(styles.actions, styles.actionsAfter)}>
+            <ButtonLink href="/app/master/calendar" variant="ghost">
+              Открыть календарь
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}

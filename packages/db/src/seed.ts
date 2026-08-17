@@ -38,7 +38,7 @@ const CATEGORIES: Array<{
     name: 'Ногти',
     templates: [
       { title: 'Маникюр классический', durationMin: 60, price: 35 },
-      { title: 'Маникюр комбинированный', durationMin: 90, price: 45 },
+      { title: 'Маникюр комбинированный', durationMin: 90, price: 60 },
       { title: 'Маникюр с покрытием гель-лак', durationMin: 90, price: 50 },
       { title: 'Педикюр классический', durationMin: 75, price: 45 },
       { title: 'Педикюр аппаратный', durationMin: 90, price: 55 },
@@ -102,7 +102,7 @@ const CATEGORIES: Array<{
   {
     name: 'Тату и пирсинг',
     templates: [
-      { title: 'Пирсинг мочки уха', durationMin: 20, price: 25 },
+      { title: 'Пирсинг мочки уха', durationMin: 30, price: 25 },
       { title: 'Татуаж бровей', durationMin: 120, price: 90 },
       { title: 'Перманентный макияж губ', durationMin: 120, price: 100 },
     ],

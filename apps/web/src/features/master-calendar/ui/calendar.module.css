@@ -1,0 +1,393 @@
+.page {
+  min-height: 100dvh;
+  padding-bottom: var(--spacing-40);
+}
+
+.shell {
+  margin-top: var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.eyebrow {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-32);
+  line-height: var(--text-32--line-height);
+  color: var(--color-text);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.rangeLabel {
+  font-size: var(--text-16);
+  line-height: var(--text-16--line-height);
+  color: var(--color-text-2);
+  min-width: calc(var(--spacing-96) + var(--spacing-96));
+}
+
+.modeSwitch {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
+.modeButton {
+  min-height: 44px;
+  padding: 0 var(--spacing-16);
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  box-shadow: none;
+  transform: none;
+}
+
+.modeButton:hover:not(:disabled) {
+  border-color: transparent;
+  color: var(--color-text);
+  transform: none;
+}
+
+.modeButtonActive {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.stateBox {
+  padding: var(--spacing-24);
+  border-radius: var(--radius-14);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-2);
+}
+
+.errorBox {
+  padding: var(--spacing-24);
+  border-radius: var(--radius-14);
+  border: 1px solid var(--color-danger);
+  background: var(--color-surface);
+  color: var(--color-danger);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-16);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.swatchOpen {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-4);
+  background: var(--color-sage);
+}
+
+.swatchBlock {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-4);
+  background: var(--color-warning);
+}
+
+.swatchException {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-4);
+  background: var(--color-accent);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-14);
+  background: var(--color-surface);
+  padding: var(--spacing-12);
+}
+
+.hourRow {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: var(--spacing-8);
+  align-items: start;
+}
+
+.hourLabel {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+  padding-top: var(--spacing-8);
+}
+
+.hourCell {
+  min-height: 48px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) 0;
+  align-items: flex-start;
+}
+
+.slotChip {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-4);
+  background: color-mix(in srgb, var(--color-sage) 22%, var(--color-surface));
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.blockChip {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-4);
+  background: color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.exceptionChip {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-radius: var(--radius-4);
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  color: var(--color-text);
+}
+
+.exceptionBanner {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-8);
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  text-align: left;
+}
+
+.weekGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--spacing-8);
+}
+
+.weekDay {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  padding: var(--spacing-12);
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  text-align: left;
+  cursor: pointer;
+}
+
+.weekDayToday {
+  border-color: var(--color-accent);
+}
+
+.weekDayTitle {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+  font-weight: var(--font-weight-600);
+}
+
+.weekMeta {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
+.weekBlocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.dialogBackdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: var(--z-40);
+  padding: var(--spacing-16);
+}
+
+.dialog {
+  width: min(100%, calc(var(--spacing-96) * 5));
+  background: var(--color-surface);
+  border-radius: var(--radius-14);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  box-shadow: var(--shadow-2);
+}
+
+.dialogTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-26);
+  line-height: var(--text-26--line-height);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.label {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.input,
+.select {
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  padding: 0 var(--spacing-12);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.fieldError {
+  color: var(--color-danger);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.dialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-height: 44px;
+}
+
+.suggestRoot {
+  position: relative;
+}
+
+.suggestList {
+  position: absolute;
+  z-index: var(--z-30);
+  top: calc(100% + var(--spacing-4));
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: var(--spacing-4);
+  list-style: none;
+  max-height: calc(6 * var(--spacing-40));
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+}
+
+.suggestOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-4);
+  min-height: 44px;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 0;
+  border-radius: var(--radius-4);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestOptionActive {
+  background: var(--color-surface-2);
+}
+
+.suggestName {
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.suggestPhone {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+@media (min-width: 768px) {
+  .dialogBackdrop {
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .weekGrid {
+    grid-template-columns: 1fr;
+  }
+}

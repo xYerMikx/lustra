@@ -1,0 +1,135 @@
+.shell {
+  margin-top: var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-20);
+  max-width: 720px;
+}
+
+.eyebrow {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-3);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-32);
+  line-height: var(--text-32--line-height);
+  color: var(--color-text);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+}
+
+.tab {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-2);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-10);
+  cursor: pointer;
+}
+
+.tabActive {
+  border-color: var(--color-text);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+}
+
+.row {
+  display: block;
+  padding: var(--spacing-16) 0;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.rowTitle {
+  font-size: var(--text-18);
+  line-height: var(--text-18--line-height);
+  margin-bottom: var(--spacing-4);
+}
+
+.rowMeta {
+  color: var(--color-text-2);
+  font-size: var(--text-14);
+  line-height: var(--text-14--line-height);
+}
+
+.status {
+  margin-top: var(--spacing-8);
+  color: var(--color-text-3);
+  font-size: var(--text-13);
+}
+
+.message {
+  color: var(--color-text-2);
+}
+
+.error {
+  color: var(--color-danger, #b42318);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.detailBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+  align-items: center;
+}
+
+.reasonField {
+  width: 100%;
+  max-width: 420px;
+  min-height: 44px;
+  padding: var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-10);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.fieldLabel,
+.rescheduleTitle {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.rescheduleTitle {
+  font-weight: var(--font-weight-600);
+  color: var(--color-text);
+}
+
+.backLink {
+  color: var(--color-text-2);
+  text-decoration: none;
+  font-size: var(--text-14);
+}

@@ -7,7 +7,8 @@ COMPOSE ?= docker compose
 PNPM    ?= pnpm
 
 .PHONY: help setup install env infra up down wait-db db migrate seed \
-	start dev stop restart status studio build test typecheck logs
+	start dev stop restart status studio build test test-e2e test-e2e-headed \
+	test-e2e-ui typecheck logs prod-env prod-build prod-up prod-down prod-logs
 
 help: ## список команд
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
@@ -27,9 +28,9 @@ env: ## скопировать .env из example, если ещё нет
 	@test -f apps/landing/.env || cp apps/landing/.env.example apps/landing/.env
 	@echo ".env на месте"
 
-up: ## поднять Postgres + Redis
+up: ## поднять Postgres + Redis + MinIO
 	$(COMPOSE) up -d
-	@echo "Postgres :5432  Redis :6379"
+	@echo "Postgres :5432  Redis :6379  MinIO :9000 (console :9001)"
 
 infra: up ## алиас на up
 
@@ -87,5 +88,31 @@ build: ## production build всех пакетов
 test: ## unit-тесты
 	$(PNPM) test
 
+test-e2e: ## Playwright UI e2e (мок API, без Postgres)
+	$(PNPM) --filter @lustra/web test:e2e
+
+test-e2e-headed: ## те же e2e с видимым браузером
+	$(PNPM) --filter @lustra/web test:e2e:headed
+
+test-e2e-ui: ## Playwright UI Mode (таймлайн, шаги, трейсы)
+	$(PNPM) --filter @lustra/web test:e2e:ui
+
 typecheck: ## tsc по монорепо
 	$(PNPM) typecheck
+
+prod-env: ## скопировать .env.production из example, если ещё нет
+	@test -f .env.production || cp .env.production.example .env.production
+	@echo "Заполни .env.production (пароли, JWT, DOMAIN) перед prod-up"
+
+prod-build: prod-env ## собрать prod-образы (api, web, caddy+landing)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production build
+
+prod-up: prod-env ## поднять prod-стек (нужен заполненный .env.production)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production up -d
+	@echo "Caddy :80/:443  — домен из DOMAIN в .env.production"
+
+prod-down: ## остановить prod-стек (тома сохраняются)
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production down
+
+prod-logs: ## логи prod-стека
+	$(COMPOSE) -f deploy/docker-compose.yml --env-file .env.production logs -f --tail=100

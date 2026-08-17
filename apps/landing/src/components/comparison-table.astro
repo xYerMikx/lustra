@@ -1,0 +1,140 @@
+---
+interface Row {
+  criterion: string
+  direct: string
+  lustra: string
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  rows: Row[]
+}
+
+const { eyebrow, title, lead, rows } = Astro.props
+---
+
+<section class="compare section" id="compare" aria-labelledby="compare-title">
+  <div class="wrap">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2 id="compare-title">{title}</h2>
+    <p class="lead">{lead}</p>
+
+    <div class="table" role="table" aria-label="Сравнение директ и Lustra">
+      <div class="head" role="row">
+        <span role="columnheader"></span>
+        <span role="columnheader">Директ</span>
+        <span role="columnheader">Lustra</span>
+      </div>
+      {
+        rows.map((row) => (
+          <div class="row" role="row">
+            <span class="criterion" role="cell">
+              {row.criterion}
+            </span>
+            <span class="direct" role="cell">
+              {row.direct}
+            </span>
+            <span class="lustra" role="cell">
+              {row.lustra}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .wrap {
+    width: min(960px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h2 {
+    font-size: clamp(var(--text-32), 5vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 40ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .table {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-14);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .head,
+  .row {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr;
+    gap: var(--spacing-12);
+    padding: var(--spacing-16) var(--spacing-20);
+  }
+
+  .head {
+    background: var(--color-surface-2);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .row + .row {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .criterion {
+    font-weight: var(--font-weight-600);
+  }
+
+  .direct {
+    color: var(--color-text-2);
+  }
+
+  .lustra {
+    color: var(--color-accent-700);
+    font-weight: var(--font-weight-500);
+  }
+
+  @media (max-width: 720px) {
+    .head {
+      display: none;
+    }
+
+    .row {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-8);
+    }
+
+    .direct::before {
+      content: 'Директ: ';
+      color: var(--color-text-3);
+      font-weight: var(--font-weight-600);
+    }
+
+    .lustra::before {
+      content: 'Lustra: ';
+      color: var(--color-text-3);
+      font-weight: var(--font-weight-600);
+    }
+  }
+</style>

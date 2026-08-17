@@ -1,0 +1,44 @@
+---
+description: Postman via MCP — collections live in Postman, not in git
+alwaysApply: true
+---
+
+# Lustra — Postman / API smoke
+
+## Source of truth
+
+- API collections, environments, and monitors live in **Postman workspace** (synced via Postman MCP).
+- **Do not** commit Postman artifacts to the monorepo:
+  - `*.postman_collection.json`
+  - `*.postman_environment.json`
+  - `*.postman_workspace.json`
+  - exported Collection v2 dumps under `**/postman/**`
+
+## What agents must do
+
+1. Prefer **Postman MCP** (`postman` server) to create/update collections and run checks.
+2. If MCP is unavailable / unauthenticated — escalate to the user (ask for `POSTMAN_API_KEY` + workspace), do **not** invent a collection file in git as a workaround.
+3. Local one-off probes may use `curl` / short shell scripts (no secrets, no full collection dump).
+4. Never put `POSTMAN_API_KEY` or collection secrets in repo files; only `${env:POSTMAN_API_KEY}` in `.cursor/mcp.json`.
+
+## MCP setup (human)
+
+1. Create key: https://go.postman.co/settings/me/api-keys  
+2. `export POSTMAN_API_KEY='PMAK-…'` in shell **or** Cursor Settings → MCP → env  
+3. Reload MCP / restart Cursor  
+4. Optional: set workspace id in this rule once known
+
+## Workspace
+
+- Name: John Yermalayeu's Workspace
+- Workspace ID: `267d2e90-afe0-4a42-85a8-6ecfc8ebbd7c`
+- Collection: **Lustra Auth Smoke** (`53334068-a15d4d6a-e5b8-4155-bc4d-d1c30571b9a0`)
+- Environment: **Lustra Local** (`baseUrl=http://localhost:3333`)
+
+## When API changes
+
+Update the Postman collection through MCP (request + examples + auth/CSRF notes), not by editing JSON in git.
+
+## Smoke data in requests
+
+Register/login smoke requests must use marker emails: `{role}.smoke.{runId}@example.com` with a fresh `runId` per run (Postman pre-request script or collection variable). See `.cursor/rules/lustra-smoke-data.mdc`. Cleanup script is deferred to a later PR.

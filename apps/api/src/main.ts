@@ -1,4 +1,7 @@
+import { config as loadEnv } from 'dotenv'
 import 'reflect-metadata'
+
+loadEnv()
 
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
@@ -7,11 +10,15 @@ import { NestFactory } from '@nestjs/core'
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify'
 import { Logger } from 'nestjs-pino'
 
-import { AppModule } from './app.module'
-import { DomainExceptionFilter } from './common/errors/domain-exception.filter'
+import { AppModule } from '@/app.module'
+import { isProduction } from '@/common/env/is-production'
+import { DomainExceptionFilter } from '@/common/errors/domain-exception.filter'
 
 async function bootstrap() {
-  const adapter = new FastifyAdapter({ trustProxy: true })
+  const adapter = new FastifyAdapter({
+    trustProxy: true,
+    bodyLimit: 9 * 1024 * 1024,
+  })
 
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, adapter, {
     bufferLogs: true,
@@ -25,8 +32,13 @@ async function bootstrap() {
     .map((origin) => origin.trim())
     .filter(Boolean)
 
+  if (corsOrigins.length === 0 && isProduction) {
+    throw new Error('CORS_ORIGINS is required in production (comma-separated allowlist)')
+  }
+
   await app.register(fastifyHelmet, {
     contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
   await app.register(fastifyCors, {
     origin: corsOrigins.length > 0 ? corsOrigins : true,
@@ -34,8 +46,20 @@ async function bootstrap() {
   })
   await app.register(fastifyCookie)
 
-  // Swagger UI (Fastify) нужен @fastify/static — включим после установки пакета
-  // GET /api/docs появится в срезе с OpenAPI-контрактами
+  const fastify = app.getHttpAdapter().getInstance()
+  const parseImageBody = (
+    _request: unknown,
+    body: Buffer,
+    done: (error: Error | null, value?: Buffer) => void,
+  ) => {
+    done(null, body)
+  }
+
+  fastify.addContentTypeParser(
+    ['image/jpeg', 'image/png', 'image/webp', 'application/octet-stream'],
+    { parseAs: 'buffer' },
+    parseImageBody,
+  )
 
   app.enableShutdownHooks()
 

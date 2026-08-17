@@ -1,0 +1,19 @@
+---
+import { getEntry } from 'astro:content'
+import BaseLayout from '../layouts/base-layout.astro'
+import LegalStub from '../components/legal-stub.astro'
+
+const content = (await getEntry('sections', 'privacy'))!.data
+---
+
+<BaseLayout
+  title="Политика конфиденциальности · Lustra"
+  description="Политика конфиденциальности Lustra — обработка персональных данных."
+  canonicalPath="/privacy"
+>
+  <LegalStub
+    title={content.title!}
+    lead={content.lead}
+    paragraphs={content.body ?? []}
+  />
+</BaseLayout>

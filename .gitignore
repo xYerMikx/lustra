@@ -10,8 +10,10 @@ coverage/
 
 .env
 .env.local
+.env.production
 .env.*.local
 !.env.example
+!.env.production.example
 
 *.log
 npm-debug.log*
@@ -24,7 +26,18 @@ Thumbs.db
 !.vscode/extensions.json
 .idea/
 
+# Postman exports — collections live in Postman workspace (MCP), not git
+*.postman_collection.json
+*.postman_environment.json
+*.postman_workspace.json
+
 *.tsbuildinfo
 .eslintcache
 
 /packages/db/generated/
+.worktrees/
+.data/
+
+playwright-report/
+test-results/
+blob-report/

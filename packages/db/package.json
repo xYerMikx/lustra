@@ -9,7 +9,7 @@
     "build": "prisma generate && tsc -p tsconfig.json --declaration",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "seed": "tsx src/seed.ts",
+    "seed": "tsx --env-file=.env src/seed.ts",
     "studio": "prisma studio",
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."

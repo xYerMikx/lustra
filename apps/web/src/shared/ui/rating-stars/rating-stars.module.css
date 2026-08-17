@@ -1,0 +1,19 @@
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.icon {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  flex-shrink: 0;
+}
+
+.filled {
+  color: var(--color-gold);
+}
+
+.empty {
+  color: var(--color-border);
+}
