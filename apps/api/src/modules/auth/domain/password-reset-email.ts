@@ -11,7 +11,7 @@ export function passwordResetEmailCopy(input: {
   resetUrl: string
 }): { subject: string; text: string; html: string } {
   const name = input.firstName.trim() || 'вы'
-  const subject = 'Сброс пароля Lustra'
+  const subject = 'Сброс пароля Lumira'
   const text = `Здравствуйте, ${name}.\n\nСсылка для нового пароля (действует 1 час):\n${input.resetUrl}\n\nЕсли вы не запрашивали сброс, просто игнорируйте письмо.`
   const html = `<p>Здравствуйте, ${escapeHtml(name)}.</p><p>Ссылка для нового пароля (действует 1 час):</p><p><a href="${escapeHtml(input.resetUrl)}">${escapeHtml(input.resetUrl)}</a></p><p>Если вы не запрашивали сброс, просто игнорируйте письмо.</p>`
 

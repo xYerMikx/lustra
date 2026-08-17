@@ -79,7 +79,7 @@ export function AppHeader() {
   return (
     <header className={styles.header}>
       <Link href="/" className={styles.brand}>
-        Lustra
+        Lumira
       </Link>
       <div className={styles.headerEnd}>
         <nav className={styles.nav} aria-label="Основная навигация">

@@ -11,9 +11,9 @@ export function emailVerifyEmailCopy(input: {
   verifyUrl: string
 }): { subject: string; text: string; html: string } {
   const name = input.firstName.trim() || 'вы'
-  const subject = 'Подтверждение почты Lustra'
-  const text = `Здравствуйте, ${name}.\n\nПодтвердите почту по ссылке (действует 24 часа):\n${input.verifyUrl}\n\nЕсли вы не регистрировались в Lustra, просто игнорируйте письмо.`
-  const html = `<p>Здравствуйте, ${escapeHtml(name)}.</p><p>Подтвердите почту по ссылке (действует 24 часа):</p><p><a href="${escapeHtml(input.verifyUrl)}">${escapeHtml(input.verifyUrl)}</a></p><p>Если вы не регистрировались в Lustra, просто игнорируйте письмо.</p>`
+  const subject = 'Подтверждение почты Lumira'
+  const text = `Здравствуйте, ${name}.\n\nПодтвердите почту по ссылке (действует 24 часа):\n${input.verifyUrl}\n\nЕсли вы не регистрировались в Lumira, просто игнорируйте письмо.`
+  const html = `<p>Здравствуйте, ${escapeHtml(name)}.</p><p>Подтвердите почту по ссылке (действует 24 часа):</p><p><a href="${escapeHtml(input.verifyUrl)}">${escapeHtml(input.verifyUrl)}</a></p><p>Если вы не регистрировались в Lumira, просто игнорируйте письмо.</p>`
 
   return { subject, text, html }
 }

@@ -54,7 +54,7 @@ export class ResendMailer implements Mailer {
 export function createMailerFromEnv(): Mailer {
   const apiKey = process.env.RESEND_API_KEY?.trim()
   const from =
-    process.env.RESEND_FROM?.trim() || 'Lustra <noreply@lustra.by>'
+    process.env.RESEND_FROM?.trim() || 'Lumira <noreply@lumira.by>'
 
   if (apiKey) {
     return new ResendMailer(apiKey, from)

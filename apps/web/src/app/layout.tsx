@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Lustra",
-    template: "%s · Lustra",
+    default: "Lumira",
+    template: "%s · Lumira",
   },
   description: "Агрегатор бьюти-мастеров в Минске",
 };
