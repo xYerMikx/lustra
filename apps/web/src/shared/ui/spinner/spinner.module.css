@@ -1,0 +1,31 @@
+.spinner {
+  display: block;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, currentColor 28%, transparent);
+  border-top-color: currentColor;
+  border-radius: var(--radius-999);
+  animation: spin calc(var(--duration-400) * 2) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: pulse var(--duration-400) ease-in-out infinite;
+    border-top-color: color-mix(in srgb, currentColor 28%, transparent);
+    background: currentColor;
+    opacity: 0.45;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.2;
+  }
+}

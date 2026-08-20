@@ -22,6 +22,7 @@ describe('passwordResetEmailCopy', () => {
 
     expect(copy.html.includes('<script>')).toBe(false)
     expect(copy.html.includes('&lt;script&gt;')).toBe(true)
+    expect(copy.html).toContain('https://lumira.by/email-mark.png')
     expect(copy.text).toContain('http://localhost:3000/app/reset?token=a')
   })
 })

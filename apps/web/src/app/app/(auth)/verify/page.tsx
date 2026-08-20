@@ -25,8 +25,8 @@ export default function VerifyEmailPage() {
               <VerifyEmailForm />
             </Suspense>
             <p className={styles.footer}>
-              <Link className={styles.footerLink} href="/app/login">
-                К входу
+              <Link className={styles.footerLink} href="/app">
+                Перейти в кабинет
               </Link>
             </p>
           </section>

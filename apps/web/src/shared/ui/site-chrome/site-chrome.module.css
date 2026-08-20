@@ -7,7 +7,7 @@
 
 .header {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-16);
@@ -15,6 +15,7 @@
 }
 
 .brand {
+  flex-shrink: 0;
   font-family: var(--font-display);
   font-size: var(--text-26);
   line-height: var(--text-26--line-height);
@@ -52,6 +53,7 @@
 
 .account {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: var(--spacing-8);
 }
@@ -106,12 +108,13 @@
 }
 
 @media (max-width: 767px) {
-  .headerCompact .headerEnd {
-    width: auto;
+  .nav {
+    display: none;
   }
 
-  .headerCompact .nav {
-    display: none;
+  .headerEnd {
+    width: auto;
+    flex-wrap: nowrap;
   }
 }
 
@@ -126,11 +129,6 @@
   }
 
   .headerEnd {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .nav {
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 }

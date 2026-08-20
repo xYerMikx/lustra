@@ -1,3 +1,6 @@
+import { brandedEmailHtml } from '@/modules/auth/domain/branded-email-html'
+import { escapeHtml } from '@/modules/auth/domain/escape-html'
+
 export const EMAIL_VERIFY_TTL_SEC = 24 * 60 * 60
 
 export function buildEmailVerifyUrl(appUrl: string, token: string): string {
@@ -13,15 +16,7 @@ export function emailVerifyEmailCopy(input: {
   const name = input.firstName.trim() || 'вы'
   const subject = 'Подтверждение почты Lumira'
   const text = `Здравствуйте, ${name}.\n\nПодтвердите почту по ссылке (действует 24 часа):\n${input.verifyUrl}\n\nЕсли вы не регистрировались в Lumira, просто игнорируйте письмо.`
-  const html = `<p>Здравствуйте, ${escapeHtml(name)}.</p><p>Подтвердите почту по ссылке (действует 24 часа):</p><p><a href="${escapeHtml(input.verifyUrl)}">${escapeHtml(input.verifyUrl)}</a></p><p>Если вы не регистрировались в Lumira, просто игнорируйте письмо.</p>`
+  const inner = `<p>Здравствуйте, ${escapeHtml(name)}.</p><p>Подтвердите почту по ссылке (действует 24 часа):</p><p><a href="${escapeHtml(input.verifyUrl)}">${escapeHtml(input.verifyUrl)}</a></p><p>Если вы не регистрировались в Lumira, просто игнорируйте письмо.</p>`
 
-  return { subject, text, html }
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+  return { subject, text, html: brandedEmailHtml(inner) }
 }
