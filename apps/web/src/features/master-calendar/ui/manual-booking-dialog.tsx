@@ -27,6 +27,7 @@ import { TEST_ID } from '@/shared/lib/test-id'
 type ManualBookingDialogProps = {
   defaultDate: string
   defaultStartsAt: string | null
+  minDate: string
   services: ServiceView[]
   clients: MasterClientView[]
   onClose: () => void
@@ -36,6 +37,7 @@ type ManualBookingDialogProps = {
 export function ManualBookingDialog({
   defaultDate,
   defaultStartsAt,
+  minDate,
   services,
   clients,
   onClose,
@@ -55,6 +57,8 @@ export function ManualBookingDialog({
   })
 
   const clientName = watch('clientName')
+  const channel = watch('channel')
+  const showSocialHandle = channel === 'instagram' || channel === 'telegram'
 
   const submitForm = handleSubmit(async (values) => {
     setFormError(null)
@@ -67,12 +71,21 @@ export function ManualBookingDialog({
       return
     }
 
+    if (values.date < minDate) {
+      setFormError('Нельзя записать клиента на прошедшую дату')
+
+      return
+    }
+
     const parsed = CreateManualBookingInputSchema.safeParse({
       serviceId: values.serviceId,
       startsAt,
       clientName: values.clientName,
       phone: values.phone,
       channel: values.channel,
+      socialHandle: values.socialHandle.trim()
+        ? values.socialHandle.trim()
+        : undefined,
       note: values.note.trim() ? values.note.trim() : undefined,
     })
 
@@ -123,6 +136,7 @@ export function ManualBookingDialog({
               id="manual-date"
               type="date"
               className={styles.input}
+              min={minDate}
               {...register('date', { required: true })}
             />
           </div>
@@ -155,6 +169,10 @@ export function ManualBookingDialog({
                 if (client.phone) {
                   setValue('phone', client.phone, { shouldDirty: true })
                 }
+
+                setValue('socialHandle', client.socialHandle ?? '', {
+                  shouldDirty: true,
+                })
               }}
             />
           </div>
@@ -184,6 +202,21 @@ export function ManualBookingDialog({
               options={MANUAL_CHANNEL_OPTIONS}
             />
           </div>
+
+          {showSocialHandle ? (
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="manual-handle">
+                {channel === 'telegram' ? 'Ник в Telegram' : 'Ник в Instagram'}
+              </label>
+              <input
+                id="manual-handle"
+                className={styles.input}
+                placeholder="@username"
+                autoComplete="off"
+                {...register('socialHandle')}
+              />
+            </div>
+          ) : null}
 
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-note">

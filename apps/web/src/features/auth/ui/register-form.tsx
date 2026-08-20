@@ -18,6 +18,7 @@ import { register as registerAccount } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
+import { PasswordInput } from '@/shared/ui/field'
 
 const REGISTER_INTRO: Record<RegisterRole, string> = {
   client: 'Аккаунт для записи к мастерам.',
@@ -119,11 +120,10 @@ export function RegisterForm() {
 
         <label className={styles.field}>
           <span>Пароль</span>
-          <input
-            className={styles.input}
-            type="password"
+          <PasswordInput
             autoComplete="new-password"
             data-testid={TEST_ID.authRegisterPassword}
+            invalid={Boolean(errors.password)}
             {...register('password')}
           />
           {errors.password ? (

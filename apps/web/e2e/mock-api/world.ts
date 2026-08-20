@@ -371,9 +371,9 @@ export function createWorld(): MockWorld {
     ],
     conflictStartsAt: slot15.startsAt,
     calendarSlots: [
-      { id: SLOT_10_ID, ...slot10, status: 'open', clientName: null },
-      { id: SLOT_11_ID, ...slot11, status: 'open', clientName: null },
-      { id: SLOT_14_ID, ...slot14, status: 'open', clientName: null },
+      { id: SLOT_10_ID, ...slot10, status: 'open', clientName: null, bookingId: null },
+      { id: SLOT_11_ID, ...slot11, status: 'open', clientName: null, bookingId: null },
+      { id: SLOT_14_ID, ...slot14, status: 'open', clientName: null, bookingId: null },
     ],
     blocks: [],
     exceptions: [],

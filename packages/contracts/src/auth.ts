@@ -19,7 +19,7 @@ export type MasterProfileStatus = z.infer<typeof MasterProfileStatusSchema>
 const EmailSchema = z
   .string()
   .trim()
-  .email()
+  .email('Некорректный email')
   .max(254)
   .transform((value) => value.toLowerCase())
 
@@ -27,7 +27,7 @@ export const RegisterInputSchema = z
   .object({
     email: EmailSchema,
     password: z.string().min(8, 'Пароль не короче 8 символов').max(128),
-    firstName: z.string().trim().min(1).max(80),
+    firstName: z.string().trim().min(1, 'Укажите имя').max(80),
     role: RegisterRoleSchema,
     acceptTerms: z.boolean().refine((value) => value === true, {
       message: 'Нужно принять условия использования',
@@ -39,7 +39,7 @@ export type RegisterInput = z.infer<typeof RegisterInputSchema>
 export const LoginInputSchema = z
   .object({
     email: EmailSchema,
-    password: z.string().min(1).max(128),
+    password: z.string().min(1, 'Введите пароль').max(128),
   })
   .strict()
 export type LoginInput = z.infer<typeof LoginInputSchema>

@@ -11,8 +11,6 @@ import type {
 
 import {
   rangeForMode,
-  shiftAnchorDate,
-  todayYmdDate,
   type CalendarViewMode,
 } from '@/features/master-calendar/model/calendar-range'
 import { createManualBooking } from '@/shared/api/bookings-client'
@@ -31,9 +29,10 @@ import { listMasterServices } from '@/shared/api/master-services-client'
 
 type CalendarStatus = 'loading' | 'error' | 'empty' | 'success'
 
-export function useCalendarData() {
-  const [mode, setMode] = useState<CalendarViewMode>('week')
-  const [anchorDate, setAnchorDate] = useState(() => todayYmdDate())
+export function useCalendarData(
+  mode: CalendarViewMode,
+  anchorDate: string,
+) {
   const [data, setData] = useState<MasterCalendarView | null>(null)
   const [status, setStatus] = useState<CalendarStatus>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -93,27 +92,6 @@ export function useCalendarData() {
     }
   }, [range.from, range.to, reloadToken])
 
-  const goPrev = useCallback(() => {
-    setAnchorDate((current) => shiftAnchorDate(current, mode, -1))
-  }, [mode])
-
-  const goNext = useCallback(() => {
-    setAnchorDate((current) => shiftAnchorDate(current, mode, 1))
-  }, [mode])
-
-  const goToday = useCallback(() => {
-    setAnchorDate(todayYmdDate())
-  }, [])
-
-  const changeMode = useCallback((next: CalendarViewMode) => {
-    setMode(next)
-  }, [])
-
-  const selectDay = useCallback((ymdDate: string) => {
-    setAnchorDate(ymdDate)
-    setMode('day')
-  }, [])
-
   const reloadCalendar = useCallback(() => {
     setReloadToken((value) => value + 1)
   }, [])
@@ -167,17 +145,10 @@ export function useCalendarData() {
   )
 
   return {
-    mode,
-    anchorDate,
     range,
     data,
     status,
     errorMessage,
-    goPrev,
-    goNext,
-    goToday,
-    changeMode,
-    selectDay,
     reloadCalendar,
     addBlock,
     removeBlock,

@@ -107,6 +107,7 @@ export type CreateManualBookingStoreInput = {
   channel: ManualBookingChannel
   clientName: string
   phone: string
+  socialHandle: string | null
   masterNote: string | null
   now: Date
 }
@@ -129,6 +130,7 @@ export type MasterClientRecord = {
   name: string
   phone: string | null
   source: ContactChannel | null
+  socialHandle: string | null
 }
 
 export type ListBookingsScope = 'upcoming' | 'past' | 'pending'

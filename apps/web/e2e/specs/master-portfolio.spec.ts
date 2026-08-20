@@ -42,6 +42,7 @@ test.describe('master portfolio', () => {
     const itemId = await uploadStubPhoto(page, 'tmp.png')
 
     await page.getByTestId(portfolioRemoveTestId(itemId)).click()
+    await page.getByTestId(TEST_ID.confirmPopoverConfirm).click()
     await expect(page.getByTestId(TEST_ID.portfolioEmpty)).toBeVisible()
     await expect(page.getByTestId(portfolioCardTestId(itemId))).toHaveCount(0)
   })

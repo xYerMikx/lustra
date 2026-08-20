@@ -1210,7 +1210,7 @@ apps/web/src/
   /* отступы: только эти значения, шаг 4 */
   --spacing-2: 2px;  --spacing-4: 4px;   --spacing-8: 8px;   --spacing-12: 12px;
   --spacing-16: 16px; --spacing-20: 20px; --spacing-24: 24px; --spacing-32: 32px;
-  --spacing-40: 40px; --spacing-56: 56px; --spacing-64: 64px; --spacing-96: 96px;
+  --spacing-40: 40px; --spacing-56: 56px; --spacing-64: 64px; --spacing-80: 80px; --spacing-96: 96px;
 
   /* радиусы */
   --radius-4: 4px; --radius-8: 8px; --radius-14: 14px; --radius-22: 22px; --radius-999: 999px;

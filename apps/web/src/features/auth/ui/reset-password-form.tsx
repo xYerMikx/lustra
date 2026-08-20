@@ -12,6 +12,7 @@ import { resetPassword } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
+import { PasswordInput } from '@/shared/ui/field'
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams()
@@ -83,11 +84,10 @@ export function ResetPasswordForm() {
       <input type="hidden" {...register('token')} />
       <label className={styles.field}>
         <span>Новый пароль</span>
-        <input
-          className={styles.input}
-          type="password"
+        <PasswordInput
           autoComplete="new-password"
           data-testid={TEST_ID.authResetPassword}
+          invalid={Boolean(errors.password)}
           {...register('password')}
         />
         {errors.password ? (

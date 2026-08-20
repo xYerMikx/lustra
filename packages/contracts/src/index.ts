@@ -1,3 +1,10 @@
+import './zod-ru'
+
+export {
+  applyRuZodErrorMap,
+  ruZodErrorMap,
+} from './zod-ru'
+
 export {
   RegisterRoleSchema,
   UserRoleSchema,

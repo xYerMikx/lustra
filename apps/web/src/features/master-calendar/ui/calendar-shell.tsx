@@ -1,9 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { MasterClientView, ServiceView } from '@lustra/contracts'
 
+import { calendarHref, isYmdDate } from '@/features/master-calendar/model/calendar-href'
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'
+import {
+  shiftAnchorDate,
+  todayYmdDate,
+  type CalendarViewMode,
+} from '@/features/master-calendar/model/calendar-range'
 import { submitWithSuccess } from '@/features/master-calendar/model/submit-with-success'
 import { useCalendarData } from '@/features/master-calendar/model/use-calendar-data'
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
@@ -28,11 +35,24 @@ type CalendarFeedback = {
 }
 
 export function CalendarShell() {
-  const calendar = useCalendarData()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const today = todayYmdDate()
+  const mode: CalendarViewMode =
+    searchParams.get('view') === 'day' ? 'day' : 'week'
+  const dateParam = searchParams.get('date')
+  const anchorDate = isYmdDate(dateParam) ? dateParam : today
+  const calendar = useCalendarData(mode, anchorDate)
+  const calendarPath = calendarHref(mode, anchorDate)
+  const canCreateBooking = anchorDate >= today
   const [blockOpen, setBlockOpen] = useState(false)
   const [exceptionOpen, setExceptionOpen] = useState(false)
   const [manual, setManual] = useState<ManualDialogState | null>(null)
   const [feedback, setFeedback] = useState<CalendarFeedback | null>(null)
+
+  const setCalendarView = (nextMode: CalendarViewMode, nextDate: string) => {
+    router.replace(calendarHref(nextMode, nextDate), { scroll: false })
+  }
 
   const days =
     calendar.data == null
@@ -74,6 +94,15 @@ export function CalendarShell() {
 
   const handleOpenManual = async (startsAtIso: string | null) => {
     setFeedback(null)
+
+    if (!canCreateBooking) {
+      setFeedback({
+        tone: 'error',
+        text: 'Нельзя записать клиента на прошедшую дату',
+      })
+
+      return
+    }
 
     try {
       const context = await calendar.loadManualContext()
@@ -125,11 +154,17 @@ export function CalendarShell() {
         <h1 className={styles.title}>Календарь</h1>
         <CalendarToolbar
           rangeLabel={rangeLabel}
-          mode={calendar.mode}
-          onPrev={calendar.goPrev}
-          onToday={calendar.goToday}
-          onNext={calendar.goNext}
-          onChangeMode={calendar.changeMode}
+          mode={mode}
+          canCreateBooking={canCreateBooking}
+          onPrev={() =>
+            setCalendarView(mode, shiftAnchorDate(anchorDate, mode, -1))
+          }
+          onToday={() => setCalendarView(mode, today)}
+          onNext={() =>
+            setCalendarView(mode, shiftAnchorDate(anchorDate, mode, 1))
+          }
+          onChangeMode={(next) => setCalendarView(next, anchorDate)}
+          onBackToWeek={() => setCalendarView('week', anchorDate)}
           onOpenManual={() => void handleOpenManual(null)}
           onOpenBlock={() => setBlockOpen(true)}
           onOpenException={() => setExceptionOpen(true)}
@@ -160,10 +195,12 @@ export function CalendarShell() {
       <CalendarBody
         status={calendar.status}
         errorMessage={calendar.errorMessage}
-        mode={calendar.mode}
+        mode={mode}
         days={days}
+        calendarPath={calendarPath}
+        canBook={canCreateBooking}
         onReload={calendar.reloadCalendar}
-        onSelectDay={calendar.selectDay}
+        onSelectDay={(ymdDate) => setCalendarView('day', ymdDate)}
         onSelectSlot={handleOpenManual}
         onRemoveBlock={handleRemoveBlock}
         onRemoveException={handleRemoveException}
@@ -171,7 +208,7 @@ export function CalendarShell() {
 
       {blockOpen ? (
         <BlockDialog
-          defaultDate={calendar.anchorDate}
+          defaultDate={anchorDate}
           onClose={() => setBlockOpen(false)}
           onSubmit={submitBlock}
         />
@@ -179,7 +216,7 @@ export function CalendarShell() {
 
       {exceptionOpen ? (
         <ExceptionDialog
-          defaultDate={calendar.anchorDate}
+          defaultDate={anchorDate}
           onClose={() => setExceptionOpen(false)}
           onSubmit={submitException}
         />
@@ -187,8 +224,9 @@ export function CalendarShell() {
 
       {manual ? (
         <ManualBookingDialog
-          defaultDate={calendar.anchorDate}
+          defaultDate={anchorDate < today ? today : anchorDate}
           defaultStartsAt={manual.startsAtIso}
+          minDate={today}
           services={manual.services}
           clients={manual.clients}
           onClose={() => setManual(null)}

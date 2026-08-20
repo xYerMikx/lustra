@@ -10,6 +10,8 @@ export type CalendarBodyProps = {
   errorMessage: string | null
   mode: 'day' | 'week'
   days: DayItems[]
+  calendarPath: string
+  canBook: boolean
   onReload: () => void
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
@@ -22,6 +24,8 @@ export function CalendarBody({
   errorMessage,
   mode,
   days,
+  calendarPath,
+  canBook,
   onReload,
   onSelectDay,
   onSelectSlot,
@@ -54,6 +58,8 @@ export function CalendarBody({
       <CalendarGrid
         mode={mode}
         days={days}
+        calendarPath={calendarPath}
+        canBook={canBook}
         onSelectDay={onSelectDay}
         onSelectSlot={onSelectSlot}
         onRemoveBlock={onRemoveBlock}

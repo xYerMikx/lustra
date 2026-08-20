@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 import { RequireMasterSession } from '@/features/auth'
@@ -20,7 +21,9 @@ export default function MasterCalendarPage() {
     >
       <main className={styles.page}>
         <SiteChrome>
-          <CalendarShell />
+          <Suspense fallback={<p className={styles.copy}>Загружаем календарь…</p>}>
+            <CalendarShell />
+          </Suspense>
         </SiteChrome>
       </main>
     </RequireMasterSession>

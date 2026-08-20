@@ -113,3 +113,30 @@
   color: var(--color-accent-700);
   font-weight: var(--font-weight-600);
 }
+
+.optionMulti {
+  gap: var(--spacing-12);
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-4);
+  background: var(--color-surface);
+}
+
+.checkOn {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface));
+  color: var(--color-accent-700);
+}
+
+.checkIcon {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+}

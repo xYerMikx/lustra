@@ -1,10 +1,11 @@
 import type { Prisma } from '@lustra/db'
 
 import type { MasterClientRecord } from '@/modules/bookings/app/booking.ports'
+import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 
 type DbClient = Prisma.TransactionClient
 
-export function listMasterClientsInStore(
+export async function listMasterClientsInStore(
   db: DbClient,
   input: {
     masterId: string
@@ -15,7 +16,7 @@ export function listMasterClientsInStore(
   const needle = input.query.trim()
   const take = input.limit ?? 20
 
-  return db.masterClient.findMany({
+  const rows = await db.masterClient.findMany({
     where: {
       masterId: input.masterId,
       ...(needle
@@ -23,6 +24,7 @@ export function listMasterClientsInStore(
             OR: [
               { name: { contains: needle, mode: 'insensitive' } },
               { phone: { contains: needle } },
+              { note: { contains: needle, mode: 'insensitive' } },
             ],
           }
         : {}),
@@ -34,6 +36,15 @@ export function listMasterClientsInStore(
       name: true,
       phone: true,
       source: true,
+      note: true,
     },
   })
+
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    phone: row.phone,
+    source: row.source,
+    socialHandle: socialHandleFromNote(row.note),
+  }))
 }

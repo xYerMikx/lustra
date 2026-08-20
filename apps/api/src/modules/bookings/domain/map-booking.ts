@@ -3,7 +3,10 @@ import type {
   BookingMasterView,
   BookingReviewRef,
   BookingStatus,
+  ContactChannel,
 } from '@lustra/contracts'
+
+import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 
 export type BookingRecord = {
   id: string
@@ -23,12 +26,14 @@ export type BookingRecord = {
   completedAt: Date | null
   review: BookingReviewRef | null
   masterNote: string | null
+  channel: ContactChannel | null
   masterDisplayName: string
   addressHint: string | null
   addressExact: string | null
   clientName: string
   clientPhone: string | null
   clientNote: string | null
+  clientSource: ContactChannel | null
 }
 
 const PRIVATE_CLIENT_KEYS = ['masterNote', 'trustScore'] as const
@@ -87,10 +92,13 @@ export function toBookingMasterView(record: BookingRecord): BookingMasterView {
       ? record.completedAt.toISOString()
       : null,
     masterNote: record.masterNote,
+    channel: record.channel,
     client: {
       name: record.clientName,
       phone: record.clientPhone,
       note: record.clientNote,
+      socialHandle: socialHandleFromNote(record.clientNote),
+      source: record.clientSource,
     },
   }
 }

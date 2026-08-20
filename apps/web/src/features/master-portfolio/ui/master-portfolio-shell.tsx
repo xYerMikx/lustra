@@ -14,8 +14,7 @@ export function MasterPortfolioShell() {
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Портфолио</h1>
         <p className={styles.copy}>
-          До 60 фото. Перед загрузкой сжимаем до 2000 px и WebP. Первое фото
-          становится обложкой.
+          До 60 фото. Первое фото становится обложкой.
         </p>
         <MasterPortfolioBody {...portfolio} />
       </section>

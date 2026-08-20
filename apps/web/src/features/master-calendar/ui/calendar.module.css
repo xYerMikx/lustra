@@ -287,6 +287,68 @@
   border-color: var(--color-accent);
 }
 
+.weekDayPast {
+  background: var(--color-surface-2);
+  color: var(--color-text-3);
+}
+
+.weekDayHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-8);
+}
+
+.weekDayHint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
+.weekHintIcon {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+}
+
+.weekDay:hover .weekDayHint,
+.weekDay:focus-visible .weekDayHint {
+  color: var(--color-accent-700);
+}
+
+.spanChip {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-8);
+  background: color-mix(in srgb, var(--color-clay) 18%, var(--color-surface));
+  color: var(--color-text);
+  border: none;
+  cursor: pointer;
+  min-height: 44px;
+  text-align: left;
+}
+
+.spanChip[data-status='held'] {
+  background: color-mix(in srgb, var(--color-gold) 24%, var(--color-surface));
+  cursor: default;
+}
+
+.spanChip[data-status='blocked'] {
+  background: color-mix(in srgb, var(--color-warning) 28%, var(--color-surface));
+  cursor: default;
+}
+
+.exceptionRow,
+.blockRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+}
+
 .weekDayTitle {
   font-size: var(--text-13);
   line-height: var(--text-13--line-height);
@@ -431,5 +493,15 @@
   .title {
     font-size: var(--text-26);
     line-height: var(--text-26--line-height);
+  }
+}
+
+@media (min-width: 768px) {
+  .weekHintText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
 }

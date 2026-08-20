@@ -146,10 +146,13 @@ export function toMasterBooking(booking: E2eBooking): BookingMasterView {
     confirmedAt: booking.confirmedAt,
     completedAt: booking.completedAt,
     masterNote: booking.masterNote,
+    channel: null,
     client: {
       name: booking.clientName,
       phone: booking.clientPhone,
       note: booking.masterNote,
+      socialHandle: null,
+      source: null,
     },
   }
 }

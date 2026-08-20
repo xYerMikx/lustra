@@ -1,14 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import cn from 'classnames'
 import type { MeResponse } from '@lustra/contracts'
 
 import {
   buildAppNavItems,
   initialsFromUser,
 } from '@/features/app-shell/model/build-app-nav'
+import { isMasterWorkspacePath } from '@/features/app-shell/model/master-workspace-nav'
 import {
   clearSessionCache,
   loadSession,
@@ -24,6 +26,8 @@ type SessionState =
 
 export function AppHeader() {
   const router = useRouter()
+  const pathname = usePathname()
+  const compact = isMasterWorkspacePath(pathname)
   const [session, setSession] = useState<SessionState>({ status: 'loading' })
   const [loggingOut, setLoggingOut] = useState(false)
 
@@ -77,7 +81,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className={styles.header}>
+    <header className={cn(styles.header, compact && styles.headerCompact)}>
       <Link href="/" className={styles.brand}>
         Lumira
       </Link>

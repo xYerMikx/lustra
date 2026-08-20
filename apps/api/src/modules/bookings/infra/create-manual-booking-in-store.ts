@@ -4,6 +4,7 @@ import { OutboxEventType } from '@/common/events/outbox-event-type'
 import { DomainError } from '@/common/errors/domain-error'
 import type { CreateManualBookingStoreInput } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
+import { clientNoteFromHandle } from '@/modules/bookings/domain/social-handle-note'
 import { attachBookingToGranules } from '@/modules/bookings/infra/attach-booking-to-granules'
 import {
   BOOKING_CABINET_SELECT,
@@ -20,7 +21,7 @@ export async function createManualBookingInStore(
     masterId: input.masterId,
     name: input.clientName,
     phone: input.phone,
-    note: input.masterNote,
+    socialHandle: input.socialHandle,
     source: input.channel,
   })
 
@@ -99,16 +100,17 @@ async function upsertGuestMasterClient(
     masterId: string
     name: string
     phone: string
-    note: string | null
+    socialHandle: string | null
     source: CreateManualBookingStoreInput['channel']
   },
 ): Promise<{ id: string; isBlocked: boolean }> {
+  const handleNote = clientNoteFromHandle(input.socialHandle)
   const existing = await db.masterClient.findFirst({
     where: {
       masterId: input.masterId,
       phone: input.phone,
     },
-    select: { id: true, isBlocked: true },
+    select: { id: true, isBlocked: true, note: true },
   })
 
   if (existing) {
@@ -117,7 +119,7 @@ async function upsertGuestMasterClient(
       data: {
         name: input.name,
         source: input.source,
-        note: input.note,
+        note: handleNote ?? existing.note,
       },
     })
 
@@ -129,7 +131,7 @@ async function upsertGuestMasterClient(
       masterId: input.masterId,
       name: input.name,
       phone: input.phone,
-      note: input.note,
+      note: handleNote,
       source: input.source,
     },
     select: { id: true, isBlocked: true },

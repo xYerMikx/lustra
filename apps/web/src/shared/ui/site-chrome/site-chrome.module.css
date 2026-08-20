@@ -100,6 +100,21 @@
   cursor: default;
 }
 
+.headerCompact {
+  flex-wrap: nowrap;
+  padding: var(--spacing-12) 0;
+}
+
+@media (max-width: 767px) {
+  .headerCompact .headerEnd {
+    width: auto;
+  }
+
+  .headerCompact .nav {
+    display: none;
+  }
+}
+
 @media (max-width: 639px) {
   .shell {
     padding-inline: var(--spacing-12);

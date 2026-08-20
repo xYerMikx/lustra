@@ -69,6 +69,7 @@ export class MasterCalendarRepository implements MasterCalendarStore {
             select: {
               booking: {
                 select: {
+                  id: true,
                   masterClient: {
                     select: { name: true },
                   },
@@ -86,6 +87,7 @@ export class MasterCalendarRepository implements MasterCalendarStore {
           endsAt: row.endsAt,
           status: row.status,
           clientName: row.bookingLinks[0]?.booking.masterClient.name ?? null,
+          bookingId: row.bookingLinks[0]?.booking.id ?? null,
         })),
       )
   }
