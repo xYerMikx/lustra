@@ -25,8 +25,8 @@ const masterHref =
       aria-expanded="false"
       aria-label="Открыть меню"
     >
-      <span></span>
-      <span></span>
+      <span class="nav-burger-bar"></span>
+      <span class="nav-burger-bar"></span>
     </button>
 
     <nav class="nav" id="site-nav" data-open="false" aria-label="Основная навигация">
@@ -105,9 +105,9 @@ const masterHref =
 
   .nav-burger {
     display: none;
+    position: relative;
     width: var(--spacing-40);
     height: var(--spacing-40);
-    place-items: center;
     cursor: pointer;
     border: 0;
     border-radius: var(--radius-8);
@@ -120,24 +120,36 @@ const masterHref =
     outline-offset: var(--spacing-4);
   }
 
-  .nav-burger span {
-    display: block;
+  .nav-burger-bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
     width: var(--spacing-24);
-    height: 2px;
+    height: var(--spacing-2);
     background: var(--color-text);
     transition: transform var(--duration-250) var(--ease-out-quart);
   }
 
-  .nav-burger span + span {
-    margin-top: var(--spacing-8);
+  .nav-burger-bar:first-child {
+    transform: translate(-50%, calc(-50% - var(--spacing-4)));
   }
 
-  .nav-burger.is-open span:first-child {
-    transform: translateY(5px) rotate(45deg);
+  .nav-burger-bar:last-child {
+    transform: translate(-50%, calc(-50% + var(--spacing-4)));
   }
 
-  .nav-burger.is-open span:last-child {
-    transform: translateY(-5px) rotate(-45deg);
+  .nav-burger.is-open .nav-burger-bar:first-child {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .nav-burger.is-open .nav-burger-bar:last-child {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-burger-bar {
+      transition: none;
+    }
   }
 
   .nav {
@@ -161,7 +173,7 @@ const masterHref =
 
   @media (max-width: 860px) {
     .nav-burger {
-      display: grid;
+      display: block;
     }
 
     .nav {
