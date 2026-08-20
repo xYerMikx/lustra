@@ -1,7 +1,6 @@
 import styles from '@/shared/ui/close-icon/close-icon.module.css'
 
 export function CloseIcon() {
-
   return (
     <svg
       className={styles.icon}

@@ -423,7 +423,7 @@
   color: var(--color-text-2);
 }
 
-@media (width < 768px) {
+@media (max-width: 767px) {
   .weekGrid {
     grid-template-columns: 1fr;
   }

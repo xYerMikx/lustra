@@ -86,8 +86,8 @@
   --z-50: 50;
 
   /*
-   * Breakpoints are min-width. Custom properties cannot be used inside @media;
-   * copy the px value. Below a token: (width < 640px), not 639 as a new token.
+   * Breakpoints are min-width. var() is invalid inside @media — copy the px:
+   *   (min-width: 768px) includes 768; (max-width: 767px) is below that token.
    */
   --breakpoint-375: 375px;
   --breakpoint-640: 640px;

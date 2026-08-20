@@ -100,7 +100,7 @@
   cursor: default;
 }
 
-@media (width < 640px) {
+@media (max-width: 639px) {
   .shell {
     padding-inline: var(--spacing-12);
   }

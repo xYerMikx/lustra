@@ -1,7 +1,7 @@
 /**
  * Breakpoint tokens: --breakpoint-375 / 640 / 768 / 1024 (min-width).
- * Custom properties are invalid inside @media — copy the px value:
+ * var() cannot appear inside @media — copy the px:
  *   @media (min-width: 768px)
- *   @media (width < 768px)
+ *   @media (max-width: 767px)
  */
 @import './tokens.css';
