@@ -12,10 +12,11 @@ export function filterMasterClients(
 
   return clients.filter((client) => {
     const name = client.name.trim().toLowerCase()
+    const handle = (client.socialHandle ?? '').trim().toLowerCase()
     const phone = (client.phone ?? '').replace(/[^\d+]/g, '')
     const phoneNeedle = needle.replace(/[^\d+]/g, '')
 
-    if (name.includes(needle)) {
+    if (name.includes(needle) || handle.includes(needle.replace(/^@/, ''))) {
       return true
     }
 

@@ -23,6 +23,7 @@ import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { CheckSlugAvailabilityUseCase } from '@/modules/master-profile/app/check-slug-availability.usecase'
 import { GetMasterProfileUseCase } from '@/modules/master-profile/app/get-master-profile.usecase'
 import { PublishMasterProfileUseCase } from '@/modules/master-profile/app/publish-master-profile.usecase'
+import { UpdateMasterContactsUseCase } from '@/modules/master-profile/app/update-master-contacts.usecase'
 import { UpdateMasterProfileUseCase } from '@/modules/master-profile/app/update-master-profile.usecase'
 
 @Controller('master/profile')
@@ -32,6 +33,7 @@ export class MasterProfileController {
   constructor(
     private readonly getProfile: GetMasterProfileUseCase,
     private readonly updateProfile: UpdateMasterProfileUseCase,
+    private readonly updateContacts: UpdateMasterContactsUseCase,
     private readonly checkSlugAvailability: CheckSlugAvailabilityUseCase,
     private readonly publishProfile: PublishMasterProfileUseCase,
   ) {}
@@ -51,11 +53,37 @@ export class MasterProfileController {
   }
 
   @Patch()
-  patch(
+  async patch(
     @CurrentUser() user: AuthUser,
     @Body(new ZodValidationPipe(PatchMasterProfileInputSchema))
     body: PatchMasterProfileInput,
   ) {
+    const contactInput = {
+      publicPhone: body.publicPhone,
+      instagram: body.instagram,
+      telegramUsername: body.telegramUsername,
+      website: body.website,
+    }
+    const hasContactPatch = Object.values(contactInput).some(
+      (value) => value !== undefined,
+    )
+    const hasProfilePatch =
+      body.displayName !== undefined ||
+      body.slug !== undefined ||
+      body.headline !== undefined ||
+      body.bio !== undefined ||
+      body.districtId !== undefined ||
+      body.locationType !== undefined ||
+      body.addressHint !== undefined
+
+    if (hasContactPatch) {
+      if (hasProfilePatch) {
+        await this.updateProfile.execute(user, body)
+      }
+
+      return this.updateContacts.execute(user, contactInput)
+    }
+
     return this.updateProfile.execute(user, body)
   }
 

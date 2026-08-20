@@ -27,6 +27,8 @@ export function sampleBookingRecord(
     clientName: 'Клиент',
     clientPhone: '+375291112233',
     clientNote: null,
+    clientSource: null,
+    channel: null,
     ...overrides,
   }
 }

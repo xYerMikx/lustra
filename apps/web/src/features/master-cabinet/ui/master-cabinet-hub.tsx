@@ -10,6 +10,7 @@ import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
 import { ButtonLink } from '@/shared/ui/button'
+import { PencilIcon } from '@/shared/ui/icon-pack'
 import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
@@ -55,7 +56,17 @@ export function MasterCabinetHub() {
     <div className={styles.wrap} data-testid={TEST_ID.pageMasterCabinet}>
       <section className={styles.panel}>
         <p className={styles.eyebrow}>Личный кабинет</p>
-        <h1 className={styles.title}>{profile.displayName}</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>{profile.displayName}</h1>
+          <ButtonLink
+            href="/app/master/profile"
+            variant="icon"
+            aria-label="Редактировать профиль"
+            title="Редактировать профиль"
+          >
+            <PencilIcon />
+          </ButtonLink>
+        </div>
         <div className={styles.meta}>
           <span>{profileStatusLabel(profile.status)}</span>
           {district ? <span>{district}</span> : null}
@@ -65,25 +76,6 @@ export function MasterCabinetHub() {
         ) : null}
 
         {!session.emailVerified ? <EmailVerifyBanner /> : null}
-
-        <div className={styles.actions}>
-          <ButtonLink href="/app/master/profile">Редактировать профиль</ButtonLink>
-          <ButtonLink href="/app/master/portfolio" variant="ghost">
-            Портфолио
-          </ButtonLink>
-          <ButtonLink href="/app/master/bookings" variant="ghost">
-            Записи
-          </ButtonLink>
-          <ButtonLink href="/app/master/calendar" variant="ghost">
-            Календарь
-          </ButtonLink>
-          <ButtonLink href="/app/master/reviews" variant="ghost">
-            Отзывы
-          </ButtonLink>
-          <ButtonLink href="/app/onboarding" variant="ghost">
-            Онбординг
-          </ButtonLink>
-        </div>
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Публичная страница</h2>

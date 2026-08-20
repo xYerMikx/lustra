@@ -21,6 +21,8 @@ describe('GetMasterCalendarUseCase', () => {
           startsAt: new Date('2026-08-11T07:00:00.000Z'),
           endsAt: new Date('2026-08-11T07:30:00.000Z'),
           status: 'open',
+          clientName: null,
+          bookingId: null,
         },
       ]),
       listBlocks: vi.fn().mockResolvedValue([

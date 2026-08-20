@@ -8,12 +8,14 @@ const clients = [
     name: 'Оля',
     phone: '+375291112233',
     source: 'instagram' as const,
+    socialHandle: null,
   },
   {
     id: '2',
     name: 'Оксана',
     phone: '+375297776655',
     source: 'phone' as const,
+    socialHandle: null,
   },
 ]
 

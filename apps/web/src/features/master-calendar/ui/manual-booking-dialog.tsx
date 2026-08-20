@@ -20,12 +20,14 @@ import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ClientSuggest } from '@/features/master-calendar/ui/client-suggest'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { Dialog } from '@/shared/ui/dialog'
 import { FormSelect } from '@/shared/ui/select'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 type ManualBookingDialogProps = {
   defaultDate: string
   defaultStartsAt: string | null
+  minDate: string
   services: ServiceView[]
   clients: MasterClientView[]
   onClose: () => void
@@ -35,6 +37,7 @@ type ManualBookingDialogProps = {
 export function ManualBookingDialog({
   defaultDate,
   defaultStartsAt,
+  minDate,
   services,
   clients,
   onClose,
@@ -54,6 +57,8 @@ export function ManualBookingDialog({
   })
 
   const clientName = watch('clientName')
+  const channel = watch('channel')
+  const showSocialHandle = channel === 'instagram' || channel === 'telegram'
 
   const submitForm = handleSubmit(async (values) => {
     setFormError(null)
@@ -66,12 +71,21 @@ export function ManualBookingDialog({
       return
     }
 
+    if (values.date < minDate) {
+      setFormError('Нельзя записать клиента на прошедшую дату')
+
+      return
+    }
+
     const parsed = CreateManualBookingInputSchema.safeParse({
       serviceId: values.serviceId,
       startsAt,
       clientName: values.clientName,
       phone: values.phone,
       channel: values.channel,
+      socialHandle: values.socialHandle.trim()
+        ? values.socialHandle.trim()
+        : undefined,
       note: values.note.trim() ? values.note.trim() : undefined,
     })
 
@@ -92,17 +106,12 @@ export function ManualBookingDialog({
   })
 
   return (
-    <div className={styles.dialogBackdrop} role="presentation">
-      <div
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="manual-booking-title"
-        data-testid={TEST_ID.dialogManual}
-      >
-        <h2 id="manual-booking-title" className={styles.dialogTitle}>
-          Записать клиента
-        </h2>
+    <Dialog
+      title="Записать клиента"
+      titleId="manual-booking-title"
+      onClose={onClose}
+      testId={TEST_ID.dialogManual}
+    >
         <form className={formStyles.form} onSubmit={submitForm}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-service">
@@ -127,6 +136,7 @@ export function ManualBookingDialog({
               id="manual-date"
               type="date"
               className={styles.input}
+              min={minDate}
               {...register('date', { required: true })}
             />
           </div>
@@ -159,6 +169,10 @@ export function ManualBookingDialog({
                 if (client.phone) {
                   setValue('phone', client.phone, { shouldDirty: true })
                 }
+
+                setValue('socialHandle', client.socialHandle ?? '', {
+                  shouldDirty: true,
+                })
               }}
             />
           </div>
@@ -189,6 +203,21 @@ export function ManualBookingDialog({
             />
           </div>
 
+          {showSocialHandle ? (
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="manual-handle">
+                {channel === 'telegram' ? 'Ник в Telegram' : 'Ник в Instagram'}
+              </label>
+              <input
+                id="manual-handle"
+                className={styles.input}
+                placeholder="@username"
+                autoComplete="off"
+                {...register('socialHandle')}
+              />
+            </div>
+          ) : null}
+
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-note">
               Заметка
@@ -215,7 +244,6 @@ export function ManualBookingDialog({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

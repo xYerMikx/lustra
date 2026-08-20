@@ -13,6 +13,7 @@ import {
 import { buildQrProfileUrl } from '@/features/master-cabinet/model/public-profile-url'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 import { Button } from '@/shared/ui/button'
+import { QrIcon } from '@/shared/ui/icon-pack'
 
 type DownloadQrButtonsProps = {
   slug: string
@@ -58,22 +59,26 @@ export function DownloadQrButtons({ slug }: DownloadQrButtonsProps) {
 
   return (
     <div>
-      <div className={styles.actions}>
+      <div className={styles.iconActions}>
         <Button
           type="button"
-          variant="ghost"
+          variant="icon"
           disabled={busy !== null}
+          aria-label={busy === 'png' ? 'Готовим PNG' : 'Скачать QR PNG'}
+          title="QR PNG"
           onClick={downloadPng}
         >
-          {busy === 'png' ? 'Готовим PNG…' : 'Скачать QR PNG'}
+          <QrIcon />
         </Button>
         <Button
           type="button"
-          variant="ghost"
+          variant="icon"
           disabled={busy !== null}
+          aria-label={busy === 'svg' ? 'Готовим SVG' : 'Скачать QR SVG'}
+          title="QR SVG"
           onClick={downloadSvg}
         >
-          {busy === 'svg' ? 'Готовим SVG…' : 'Скачать QR SVG'}
+          <QrIcon />
         </Button>
       </div>
       {errorMessage ? (

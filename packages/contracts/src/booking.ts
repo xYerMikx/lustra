@@ -80,9 +80,10 @@ export const CreateManualBookingInputSchema = z
   .object({
     serviceId: z.string().uuid(),
     startsAt: z.string().datetime(),
-    clientName: z.string().trim().min(1).max(80),
+    clientName: z.string().trim().min(1, 'Укажите имя').max(80),
     phone: ByPhoneSchema,
     channel: ManualBookingChannelSchema,
+    socialHandle: z.string().trim().max(40).optional(),
     note: z.string().trim().max(500).optional(),
   })
   .strict()
@@ -104,6 +105,7 @@ export const MasterClientViewSchema = z.object({
   name: z.string(),
   phone: z.string().nullable(),
   source: ContactChannelSchema.nullable(),
+  socialHandle: z.string().nullable(),
 })
 export type MasterClientView = z.infer<typeof MasterClientViewSchema>
 
@@ -158,6 +160,8 @@ export const BookingMasterClientSchema = z.object({
   name: z.string(),
   phone: z.string().nullable(),
   note: z.string().nullable(),
+  socialHandle: z.string().nullable(),
+  source: ContactChannelSchema.nullable(),
 })
 export type BookingMasterClient = z.infer<typeof BookingMasterClientSchema>
 
@@ -177,6 +181,7 @@ export const BookingMasterViewSchema = z.object({
   confirmedAt: z.string().datetime().nullable(),
   completedAt: z.string().datetime().nullable(),
   masterNote: z.string().nullable(),
+  channel: ContactChannelSchema.nullable(),
   client: BookingMasterClientSchema,
 })
 export type BookingMasterView = z.infer<typeof BookingMasterViewSchema>

@@ -13,6 +13,7 @@ import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
 import { zonedLocalToUtc } from '@/shared/lib/tz'
 import { Button } from '@/shared/ui/button'
+import { Dialog } from '@/shared/ui/dialog'
 import { FormSelect } from '@/shared/ui/select'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -103,17 +104,12 @@ export function BlockDialog({
   })
 
   return (
-    <div className={styles.dialogBackdrop} role="presentation">
-      <div
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="block-dialog-title"
-        data-testid={TEST_ID.dialogBlock}
-      >
-        <h2 id="block-dialog-title" className={styles.dialogTitle}>
-          Блок времени
-        </h2>
+    <Dialog
+      title="Блок времени"
+      titleId="block-dialog-title"
+      onClose={onClose}
+      testId={TEST_ID.dialogBlock}
+    >
         <form className={formStyles.form} onSubmit={submitForm}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="block-date">
@@ -192,7 +188,6 @@ export function BlockDialog({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

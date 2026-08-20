@@ -1,3 +1,10 @@
+import './zod-ru'
+
+export {
+  applyRuZodErrorMap,
+  ruZodErrorMap,
+} from './zod-ru'
+
 export {
   RegisterRoleSchema,
   UserRoleSchema,
@@ -30,20 +37,24 @@ export {
   DistrictViewSchema,
   DistrictListResponseSchema,
   MasterLocationViewSchema,
+  MasterContactViewSchema,
   MasterProfileViewSchema,
   MasterSlugSchema,
   CheckSlugAvailabilityQuerySchema,
   CheckSlugAvailabilityResponseSchema,
+  PatchMasterContactInputSchema,
   PatchMasterProfileInputSchema,
   StepBasicsInputSchema,
   type LocationType,
   type DistrictView,
   type DistrictListResponse,
   type MasterLocationView,
+  type MasterContactView,
   type MasterProfileView,
   type MasterSlug,
   type CheckSlugAvailabilityQuery,
   type CheckSlugAvailabilityResponse,
+  type PatchMasterContactInput,
   type PatchMasterProfileInput,
   type StepBasicsInput,
 } from './master-profile'
@@ -159,6 +170,14 @@ export {
 } from './favorites'
 
 export { ByPhoneSchema, normalizeByPhone } from './phone'
+export {
+  InstagramHandleSchema,
+  TelegramHandleSchema,
+  WebsiteUrlSchema,
+  instagramProfileUrl,
+  normalizeSocialHandle,
+  telegramProfileUrl,
+} from './social-handle'
 
 export {
   REVIEW_WINDOW_DAYS,

@@ -128,7 +128,14 @@ export function handleClientBookings(
     world.bookings.push(booking)
     world.availability = world.availability.filter((item) => item.startsAt !== startsAt)
     world.calendarSlots = world.calendarSlots.map((item) =>
-      item.startsAt === startsAt ? { ...item, status: 'booked' as const } : item,
+      item.startsAt === startsAt
+        ? {
+            ...item,
+            status: 'booked' as const,
+            clientName: gated.user.firstName,
+            bookingId: booking.id,
+          }
+        : item,
     )
 
     if (idempotencyKey) {
@@ -396,7 +403,14 @@ export function handleMasterBookings(
 
     world.bookings.push(booking)
     world.calendarSlots = world.calendarSlots.map((slot) =>
-      slot.startsAt === startsAt ? { ...slot, status: 'booked' as const } : slot,
+      slot.startsAt === startsAt
+        ? {
+            ...slot,
+            status: 'booked' as const,
+            clientName: String(body.clientName ?? 'Гость'),
+            bookingId: booking.id,
+          }
+        : slot,
     )
 
     return {

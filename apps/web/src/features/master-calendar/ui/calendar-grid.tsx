@@ -8,6 +8,8 @@ import { WeekGrid } from '@/features/master-calendar/ui/week-grid'
 export type CalendarGridProps = {
   mode: 'day' | 'week'
   days: DayItems[]
+  calendarPath: string
+  canBook: boolean
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
@@ -17,6 +19,8 @@ export type CalendarGridProps = {
 export function CalendarGrid({
   mode,
   days,
+  calendarPath,
+  canBook,
   onSelectDay,
   onSelectSlot,
   onRemoveBlock,
@@ -35,9 +39,11 @@ export function CalendarGrid({
   return (
     <DayTimeline
       date={dayView.date}
-      openSlots={dayView.openSlots}
+      slots={dayView.slots}
       blocks={dayView.blocks}
       exception={dayView.exception}
+      calendarPath={calendarPath}
+      canBook={canBook}
       onSelectSlot={onSelectSlot}
       onRemoveBlock={onRemoveBlock}
       onRemoveException={onRemoveException}

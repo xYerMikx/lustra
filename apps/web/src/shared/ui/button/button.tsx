@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import styles from '@/shared/ui/button/button.module.css'
 
-export type ButtonVariant = 'primary' | 'ghost'
+export type ButtonVariant = 'primary' | 'ghost' | 'icon'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant

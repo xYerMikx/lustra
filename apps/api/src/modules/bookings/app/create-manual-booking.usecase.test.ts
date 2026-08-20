@@ -156,6 +156,31 @@ describe('CreateManualBookingUseCase', () => {
     expect(store.createManualBooking).not.toHaveBeenCalled()
   })
 
+  it('rejects when the date is in the past', async () => {
+    const store = buildStore()
+    const ensureSlots = {
+      execute: vi.fn(),
+    } as unknown as EnsureSlotsUseCase
+    const useCase = new CreateManualBookingUseCase(
+      store,
+      createTransactions(),
+      clock,
+      ensureSlots,
+    )
+
+    await expect(
+      useCase.execute(currentUser, {
+        serviceId: 'svc1',
+        startsAt: '2026-08-11T10:00:00.000Z',
+        clientName: 'Оля',
+        phone: '+375291112233',
+        channel: 'instagram',
+      }),
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
+
+    expect(store.createManualBooking).not.toHaveBeenCalled()
+  })
+
   it('maps EXCLUDE overlap to TIME_OVERLAP', async () => {
     const store = buildStore({
       createManualBooking: vi.fn().mockRejectedValue({

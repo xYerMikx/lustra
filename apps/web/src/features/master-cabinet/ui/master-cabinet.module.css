@@ -26,7 +26,20 @@
   font-family: var(--font-display);
   font-size: var(--text-32);
   line-height: var(--text-32--line-height);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
   margin-bottom: var(--spacing-8);
+}
+
+.iconActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
 }
 
 .meta {
@@ -105,7 +118,8 @@
 .shareActions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-12);
+  align-items: center;
+  gap: var(--spacing-8);
   margin-bottom: var(--spacing-12);
 }
 

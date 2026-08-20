@@ -1,0 +1,5 @@
+.icon {
+  display: block;
+  width: var(--spacing-20);
+  height: var(--spacing-20);
+}

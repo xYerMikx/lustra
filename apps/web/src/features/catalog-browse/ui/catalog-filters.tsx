@@ -14,7 +14,7 @@ import {
   CATALOG_SORT_OPTIONS,
 } from '@/features/catalog-browse/model/catalog-filter-options'
 import { catalogHref } from '@/features/catalog-browse/model/href-for-category'
-import { CatalogDistrictChecks } from '@/features/catalog-browse/ui/catalog-district-checks'
+import { CatalogDistrictSelect } from '@/features/catalog-browse/ui/catalog-district-select'
 import styles from '@/features/catalog-browse/ui/catalog-filters.module.css'
 import { Button, ButtonLink } from '@/shared/ui/button'
 import { Field, TextInput } from '@/shared/ui/field'
@@ -60,7 +60,7 @@ export function CatalogFilters({
   return (
     <form className={styles.form} method="get" action={action}>
       <div className={styles.fields}>
-        <CatalogDistrictChecks
+        <CatalogDistrictSelect
           districts={districts}
           selected={district}
           onChange={setDistrict}

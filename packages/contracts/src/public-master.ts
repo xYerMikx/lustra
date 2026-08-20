@@ -26,6 +26,7 @@ export const PublicMasterContactViewSchema = z.object({
   publicPhone: z.string().nullable(),
   instagram: z.string().nullable(),
   telegramUsername: z.string().nullable(),
+  website: z.string().nullable(),
 })
 export type PublicMasterContactView = z.infer<typeof PublicMasterContactViewSchema>
 

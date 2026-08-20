@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 import { RequireMasterSession } from '@/features/auth'
@@ -28,7 +29,9 @@ export default async function MasterBookingDetailPage({
     >
       <main className={styles.page}>
         <SiteChrome>
-          <MasterBookingDetailShell bookingId={id} />
+          <Suspense fallback={<p className={styles.copy}>Загружаем запись…</p>}>
+            <MasterBookingDetailShell bookingId={id} />
+          </Suspense>
         </SiteChrome>
       </main>
     </RequireMasterSession>

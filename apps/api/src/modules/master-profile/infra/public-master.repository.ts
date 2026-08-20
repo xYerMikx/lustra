@@ -110,6 +110,7 @@ export class PublicMasterRepository implements PublicMasterStore {
             publicPhone: true,
             instagram: true,
             telegramUsername: true,
+            website: true,
           },
         },
         stats: {

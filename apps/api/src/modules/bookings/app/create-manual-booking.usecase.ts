@@ -69,6 +69,13 @@ export class CreateManualBookingUseCase {
     const horizonEndYmd = addDaysToYmdDate(todayYmd, policy.maxHorizonDays)
     const startYmd = formatYmdDateInTimeZone(startsAt, MASTER_TIMEZONE)
 
+    if (startYmd < todayYmd) {
+      throw new DomainError(
+        'VALIDATION_FAILED',
+        'Нельзя создать запись на прошедшую дату',
+      )
+    }
+
     if (startYmd > horizonEndYmd) {
       throw new DomainError(
         'VALIDATION_FAILED',
@@ -109,6 +116,9 @@ export class CreateManualBookingUseCase {
           channel: input.channel,
           clientName: input.clientName,
           phone: input.phone,
+          socialHandle: input.socialHandle?.trim()
+            ? input.socialHandle.trim()
+            : null,
           masterNote,
           now,
         }),

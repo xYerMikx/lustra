@@ -36,6 +36,7 @@
   --spacing-40: 40px;
   --spacing-56: 56px;
   --spacing-64: 64px;
+  --spacing-80: 80px;
   --spacing-96: 96px;
 
   /* radius */
@@ -84,4 +85,13 @@
   --z-30: 30;
   --z-40: 40;
   --z-50: 50;
+
+  /*
+   * Breakpoints are min-width. var() is invalid inside @media — copy the px:
+   *   (min-width: 768px) includes 768; (max-width: 767px) is below that token.
+   */
+  --breakpoint-375: 375px;
+  --breakpoint-640: 640px;
+  --breakpoint-768: 768px;
+  --breakpoint-1024: 1024px;
 }

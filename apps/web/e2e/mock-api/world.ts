@@ -238,6 +238,7 @@ export function createWorld(): MockWorld {
           publicPhone: '+375291000001',
           instagram: 'anna.nails',
           telegramUsername: 'anna_nails',
+          website: null,
         },
         services: [
           {
@@ -324,6 +325,12 @@ export function createWorld(): MockWorld {
           addressHint: 'Фрунзенский, ориентир ТЦ',
           isPrimary: true,
         },
+        contact: {
+          publicPhone: '+375291000001',
+          instagram: 'anna.nails',
+          telegramUsername: 'anna_nails',
+          website: null,
+        },
       },
       {
         id: DRAFT_MASTER_PROFILE_ID,
@@ -335,6 +342,7 @@ export function createWorld(): MockWorld {
         experienceSince: null,
         languages: null,
         primaryLocation: null,
+        contact: null,
       },
     ],
     services: [
@@ -363,9 +371,9 @@ export function createWorld(): MockWorld {
     ],
     conflictStartsAt: slot15.startsAt,
     calendarSlots: [
-      { id: SLOT_10_ID, ...slot10, status: 'open' },
-      { id: SLOT_11_ID, ...slot11, status: 'open' },
-      { id: SLOT_14_ID, ...slot14, status: 'open' },
+      { id: SLOT_10_ID, ...slot10, status: 'open', clientName: null, bookingId: null },
+      { id: SLOT_11_ID, ...slot11, status: 'open', clientName: null, bookingId: null },
+      { id: SLOT_14_ID, ...slot14, status: 'open', clientName: null, bookingId: null },
     ],
     blocks: [],
     exceptions: [],

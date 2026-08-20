@@ -6,7 +6,9 @@ import type { PortfolioItemView } from '@lustra/contracts'
 import { portfolioModerationLabel } from '@/features/master-portfolio/model/portfolio-moderation-label'
 import { portfolioRatioClass } from '@/features/master-portfolio/model/portfolio-ratio-class'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
+import { ConfirmPopover } from '@/shared/ui/confirm-popover'
 import { Button } from '@/shared/ui/button'
+import { CoverIcon, TrashIcon } from '@/shared/ui/icon-pack'
 import {
   TEST_ID,
   portfolioCardTestId,
@@ -53,23 +55,24 @@ export function PortfolioManagerCard({
         {item.isCover ? null : (
           <Button
             type="button"
-            variant="ghost"
+            variant="icon"
             disabled={busy}
+            aria-label="Сделать обложкой"
+            title="Обложка"
             data-testid={portfolioSetCoverTestId(item.id)}
             onClick={() => onSetCover(item.id)}
           >
-            Обложка
+            <CoverIcon />
           </Button>
         )}
-        <Button
-          type="button"
-          variant="ghost"
+        <ConfirmPopover
+          title="Удалить это фото?"
           disabled={busy}
-          data-testid={portfolioRemoveTestId(item.id)}
-          onClick={() => onRemove(item.id)}
-        >
-          Удалить
-        </Button>
+          trigger={<TrashIcon />}
+          triggerLabel="Удалить фото"
+          testId={portfolioRemoveTestId(item.id)}
+          onConfirm={() => onRemove(item.id)}
+        />
       </div>
     </article>
   )

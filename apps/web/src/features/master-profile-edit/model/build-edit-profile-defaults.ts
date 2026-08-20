@@ -17,5 +17,9 @@ export function buildEditProfileDefaults(
     districtId,
     locationType: profile.primaryLocation?.type ?? 'salon',
     addressHint: profile.primaryLocation?.addressHint ?? '',
+    publicPhone: profile.contact?.publicPhone ?? '',
+    instagram: profile.contact?.instagram ?? '',
+    telegramUsername: profile.contact?.telegramUsername ?? '',
+    website: profile.contact?.website ?? '',
   }
 }

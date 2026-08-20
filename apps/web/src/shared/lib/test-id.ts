@@ -46,7 +46,9 @@ export const TEST_ID = {
   catalogEmpty: 'catalog-empty',
   catalogSubmit: 'catalog-submit',
   catalogPriceMax: 'catalog-price-max',
+  catalogDistricts: 'catalog-districts',
   catalogList: 'catalog-list',
+  confirmPopoverConfirm: 'confirm-popover-confirm',
 
   masterPublicName: 'master-public-name',
 
@@ -99,6 +101,7 @@ export const TEST_ID = {
   calendarBlockOpen: 'calendar-block-open',
   calendarExceptionOpen: 'calendar-exception-open',
   calendarManualOpen: 'calendar-manual-open',
+  calendarBackToWeek: 'calendar-back-to-week',
   calendarBlockChip: 'calendar-block-chip',
   calendarExceptionChip: 'calendar-exception-chip',
   dialogBlock: 'dialog-block',
