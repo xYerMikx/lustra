@@ -2,10 +2,12 @@
   width: min(1120px, 100%);
   margin-inline: auto;
   padding-inline: var(--spacing-16);
+  overflow-x: clip;
 }
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-16);
@@ -98,7 +100,7 @@
   cursor: default;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .shell {
     padding-inline: var(--spacing-12);
   }
@@ -106,5 +108,14 @@
   .brand {
     font-size: var(--text-20);
     line-height: var(--text-20--line-height);
+  }
+
+  .headerEnd {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .nav {
+    justify-content: flex-start;
   }
 }

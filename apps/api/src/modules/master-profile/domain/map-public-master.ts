@@ -64,6 +64,7 @@ export type PublicMasterRecord = {
     publicPhone: string | null
     instagram: string | null
     telegramUsername: string | null
+    website: string | null
   } | null
   stats: {
     ratingAvg: { toString(): string } | number | string
@@ -181,6 +182,7 @@ function toContactView(
     publicPhone: contact.publicPhone,
     instagram: contact.instagram,
     telegramUsername: contact.telegramUsername,
+    website: contact.website,
   }
 }
 

@@ -15,6 +15,7 @@ describe('CheckSlugAvailabilityUseCase', () => {
       isSlugTaken: vi.fn(),
       updateProfile: vi.fn(),
       upsertPrimaryLocation: vi.fn(),
+      upsertContact: vi.fn(),
     }
 
     const useCase = new CheckSlugAvailabilityUseCase(profiles)
@@ -33,6 +34,7 @@ describe('CheckSlugAvailabilityUseCase', () => {
       isSlugTaken: vi.fn().mockResolvedValue(true),
       updateProfile: vi.fn(),
       upsertPrimaryLocation: vi.fn(),
+      upsertContact: vi.fn(),
     }
 
     const useCase = new CheckSlugAvailabilityUseCase(profiles)

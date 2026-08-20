@@ -27,6 +27,7 @@ describe('UpdateMasterProfileUseCase', () => {
       experienceSince: null,
       languages: null,
       locations: [],
+      contact: null,
     }
   }
 
@@ -50,6 +51,7 @@ describe('UpdateMasterProfileUseCase', () => {
         locations: [],
       })),
       upsertPrimaryLocation: vi.fn(),
+      upsertContact: vi.fn(),
     }
 
     const districts: DistrictStore = {
@@ -86,6 +88,7 @@ describe('UpdateMasterProfileUseCase', () => {
         locations: [],
       })),
       upsertPrimaryLocation: vi.fn(),
+      upsertContact: vi.fn(),
     }
 
     const useCase = new UpdateMasterProfileUseCase(profiles, {
@@ -116,6 +119,7 @@ describe('UpdateMasterProfileUseCase', () => {
       isSlugTaken: vi.fn().mockResolvedValue(true),
       updateProfile: vi.fn(),
       upsertPrimaryLocation: vi.fn(),
+      upsertContact: vi.fn(),
     }
 
     const useCase = new UpdateMasterProfileUseCase(profiles, {

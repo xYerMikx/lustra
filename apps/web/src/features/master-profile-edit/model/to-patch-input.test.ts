@@ -23,6 +23,10 @@ describe('toPatchMasterProfileInput', () => {
         districtId: '11111111-1111-1111-1111-111111111111',
         locationType: 'salon',
         addressHint: '',
+        publicPhone: '',
+        instagram: '',
+        telegramUsername: '',
+        website: '',
       }),
     ).toEqual({
       displayName: 'Anna',
@@ -32,6 +36,10 @@ describe('toPatchMasterProfileInput', () => {
       districtId: '11111111-1111-1111-1111-111111111111',
       locationType: 'salon',
       addressHint: null,
+      publicPhone: null,
+      instagram: null,
+      telegramUsername: null,
+      website: null,
     })
   })
 })

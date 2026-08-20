@@ -12,6 +12,7 @@ import {
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
+import { Dialog } from '@/shared/ui/dialog'
 import { FormSelect } from '@/shared/ui/select'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -78,17 +79,12 @@ export function ExceptionDialog({
   })
 
   return (
-    <div className={styles.dialogBackdrop} role="presentation">
-      <div
-        className={styles.dialog}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="exception-dialog-title"
-        data-testid={TEST_ID.dialogException}
-      >
-        <h2 id="exception-dialog-title" className={styles.dialogTitle}>
-          Исключение в графике
-        </h2>
+    <Dialog
+      title="Исключение в графике"
+      titleId="exception-dialog-title"
+      onClose={onClose}
+      testId={TEST_ID.dialogException}
+    >
         <form className={formStyles.form} onSubmit={submitForm}>
           <div className={styles.field}>
             <label className={styles.label} htmlFor="exception-date">
@@ -169,7 +165,6 @@ export function ExceptionDialog({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

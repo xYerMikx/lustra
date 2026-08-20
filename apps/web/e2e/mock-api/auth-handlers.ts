@@ -97,6 +97,7 @@ export function handleAuth(
         experienceSince: null,
         languages: null,
         primaryLocation: null,
+        contact: null,
       })
     }
 

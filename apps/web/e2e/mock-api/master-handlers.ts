@@ -80,6 +80,34 @@ export function handleMasterCabinet(
       }
     }
 
+    const nextContact = {
+      publicPhone:
+        typeof body.publicPhone === 'string' || body.publicPhone === null
+          ? (body.publicPhone as string | null)
+          : (profile.contact?.publicPhone ?? null),
+      instagram:
+        typeof body.instagram === 'string' || body.instagram === null
+          ? (body.instagram as string | null)
+          : (profile.contact?.instagram ?? null),
+      telegramUsername:
+        typeof body.telegramUsername === 'string' || body.telegramUsername === null
+          ? (body.telegramUsername as string | null)
+          : (profile.contact?.telegramUsername ?? null),
+      website:
+        typeof body.website === 'string' || body.website === null
+          ? (body.website as string | null)
+          : (profile.contact?.website ?? null),
+    }
+
+    if (
+      body.publicPhone !== undefined ||
+      body.instagram !== undefined ||
+      body.telegramUsername !== undefined ||
+      body.website !== undefined
+    ) {
+      profile.contact = nextContact
+    }
+
     return { response: { status: 200, body: profile } }
   }
 

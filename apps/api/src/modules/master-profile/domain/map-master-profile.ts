@@ -29,6 +29,14 @@ export type MasterProfileRecord = {
   experienceSince: number | null
   languages: unknown
   locations: MasterLocationRecord[]
+  contact: MasterContactRecord | null
+}
+
+export type MasterContactRecord = {
+  publicPhone: string | null
+  instagram: string | null
+  telegramUsername: string | null
+  website: string | null
 }
 
 export function toMasterProfileView(record: MasterProfileRecord): MasterProfileView {
@@ -47,6 +55,22 @@ export function toMasterProfileView(record: MasterProfileRecord): MasterProfileV
     experienceSince: record.experienceSince,
     languages: parseLanguages(record.languages),
     primaryLocation: primary ? toLocationView(primary) : null,
+    contact: toContactView(record.contact),
+  }
+}
+
+function toContactView(
+  contact: MasterContactRecord | null,
+): MasterProfileView['contact'] {
+  if (!contact) {
+    return null
+  }
+
+  return {
+    publicPhone: contact.publicPhone,
+    instagram: contact.instagram,
+    telegramUsername: contact.telegramUsername,
+    website: contact.website,
   }
 }
 

@@ -13,7 +13,7 @@ import {
 
 export type DayItems = {
   date: string
-  openSlots: MasterCalendarSlotView[]
+  slots: MasterCalendarSlotView[]
   blocks: TimeBlockView[]
   exception: ScheduleExceptionView | null
 }
@@ -32,12 +32,11 @@ export function groupCalendarByDay(
 
     days.push({
       date: cursor,
-      openSlots: data.slots.filter(
-        (slot) =>
-          slot.status === 'open' &&
-          new Date(slot.startsAt) >= dayStart &&
-          new Date(slot.startsAt) < dayEnd,
-      ),
+      slots: data.slots.filter((slot) => {
+        const startsAt = new Date(slot.startsAt)
+
+        return startsAt >= dayStart && startsAt < dayEnd
+      }),
       blocks: data.blocks.filter((block) => {
         const startsAt = new Date(block.startsAt)
         const endsAt = new Date(block.endsAt)
@@ -91,4 +90,8 @@ export function dateLabel(ymdDate: string): string {
     day: 'numeric',
     month: 'short',
   }).format(instant)
+}
+
+export function openSlotCount(slots: MasterCalendarSlotView[]): number {
+  return slots.filter((slot) => slot.status === 'open').length
 }

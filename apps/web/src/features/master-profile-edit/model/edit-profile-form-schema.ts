@@ -13,6 +13,10 @@ export const EditMasterProfileFormSchema = z
     districtId: z.string().uuid('Выберите район'),
     locationType: LocationTypeSchema,
     addressHint: z.string().trim().max(200),
+    publicPhone: z.string(),
+    instagram: z.string(),
+    telegramUsername: z.string(),
+    website: z.string(),
   })
   .strict()
 

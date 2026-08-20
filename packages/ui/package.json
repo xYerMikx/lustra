@@ -4,9 +4,11 @@
   "version": "0.1.0",
   "description": "Lustra design tokens and shared UI primitives",
   "exports": {
-    "./tokens.css": "./tokens.css"
+    "./tokens.css": "./tokens.css",
+    "./breakpoints.css": "./breakpoints.css"
   },
   "files": [
-    "tokens.css"
+    "tokens.css",
+    "breakpoints.css"
   ]
 }

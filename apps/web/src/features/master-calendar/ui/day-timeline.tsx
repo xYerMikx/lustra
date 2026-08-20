@@ -12,6 +12,7 @@ import {
   slotsForHour,
 } from '@/features/master-calendar/model/group-calendar'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { DaySlotChip } from '@/features/master-calendar/ui/day-slot-chip'
 import { formatTimeInTimeZone } from '@/shared/lib/tz'
 
 const HOURS = Array.from({ length: 15 }, (_, index) => index + 8)
@@ -28,7 +29,7 @@ const REASON_LABELS: Record<TimeBlockView['reason'], string> = {
 
 type DayTimelineProps = {
   date: string
-  openSlots: MasterCalendarSlotView[]
+  slots: MasterCalendarSlotView[]
   blocks: TimeBlockView[]
   exception: ScheduleExceptionView | null
   onSelectSlot: (startsAtIso: string) => void
@@ -38,7 +39,7 @@ type DayTimelineProps = {
 
 export function DayTimeline({
   date,
-  openSlots,
+  slots,
   blocks,
   exception,
   onSelectSlot,
@@ -59,7 +60,7 @@ export function DayTimeline({
         </button>
       ) : null}
       {HOURS.map((hour) => {
-        const hourSlots = slotsForHour(openSlots, date, hour)
+        const hourSlots = slotsForHour(slots, date, hour)
         const hourBlocks = blocks.filter((block) =>
           blockOverlapsHour(block, date, hour),
         )
@@ -71,14 +72,11 @@ export function DayTimeline({
             </div>
             <div className={styles.hourCell}>
               {hourSlots.map((slot) => (
-                <button
+                <DaySlotChip
                   key={slot.id}
-                  type="button"
-                  className={styles.slotChip}
-                  onClick={() => onSelectSlot(slot.startsAt)}
-                >
-                  {formatTimeInTimeZone(new Date(slot.startsAt))}
-                </button>
+                  slot={slot}
+                  onSelect={onSelectSlot}
+                />
               ))}
               {hourBlocks.map((block) => (
                 <button
