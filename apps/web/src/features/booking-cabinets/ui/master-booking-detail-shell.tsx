@@ -1,23 +1,24 @@
 'use client'
 
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-
 import type { RescheduleBookingInput } from '@lustra/contracts'
 
-import {
-  bookingStatusLabel,
-  formatBookingWhen,
-} from '@/features/booking-cabinets/model/booking-labels'
+import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { canMarkNoShow } from '@/features/booking-cabinets/model/can-mark-no-show'
 import { canRescheduleBooking } from '@/features/booking-cabinets/model/can-reschedule-booking'
 import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-master-bookings'
-import styles from '@/features/booking-cabinets/ui/bookings.module.css'
+import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
+import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
+import { ClientSocialLink } from '@/features/booking-cabinets/ui/client-social-link'
+import { MasterBookingBackLink } from '@/features/booking-cabinets/ui/master-booking-back-link'
+import { toClientSocialLink } from '@/features/booking-cabinets/model/to-client-social-link'
 import { RescheduleBookingForm } from '@/features/booking-cabinets/ui/reschedule-booking-form'
+import { safeReturnPath } from '@/features/master-calendar/model/calendar-href'
+import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { formatByn } from '@/shared/lib/money'
 import { Button } from '@/shared/ui/button'
-import { TEST_ID, bookingStatusTestId } from '@/shared/lib/test-id'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 const CANCELABLE = new Set(['hold', 'pending', 'confirmed'])
 
@@ -29,6 +30,14 @@ export function MasterBookingDetailShell({
   bookingId,
 }: MasterBookingDetailShellProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const backHref = safeReturnPath(
+    searchParams.get('from'),
+    '/app/master/bookings',
+  )
+  const backLabel = backHref.startsWith('/app/master/calendar')
+    ? 'К календарю'
+    : 'К списку записей'
   const detail = useMasterBookingDetail(bookingId)
   const [reason, setReason] = useState('')
 
@@ -36,7 +45,9 @@ export function MasterBookingDetailShell({
     const next = await detail.reschedule(input)
 
     if (next) {
-      router.push(`/app/master/bookings/${next.id}`)
+      router.push(
+        `/app/master/bookings/${next.id}?from=${encodeURIComponent(backHref)}`,
+      )
     }
   }
 
@@ -48,9 +59,7 @@ export function MasterBookingDetailShell({
     return (
       <section className={styles.shell}>
         <p className={styles.error}>{detail.errorMessage ?? 'Запись не найдена'}</p>
-        <Link className={styles.backLink} href="/app/master/bookings">
-          К списку записей
-        </Link>
+        <MasterBookingBackLink href={backHref} label={backLabel} />
       </section>
     )
   }
@@ -61,50 +70,54 @@ export function MasterBookingDetailShell({
   const canComplete = booking.status === 'confirmed'
   const canNoShow = canMarkNoShow(booking.status)
   const canReschedule = canRescheduleBooking(booking.status)
+  const priceLabel = `${formatByn(Number(booking.priceAmount), booking.currency)} · ${booking.serviceDurationMin} мин`
+  const socialLink = toClientSocialLink({
+    socialHandle: booking.client.socialHandle,
+    source: booking.client.source,
+    channel: booking.channel,
+  })
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageMasterBookingDetail}>
-
       <header>
+        <MasterBookingBackLink href={backHref} label={backLabel} />
         <p className={styles.eyebrow}>Запись клиента</p>
-        <h1 className={styles.title}>{booking.serviceTitle}</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>{booking.serviceTitle}</h1>
+          <BookingStatusBadge status={booking.status} />
+        </div>
       </header>
 
       <div className={styles.detail}>
-        <div className={styles.detailBlock}>
-          <strong>{booking.client.name}</strong>
+        <BookingInfoCard title="Клиент">
+          <span className={styles.cardValue}>{booking.client.name}</span>
           {booking.client.phone ? (
-            <span className={styles.rowMeta}>{booking.client.phone}</span>
+            <a className={styles.phoneLink} href={`tel:${booking.client.phone}`}>
+              {booking.client.phone}
+            </a>
           ) : null}
-          <span className={styles.rowMeta}>
+          {socialLink ? <ClientSocialLink link={socialLink} /> : null}
+        </BookingInfoCard>
+
+        <BookingInfoCard title="Визит">
+          <span className={styles.cardValue}>
             {formatBookingWhen(booking.startsAt, booking.endsAt)}
           </span>
-          <span className={styles.rowMeta}>
-            {formatByn(Number(booking.priceAmount), booking.currency)} ·{' '}
-            {booking.serviceDurationMin} мин
-          </span>
-          <span
-            className={styles.status}
-            data-testid={bookingStatusTestId(booking.status)}
-          >
-            {bookingStatusLabel(booking.status)}
-          </span>
-        </div>
+          <span className={styles.cardHint}>{priceLabel}</span>
+        </BookingInfoCard>
 
         {booking.clientComment ? (
-          <div className={styles.detailBlock}>
-            <strong>Комментарий клиента</strong>
-            <span className={styles.rowMeta} data-testid={TEST_ID.masterBookingComment}>
+          <BookingInfoCard title="Комментарий клиента">
+            <span className={styles.cardHint} data-testid={TEST_ID.masterBookingComment}>
               {booking.clientComment}
             </span>
-          </div>
+          </BookingInfoCard>
         ) : null}
 
         {booking.masterNote ? (
-          <div className={styles.detailBlock}>
-            <strong>Заметка</strong>
-            <span className={styles.rowMeta}>{booking.masterNote}</span>
-          </div>
+          <BookingInfoCard title="Заметка">
+            <span className={styles.cardHint}>{booking.masterNote}</span>
+          </BookingInfoCard>
         ) : null}
 
         <div className={styles.actions}>
@@ -149,8 +162,10 @@ export function MasterBookingDetailShell({
         ) : null}
 
         {canCancel ? (
-          <div className={styles.detailBlock}>
-            <label htmlFor="master-cancel-reason">Причина отмены</label>
+          <BookingInfoCard title="Отмена">
+            <label className={styles.fieldLabel} htmlFor="master-cancel-reason">
+              Причина отмены
+            </label>
             <input
               id="master-cancel-reason"
               className={styles.reasonField}
@@ -171,7 +186,7 @@ export function MasterBookingDetailShell({
                 Отменить запись
               </Button>
             </div>
-          </div>
+          </BookingInfoCard>
         ) : null}
 
         {detail.actionError ? (

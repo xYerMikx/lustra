@@ -15,6 +15,20 @@ type ClientSuggestProps = {
   testId?: string
 }
 
+function clientSuggestMeta(client: MasterClientView): string {
+  const parts: string[] = []
+
+  if (client.phone) {
+    parts.push(client.phone)
+  }
+
+  if (client.socialHandle) {
+    parts.push(`@${client.socialHandle}`)
+  }
+
+  return parts.join(' · ')
+}
+
 export function ClientSuggest({
   id,
   value,
@@ -44,27 +58,31 @@ export function ClientSuggest({
       />
       {suggest.showList ? (
         <ul id={`${id}-list`} className={styles.suggestList} role="listbox">
-          {suggest.matches.map((client, index) => (
-            <li key={client.id} role="presentation">
-              <button
-                type="button"
-                role="option"
-                aria-selected={index === suggest.activeIndex}
-                className={cn(
-                  styles.suggestOption,
-                  index === suggest.activeIndex && styles.suggestOptionActive,
-                )}
-                onMouseEnter={() => suggest.setActiveIndex(index)}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => suggest.pickClient(client)}
-              >
-                <span className={styles.suggestName}>{client.name}</span>
-                {client.phone ? (
-                  <span className={styles.suggestPhone}>{client.phone}</span>
-                ) : null}
-              </button>
-            </li>
-          ))}
+          {suggest.matches.map((client, index) => {
+            const meta = clientSuggestMeta(client)
+
+            return (
+              <li key={client.id} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={index === suggest.activeIndex}
+                  className={cn(
+                    styles.suggestOption,
+                    index === suggest.activeIndex && styles.suggestOptionActive,
+                  )}
+                  onMouseEnter={() => suggest.setActiveIndex(index)}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => suggest.pickClient(client)}
+                >
+                  <span className={styles.suggestName}>{client.name}</span>
+                  {meta ? (
+                    <span className={styles.suggestPhone}>{meta}</span>
+                  ) : null}
+                </button>
+              </li>
+            )
+          })}
         </ul>
       ) : null}
     </div>

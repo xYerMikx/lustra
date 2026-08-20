@@ -52,3 +52,18 @@
 .fullWidth {
   width: 100%;
 }
+
+.icon {
+  min-width: 44px;
+  width: 44px;
+  padding: 0;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.icon:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-surface);
+}

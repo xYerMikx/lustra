@@ -14,6 +14,7 @@ describe('pickUpcomingOpenSlots', () => {
           endsAt: '2026-08-12T10:00:00.000Z',
           status: 'open',
           clientName: null,
+          bookingId: null,
         },
         {
           id: '2',
@@ -21,6 +22,7 @@ describe('pickUpcomingOpenSlots', () => {
           endsAt: '2026-08-13T13:00:00.000Z',
           status: 'booked',
           clientName: 'Оля',
+          bookingId: 'b-olya',
         },
         {
           id: '3',
@@ -28,6 +30,7 @@ describe('pickUpcomingOpenSlots', () => {
           endsAt: '2026-08-12T16:00:00.000Z',
           status: 'open',
           clientName: null,
+          bookingId: null,
         },
         {
           id: '4',
@@ -35,6 +38,7 @@ describe('pickUpcomingOpenSlots', () => {
           endsAt: '2026-08-14T10:00:00.000Z',
           status: 'open',
           clientName: null,
+          bookingId: null,
         },
       ],
       nowMs,

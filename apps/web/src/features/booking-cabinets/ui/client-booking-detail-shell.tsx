@@ -3,16 +3,15 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-import {
-  bookingStatusLabel,
-  formatBookingWhen,
-} from '@/features/booking-cabinets/model/booking-labels'
+import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingDetail } from '@/features/booking-cabinets/model/use-client-bookings'
-import styles from '@/features/booking-cabinets/ui/bookings.module.css'
+import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
+import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import { ClientReviewPanel } from '@/features/reviews/ui/client-review-panel'
+import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
-import { TEST_ID, bookingStatusTestId } from '@/shared/lib/test-id'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 const CANCELABLE = new Set(['hold', 'pending', 'confirmed'])
 
@@ -33,10 +32,7 @@ export function ClientBookingDetailShell({
   if (detail.status === 'error' || !detail.booking) {
     return (
       <section className={styles.shell}>
-        <p
-          className={styles.error}
-          data-testid={TEST_ID.bookingNotFound}
-        >
+        <p className={styles.error} data-testid={TEST_ID.bookingNotFound}>
           {detail.errorMessage ?? 'Запись не найдена'}
         </p>
         <Link className={styles.backLink} href="/app/client/bookings">
@@ -48,55 +44,52 @@ export function ClientBookingDetailShell({
 
   const booking = detail.booking
   const canCancel = CANCELABLE.has(booking.status)
+  const priceLabel = `${formatByn(Number(booking.priceAmount), booking.currency)} · ${booking.serviceDurationMin} мин`
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageClientBookingDetail}>
-
       <header>
         <p className={styles.eyebrow}>Запись</p>
-        <h1 className={styles.title}>{booking.serviceTitle}</h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>{booking.serviceTitle}</h1>
+          <BookingStatusBadge status={booking.status} />
+        </div>
       </header>
 
       <div className={styles.detail}>
-        <div className={styles.detailBlock}>
-          <strong>{booking.masterDisplayName}</strong>
-          <span className={styles.rowMeta}>
+        <BookingInfoCard title="Мастер">
+          <span className={styles.cardValue}>{booking.masterDisplayName}</span>
+        </BookingInfoCard>
+
+        <BookingInfoCard title="Визит">
+          <span className={styles.cardValue}>
             {formatBookingWhen(booking.startsAt, booking.endsAt)}
           </span>
-          <span className={styles.rowMeta}>
-            {formatByn(Number(booking.priceAmount), booking.currency)} ·{' '}
-            {booking.serviceDurationMin} мин
-          </span>
-          <span
-            className={styles.status}
-            data-testid={bookingStatusTestId(booking.status)}
-          >
-            {bookingStatusLabel(booking.status)}
-          </span>
-        </div>
+          <span className={styles.cardHint}>{priceLabel}</span>
+        </BookingInfoCard>
 
         {booking.addressHint || booking.addressExact ? (
-          <div className={styles.detailBlock}>
-            <strong>Адрес</strong>
+          <BookingInfoCard title="Адрес">
             {booking.addressHint ? (
-              <span className={styles.rowMeta}>{booking.addressHint}</span>
+              <span className={styles.cardHint}>{booking.addressHint}</span>
             ) : null}
             {booking.addressExact ? (
-              <span className={styles.rowMeta}>{booking.addressExact}</span>
+              <span className={styles.cardHint}>{booking.addressExact}</span>
             ) : null}
-          </div>
+          </BookingInfoCard>
         ) : null}
 
         {booking.clientComment ? (
-          <div className={styles.detailBlock}>
-            <strong>Комментарий</strong>
-            <span className={styles.rowMeta}>{booking.clientComment}</span>
-          </div>
+          <BookingInfoCard title="Комментарий">
+            <span className={styles.cardHint}>{booking.clientComment}</span>
+          </BookingInfoCard>
         ) : null}
 
         {canCancel ? (
-          <div className={styles.detailBlock}>
-            <label htmlFor="cancel-reason">Причина отмены (необязательно)</label>
+          <BookingInfoCard title="Отмена">
+            <label className={styles.fieldLabel} htmlFor="cancel-reason">
+              Причина отмены (необязательно)
+            </label>
             <input
               id="cancel-reason"
               className={styles.reasonField}
@@ -116,7 +109,7 @@ export function ClientBookingDetailShell({
                 Отменить запись
               </Button>
             </div>
-          </div>
+          </BookingInfoCard>
         ) : null}
 
         <ClientReviewPanel booking={booking} />

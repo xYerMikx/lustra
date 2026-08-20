@@ -1,0 +1,122 @@
+.frame {
+  display: block;
+}
+
+.frameNav {
+  padding-bottom: var(--spacing-80);
+}
+
+.rail {
+  display: none;
+}
+
+.bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-40);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--spacing-4);
+  padding: var(--spacing-8);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  min-height: 44px;
+  color: var(--color-text-2);
+  text-decoration: none;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-500);
+}
+
+.linkTab {
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.linkRail {
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0 var(--spacing-12);
+  border-radius: var(--radius-8);
+}
+
+.linkActive {
+  color: var(--color-accent-700);
+  font-weight: var(--font-weight-600);
+}
+
+.linkRail.linkActive {
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
+}
+
+.sheetBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-50);
+  background: var(--color-overlay);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: 100%;
+  display: grid;
+  gap: var(--spacing-16);
+  padding: var(--spacing-24);
+  border-radius: var(--radius-22) var(--radius-22) 0 0;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-3);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-26);
+  line-height: var(--text-26--line-height);
+}
+
+.sheetNav {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+@media (min-width: 768px) {
+  .frameNav {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: var(--spacing-24);
+    padding-bottom: 0;
+    align-items: start;
+  }
+
+  .rail {
+    display: grid;
+    gap: var(--spacing-4);
+    position: sticky;
+    top: var(--spacing-16);
+    padding: var(--spacing-12);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-14);
+    background: var(--color-surface);
+  }
+
+  .bottom {
+    display: none;
+  }
+}

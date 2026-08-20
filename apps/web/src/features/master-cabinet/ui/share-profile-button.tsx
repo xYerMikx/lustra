@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { buildShareStoryText } from '@/features/master-cabinet/model/build-share-story-text'
 import { buildPublicProfileUrl } from '@/features/master-cabinet/model/public-profile-url'
 import { Button } from '@/shared/ui/button'
+import { CheckIcon, ShareIcon } from '@/shared/ui/icon-pack'
 
 type ShareProfileButtonProps = {
   slug: string
@@ -49,8 +50,14 @@ export function ShareProfileButton({
   }
 
   return (
-    <Button type="button" variant="ghost" onClick={shareProfile}>
-      {copied ? 'Скопировано' : 'Поделиться'}
+    <Button
+      type="button"
+      variant="icon"
+      aria-label={copied ? 'Скопировано' : 'Поделиться'}
+      title={copied ? 'Скопировано' : 'Поделиться'}
+      onClick={shareProfile}
+    >
+      {copied ? <CheckIcon /> : <ShareIcon />}
     </Button>
   )
 }

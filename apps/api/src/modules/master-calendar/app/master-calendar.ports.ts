@@ -16,6 +16,7 @@ export type CalendarSlotRecord = {
   endsAt: Date
   status: MasterCalendarSlotStatus
   clientName: string | null
+  bookingId: string | null
 }
 
 export type CalendarBlockRecord = {
@@ -67,6 +68,7 @@ export function toCalendarSlotView(
     endsAt: record.endsAt.toISOString(),
     status: record.status,
     clientName: showClientName ? record.clientName : null,
+    bookingId: record.status === 'open' ? null : record.bookingId,
   }
 }
 

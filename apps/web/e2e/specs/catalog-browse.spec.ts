@@ -32,7 +32,9 @@ test.describe('catalog browse', () => {
 
   test('filters by district', async ({ page }) => {
     await page.goto('/catalog')
-    await page.getByTestId(catalogDistrictTestId(DISTRICT_FRUNZE_SLUG)).check()
+    await page.getByTestId(TEST_ID.catalogDistricts).click()
+    await page.getByTestId(catalogDistrictTestId(DISTRICT_FRUNZE_SLUG)).click()
+    await page.keyboard.press('Escape')
     await page.getByTestId(TEST_ID.catalogSubmit).click()
     await expect(page).toHaveURL(/district=frunzenskiy/)
     await expect(page.getByTestId(masterCardTestId(ANNA_SLUG))).toBeVisible()

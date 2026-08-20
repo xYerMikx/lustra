@@ -1,24 +1,25 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
 import cn from 'classnames'
 
-import {
-  bookingStatusLabel,
-  formatBookingWhen,
-} from '@/features/booking-cabinets/model/booking-labels'
+import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingsList } from '@/features/booking-cabinets/model/use-client-bookings'
+import { BookingListRow } from '@/features/booking-cabinets/ui/booking-list-row'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
-import { TEST_ID, bookingRowTestId, bookingStatusTestId } from '@/shared/lib/test-id'
+import { TEST_ID } from '@/shared/lib/test-id'
 
 type Scope = 'upcoming' | 'past'
 
 export function ClientBookingsShell() {
   const [scope, setScope] = useState<Scope>('upcoming')
   const list = useClientBookingsList(scope)
+  const emptyCopy =
+    scope === 'upcoming'
+      ? 'Пока нет предстоящих записей. Выберите мастера в каталоге.'
+      : 'Прошлых записей пока нет.'
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageClientBookings}>
@@ -60,35 +61,22 @@ export function ClientBookingsShell() {
       ) : null}
 
       {list.status === 'empty' ? (
-        <p className={styles.message}>
-          {scope === 'upcoming'
-            ? 'Пока нет предстоящих записей. Выберите мастера в каталоге.'
-            : 'Прошлых записей пока нет.'}
-        </p>
+        <p className={styles.empty}>{emptyCopy}</p>
       ) : null}
 
       {list.status === 'success' ? (
         <ul className={styles.list} data-testid={TEST_ID.clientBookingsList}>
           {list.items.map((item) => (
             <li key={item.id}>
-              <Link
-                className={styles.row}
+              <BookingListRow
                 href={`/app/client/bookings/${item.id}`}
-                data-testid={bookingRowTestId(item.id)}
-              >
-                <div className={styles.rowTitle}>{item.serviceTitle}</div>
-                <div className={styles.rowMeta}>
-                  {item.masterDisplayName} ·{' '}
-                  {formatBookingWhen(item.startsAt, item.endsAt)} ·{' '}
-                  {formatByn(Number(item.priceAmount), item.currency)}
-                </div>
-                <div
-                  className={styles.status}
-                  data-testid={bookingStatusTestId(item.status)}
-                >
-                  {bookingStatusLabel(item.status)}
-                </div>
-              </Link>
+                bookingId={item.id}
+                title={item.serviceTitle}
+                person={item.masterDisplayName}
+                when={formatBookingWhen(item.startsAt, item.endsAt)}
+                price={formatByn(Number(item.priceAmount), item.currency)}
+                status={item.status}
+              />
             </li>
           ))}
         </ul>

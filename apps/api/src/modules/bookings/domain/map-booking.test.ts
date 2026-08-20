@@ -43,5 +43,21 @@ describe('toBookingMasterView', () => {
     expect(view.masterNote).toBe('secret')
     expect(view.client.name).toBe('Клиент')
     expect(view.client.phone).toBe('+375291112233')
+    expect(view.client.socialHandle).toBeNull()
+    expect(view.channel).toBeNull()
+  })
+
+  it('exposes Instagram handle from the client note', () => {
+    const view = toBookingMasterView(
+      sampleBookingRecord({
+        clientNote: '@anna.nails',
+        clientSource: 'instagram',
+        channel: 'instagram',
+      }),
+    )
+
+    expect(view.client.socialHandle).toBe('anna.nails')
+    expect(view.client.source).toBe('instagram')
+    expect(view.channel).toBe('instagram')
   })
 })

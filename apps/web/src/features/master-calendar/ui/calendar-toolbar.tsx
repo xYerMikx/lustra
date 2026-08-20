@@ -9,10 +9,12 @@ import { TEST_ID } from '@/shared/lib/test-id'
 type CalendarToolbarProps = {
   rangeLabel: string
   mode: 'day' | 'week'
+  canCreateBooking: boolean
   onPrev: () => void
   onToday: () => void
   onNext: () => void
   onChangeMode: (mode: 'day' | 'week') => void
+  onBackToWeek: () => void
   onOpenManual: () => void
   onOpenBlock: () => void
   onOpenException: () => void
@@ -21,10 +23,12 @@ type CalendarToolbarProps = {
 export function CalendarToolbar({
   rangeLabel,
   mode,
+  canCreateBooking,
   onPrev,
   onToday,
   onNext,
   onChangeMode,
+  onBackToWeek,
   onOpenManual,
   onOpenBlock,
   onOpenException,
@@ -98,9 +102,20 @@ export function CalendarToolbar({
             Неделя
           </Button>
         </div>
+        {mode === 'day' ? (
+          <Button
+            type="button"
+            variant="ghost"
+            data-testid={TEST_ID.calendarBackToWeek}
+            onClick={onBackToWeek}
+          >
+            К неделе
+          </Button>
+        ) : null}
         <Button
           type="button"
           onClick={onOpenManual}
+          disabled={!canCreateBooking}
           data-testid={TEST_ID.calendarManualOpen}
         >
           Записать клиента

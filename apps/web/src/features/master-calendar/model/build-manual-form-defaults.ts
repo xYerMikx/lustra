@@ -7,6 +7,7 @@ export type ManualFormValues = {
   clientName: string
   phone: string
   channel: 'instagram' | 'telegram' | 'phone' | 'walk_in' | 'other'
+  socialHandle: string
   note: string
 }
 
@@ -27,6 +28,7 @@ export function buildManualFormDefaults(
     clientName: '',
     phone: '',
     channel: 'instagram',
+    socialHandle: '',
     note: '',
   }
 }

@@ -24,13 +24,13 @@ export function PublicProfileShare({
         <Link className={styles.publicPath} href={publicPath}>
           {publicPath}
         </Link>
-        <CopyProfileLinkButton slug={slug} />
       </div>
       <div className={styles.shareActions}>
+        <CopyProfileLinkButton slug={slug} />
         <ShareProfileButton slug={slug} displayName={displayName} />
         <CopyStoryTextButton slug={slug} displayName={displayName} />
+        <DownloadQrButtons slug={slug} />
       </div>
-      <DownloadQrButtons slug={slug} />
     </div>
   )
 }

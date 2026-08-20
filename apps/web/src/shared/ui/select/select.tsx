@@ -14,6 +14,7 @@ import styles from '@/shared/ui/select/select.module.css'
 export type SelectOption = {
   value: string
   label: string
+  testId?: string
 }
 
 type SelectProps = {
@@ -196,6 +197,7 @@ export function Select({
                     isSelected && styles.optionSelected,
                     isActive && styles.optionActive,
                   )}
+                  data-testid={option.testId}
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => chooseOption(option.value)}
                 >
