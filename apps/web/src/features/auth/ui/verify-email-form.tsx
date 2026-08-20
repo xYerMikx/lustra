@@ -1,8 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { VerifyEmailInputSchema, type VerifyEmailInput } from '@lustra/contracts'
@@ -13,11 +12,13 @@ import { verifyEmail } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
 
+const VERIFY_REDIRECT_DELAY_MS = 1000
+
 export function VerifyEmailForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')?.trim() ?? ''
   const [formError, setFormError] = useState<string | null>(null)
-  const [done, setDone] = useState(false)
   const {
     register,
     handleSubmit,
@@ -33,7 +34,11 @@ export function VerifyEmailForm() {
     try {
       await verifyEmail({ token: values.token })
       clearSessionCache()
-      setDone(true)
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, VERIFY_REDIRECT_DELAY_MS)
+      })
+      router.replace('/app')
+      router.refresh()
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message)
@@ -53,17 +58,6 @@ export function VerifyEmailForm() {
     )
   }
 
-  if (done) {
-    return (
-      <p className={styles.success} role="status">
-        Почта подтверждена.{' '}
-        <Link className={styles.inlineLink} href="/app">
-          В кабинет
-        </Link>
-      </p>
-    )
-  }
-
   return (
     <form className={styles.form} onSubmit={handleSubmit(submitForm)} noValidate>
       <input type="hidden" {...register('token')} />
@@ -74,8 +68,8 @@ export function VerifyEmailForm() {
         </p>
       ) : null}
 
-      <Button type="submit" fullWidth disabled={isSubmitting}>
-        {isSubmitting ? 'Подтверждаем…' : 'Подтвердить почту'}
+      <Button type="submit" fullWidth loading={isSubmitting}>
+        Подтвердить почту
       </Button>
     </form>
   )

@@ -1,4 +1,5 @@
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -66,4 +67,18 @@
   border-color: var(--color-accent);
   color: var(--color-accent);
   background: var(--color-surface);
+}
+
+.addon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.loadingLabel {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

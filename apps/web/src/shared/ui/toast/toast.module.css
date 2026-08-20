@@ -1,0 +1,129 @@
+.viewport {
+  position: fixed;
+  z-index: var(--z-50);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  pointer-events: none;
+  inset: auto var(--spacing-16) var(--spacing-80) var(--spacing-16);
+}
+
+.item {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-8);
+  width: 100%;
+  padding: var(--spacing-12) var(--spacing-8) var(--spacing-12) var(--spacing-16);
+  border: 1px solid var(--color-border);
+  border-left-width: var(--spacing-4);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+  color: var(--color-text);
+  font-family: var(--font-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  animation: toast-in-mobile var(--duration-400) var(--ease-out-quart);
+}
+
+.message {
+  margin: 0;
+  min-width: 0;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: transparent;
+  color: var(--color-text-3);
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus-visible {
+  color: var(--color-text);
+  background: var(--color-surface-2);
+}
+
+.success {
+  border-left-color: var(--color-success);
+}
+
+.warning {
+  border-left-color: var(--color-warning);
+}
+
+.error {
+  border-left-color: var(--color-danger);
+}
+
+.info {
+  border-left-color: var(--color-clay);
+}
+
+.leaving {
+  opacity: 0;
+  transform: translateY(var(--spacing-12));
+  animation: none;
+  transition:
+    opacity var(--duration-250) var(--ease-out-quart),
+    transform var(--duration-250) var(--ease-out-quart);
+  pointer-events: none;
+}
+
+@keyframes toast-in-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-16));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in-desktop {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing-16) * -1));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .viewport {
+    inset: var(--spacing-24) var(--spacing-24) auto auto;
+    width: calc(var(--spacing-96) * 4);
+    max-width: calc(100vw - var(--spacing-32) - var(--spacing-16));
+  }
+
+  .item {
+    animation-name: toast-in-desktop;
+  }
+
+  .leaving {
+    transform: translateY(calc(var(--spacing-12) * -1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .leaving {
+    animation: none;
+    transition: opacity var(--duration-250) ease;
+    transform: none;
+  }
+}

@@ -53,14 +53,36 @@ Same for early returns, throws, and one-liner bodies.
 
 ## Blank lines (readability)
 
-Always leave a blank line:
+Leave a blank line **after finished work**, not after a condition:
 
-- between separate `if` / `else` blocks (not inside a single `if / else if / else` chain)
+- after a completed `if` / `if/else` (not inside a single `if / else if / else` chain)
+- after a completed `for` / `while` when more code follows
+- after declarations and side-effect statements (`const` / `let`, setters, function calls) when more code follows — including `return` / `throw`
 - between `case` arms in `switch`
-- after a loop block when more code follows
-- immediately before every `return` (including early returns)
+
+Do **not** insert a blank line right after `if (` / `else` / `for (` when the body starts immediately with `return` / `throw` / the first statement. The gap belongs *after* that statement, not after the condition.
 
 ```ts
+// ❌ BAD — empty line after the condition, nothing ran yet
+if (!toasts.length) {
+
+  return null
+}
+
+// ✅ GOOD — body starts immediately; blank after finished if
+if (!toasts.length) {
+  return null
+}
+
+// ✅ GOOD — blank after logic (setter / const / call), then return
+if (err instanceof ApiError) {
+  setFormError(err.message)
+
+  return
+}
+
+const user = await this.users.findById(userId)
+
 if (!user) {
   throw new ForbiddenException('Доступ запрещён')
 }
