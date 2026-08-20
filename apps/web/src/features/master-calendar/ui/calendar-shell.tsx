@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { MasterClientView, ServiceView } from '@lustra/contracts'
 
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'
+import { submitWithSuccess } from '@/features/master-calendar/model/submit-with-success'
 import { useCalendarData } from '@/features/master-calendar/model/use-calendar-data'
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
@@ -97,6 +98,26 @@ export function CalendarShell() {
       ? calendar.range.from
       : `${calendar.range.from} — ${calendar.range.to}`
 
+  const showSuccess = (text: string) => {
+    setFeedback({ tone: 'success', text })
+  }
+
+  const submitBlock = submitWithSuccess(
+    calendar.addBlock,
+    showSuccess,
+    'Блок сохранён',
+  )
+  const submitException = submitWithSuccess(
+    calendar.addException,
+    showSuccess,
+    'Исключение сохранено',
+  )
+  const submitManual = submitWithSuccess(
+    calendar.addManualBooking,
+    showSuccess,
+    'Клиент записан',
+  )
+
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageCalendar}>
       <header className={styles.header}>
@@ -152,10 +173,7 @@ export function CalendarShell() {
         <BlockDialog
           defaultDate={calendar.anchorDate}
           onClose={() => setBlockOpen(false)}
-          onSubmit={async (input) => {
-            await calendar.addBlock(input)
-            setFeedback({ tone: 'success', text: 'Блок сохранён' })
-          }}
+          onSubmit={submitBlock}
         />
       ) : null}
 
@@ -163,10 +181,7 @@ export function CalendarShell() {
         <ExceptionDialog
           defaultDate={calendar.anchorDate}
           onClose={() => setExceptionOpen(false)}
-          onSubmit={async (date, input) => {
-            await calendar.addException(date, input)
-            setFeedback({ tone: 'success', text: 'Исключение сохранено' })
-          }}
+          onSubmit={submitException}
         />
       ) : null}
 
@@ -177,10 +192,7 @@ export function CalendarShell() {
           services={manual.services}
           clients={manual.clients}
           onClose={() => setManual(null)}
-          onSubmit={async (input) => {
-            await calendar.addManualBooking(input)
-            setFeedback({ tone: 'success', text: 'Клиент записан' })
-          }}
+          onSubmit={submitManual}
         />
       ) : null}
     </section>

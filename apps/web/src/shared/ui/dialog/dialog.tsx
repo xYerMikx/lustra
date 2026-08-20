@@ -2,6 +2,7 @@
 
 import { useRef, type MouseEvent, type ReactNode } from 'react'
 
+import { CloseIcon } from '@/shared/ui/close-icon'
 import { useDialogA11y } from '@/shared/ui/dialog/use-dialog-a11y'
 import styles from '@/shared/ui/dialog/dialog.module.css'
 
@@ -61,20 +62,7 @@ export function Dialog({
             aria-label="Закрыть"
             onClick={onClose}
           >
-            <svg
-              className={styles.closeIcon}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                d="M6 6l12 12M18 6L6 18"
-              />
-            </svg>
+            <CloseIcon />
           </button>
         </div>
         {children}

@@ -34,7 +34,6 @@
 }
 
 @media (min-width: 768px) {
-  /* --breakpoint-768 */
   .list {
     grid-template-columns: 1fr 1fr;
   }

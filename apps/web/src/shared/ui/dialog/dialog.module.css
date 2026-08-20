@@ -61,13 +61,7 @@
   background: var(--color-surface-2);
 }
 
-.closeIcon {
-  width: var(--spacing-20);
-  height: var(--spacing-20);
-}
-
 @media (min-width: 768px) {
-  /* --breakpoint-768 */
   .backdrop {
     align-items: center;
     padding: var(--spacing-16);

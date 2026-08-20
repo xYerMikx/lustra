@@ -100,8 +100,7 @@
   cursor: default;
 }
 
-@media (max-width: 639px) {
-  /* below --breakpoint-640 */
+@media (width < 640px) {
   .shell {
     padding-inline: var(--spacing-12);
   }
