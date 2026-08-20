@@ -6,6 +6,7 @@ import { buildShareStoryText } from '@/features/master-cabinet/model/build-share
 import { buildPublicProfileUrl } from '@/features/master-cabinet/model/public-profile-url'
 import { Button } from '@/shared/ui/button'
 import { CheckIcon, ShareIcon } from '@/shared/ui/icon-pack'
+import { useToast } from '@/shared/ui/toast'
 
 type ShareProfileButtonProps = {
   slug: string
@@ -16,6 +17,7 @@ export function ShareProfileButton({
   slug,
   displayName,
 }: ShareProfileButtonProps) {
+  const toast = useToast()
   const [copied, setCopied] = useState(false)
 
   const shareProfile = async () => {
@@ -41,11 +43,13 @@ export function ShareProfileButton({
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
+      toast.success('Скопировано в буфер обмена')
       window.setTimeout(() => {
         setCopied(false)
       }, 2000)
     } catch {
       setCopied(false)
+      toast.error('Не удалось скопировать ссылку')
     }
   }
 

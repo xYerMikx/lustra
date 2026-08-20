@@ -30,7 +30,7 @@ export class VerifyEmailUseCase {
     const userId = token.userId
 
     if (token.usedAt) {
-      return this.okIfAlreadyVerified(userId)
+      throw DomainError.invalidState(INVALID_LINK)
     }
 
     if (token.expiresAt.getTime() <= now.getTime()) {
@@ -57,7 +57,6 @@ export class VerifyEmailUseCase {
     const user = await this.users.findById(userId)
 
     if (user?.emailVerified) {
-
       return { ok: true }
     }
 

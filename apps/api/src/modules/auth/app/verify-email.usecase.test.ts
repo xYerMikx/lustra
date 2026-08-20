@@ -46,7 +46,7 @@ describe('VerifyEmailUseCase', () => {
     } satisfies Partial<DomainError>)
   })
 
-  it('treats a used token as success when the email is already verified', async () => {
+  it('rejects a used token even when the email is already verified', async () => {
     const tokens = {
       findByHash: vi.fn().mockResolvedValue({
         ...validToken,
@@ -64,7 +64,10 @@ describe('VerifyEmailUseCase', () => {
       new FixedClock(now),
     )
 
-    await expect(useCase.execute({ token: 'spent' })).resolves.toEqual({ ok: true })
+    await expect(useCase.execute({ token: 'spent' })).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      message: 'Ссылка недействительна или устарела',
+    } satisfies Partial<DomainError>)
     expect(users.markEmailVerified).not.toHaveBeenCalled()
   })
 
