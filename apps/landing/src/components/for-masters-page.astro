@@ -1,4 +1,6 @@
 ---
+import SignupTermsNote from './signup-terms-note.astro'
+
 interface Benefit {
   title: string
   body: string
@@ -23,6 +25,7 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
       <h1>{title}</h1>
       <p class="lead">{lead}</p>
       <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+      <SignupTermsNote />
     </div>
   </section>
 
@@ -44,6 +47,7 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
       <h2>Начните с профиля</h2>
       <p>Заполните услуги и окна — клиенты найдут вас в каталоге Минска.</p>
       <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+      <SignupTermsNote />
     </div>
   </section>
 </main>

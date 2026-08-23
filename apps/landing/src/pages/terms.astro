@@ -1,19 +1,12 @@
 ---
-import { getEntry } from 'astro:content'
 import BaseLayout from '../layouts/base-layout.astro'
-import LegalStub from '../components/legal-stub.astro'
-
-const content = (await getEntry('sections', 'terms'))!.data
+import TermsDocument from '../components/terms-document.astro'
 ---
 
 <BaseLayout
-  title="Пользовательское соглашение · Lumira"
-  description="Условия использования платформы Lumira."
+  title="Условия пользования · Lumira"
+  description="Пользовательское соглашение платформы Lumira — правила для клиентов и мастеров в Минске."
   canonicalPath="/terms"
 >
-  <LegalStub
-    title={content.title!}
-    lead={content.lead}
-    paragraphs={content.body ?? []}
-  />
+  <TermsDocument />
 </BaseLayout>

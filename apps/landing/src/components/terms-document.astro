@@ -1,0 +1,249 @@
+---
+import {
+  TERMS_META,
+  TERMS_SECTIONS,
+  type TermsBlock,
+  type TermsInline,
+} from '@/lib/terms-document'
+
+function isRichParagraph(
+  block: TermsBlock,
+): block is { type: 'p'; parts: TermsInline[] } {
+  return block.type === 'p' && 'parts' in block
+}
+---
+
+<main class="terms">
+  <a class="back" href="/">← Lumira</a>
+  <h1>{TERMS_META.title}</h1>
+  <p class="meta">
+    Редакция от {TERMS_META.edition} · Оператор: {TERMS_META.operatorStatus}
+    {' '}
+    {TERMS_META.operatorName}
+  </p>
+  <p class="lead">{TERMS_META.lead}</p>
+
+  <dl class="facts">
+    <div class="fact">
+      <dt>ФИО</dt>
+      <dd>{TERMS_META.operatorName}</dd>
+    </div>
+    <div class="fact">
+      <dt>Статус</dt>
+      <dd>{TERMS_META.operatorStatus}</dd>
+    </div>
+    <div class="fact">
+      <dt>УНП</dt>
+      <dd>{TERMS_META.unp}</dd>
+    </div>
+    <div class="fact">
+      <dt>Страна</dt>
+      <dd>{TERMS_META.country}</dd>
+    </div>
+    <div class="fact">
+      <dt>Город</dt>
+      <dd>{TERMS_META.city}</dd>
+    </div>
+    <div class="fact">
+      <dt>Почта</dt>
+      <dd>
+        <a href={`mailto:${TERMS_META.email}`}>{TERMS_META.email}</a>
+      </dd>
+    </div>
+  </dl>
+
+  <nav class="toc" aria-label="Содержание">
+    <p class="toc-title">Содержание</p>
+    <ol>
+      {
+        TERMS_SECTIONS.map((section) => (
+          <li>
+            <a href={`#${section.id}`}>{section.title}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  {
+    TERMS_SECTIONS.map((section) => (
+      <section class="chapter" id={section.id}>
+        <h2>{section.title}</h2>
+        {section.blocks.map((block) => {
+          if (block.type === 'ul') {
+            return (
+              <ul>
+                {block.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )
+          }
+
+          if (isRichParagraph(block)) {
+            return (
+              <p>
+                {block.parts.map((part) =>
+                  typeof part === 'string' ? (
+                    part
+                  ) : (
+                    <a href={part.href}>{part.label}</a>
+                  ),
+                )}
+              </p>
+            )
+          }
+
+          return <p>{block.text}</p>
+        })}
+      </section>
+    ))
+  }
+</main>
+
+<style>
+  .terms {
+    width: min(720px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    padding: var(--spacing-40) 0 var(--spacing-96);
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: var(--spacing-32);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-2);
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-16);
+  }
+
+  h2 {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .meta {
+    color: var(--color-text-3);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 0 0 var(--spacing-40);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--spacing-12);
+    padding: var(--spacing-12) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .fact dt {
+    color: var(--color-text-3);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+  }
+
+  .fact dd {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .toc {
+    margin-bottom: var(--spacing-40);
+    padding: var(--spacing-24);
+    background: var(--color-surface-2);
+    border-radius: var(--radius-8);
+  }
+
+  .toc-title {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: var(--spacing-20);
+    display: grid;
+    gap: var(--spacing-8);
+  }
+
+  .toc a {
+    color: var(--color-text-2);
+  }
+
+  .toc a:hover {
+    color: var(--color-accent);
+  }
+
+  .chapter {
+    margin-bottom: var(--spacing-40);
+    scroll-margin-top: calc(var(--spacing-56) + var(--spacing-16));
+  }
+
+  .chapter p,
+  .chapter li {
+    color: var(--color-text-2);
+    line-height: 1.6;
+  }
+
+  .chapter p + p,
+  .chapter p + ul,
+  .chapter ul + p {
+    margin-top: var(--spacing-16);
+  }
+
+  .chapter ul {
+    margin: 0;
+    padding-left: var(--spacing-24);
+    display: grid;
+    gap: var(--spacing-8);
+  }
+
+  .chapter a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .chapter a:hover {
+    color: var(--color-accent-700);
+  }
+
+  .facts a {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .fact {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-4);
+    }
+  }
+</style>
