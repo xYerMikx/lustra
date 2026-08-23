@@ -7,6 +7,7 @@ import {
   BOOKING_CABINET_SELECT,
   mapBookingRow,
 } from '@/modules/bookings/infra/map-booking-row'
+import { recordCompletedBookingIncome } from '@/modules/master-ledger/infra/record-booking-income-in-store'
 
 type TxClient = Prisma.TransactionClient
 
@@ -72,6 +73,16 @@ export async function completeBookingInStore(
   if (!row) {
     return null
   }
+
+  await recordCompletedBookingIncome(db, {
+    id: row.id,
+    masterId: row.masterId,
+    priceAmount: row.priceAmount,
+    currency: row.currency,
+    serviceTitle: row.serviceTitle,
+    completedAt: row.completedAt,
+    startsAt: row.startsAt,
+  })
 
   return mapBookingRow(row)
 }

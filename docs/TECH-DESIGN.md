@@ -1077,7 +1077,13 @@ PATCH /api/v1/master/bookings/:id            { note?, priceAmount? }
 POST /api/v1/master/bookings/:id/(confirm|complete|no-show|cancel|reschedule)
 GET  /api/v1/master/clients                  ?query=   → книга клиентов (автокомплит ручной записи)
 PATCH /api/v1/master/clients/:id             { name?, phone?, note?, tags?, isBlocked? }
+GET  /api/v1/master/ledger                   ?from=&to=&kind=&categoryId=  → касса (только master)
+POST /api/v1/master/ledger/entries           { kind, categoryId, amount, occurredOn?, periodStart?, periodEnd?, note?, bookingId? }
+POST /api/v1/master/ledger/categories        { kind, name }  // своя метка, например «Азер»
+DEL  /api/v1/master/ledger/entries/:id       // только source=manual
 ```
+
+Касса: `LedgerCategory` / `LedgerEntry`. Завершение брони в той же транзакции пишет `source=booking` на категорию `service`. Чаевые — отдельные `manual` строки. Уникальность `bookingId` только для `source=booking`, чтобы чаевые можно было привязать к визиту.
 
 Пример ответа `availability` (форма зафиксирована — фронт строит на ней `SlotPicker`):
 
@@ -1130,7 +1136,7 @@ export const BookingMasterView = z.object({ /* ... + masterNote, client.phone, c
 | `/app/(auth)/login`, `register`, `forgot`, `reset` | `web` | SSR-shell + client forms | — | anon |
 | `/app/onboarding` | `web` | client wizard, серверный guard | master-профиль | master |
 | `/app/master/calendar` | `web` | client (TanStack Query) | `master/calendar` + poll 30 с | master |
-| `/app/master/{services,portfolio,schedule,clients,bookings,profile}` | `web` | client + prefetch на сервере | соответствующие ручки | master |
+| `/app/master/{services,portfolio,schedule,clients,bookings,ledger,profile}` | `web` | client + prefetch на сервере | соответствующие ручки | master |
 | `/app/client/{bookings,favorites,profile}` | `web` | RSC для списков + client для действий | `bookings`, `favorites` | client |
 | `/admin/*` | `web` | client, `noindex`, IP-allowlist | `admin/*` | admin |
 

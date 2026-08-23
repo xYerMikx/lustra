@@ -1,7 +1,7 @@
 export type MasterWorkspaceItem = {
   href: string
   label: string
-  icon: 'home' | 'calendar' | 'bookings' | 'portfolio' | 'reviews' | 'onboarding'
+  icon: 'home' | 'calendar' | 'bookings' | 'portfolio' | 'reviews' | 'ledger' | 'onboarding'
 }
 
 export const MASTER_WORKSPACE_PRIMARY: MasterWorkspaceItem[] = [
@@ -12,6 +12,7 @@ export const MASTER_WORKSPACE_PRIMARY: MasterWorkspaceItem[] = [
 ]
 
 export const MASTER_WORKSPACE_MORE: MasterWorkspaceItem[] = [
+  { href: '/app/master/ledger', label: 'Касса', icon: 'ledger' },
   { href: '/app/master/reviews', label: 'Отзывы', icon: 'reviews' },
   { href: '/app/onboarding', label: 'Онбординг', icon: 'onboarding' },
 ]

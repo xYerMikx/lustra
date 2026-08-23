@@ -9,6 +9,7 @@ import {
   type MockWorld,
 } from './types'
 import { requireUser, type HandlerResult } from './auth-handlers'
+import { recordBookingIncome } from './ledger-handlers'
 import { asRecord, type MockRequest } from './http'
 
 function findClientBooking(world: MockWorld, id: string, userId: string) {
@@ -439,6 +440,7 @@ export function handleMasterBookings(
     if (action === 'complete') {
       booking.status = 'completed'
       booking.completedAt = new Date().toISOString()
+      recordBookingIncome(world, booking)
     }
 
     if (action === 'no-show') {

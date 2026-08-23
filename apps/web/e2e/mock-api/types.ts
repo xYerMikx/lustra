@@ -5,6 +5,8 @@ import type {
   BookingMasterView,
   BookingStatus,
   CatalogMasterCard,
+  LedgerKind,
+  LedgerSource,
   DistrictView,
   MasterCalendarSlotView,
   MasterProfileView,
@@ -60,6 +62,33 @@ export type E2ePortfolioItem = PortfolioItemView & {
   masterId: string
 }
 
+export type E2eLedgerCategory = {
+  id: string
+  masterId: string
+  kind: LedgerKind
+  name: string
+  slug: string
+  isSystem: boolean
+}
+
+export type E2eLedgerEntry = {
+  id: string
+  masterId: string
+  kind: LedgerKind
+  source: LedgerSource
+  categoryId: string
+  categoryName: string
+  amount: string
+  currency: string
+  occurredOn: string
+  occurredAt: string
+  periodStart: string | null
+  periodEnd: string | null
+  bookingId: string | null
+  note: string | null
+  serviceTitle: string | null
+}
+
 export type MockWorld = {
   users: E2eUser[]
   resetTokens: Map<string, string>
@@ -79,6 +108,8 @@ export type MockWorld = {
   exceptions: ScheduleExceptionView[]
   bookings: E2eBooking[]
   portfolioItems: E2ePortfolioItem[]
+  ledgerCategories: E2eLedgerCategory[]
+  ledgerEntries: E2eLedgerEntry[]
   adminMasters: Array<{
     id: string
     slug: string

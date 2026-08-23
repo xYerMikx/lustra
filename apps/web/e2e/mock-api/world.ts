@@ -411,6 +411,14 @@ export function createWorld(): MockWorld {
       }),
     ],
     portfolioItems: [],
+    ledgerCategories: [
+      { id: 'c-service', masterId: MASTER_PROFILE_ID, kind: 'income', name: 'Услуги', slug: 'service', isSystem: true },
+      { id: 'c-tip', masterId: MASTER_PROFILE_ID, kind: 'income', name: 'Чаевые', slug: 'tip', isSystem: true },
+      { id: 'c-materials', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Материалы', slug: 'materials', isSystem: true },
+      { id: 'c-rent', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Аренда', slug: 'rent', isSystem: true },
+      { id: 'c-other', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Прочее', slug: 'other', isSystem: true },
+    ],
+    ledgerEntries: [],
     adminMasters: [
       {
         id: PENDING_MASTER_PROFILE_ID,

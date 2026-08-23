@@ -86,6 +86,7 @@ export const TEST_ID = {
   onboardingFormError: 'onboarding-form-error',
   onboardingPortfolioAdd: 'onboarding-portfolio-add',
   pageMasterPortfolio: 'page-master-portfolio',
+  pageMasterLedger: 'page-master-ledger',
   portfolioFileInput: 'portfolio-file-input',
   portfolioEmpty: 'portfolio-empty',
   portfolioCoverBadge: 'portfolio-cover-badge',

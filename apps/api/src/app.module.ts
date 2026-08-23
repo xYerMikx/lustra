@@ -19,6 +19,7 @@ import { ReviewsModule } from '@/modules/reviews/reviews.module'
 import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.module'
 import { MasterServicesModule } from '@/modules/master-services/master-services.module'
 import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
+import { MasterLedgerModule } from '@/modules/master-ledger/master-ledger.module'
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
     SchedulingModule,
     BookingsModule,
     FavoritesModule,
+    MasterLedgerModule,
   ],
   providers: [
     {
