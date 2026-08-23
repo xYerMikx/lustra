@@ -5,6 +5,7 @@ import {
   BookingsIcon,
   CalendarIcon,
   HomeIcon,
+  LedgerIcon,
   OnboardingIcon,
   PortfolioIcon,
   ReviewsIcon,
@@ -16,6 +17,7 @@ const ICONS: Record<MasterWorkspaceItem['icon'], ReactNode> = {
   bookings: <BookingsIcon />,
   portfolio: <PortfolioIcon />,
   reviews: <ReviewsIcon />,
+  ledger: <LedgerIcon />,
   onboarding: <OnboardingIcon />,
 }
 

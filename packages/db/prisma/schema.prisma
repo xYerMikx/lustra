@@ -262,6 +262,8 @@ model MasterProfile {
   bookings     Booking[]
   reviews      Review[]
   favoritedBy  Favorite[]
+  ledgerCategories LedgerCategory[]
+  ledgerEntries    LedgerEntry[]
 
   @@index([status, boostPriority])
 }
@@ -647,6 +649,7 @@ model Booking {
   slots  BookingSlot[]
   events BookingEvent[]
   review Review?
+  ledgerEntries LedgerEntry[]
 
   @@index([masterId, startsAt])
   @@index([clientUserId, startsAt])
@@ -677,6 +680,65 @@ model BookingEvent {
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   @@index([bookingId, createdAt])
+}
+
+
+// =============================================================================
+// Master ledger (income / expenses)
+// =============================================================================
+
+enum LedgerKind {
+  income
+  expense
+}
+
+enum LedgerSource {
+  booking
+  manual
+}
+
+model LedgerCategory {
+  id         String     @id @default(uuid())
+  masterId   String
+  kind       LedgerKind
+  name       String
+  slug       String
+  isSystem   Boolean    @default(false)
+  createdAt  DateTime   @default(now()) @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @db.Timestamptz
+
+  master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  entries LedgerEntry[]
+
+  @@unique([masterId, kind, slug])
+  @@index([masterId, kind])
+}
+
+model LedgerEntry {
+  id          String       @id @default(uuid())
+  masterId    String
+  kind        LedgerKind
+  source      LedgerSource
+  categoryId  String
+  amount      Decimal      @db.Decimal(10, 2)
+  currency    String       @default("BYN")
+  occurredOn  DateTime     @db.Date
+  occurredAt  DateTime     @db.Timestamptz
+  periodStart DateTime?    @db.Date
+  periodEnd   DateTime?    @db.Date
+  bookingId   String?
+  note        String?      @db.VarChar(500)
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @db.Timestamptz
+
+  master   MasterProfile  @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  category LedgerCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  booking  Booking?       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([masterId, occurredOn])
+  @@index([masterId, kind, occurredOn])
+  @@index([masterId, categoryId])
+  @@index([bookingId])
 }
 
 // =============================================================================
