@@ -5,7 +5,9 @@ import { useState } from 'react'
 
 import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingDetail } from '@/features/booking-cabinets/model/use-client-bookings'
+import { BookingCancelWarning } from '@/features/booking-cabinets/ui/booking-cancel-warning'
 import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
+import { DevNotifyProbeCard } from '@/features/booking-cabinets/ui/dev-notify-probe-card'
 import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import { ClientReviewPanel } from '@/features/reviews/ui/client-review-panel'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
@@ -87,6 +89,7 @@ export function ClientBookingDetailShell({
 
         {canCancel ? (
           <BookingInfoCard title="Отмена">
+            <BookingCancelWarning audience="client" />
             <label className={styles.fieldLabel} htmlFor="cancel-reason">
               Причина отмены (необязательно)
             </label>
@@ -111,6 +114,8 @@ export function ClientBookingDetailShell({
             </div>
           </BookingInfoCard>
         ) : null}
+
+        <DevNotifyProbeCard bookingId={booking.id} />
 
         <ClientReviewPanel booking={booking} />
 

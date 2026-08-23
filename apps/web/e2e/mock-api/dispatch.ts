@@ -5,6 +5,7 @@ import { handleCatalog } from './catalog-handlers'
 import { handleClientBookings, handleMasterBookings } from './booking-handlers'
 import { handleMasterPortfolio } from './portfolio-handlers'
 import { handleMasterLedger } from './ledger-handlers'
+import { handleTelegram } from './telegram-handlers'
 import { csrfOk, needsCsrf, type MockRequest, type MockResponse } from './http'
 
 export function dispatch(
@@ -22,6 +23,7 @@ export function dispatch(
   const handled =
     handleE2eAdmin(world, request) ??
     handleAuth(world, request) ??
+    handleTelegram(world, request) ??
     handleCatalog(world, request) ??
     handleClientBookings(world, request) ??
     handleMasterBookings(world, request) ??

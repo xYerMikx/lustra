@@ -9,6 +9,7 @@ import {
 describe('event type catalogs', () => {
   it('exposes outbox types for subscribers', () => {
     expect(OutboxEventType.BookingCreatedManual).toBe('booking.created_manual')
+    expect(OutboxEventType.BookingConfirmed).toBe('booking.confirmed')
     expect(isOutboxEventType('booking.cancelled')).toBe(true)
     expect(isOutboxEventType('booking.no_show')).toBe(true)
     expect(isOutboxEventType('review.published')).toBe(true)

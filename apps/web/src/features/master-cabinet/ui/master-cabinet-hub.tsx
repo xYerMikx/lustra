@@ -6,6 +6,7 @@ import { useSession } from '@/features/auth'
 import { profileStatusLabel } from '@/features/master-cabinet/model/profile-status-label'
 import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
 import { EmailVerifyBanner } from '@/features/master-cabinet/ui/email-verify-banner'
+import { TelegramLinkCard } from '@/features/telegram-link'
 import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-share'
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingSlotsList } from '@/features/master-cabinet/ui/upcoming-slots-list'
@@ -76,6 +77,7 @@ export function MasterCabinetHub() {
         ) : null}
 
         {!session.emailVerified ? <EmailVerifyBanner /> : null}
+        <TelegramLinkCard linked={session.telegramLinked} audience="master" />
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Публичная страница</h2>

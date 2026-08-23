@@ -169,6 +169,11 @@ export {
   type FavoriteStatusResponse,
 } from './favorites'
 
+export {
+  TelegramLinkStartResponseSchema,
+  type TelegramLinkStartResponse,
+} from './telegram'
+
 export { ByPhoneSchema, normalizeByPhone } from './phone'
 export {
   InstagramHandleSchema,

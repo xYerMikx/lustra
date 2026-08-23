@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import cn from 'classnames'
 
+import { useClientSession } from '@/features/auth'
 import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingsList } from '@/features/booking-cabinets/model/use-client-bookings'
 import { BookingListRow } from '@/features/booking-cabinets/ui/booking-list-row'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
+import { TelegramLinkCard } from '@/features/telegram-link'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
 import { TEST_ID } from '@/shared/lib/test-id'
@@ -14,6 +16,7 @@ import { TEST_ID } from '@/shared/lib/test-id'
 type Scope = 'upcoming' | 'past'
 
 export function ClientBookingsShell() {
+  const session = useClientSession()
   const [scope, setScope] = useState<Scope>('upcoming')
   const list = useClientBookingsList(scope)
   const emptyCopy =
@@ -27,6 +30,8 @@ export function ClientBookingsShell() {
         <p className={styles.eyebrow}>Кабинет клиента</p>
         <h1 className={styles.title}>Мои записи</h1>
       </header>
+
+      <TelegramLinkCard linked={session.telegramLinked} audience="client" />
 
       <div className={styles.tabs} role="tablist" aria-label="Период">
         <button

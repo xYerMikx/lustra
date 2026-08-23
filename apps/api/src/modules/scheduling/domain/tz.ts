@@ -48,6 +48,26 @@ export function getTimeZoneOffsetMs(instant: Date, timeZone: string): number {
   return asUtc - instant.getTime()
 }
 
+/** Minutes from local midnight in `timeZone` (0–1439). */
+export function getLocalMinuteOfDay(instant: Date, timeZone: string): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  }).formatToParts(instant)
+
+  const read = (type: Intl.DateTimeFormatPartTypes): number => {
+    const part = parts.find((item) => item.type === type)
+
+    return Number(part?.value ?? NaN)
+  }
+
+  const hour = read('hour') === 24 ? 0 : read('hour')
+
+  return hour * 60 + read('minute')
+}
+
 /** Local calendar date `YYYY-MM-DD` in `timeZone` for a UTC instant. */
 export function formatYmdDateInTimeZone(instant: Date, timeZone: string): string {
   return new Intl.DateTimeFormat('en-CA', {

@@ -48,6 +48,12 @@ import { RefreshSessionRepository } from '@/modules/auth/infra/refresh-session.r
     SendEmailVerifyUseCase,
     VerifyEmailUseCase,
   ],
-  exports: [JwtTokenService, JwtGuard, RolesGuard, AuthUserRepository],
+  exports: [
+    JwtTokenService,
+    JwtGuard,
+    RolesGuard,
+    AuthUserRepository,
+    AuthTokenRepository,
+  ],
 })
 export class AuthModule {}

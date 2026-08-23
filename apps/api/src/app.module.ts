@@ -20,6 +20,8 @@ import { MasterScheduleModule } from '@/modules/master-schedule/master-schedule.
 import { MasterServicesModule } from '@/modules/master-services/master-services.module'
 import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
 import { MasterLedgerModule } from '@/modules/master-ledger/master-ledger.module'
+import { NotificationsModule } from '@/modules/notifications/notifications.module'
+import { TelegramModule } from '@/modules/telegram/telegram.module'
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { MasterLedgerModule } from '@/modules/master-ledger/master-ledger.module
     BookingsModule,
     FavoritesModule,
     MasterLedgerModule,
+    NotificationsModule,
+    TelegramModule,
   ],
   providers: [
     {
