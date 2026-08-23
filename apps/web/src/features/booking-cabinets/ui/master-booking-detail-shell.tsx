@@ -8,6 +8,7 @@ import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-lab
 import { canMarkNoShow } from '@/features/booking-cabinets/model/can-mark-no-show'
 import { canRescheduleBooking } from '@/features/booking-cabinets/model/can-reschedule-booking'
 import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-master-bookings'
+import { BookingCancelWarning } from '@/features/booking-cabinets/ui/booking-cancel-warning'
 import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
 import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import { ClientSocialLink } from '@/features/booking-cabinets/ui/client-social-link'
@@ -164,6 +165,7 @@ export function MasterBookingDetailShell({
 
         {canCancel ? (
           <BookingInfoCard title="Отмена">
+            <BookingCancelWarning audience="master" />
             <label className={styles.fieldLabel} htmlFor="master-cancel-reason">
               Причина отмены
             </label>

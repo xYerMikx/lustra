@@ -67,6 +67,8 @@ export const TEST_ID = {
   clientCancelReason: 'client-cancel-reason',
   clientCancelSubmit: 'client-cancel-submit',
   bookingNotFound: 'booking-not-found',
+  telegramConnect: 'telegram-connect',
+  telegramLinked: 'telegram-linked',
 
   reviewPrompt: 'review-prompt',
   reviewText: 'review-text',

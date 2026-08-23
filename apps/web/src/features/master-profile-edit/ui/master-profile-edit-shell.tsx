@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import type { DistrictView, MasterProfileView } from '@lustra/contracts'
 
+import { useMasterSession } from '@/features/auth'
 import { MasterProfileEditForm } from '@/features/master-profile-edit/ui/master-profile-edit-form'
+import { TelegramLinkCard } from '@/features/telegram-link'
 import { ApiError } from '@/shared/api/http'
 import {
   getMasterProfile,
@@ -14,6 +16,7 @@ import styles from '@/features/master-profile-edit/ui/master-profile-edit.module
 type LoadStatus = 'loading' | 'error' | 'success'
 
 export function MasterProfileEditShell() {
+  const session = useMasterSession()
   const [profile, setProfile] = useState<MasterProfileView | null>(null)
   const [districts, setDistricts] = useState<DistrictView[]>([])
   const [status, setStatus] = useState<LoadStatus>('loading')
@@ -92,6 +95,7 @@ export function MasterProfileEditShell() {
         <p className={styles.copy}>
           Имя, ссылка на страницу, район и описание для клиентов.
         </p>
+        <TelegramLinkCard linked={session.telegramLinked} />
         <MasterProfileEditForm
           profile={profile}
           districts={districts}
