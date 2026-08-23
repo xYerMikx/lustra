@@ -12,6 +12,8 @@ function span(overrides: Partial<CalendarSpan>): CalendarSpan {
     clientName: 'Ерм',
     bookingId: 'booking-1',
     durationMin: 60,
+    isExtra: false,
+    extraPayAmount: null,
     ...overrides,
   }
 }
@@ -31,5 +33,20 @@ describe('calendarSpanLabel', () => {
         '10:30',
       ),
     ).toBe('10:00')
+  })
+
+  it('shows extra pay on an open slot', () => {
+    expect(
+      calendarSpanLabel(
+        span({
+          status: 'open',
+          clientName: null,
+          bookingId: null,
+          extraPayAmount: '15.00',
+        }),
+        '21:00',
+        '21:30',
+      ),
+    ).toBe('21:00 · +15 BYN')
   })
 })

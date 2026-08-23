@@ -62,6 +62,31 @@
   padding-bottom: var(--spacing-4);
 }
 
+.availabilityPane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-24);
+  min-height: var(--spacing-96);
+}
+
+.availabilityPane[data-busy='true'] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.refreshHint {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .availabilityPane {
+    transition: opacity var(--duration-150) var(--ease-out-quart);
+  }
+}
+
 .dayChip {
   flex: 0 0 auto;
   min-width: 72px;

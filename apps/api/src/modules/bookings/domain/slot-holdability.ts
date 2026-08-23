@@ -2,8 +2,9 @@ export type HoldableSlotRow = {
   id: string
   startsAt: Date
   endsAt: Date
-  status: 'open' | 'held' | 'booked' | 'blocked'
+  status: 'open' | 'held' | 'booked' | 'blocked' | 'closed'
   holdExpiresAt: Date | null
+  extraPayAmount?: string | null
 }
 
 export function isSlotHoldable(slot: HoldableSlotRow, now: Date): boolean {

@@ -109,7 +109,9 @@ export function handleClientBookings(
       serviceId: String(body.serviceId ?? SERVICE_ID),
       serviceTitle: 'Маникюр комбинированный',
       serviceDurationMin: 90,
-      priceAmount: '60',
+      priceAmount: slot.extraPayAmount
+        ? String(60 + Number(slot.extraPayAmount))
+        : '60',
       currency: 'BYN',
       startsAt: slot.startsAt,
       endsAt: slot.endsAt,

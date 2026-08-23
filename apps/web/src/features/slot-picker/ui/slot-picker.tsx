@@ -8,7 +8,10 @@ import { DayStrip } from '@/features/slot-picker/ui/day-strip'
 import { ServicePicker } from '@/features/slot-picker/ui/service-picker'
 import { SlotChipGrid } from '@/features/slot-picker/ui/slot-chip-grid'
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'
-import { slotTimeLabel } from '@/features/slot-picker/model/group-slots-by-period'
+import {
+  slotChipCaption,
+  slotTimeLabel,
+} from '@/features/slot-picker/model/group-slots-by-period'
 import { Button } from '@/shared/ui/button'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -135,7 +138,7 @@ export function SlotPicker({
         </p>
       ) : null}
 
-      {picker.status === 'empty' ? (
+      {picker.status === 'empty' && !picker.isRefreshing ? (
         <p className={styles.stateBox}>
           На ближайшие 14 дней нет свободных окон для этой услуги
         </p>
@@ -148,7 +151,14 @@ export function SlotPicker({
       ) : null}
 
       {picker.status === 'success' || picker.status === 'empty' ? (
-        <>
+        <div
+          className={styles.availabilityPane}
+          data-busy={picker.isRefreshing ? 'true' : undefined}
+          aria-busy={picker.isRefreshing}
+        >
+          {picker.isRefreshing ? (
+            <p className={styles.refreshHint}>Обновляем окна…</p>
+          ) : null}
           <DayStrip
             days={picker.days}
             selectedDate={picker.selectedDate}
@@ -163,14 +173,14 @@ export function SlotPicker({
               onSelect={picker.selectSlot}
             />
           ) : null}
-        </>
+        </div>
       ) : null}
 
       {picker.selectedSlot ? (
         <div className={styles.selectedSummary} data-testid={TEST_ID.slotSelected}>
           <p className={styles.selectedText}>
             Выбрано:{' '}
-            {slotTimeLabel(picker.selectedSlot.startsAt, picker.timezone)} ·{' '}
+            {slotChipCaption(picker.selectedSlot, picker.timezone)} ·{' '}
             {picker.selectedDate}
           </p>
           <Button

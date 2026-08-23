@@ -47,7 +47,7 @@ export function MasterWorkspaceFrame({ children }: MasterWorkspaceFrameProps) {
 
   return (
     <div className={cn(styles.frame, styles.frameNav)}>
-      <MasterWorkspaceNav />
+      <MasterWorkspaceNav onboardingStep={user.onboardingStep} />
       <div>{children}</div>
     </div>
   )

@@ -155,9 +155,17 @@
   background: var(--color-surface-2);
   font-size: var(--text-13);
   line-height: var(--text-13--line-height);
+  color: inherit;
+  text-decoration: none;
 }
 
 .slotTime {
   font-weight: var(--font-weight-600);
   color: var(--color-text);
+}
+
+.hubActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-12);
 }

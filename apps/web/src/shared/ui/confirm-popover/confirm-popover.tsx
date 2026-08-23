@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
+import { placeConfirmPanel } from '@/shared/ui/confirm-popover/place-confirm-panel'
 import { Button } from '@/shared/ui/button'
 import { TEST_ID } from '@/shared/lib/test-id'
 import styles from '@/shared/ui/confirm-popover/confirm-popover.module.css'
@@ -29,7 +31,35 @@ export function ConfirmPopover({
 }: ConfirmPopoverProps) {
   const titleId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (!open) {
+      setReady(false)
+
+      return
+    }
+
+    const triggerBox = rootRef.current?.getBoundingClientRect()
+    const panel = panelRef.current
+
+    if (!triggerBox || !panel) {
+      return
+    }
+
+    const box = placeConfirmPanel(
+      triggerBox,
+      { width: panel.offsetWidth, height: panel.offsetHeight },
+      { width: window.innerWidth, height: window.innerHeight },
+      8,
+    )
+
+    panel.style.setProperty('--confirm-top', `${box.top}px`)
+    panel.style.setProperty('--confirm-left', `${box.left}px`)
+    setReady(true)
+  }, [open])
 
   useEffect(() => {
     if (!open) {
@@ -37,9 +67,13 @@ export function ConfirmPopover({
     }
 
     const handlePointerDown = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false)
+      const target = event.target as Node
+
+      if (rootRef.current?.contains(target) || panelRef.current?.contains(target)) {
+        return
       }
+
+      setOpen(false)
     }
 
     const handleEscape = (event: KeyboardEvent) => {
@@ -76,30 +110,34 @@ export function ConfirmPopover({
       >
         {trigger}
       </Button>
-      {open ? (
-        <div
-          className={styles.panel}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={titleId}
-        >
-          <p id={titleId} className={styles.title}>
-            {title}
-          </p>
-          <div className={styles.actions}>
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
-              {cancelLabel}
-            </Button>
-            <Button
-              type="button"
-              data-testid={TEST_ID.confirmPopoverConfirm}
-              onClick={confirmAction}
+      {open
+        ? createPortal(
+            <div
+              ref={panelRef}
+              className={ready ? styles.panelReady : styles.panel}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
             >
-              {confirmLabel}
-            </Button>
-          </div>
-        </div>
-      ) : null}
+              <p id={titleId} className={styles.title}>
+                {title}
+              </p>
+              <div className={styles.actions}>
+                <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+                  {cancelLabel}
+                </Button>
+                <Button
+                  type="button"
+                  data-testid={TEST_ID.confirmPopoverConfirm}
+                  onClick={confirmAction}
+                >
+                  {confirmLabel}
+                </Button>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }

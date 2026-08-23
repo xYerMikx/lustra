@@ -8,10 +8,12 @@ import type {
 } from '@/modules/scheduling/app/scheduling.ports'
 import type { OpenTimeSlot } from '@/modules/scheduling/domain/build-availability-windows'
 import type {
+  GeneratedSlotStart,
   ScheduleExceptionInput,
   ScheduleRuleInput,
   TimeBlockInput,
 } from '@/modules/scheduling/domain/generate-slot-starts'
+import { parseScheduleIntervals } from '@/modules/scheduling/domain/parse-schedule-intervals'
 import {
   MASTER_TIMEZONE,
   formatYmdDateInTimeZone,
@@ -103,6 +105,8 @@ export class SchedulingRepository implements SchedulingStore {
         type: true,
         startMin: true,
         endMin: true,
+        granularityMin: true,
+        intervals: true,
       },
     })
 
@@ -111,6 +115,8 @@ export class SchedulingRepository implements SchedulingStore {
       type: row.type,
       startMin: row.startMin,
       endMin: row.endMin,
+      granularityMin: row.granularityMin,
+      intervals: parseScheduleIntervals(row.intervals),
     }))
   }
 
@@ -136,66 +142,57 @@ export class SchedulingRepository implements SchedulingStore {
     from: Date,
     to: Date,
   ): Promise<OpenTimeSlot[]> {
-    return this.prisma.timeSlot.findMany({
+    return this.prisma.timeSlot
+      .findMany({
+        where: {
+          masterId,
+          status: 'open',
+          startsAt: { gte: from, lt: to },
+        },
+        select: { id: true, startsAt: true, endsAt: true, extraPayAmount: true },
+        orderBy: { startsAt: 'asc' },
+      })
+      .then((rows) =>
+        rows.map((row) => ({
+          id: row.id,
+          startsAt: row.startsAt,
+          endsAt: row.endsAt,
+          extraPayAmount: row.extraPayAmount
+            ? Number(row.extraPayAmount).toFixed(2)
+            : null,
+        })),
+      )
+  }
+
+  async replaceOpenScheduleSlots(
+    masterId: string,
+    rangeFrom: Date,
+    rangeTo: Date,
+    generated: GeneratedSlotStart[],
+  ): Promise<void> {
+    await this.prisma.timeSlot.deleteMany({
       where: {
         masterId,
         status: 'open',
-        startsAt: { gte: from, lt: to },
+        isExtra: false,
+        startsAt: { gte: rangeFrom, lt: rangeTo },
       },
-      select: { id: true, startsAt: true, endsAt: true },
-      orderBy: { startsAt: 'asc' },
     })
-  }
 
-  async upsertOpenTimeSlots(
-    masterId: string,
-    starts: Date[],
-    granularityMin: number,
-  ): Promise<void> {
-    if (starts.length === 0) {
+    if (generated.length === 0) {
       return
     }
 
     await this.prisma.timeSlot.createMany({
-      data: starts.map((startsAt) => ({
+      data: generated.map((slot) => ({
         masterId,
-        startsAt,
-        endsAt: new Date(startsAt.getTime() + granularityMin * 60_000),
+        startsAt: slot.startsAt,
+        endsAt: new Date(
+          slot.startsAt.getTime() + slot.granularityMin * 60_000,
+        ),
         status: 'open' as const,
       })),
       skipDuplicates: true,
     })
-  }
-
-  async deleteMissingOpenTimeSlots(
-    masterId: string,
-    rangeFrom: Date,
-    rangeTo: Date,
-    keepStarts: Date[],
-  ): Promise<number> {
-    const keepSet = new Set(keepStarts.map((item) => item.toISOString()))
-    const openInRange = await this.prisma.timeSlot.findMany({
-      where: {
-        masterId,
-        status: 'open',
-        startsAt: { gte: rangeFrom, lt: rangeTo },
-        isExtra: false,
-      },
-      select: { id: true, startsAt: true },
-    })
-
-    const toDelete = openInRange
-      .filter((row) => !keepSet.has(row.startsAt.toISOString()))
-      .map((row) => row.id)
-
-    if (toDelete.length === 0) {
-      return 0
-    }
-
-    const result = await this.prisma.timeSlot.deleteMany({
-      where: { id: { in: toDelete } },
-    })
-
-    return result.count
   }
 }

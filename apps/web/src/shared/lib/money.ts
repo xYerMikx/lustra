@@ -23,3 +23,17 @@ export function formatPriceLabel(input: {
 
   return formatByn(input.price, input.currency)
 }
+
+export function extraPaySuffix(amount: string | null | undefined): string {
+  if (!amount) {
+    return ''
+  }
+
+  const value = Number(amount)
+
+  if (!Number.isFinite(value) || value <= 0) {
+    return ''
+  }
+
+  return ` · +${formatByn(value)}`
+}

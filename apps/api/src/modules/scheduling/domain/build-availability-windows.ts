@@ -8,6 +8,7 @@ export type OpenTimeSlot = {
   id: string
   startsAt: Date
   endsAt: Date
+  extraPayAmount: string | null
 }
 
 export type BookableWindow = {
@@ -15,6 +16,7 @@ export type BookableWindow = {
   endsAt: Date
   slotIds: string[]
   ymdDate: string
+  extraPayAmount: string | null
 }
 
 export type BuildWindowsInput = {
@@ -74,10 +76,29 @@ export function buildBookableWindows(input: BuildWindowsInput): BookableWindow[]
       endsAt,
       slotIds: slice.map((item) => item.id),
       ymdDate: formatYmdDateInTimeZone(first.startsAt, timeZone),
+      extraPayAmount: sumExtraPay(slice),
     })
   }
 
   return windows
+}
+
+function sumExtraPay(slots: OpenTimeSlot[]): string | null {
+  let total = 0
+
+  for (const slot of slots) {
+    if (!slot.extraPayAmount) {
+      continue
+    }
+
+    total += Number(slot.extraPayAmount)
+  }
+
+  if (total <= 0) {
+    return null
+  }
+
+  return total.toFixed(2)
 }
 
 function isConsecutive(slice: OpenTimeSlot[], stepMs: number): boolean {

@@ -30,6 +30,7 @@ export type E2eUser = {
   emailVerified: boolean
   telegramLinked: boolean
   profileStatus: AuthUserView['profileStatus']
+  onboardingStep: AuthUserView['onboardingStep']
 }
 
 export type E2eBooking = {
@@ -135,6 +136,7 @@ export function toAuthUserView(user: E2eUser): AuthUserView {
     emailVerified: user.emailVerified,
     telegramLinked: user.telegramLinked,
     profileStatus: user.profileStatus,
+    onboardingStep: user.onboardingStep,
   }
 }
 

@@ -10,6 +10,7 @@ import {
   PublicReviews,
   buildMasterStructuredData,
 } from '@/features/reviews'
+import { averageStarRating } from '@/features/reviews/model/average-star-rating'
 import { SlotPicker } from '@/features/slot-picker'
 import { ApiError } from '@/shared/api/http'
 import {
@@ -67,8 +68,17 @@ export default async function MasterPage({ params }: PageProps) {
   }
 
   const reviews = await loadReviews(slug)
+  const published = averageStarRating(reviews.items.map((item) => item.rating))
+  const masterView =
+    published.count > 0
+      ? {
+          ...master,
+          ratingAvg: published.avg,
+          ratingCount: published.count,
+        }
+      : master
   const structuredData = buildMasterStructuredData({
-    master,
+    master: masterView,
     reviews: reviews.items,
   })
 
@@ -76,7 +86,7 @@ export default async function MasterPage({ params }: PageProps) {
     <main className={styles.page} data-testid={TEST_ID.pageMasterPublic}>
       <MasterStructuredData data={structuredData} />
       <SiteChrome>
-        <MasterHero master={master} />
+        <MasterHero master={masterView} />
         <PublicPortfolioGallery items={master.portfolio} />
         <MasterServicesList services={master.services} />
         <PublicReviews items={reviews.items} />

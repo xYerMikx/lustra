@@ -44,6 +44,8 @@ type DayTimelineProps = {
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
   onRemoveException: (ymdDate: string) => void
+  onCloseSlot: (slotId: string) => void
+  onReopenSlot: (slotId: string) => void
 }
 
 export function DayTimeline({
@@ -56,6 +58,8 @@ export function DayTimeline({
   onSelectSlot,
   onRemoveBlock,
   onRemoveException,
+  onCloseSlot,
+  onReopenSlot,
 }: DayTimelineProps) {
   const spans = mergeSlotSpans(slots)
 
@@ -101,6 +105,8 @@ export function DayTimeline({
                   calendarPath={calendarPath}
                   canBook={canBook}
                   onSelectOpen={onSelectSlot}
+                  onCloseSlot={onCloseSlot}
+                  onReopenSlot={onReopenSlot}
                 />
               ))}
               {hourBlocks.map((block) => (

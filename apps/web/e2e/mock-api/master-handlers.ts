@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { DRAFT_MASTER_PROFILE_ID, MASTER_PROFILE_ID, MASTER_USER_ID } from '../ids'
-import { todayYmd } from '../time'
+import { addDaysYmd, todayYmd } from '../time'
 import { apiError, type MockWorld } from './types'
 import { requireUser, type HandlerResult } from './auth-handlers'
 import { asRecord, type MockRequest } from './http'
@@ -78,6 +78,10 @@ export function handleMasterCabinet(
         addressHint: profile.primaryLocation?.addressHint ?? null,
         isPrimary: true,
       }
+
+      if (gated.user.onboardingStep === 'profile') {
+        gated.user.onboardingStep = 'services'
+      }
     }
 
     const nextContact = {
@@ -149,6 +153,10 @@ export function handleMasterCabinet(
 
     world.services.push(service)
 
+    if (gated.user.onboardingStep === 'services') {
+      gated.user.onboardingStep = 'schedule'
+    }
+
     return { response: { status: 201, body: service } }
   }
 
@@ -185,6 +193,10 @@ export function handleMasterCabinet(
 
     const body = asRecord(request.body)
     const rules = Array.isArray(body.rules) ? body.rules : []
+
+    if (gated.user.onboardingStep === 'schedule') {
+      gated.user.onboardingStep = 'done'
+    }
 
     return {
       response: {
@@ -268,6 +280,70 @@ export function handleMasterCabinet(
     return { response: { status: 204 } }
   }
 
+  if (method === 'POST' && pathname === '/master/schedule/slots/extra') {
+    const gated = requireUser(world, request, 'master')
+
+    if ('response' in gated) {
+      return gated
+    }
+
+    const body = asRecord(request.body)
+    const startsAt = String(body.startsAt ?? '')
+    const extraPayAmount = Number(body.extraPayAmount).toFixed(2)
+    const slot = {
+      id: randomUUID(),
+      startsAt,
+      endsAt: new Date(new Date(startsAt).getTime() + 30 * 60_000).toISOString(),
+      status: 'open' as const,
+      clientName: null,
+      bookingId: null,
+      isExtra: true,
+      extraPayAmount,
+    }
+
+    world.calendarSlots.push(slot)
+    world.availability.push({
+      startsAt: slot.startsAt,
+      endsAt: slot.endsAt,
+      slotIds: [slot.id],
+      extraPayAmount,
+    })
+
+    return { response: { status: 201, body: slot } }
+  }
+
+  const closeSlot = pathname.match(/^\/master\/schedule\/slots\/([^/]+)\/close$/)
+
+  if (method === 'POST' && closeSlot) {
+    const gated = requireUser(world, request, 'master')
+
+    if ('response' in gated) {
+      return gated
+    }
+
+    world.calendarSlots = world.calendarSlots.map((item) =>
+      item.id === closeSlot[1] ? { ...item, status: 'closed' as const } : item,
+    )
+
+    return { response: { status: 204 } }
+  }
+
+  const reopenSlot = pathname.match(/^\/master\/schedule\/slots\/([^/]+)\/reopen$/)
+
+  if (method === 'POST' && reopenSlot) {
+    const gated = requireUser(world, request, 'master')
+
+    if ('response' in gated) {
+      return gated
+    }
+
+    world.calendarSlots = world.calendarSlots.map((item) =>
+      item.id === reopenSlot[1] ? { ...item, status: 'open' as const } : item,
+    )
+
+    return { response: { status: 204 } }
+  }
+
   const exceptionMatch = pathname.match(/^\/master\/schedule\/exceptions\/([^/]+)$/)
 
   if (method === 'PUT' && exceptionMatch) {
@@ -278,19 +354,47 @@ export function handleMasterCabinet(
     }
 
     const body = asRecord(request.body)
-    const exception = {
-      id: randomUUID(),
-      date: exceptionMatch[1] ?? todayYmd(),
-      type: body.type === 'custom_hours' ? ('custom_hours' as const) : ('day_off' as const),
-      startMin: typeof body.startMin === 'number' ? body.startMin : null,
-      endMin: typeof body.endMin === 'number' ? body.endMin : null,
-      note: String(body.note ?? '').trim() || null,
+    const startDate = exceptionMatch[1] ?? todayYmd()
+    const untilDate =
+      typeof body.untilDate === 'string' && body.untilDate >= startDate
+        ? body.untilDate
+        : startDate
+    const type = body.type === 'custom_hours' ? ('custom_hours' as const) : ('day_off' as const)
+    const startMin = typeof body.startMin === 'number' ? body.startMin : null
+    const endMin = typeof body.endMin === 'number' ? body.endMin : null
+    const granularityMin =
+      body.granularityMin === 15 ||
+      body.granularityMin === 30 ||
+      body.granularityMin === 60
+        ? body.granularityMin
+        : null
+    const intervals = Array.isArray(body.intervals)
+      ? (body.intervals as Array<{ startMin: number; endMin: number }>)
+      : null
+    const note = String(body.note ?? '').trim() || null
+    const dates: string[] = []
+    let cursor = startDate
+
+    while (cursor <= untilDate) {
+      dates.push(cursor)
+      cursor = addDaysYmd(cursor, 1)
     }
 
-    world.exceptions = world.exceptions.filter((item) => item.date !== exception.date)
-    world.exceptions.push(exception)
+    const items = dates.map((date) => ({
+      id: randomUUID(),
+      date,
+      type,
+      startMin,
+      endMin,
+      granularityMin,
+      intervals,
+      note,
+    }))
 
-    return { response: { status: 200, body: exception } }
+    world.exceptions = world.exceptions.filter((item) => !dates.includes(item.date))
+    world.exceptions.push(...items)
+
+    return { response: { status: 200, body: items[0] } }
   }
 
   if (method === 'DELETE' && exceptionMatch) {

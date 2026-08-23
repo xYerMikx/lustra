@@ -12,11 +12,15 @@ export type CalendarBodyProps = {
   days: DayItems[]
   calendarPath: string
   canBook: boolean
+  todayTick: number
   onReload: () => void
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
   onRemoveException: (ymdDate: string) => void
+  onCloseSlot: (slotId: string) => void
+  onReopenSlot: (slotId: string) => void
+  onVisibleWeekRangeChange: (range: { from: string; to: string }) => void
 }
 
 export function CalendarBody({
@@ -26,11 +30,15 @@ export function CalendarBody({
   days,
   calendarPath,
   canBook,
+  todayTick,
   onReload,
   onSelectDay,
   onSelectSlot,
   onRemoveBlock,
   onRemoveException,
+  onCloseSlot,
+  onReopenSlot,
+  onVisibleWeekRangeChange,
 }: CalendarBodyProps) {
   if (status === 'loading') {
     return <div className={styles.stateBox}>Загружаем сетку…</div>
@@ -51,8 +59,8 @@ export function CalendarBody({
     <>
       {status === 'empty' ? (
         <div className={styles.stateBox}>
-          На этот период нет открытых окон и блоков. Задайте недельный график в
-          онбординге — слоты появятся здесь.
+          На этот период нет открытых окон и блоков. Задайте недельный график —
+          слоты появятся здесь.
         </div>
       ) : null}
       <CalendarGrid
@@ -60,10 +68,14 @@ export function CalendarBody({
         days={days}
         calendarPath={calendarPath}
         canBook={canBook}
+        todayTick={todayTick}
         onSelectDay={onSelectDay}
         onSelectSlot={onSelectSlot}
         onRemoveBlock={onRemoveBlock}
         onRemoveException={onRemoveException}
+        onCloseSlot={onCloseSlot}
+        onReopenSlot={onReopenSlot}
+        onVisibleWeekRangeChange={onVisibleWeekRangeChange}
       />
     </>
   )

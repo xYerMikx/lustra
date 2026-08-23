@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { ReceivedClientReviewView } from '@lustra/contracts'
 
+import { averageStarRating } from '@/features/reviews/model/average-star-rating'
 import { listClientReviews } from '@/shared/api/reviews-client'
 import { ApiError } from '@/shared/api/http'
 
@@ -30,9 +31,10 @@ export function useClientReviews() {
         }
 
         const nextReviews = response?.items ?? []
+        const live = averageStarRating(nextReviews.map((item) => item.rating))
         setReviews(nextReviews)
-        setRatingAvg(response?.ratingAvg ?? 0)
-        setRatingCount(response?.ratingCount ?? 0)
+        setRatingAvg(live.count > 0 ? live.avg : (response?.ratingAvg ?? 0))
+        setRatingCount(live.count > 0 ? live.count : (response?.ratingCount ?? 0))
         setStatus(nextReviews.length === 0 ? 'empty' : 'success')
       } catch (error) {
         if (cancelled) {

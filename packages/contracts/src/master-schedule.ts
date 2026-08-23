@@ -82,12 +82,31 @@ export type PutMasterScheduleInput = z.infer<typeof PutMasterScheduleInputSchema
 export const ExceptionTypeSchema = z.enum(['day_off', 'custom_hours'])
 export type ExceptionType = z.infer<typeof ExceptionTypeSchema>
 
+export const ScheduleIntervalSchema = z
+  .object({
+    startMin: z.number().int().min(0).max(1439),
+    endMin: z.number().int().min(1).max(1440),
+  })
+  .strict()
+  .superRefine((interval, ctx) => {
+    if (interval.endMin <= interval.startMin) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endMin'],
+        message: 'Конец интервала должен быть позже начала',
+      })
+    }
+  })
+export type ScheduleInterval = z.infer<typeof ScheduleIntervalSchema>
+
 export const ScheduleExceptionViewSchema = z.object({
   id: z.string().uuid(),
   date: YmdDateSchema,
   type: ExceptionTypeSchema,
   startMin: z.number().int().min(0).max(1439).nullable(),
   endMin: z.number().int().min(1).max(1440).nullable(),
+  granularityMin: GranularityMinSchema.nullable(),
+  intervals: z.array(ScheduleIntervalSchema).nullable(),
   note: z.string().nullable(),
 })
 export type ScheduleExceptionView = z.infer<typeof ScheduleExceptionViewSchema>
@@ -123,6 +142,9 @@ export const PutScheduleExceptionInputSchema = z
     type: ExceptionTypeSchema,
     startMin: z.number().int().min(0).max(1439).optional(),
     endMin: z.number().int().min(1).max(1440).optional(),
+    granularityMin: GranularityMinSchema.optional(),
+    intervals: z.array(ScheduleIntervalSchema).min(1).max(8).optional(),
+    untilDate: YmdDateSchema.optional(),
     note: z.string().max(500).optional(),
   })
   .strict()
@@ -131,34 +153,55 @@ export const PutScheduleExceptionInputSchema = z
       return
     }
 
-    if (value.startMin == null) {
+    const intervals = resolveCustomHoursIntervals(value)
+
+    if (intervals.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['startMin'],
-        message: 'Укажите начало особых часов',
+        message: 'Укажите рабочие окна дня',
       })
+
+      return
     }
 
-    if (value.endMin == null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['endMin'],
-        message: 'Укажите конец особых часов',
-      })
-    }
+    for (let index = 1; index < intervals.length; index += 1) {
+      const prev = intervals[index - 1]
+      const current = intervals[index]
 
-    if (
-      value.startMin != null &&
-      value.endMin != null &&
-      value.endMin <= value.startMin
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['endMin'],
-        message: 'Конец интервала должен быть позже начала',
-      })
+      if (!prev || !current) {
+        continue
+      }
+
+      if (current.startMin < prev.endMin) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['intervals', index, 'startMin'],
+          message: 'Окна не должны пересекаться',
+        })
+      }
     }
   })
 export type PutScheduleExceptionInput = z.infer<
   typeof PutScheduleExceptionInputSchema
 >
+
+export function resolveCustomHoursIntervals(input: {
+  startMin?: number
+  endMin?: number
+  intervals?: Array<{ startMin: number; endMin: number }>
+}): Array<{ startMin: number; endMin: number }> {
+  if (input.intervals && input.intervals.length > 0) {
+    return [...input.intervals].sort((left, right) => left.startMin - right.startMin)
+  }
+
+  if (
+    input.startMin == null ||
+    input.endMin == null ||
+    input.endMin <= input.startMin
+  ) {
+    return []
+  }
+
+  return [{ startMin: input.startMin, endMin: input.endMin }]
+}

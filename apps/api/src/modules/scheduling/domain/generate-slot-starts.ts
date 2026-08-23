@@ -17,11 +17,9 @@ export type ScheduleRuleInput = {
   activeTo?: Date | null
 }
 
-export type ScheduleExceptionInput = {
-  ymdDate: string
-  type: 'day_off' | 'custom_hours'
-  startMin?: number | null
-  endMin?: number | null
+export type LocalInterval = {
+  startMin: number
+  endMin: number
 }
 
 export type TimeBlockInput = {
@@ -29,9 +27,18 @@ export type TimeBlockInput = {
   endsAt: Date
 }
 
-export type LocalInterval = {
-  startMin: number
-  endMin: number
+export type ScheduleExceptionInput = {
+  ymdDate: string
+  type: 'day_off' | 'custom_hours'
+  startMin?: number | null
+  endMin?: number | null
+  granularityMin?: number | null
+  intervals?: LocalInterval[] | null
+}
+
+export type GeneratedSlotStart = {
+  startsAt: Date
+  granularityMin: number
 }
 
 export type GenerateSlotStartsInput = {
@@ -50,7 +57,9 @@ export type GenerateSlotStartsInput = {
  * Pure SlotGenerator core: local rules/exceptions/blocks → UTC TimeSlot starts.
  * Grid aligns to each working interval start (not midnight).
  */
-export function generateSlotStarts(input: GenerateSlotStartsInput): Date[] {
+export function generateSlotStarts(
+  input: GenerateSlotStartsInput,
+): GeneratedSlotStart[] {
   const timeZone = input.timeZone ?? MASTER_TIMEZONE
   const todayYmdDate = formatYmdDateInTimeZone(input.now, timeZone)
   const horizonEndYmdDate = addDaysToYmdDate(todayYmdDate, input.maxHorizonDays)
@@ -64,9 +73,11 @@ export function generateSlotStarts(input: GenerateSlotStartsInput): Date[] {
   const exceptionByDate = new Map(
     input.exceptions.map((item) => [item.ymdDate, item]),
   )
-  const starts: Date[] = []
+  const starts: GeneratedSlotStart[] = []
 
   for (const ymdDate of eachYmdDate(rangeStart, rangeEnd)) {
+    const exception = exceptionByDate.get(ymdDate)
+    const stepMin = exception?.granularityMin ?? input.granularityMin
     const intervals = resolveDayIntervals(
       ymdDate,
       input.rules,
@@ -90,10 +101,13 @@ export function generateSlotStarts(input: GenerateSlotStartsInput): Date[] {
       for (const part of freeParts) {
         for (
           let cursor = part.startMin;
-          cursor + input.granularityMin <= part.endMin;
-          cursor += input.granularityMin
+          cursor + stepMin <= part.endMin;
+          cursor += stepMin
         ) {
-          starts.push(zonedLocalToUtc(ymdDate, cursor, timeZone))
+          starts.push({
+            startsAt: zonedLocalToUtc(ymdDate, cursor, timeZone),
+            granularityMin: stepMin,
+          })
         }
       }
     }
@@ -115,15 +129,7 @@ function resolveDayIntervals(
   }
 
   if (exception?.type === 'custom_hours') {
-    if (
-      exception.startMin == null ||
-      exception.endMin == null ||
-      exception.endMin <= exception.startMin
-    ) {
-      return []
-    }
-
-    return [{ startMin: exception.startMin, endMin: exception.endMin }]
+    return normalizeExceptionIntervals(exception)
   }
 
   const weekday = isoWeekdayForYmdDate(ymdDate, timeZone)
@@ -154,6 +160,26 @@ function resolveDayIntervals(
   return dayRules
     .map((rule) => ({ startMin: rule.startMin, endMin: rule.endMin }))
     .sort((a, b) => a.startMin - b.startMin)
+}
+
+function normalizeExceptionIntervals(
+  exception: ScheduleExceptionInput,
+): LocalInterval[] {
+  if (exception.intervals && exception.intervals.length > 0) {
+    return [...exception.intervals]
+      .filter((item) => item.endMin > item.startMin)
+      .sort((left, right) => left.startMin - right.startMin)
+  }
+
+  if (
+    exception.startMin == null ||
+    exception.endMin == null ||
+    exception.endMin <= exception.startMin
+  ) {
+    return []
+  }
+
+  return [{ startMin: exception.startMin, endMin: exception.endMin }]
 }
 
 function subtractBlocksFromInterval(

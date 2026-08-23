@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   groupSlotsByPeriod,
   periodForHour,
+  slotChipCaption,
 } from '@/features/slot-picker/model/group-slots-by-period'
 
 describe('groupSlotsByPeriod', () => {
@@ -19,11 +20,13 @@ describe('groupSlotsByPeriod', () => {
           startsAt: '2026-08-12T07:00:00.000Z', // 10:00 Minsk
           endsAt: '2026-08-12T08:30:00.000Z',
           slotIds: ['a'],
+          extraPayAmount: null,
         },
         {
           startsAt: '2026-08-12T11:00:00.000Z', // 14:00 Minsk
           endsAt: '2026-08-12T12:30:00.000Z',
           slotIds: ['b'],
+          extraPayAmount: '10.00',
         },
       ],
       'Europe/Minsk',
@@ -31,5 +34,19 @@ describe('groupSlotsByPeriod', () => {
 
     expect(grouped.map((item) => item.period)).toEqual(['morning', 'day'])
     expect(grouped[0]?.slots).toHaveLength(1)
+  })
+
+  it('shows extra pay on the chip caption', () => {
+    expect(
+      slotChipCaption(
+        {
+          startsAt: '2026-08-12T07:00:00.000Z',
+          endsAt: '2026-08-12T07:30:00.000Z',
+          slotIds: ['a'],
+          extraPayAmount: '15.00',
+        },
+        'Europe/Minsk',
+      ),
+    ).toBe('10:00 · +15 BYN')
   })
 })

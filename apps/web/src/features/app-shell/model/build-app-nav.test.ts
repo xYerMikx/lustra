@@ -14,6 +14,7 @@ function user(partial: Partial<MeResponse> & Pick<MeResponse, 'role' | 'email'>)
     emailVerified: true,
     telegramLinked: false,
     profileStatus: partial.role === 'master' ? 'published' : null,
+    onboardingStep: partial.role === 'master' ? 'done' : null,
     ...partial,
   }
 }

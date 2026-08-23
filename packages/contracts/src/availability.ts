@@ -28,6 +28,7 @@ export const AvailabilitySlotViewSchema = z.object({
   startsAt: z.string().datetime(),
   endsAt: z.string().datetime(),
   slotIds: z.array(z.string().uuid()),
+  extraPayAmount: z.string().nullable(),
 })
 export type AvailabilitySlotView = z.infer<typeof AvailabilitySlotViewSchema>
 

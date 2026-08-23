@@ -1,5 +1,6 @@
 import type { AvailabilitySlotView } from '@lustra/contracts'
 
+import { extraPaySuffix } from '@/shared/lib/money'
 import { MASTER_TIMEZONE, formatTimeInTimeZone } from '@/shared/lib/tz'
 
 export type SlotPeriod = 'morning' | 'day' | 'evening'
@@ -66,4 +67,11 @@ export function slotTimeLabel(
   timeZone: string = MASTER_TIMEZONE,
 ): string {
   return formatTimeInTimeZone(new Date(startsAt), timeZone)
+}
+
+export function slotChipCaption(
+  slot: AvailabilitySlotView,
+  timeZone: string = MASTER_TIMEZONE,
+): string {
+  return `${slotTimeLabel(slot.startsAt, timeZone)}${extraPaySuffix(slot.extraPayAmount)}`
 }

@@ -71,12 +71,7 @@ export class EnsureSlotsUseCase {
       MASTER_TIMEZONE,
     )
 
-    await this.store.upsertOpenTimeSlots(
-      input.masterId,
-      starts,
-      policy.granularityMin,
-    )
-    await this.store.deleteMissingOpenTimeSlots(
+    await this.store.replaceOpenScheduleSlots(
       input.masterId,
       rangeFrom,
       rangeTo,

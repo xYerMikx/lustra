@@ -304,7 +304,7 @@ model MasterBookingPolicy {                         // всё, что влияе
 model MasterStats {                                  // read model: пишет только воркер/сервис статистики
   id                String   @id @default(uuid())
   masterId          String   @unique
-  ratingAvg         Decimal  @default(0) @db.Decimal(3,2)   // байесовское сглаживание
+  ratingAvg         Decimal  @default(0) @db.Decimal(3,2)   // среднее опубликованных оценок
   ratingCount       Int      @default(0)
   ratingHistogram   Json?                                   // {"5":12,"4":3,...}
   priceMin          Decimal? @db.Decimal(10,2)
@@ -610,7 +610,7 @@ model Review {
 }
 
 // Публичный каталог и /m/[slug] показывают только authorRole=client + published + rating != null.
-// Комментарий мастера без оценки (rating IS NULL) в байесовское среднее не входит.
+// Комментарий мастера без оценки (rating IS NULL) в среднее не входит.
 
 
 model ReviewPhoto {

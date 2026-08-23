@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import cn from 'classnames'
+import type { OnboardingStep } from '@lustra/contracts'
 
 import { MasterNavLink } from '@/features/app-shell/ui/master-nav-link'
 import {
   MASTER_WORKSPACE_MORE,
   isWorkspaceItemActive,
+  workspaceNavItems,
 } from '@/features/app-shell/model/master-workspace-nav'
 import { Button } from '@/shared/ui/button'
 import { CatalogIcon } from '@/shared/ui/icon-pack'
@@ -14,10 +16,17 @@ import styles from '@/features/app-shell/ui/master-workspace-nav.module.css'
 
 type MasterMoreSheetProps = {
   pathname: string
+  onboardingStep: OnboardingStep | null
   onClose: () => void
 }
 
-export function MasterMoreSheet({ pathname, onClose }: MasterMoreSheetProps) {
+export function MasterMoreSheet({
+  pathname,
+  onboardingStep,
+  onClose,
+}: MasterMoreSheetProps) {
+  const items = workspaceNavItems(MASTER_WORKSPACE_MORE, onboardingStep)
+
   return (
     <div className={styles.sheetBackdrop} role="presentation" onClick={onClose}>
       <div
@@ -31,7 +40,7 @@ export function MasterMoreSheet({ pathname, onClose }: MasterMoreSheetProps) {
           Ещё
         </h2>
         <nav className={styles.sheetNav} aria-label="Дополнительно">
-          {MASTER_WORKSPACE_MORE.map((item) => (
+          {items.map((item) => (
             <MasterNavLink
               key={item.href}
               item={item}

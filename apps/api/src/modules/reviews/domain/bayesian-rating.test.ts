@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { BAYES_C, BAYES_M, bayesianRating } from '@/modules/reviews/domain/bayesian-rating'
+import { bayesianRating } from '@/modules/reviews/domain/bayesian-rating'
 
 describe('bayesianRating', () => {
   it('returns zero when there are no published ratings', () => {
@@ -11,14 +11,16 @@ describe('bayesianRating', () => {
     })
   })
 
-  it('smooths a single five-star review toward the prior', () => {
+  it('shows a single five-star review as 5.0', () => {
     const result = bayesianRating([5])
-    const expected = (5 + BAYES_M * BAYES_C) / (1 + BAYES_M)
 
     expect(result.count).toBe(1)
-    expect(result.avg).toBe(Math.round(expected * 100) / 100)
-    expect(result.avg).toBeLessThan(5)
+    expect(result.avg).toBe(5)
     expect(result.histogram[5]).toBe(1)
+  })
+
+  it('averages mixed published ratings', () => {
+    expect(bayesianRating([5, 3]).avg).toBe(4)
   })
 
   it('recalculates after a rating is removed', () => {
@@ -27,6 +29,7 @@ describe('bayesianRating', () => {
 
     expect(withTwo.count).toBe(2)
     expect(afterDelete.count).toBe(1)
+    expect(afterDelete.avg).toBe(5)
     expect(afterDelete.avg).not.toBe(withTwo.avg)
   })
 })

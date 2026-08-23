@@ -1,10 +1,13 @@
 import type { MasterCalendarSlotView } from '@lustra/contracts'
 
+import { extraPaySuffix } from '@/shared/lib/money'
+
 const STATUS_LABEL: Record<MasterCalendarSlotView['status'], string | null> = {
   open: null,
   held: 'холд',
   booked: null,
   blocked: 'блок',
+  closed: 'скрыт',
 }
 
 export function calendarSlotLabel(
@@ -25,7 +28,7 @@ export function calendarSlotLabel(
     return `${timeLabel} · запись`
   }
 
-  return timeLabel
+  return `${timeLabel}${extraPaySuffix(slot.extraPayAmount)}`
 }
 
 export function isOpenCalendarSlot(slot: MasterCalendarSlotView): boolean {

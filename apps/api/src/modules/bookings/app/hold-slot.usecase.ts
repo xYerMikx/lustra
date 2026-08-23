@@ -17,6 +17,7 @@ import {
   holdCoverageEndsAt,
   isSlotHoldable,
 } from '@/modules/bookings/domain/slot-holdability'
+import { sumSlotExtraPay } from '@/modules/bookings/domain/sum-slot-extra-pay'
 import { BookingRepository } from '@/modules/bookings/infra/booking.repository'
 import { EnsureSlotsUseCase } from '@/modules/scheduling/app/ensure-slots.usecase'
 import {
@@ -185,6 +186,12 @@ export class HoldSlotUseCase {
           }
         }
 
+        const extraPay = sumSlotExtraPay(granules)
+        const priceAmount =
+          extraPay === '0.00'
+            ? String(service.price)
+            : (Number(service.price) + Number(extraPay)).toFixed(2)
+
         return this.bookings.createHold({
           masterId: input.masterId,
           masterClientId: masterClient.id,
@@ -193,7 +200,7 @@ export class HoldSlotUseCase {
           serviceTitle: service.title,
           serviceDurationMin: service.durationMin,
           bufferMin: bufferAfterMin,
-          priceAmount: String(service.price),
+          priceAmount,
           currency: service.currency,
           startsAt,
           endsAt,

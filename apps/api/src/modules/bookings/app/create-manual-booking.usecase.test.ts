@@ -62,7 +62,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
     listBookingsForMaster: vi.fn(),
     countActiveBookingsForClient: vi.fn(),
     upsertMasterClient: vi.fn(),
-    listGranulesInRange: vi.fn(),
+    listGranulesInRange: vi.fn().mockResolvedValue([]),
     createHold: vi.fn(),
     confirmHold: vi.fn(),
     cancelBooking: vi.fn(),

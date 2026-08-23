@@ -220,8 +220,21 @@ export class BookingRepository implements BookingStore {
         endsAt: true,
         status: true,
         holdExpiresAt: true,
+        extraPayAmount: true,
       },
     })
+    .then((rows) =>
+      rows.map((row) => ({
+        id: row.id,
+        startsAt: row.startsAt,
+        endsAt: row.endsAt,
+        status: row.status,
+        holdExpiresAt: row.holdExpiresAt,
+        extraPayAmount: row.extraPayAmount
+          ? Number(row.extraPayAmount).toFixed(2)
+          : null,
+      })),
+    )
   }
 
   createHold(input: CreateHoldInput): Promise<BookingRecord> {

@@ -28,4 +28,19 @@ describe('busyRangesForException', () => {
     expect(ranges[1]?.startsAt.toISOString()).toBe('2026-08-15T11:00:00.000Z')
     expect(ranges[1]?.endsAt.toISOString()).toBe('2026-08-15T21:00:00.000Z')
   })
+
+  it('keeps gaps between custom windows as busy', () => {
+    const ranges = busyRangesForException({
+      ymdDate: '2026-08-15',
+      type: 'custom_hours',
+      intervals: [
+        { startMin: 10 * 60, endMin: 12 * 60 },
+        { startMin: 14 * 60, endMin: 15 * 60 },
+      ],
+    })
+
+    expect(ranges).toHaveLength(3)
+    expect(ranges[1]?.startsAt.toISOString()).toBe('2026-08-15T09:00:00.000Z')
+    expect(ranges[1]?.endsAt.toISOString()).toBe('2026-08-15T11:00:00.000Z')
+  })
 })

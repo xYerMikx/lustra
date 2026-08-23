@@ -15,6 +15,7 @@ import {
   isBookingRaceConstraint,
 } from '@/modules/bookings/domain/booking-race'
 import { toBookingMasterView } from '@/modules/bookings/domain/map-booking'
+import { sumSlotExtraPay } from '@/modules/bookings/domain/sum-slot-extra-pay'
 import {
   appointmentEndsAt,
   holdCoverageEndsAt,
@@ -99,15 +100,26 @@ export class CreateManualBookingUseCase {
     const masterNote = input.note?.trim() ? input.note.trim() : null
 
     try {
-      const booking = await this.tx.run(() =>
-        this.bookings.createManualBooking({
+      const booking = await this.tx.run(async () => {
+        const granules = await this.bookings.listGranulesInRange({
+          masterId,
+          rangeStart: startsAt,
+          rangeEndExclusive: coverageEnd,
+        })
+        const extraPay = sumSlotExtraPay(granules)
+        const priceAmount =
+          extraPay === '0.00'
+            ? String(service.price)
+            : (Number(service.price) + Number(extraPay)).toFixed(2)
+
+        return this.bookings.createManualBooking({
           masterId,
           currentUserId: currentUser.id,
           serviceId: service.id,
           serviceTitle: service.title,
           serviceDurationMin: service.durationMin,
           bufferMin: bufferAfterMin,
-          priceAmount: String(service.price),
+          priceAmount,
           currency: service.currency,
           startsAt,
           endsAt,
@@ -121,8 +133,8 @@ export class CreateManualBookingUseCase {
             : null,
           masterNote,
           now,
-        }),
-      )
+        })
+      })
 
       return { booking: toBookingMasterView(booking) }
     } catch (error: unknown) {

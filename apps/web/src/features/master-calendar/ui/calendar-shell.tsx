@@ -11,6 +11,7 @@ import {
   todayYmdDate,
   type CalendarViewMode,
 } from '@/features/master-calendar/model/calendar-range'
+import { calendarRangeLabel } from '@/features/master-calendar/model/calendar-range-label'
 import { submitWithSuccess } from '@/features/master-calendar/model/submit-with-success'
 import { useCalendarData } from '@/features/master-calendar/model/use-calendar-data'
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
@@ -19,6 +20,7 @@ import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
 import { CalendarNotice } from '@/features/master-calendar/ui/calendar-notice'
 import { CalendarToolbar } from '@/features/master-calendar/ui/calendar-toolbar'
 import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
+import { ExtraSlotDialog } from '@/features/master-calendar/ui/extra-slot-dialog'
 import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID } from '@/shared/lib/test-id'
@@ -47,8 +49,14 @@ export function CalendarShell() {
   const canCreateBooking = anchorDate >= today
   const [blockOpen, setBlockOpen] = useState(false)
   const [exceptionOpen, setExceptionOpen] = useState(false)
+  const [extraOpen, setExtraOpen] = useState(false)
   const [manual, setManual] = useState<ManualDialogState | null>(null)
   const [feedback, setFeedback] = useState<CalendarFeedback | null>(null)
+  const [todayTick, setTodayTick] = useState(0)
+  const [visibleWeekRange, setVisibleWeekRange] = useState<{
+    from: string
+    to: string
+  } | null>(null)
 
   const setCalendarView = (nextMode: CalendarViewMode, nextDate: string) => {
     router.replace(calendarHref(nextMode, nextDate), { scroll: false })
@@ -92,6 +100,28 @@ export function CalendarShell() {
     }
   }
 
+  const handleCloseSlot = async (slotId: string) => {
+    setFeedback(null)
+
+    try {
+      await calendar.closeSlot(slotId)
+      setFeedback({ tone: 'success', text: 'Слот скрыт для клиентов' })
+    } catch (error) {
+      showError(error, 'Не удалось убрать слот')
+    }
+  }
+
+  const handleReopenSlot = async (slotId: string) => {
+    setFeedback(null)
+
+    try {
+      await calendar.reopenSlot(slotId)
+      setFeedback({ tone: 'success', text: 'Слот снова доступен' })
+    } catch (error) {
+      showError(error, 'Не удалось вернуть слот')
+    }
+  }
+
   const handleOpenManual = async (startsAtIso: string | null) => {
     setFeedback(null)
 
@@ -123,9 +153,14 @@ export function CalendarShell() {
   }
 
   const rangeLabel =
-    calendar.range.from === calendar.range.to
-      ? calendar.range.from
-      : `${calendar.range.from} — ${calendar.range.to}`
+    mode === 'week' && visibleWeekRange
+      ? calendarRangeLabel(visibleWeekRange.from, visibleWeekRange.to)
+      : calendarRangeLabel(calendar.range.from, calendar.range.to)
+
+  const goToToday = () => {
+    setCalendarView(mode, today)
+    setTodayTick((tick) => tick + 1)
+  }
 
   const showSuccess = (text: string) => {
     setFeedback({ tone: 'success', text })
@@ -146,6 +181,11 @@ export function CalendarShell() {
     showSuccess,
     'Клиент записан',
   )
+  const submitExtra = submitWithSuccess(
+    calendar.addExtraSlot,
+    showSuccess,
+    'Дополнительный слот добавлен',
+  )
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageCalendar}>
@@ -156,18 +196,19 @@ export function CalendarShell() {
           rangeLabel={rangeLabel}
           mode={mode}
           canCreateBooking={canCreateBooking}
-          onPrev={() =>
-            setCalendarView(mode, shiftAnchorDate(anchorDate, mode, -1))
+          onPrevDay={() =>
+            setCalendarView(mode, shiftAnchorDate(anchorDate, 'day', -1))
           }
-          onToday={() => setCalendarView(mode, today)}
-          onNext={() =>
-            setCalendarView(mode, shiftAnchorDate(anchorDate, mode, 1))
+          onToday={goToToday}
+          onNextDay={() =>
+            setCalendarView(mode, shiftAnchorDate(anchorDate, 'day', 1))
           }
           onChangeMode={(next) => setCalendarView(next, anchorDate)}
           onBackToWeek={() => setCalendarView('week', anchorDate)}
           onOpenManual={() => void handleOpenManual(null)}
           onOpenBlock={() => setBlockOpen(true)}
           onOpenException={() => setExceptionOpen(true)}
+          onOpenExtra={() => setExtraOpen(true)}
         />
         <div className={styles.legend}>
           <span className={styles.legendItem}>
@@ -185,6 +226,9 @@ export function CalendarShell() {
           <span className={styles.legendItem}>
             <span className={styles.swatchException} /> исключение
           </span>
+          <span className={styles.legendItem}>
+            <span className={styles.swatchClosed} /> скрыт
+          </span>
         </div>
       </header>
 
@@ -199,11 +243,15 @@ export function CalendarShell() {
         days={days}
         calendarPath={calendarPath}
         canBook={canCreateBooking}
+        todayTick={todayTick}
         onReload={calendar.reloadCalendar}
         onSelectDay={(ymdDate) => setCalendarView('day', ymdDate)}
         onSelectSlot={handleOpenManual}
         onRemoveBlock={handleRemoveBlock}
         onRemoveException={handleRemoveException}
+        onCloseSlot={handleCloseSlot}
+        onReopenSlot={handleReopenSlot}
+        onVisibleWeekRangeChange={setVisibleWeekRange}
       />
 
       {blockOpen ? (
@@ -219,6 +267,14 @@ export function CalendarShell() {
           defaultDate={anchorDate}
           onClose={() => setExceptionOpen(false)}
           onSubmit={submitException}
+        />
+      ) : null}
+
+      {extraOpen ? (
+        <ExtraSlotDialog
+          defaultDate={anchorDate < today ? today : anchorDate}
+          onClose={() => setExtraOpen(false)}
+          onSubmit={submitExtra}
         />
       ) : null}
 

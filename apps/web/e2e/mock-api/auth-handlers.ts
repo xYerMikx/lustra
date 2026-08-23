@@ -82,6 +82,7 @@ export function handleAuth(
       emailVerified: false,
       telegramLinked: false,
       profileStatus: role === 'master' ? 'draft' : null,
+      onboardingStep: role === 'master' ? 'profile' : null,
     }
 
     world.users.push(user)

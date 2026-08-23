@@ -40,7 +40,7 @@ describe('generateSlotStarts', () => {
       blocks: [],
     })
 
-    expect(starts.map((item) => item.toISOString())).toEqual([
+    expect(starts.map((item) => item.startsAt.toISOString())).toEqual([
       zonedLocalToUtc('2026-08-10', 600, MASTER_TIMEZONE).toISOString(),
       zonedLocalToUtc('2026-08-10', 630, MASTER_TIMEZONE).toISOString(),
       zonedLocalToUtc('2026-08-10', 660, MASTER_TIMEZONE).toISOString(),
@@ -61,7 +61,7 @@ describe('generateSlotStarts', () => {
     })
 
     expect(starts).toHaveLength(1)
-    expect(starts[0]?.toISOString()).toBe(
+    expect(starts[0]?.startsAt.toISOString()).toBe(
       zonedLocalToUtc('2026-08-10', 600, MASTER_TIMEZONE).toISOString(),
     )
   })
@@ -100,7 +100,7 @@ describe('generateSlotStarts', () => {
       blocks: [],
     })
 
-    expect(starts.map((item) => item.toISOString())).toEqual([
+    expect(starts.map((item) => item.startsAt.toISOString())).toEqual([
       zonedLocalToUtc('2026-08-10', 660, MASTER_TIMEZONE).toISOString(),
       zonedLocalToUtc('2026-08-10', 690, MASTER_TIMEZONE).toISOString(),
     ])
@@ -123,7 +123,7 @@ describe('generateSlotStarts', () => {
       ],
     })
 
-    expect(starts.map((item) => item.toISOString())).toEqual([
+    expect(starts.map((item) => item.startsAt.toISOString())).toEqual([
       zonedLocalToUtc('2026-08-10', 600, MASTER_TIMEZONE).toISOString(),
       zonedLocalToUtc('2026-08-10', 630, MASTER_TIMEZONE).toISOString(),
       zonedLocalToUtc('2026-08-10', 720, MASTER_TIMEZONE).toISOString(),
@@ -149,7 +149,9 @@ describe('generateSlotStarts', () => {
 
     const dates = [
       ...new Set(
-        starts.map((item) => formatYmdDateInTimeZone(item, MASTER_TIMEZONE)),
+        starts.map((item) =>
+          formatYmdDateInTimeZone(item.startsAt, MASTER_TIMEZONE),
+        ),
       ),
     ]
 
@@ -161,5 +163,35 @@ describe('generateSlotStarts', () => {
 
     expect(localTen.toISOString()).toBe('2026-08-10T07:00:00.000Z')
     expect(formatYmdDateInTimeZone(localTen, MASTER_TIMEZONE)).toBe('2026-08-10')
+  })
+
+  it('uses custom intervals and day-level granularity', () => {
+    const starts = generateSlotStarts({
+      now,
+      fromYmdDate: '2026-08-10',
+      toYmdDate: '2026-08-10',
+      granularityMin: 30,
+      maxHorizonDays: 30,
+      rules: [{ weekday: 1, startMin: 600, endMin: 1200 }],
+      exceptions: [
+        {
+          ymdDate: '2026-08-10',
+          type: 'custom_hours',
+          granularityMin: 60,
+          intervals: [
+            { startMin: 600, endMin: 720 },
+            { startMin: 840, endMin: 900 },
+          ],
+        },
+      ],
+      blocks: [],
+    })
+
+    expect(starts.map((item) => item.startsAt.toISOString())).toEqual([
+      zonedLocalToUtc('2026-08-10', 600, MASTER_TIMEZONE).toISOString(),
+      zonedLocalToUtc('2026-08-10', 660, MASTER_TIMEZONE).toISOString(),
+      zonedLocalToUtc('2026-08-10', 840, MASTER_TIMEZONE).toISOString(),
+    ])
+    expect(starts.every((item) => item.granularityMin === 60)).toBe(true)
   })
 })

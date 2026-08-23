@@ -10,6 +10,7 @@ import type {
   MasterCalendarStore,
 } from '@/modules/master-calendar/app/master-calendar.ports'
 import { ymdDateToUtcMidnight } from '@/modules/master-schedule/domain/map-schedule-exception'
+import { parseScheduleIntervals } from '@/modules/scheduling/domain/parse-schedule-intervals'
 
 @Injectable()
 export class MasterCalendarRepository implements MasterCalendarStore {
@@ -64,6 +65,8 @@ export class MasterCalendarRepository implements MasterCalendarStore {
           startsAt: true,
           endsAt: true,
           status: true,
+          isExtra: true,
+          extraPayAmount: true,
           bookingLinks: {
             take: 1,
             select: {
@@ -86,6 +89,10 @@ export class MasterCalendarRepository implements MasterCalendarStore {
           startsAt: row.startsAt,
           endsAt: row.endsAt,
           status: row.status,
+          isExtra: row.isExtra,
+          extraPayAmount: row.extraPayAmount
+            ? Number(row.extraPayAmount).toFixed(2)
+            : null,
           clientName: row.bookingLinks[0]?.booking.masterClient.name ?? null,
           bookingId: row.bookingLinks[0]?.booking.id ?? null,
         })),
@@ -133,9 +140,26 @@ export class MasterCalendarRepository implements MasterCalendarStore {
         type: true,
         startMin: true,
         endMin: true,
+        granularityMin: true,
+        intervals: true,
         note: true,
       },
       orderBy: { date: 'asc' },
     })
+    .then((rows) =>
+      rows.map((row) => ({
+        id: row.id,
+        date: row.date,
+        type: row.type,
+        startMin: row.startMin,
+        endMin: row.endMin,
+        granularityMin:
+          row.granularityMin != null && isGranularityMin(row.granularityMin)
+            ? row.granularityMin
+            : null,
+        intervals: parseScheduleIntervals(row.intervals),
+        note: row.note,
+      })),
+    )
   }
 }

@@ -476,6 +476,7 @@ enum SlotStatus {
   held
   booked
   blocked
+  closed
 }
 
 model AvailabilityRule {
@@ -493,13 +494,15 @@ model AvailabilityRule {
 }
 
 model AvailabilityException {
-  id       String        @id @default(uuid())
-  masterId String
-  date     DateTime      @db.Date
-  type     ExceptionType
-  startMin Int?
-  endMin   Int?
-  note     String?
+  id             String        @id @default(uuid())
+  masterId       String
+  date           DateTime      @db.Date
+  type           ExceptionType
+  startMin       Int?
+  endMin         Int?
+  granularityMin Int? // 15|30|60 override for this day
+  intervals      Json? // [{startMin, endMin}] custom working windows
+  note           String?
 
   master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
 
@@ -535,6 +538,7 @@ model TimeSlot {
   blockId         String?
   note            String?
   isExtra         Boolean    @default(false)
+  extraPayAmount  Decimal?   @db.Decimal(10, 2)
   outsideSchedule Boolean    @default(false)
 
   master       MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)

@@ -27,7 +27,7 @@ describe('calendar-range', () => {
     })
     expect(rangeForMode('2026-08-11', 'week')).toEqual({
       from: '2026-08-10',
-      to: '2026-08-16',
+      to: '2026-08-30',
     })
   })
 })

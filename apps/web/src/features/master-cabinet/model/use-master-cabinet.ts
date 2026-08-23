@@ -1,23 +1,23 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type {
-  MasterCalendarSlotView,
-  MasterProfileView,
-} from '@lustra/contracts'
+import type { MasterProfileView, ServiceView } from '@lustra/contracts'
 
-import { pickUpcomingOpenSlots } from '@/features/master-cabinet/model/pick-upcoming-open-slots'
+import {
+  pickUpcomingBookings,
+  type UpcomingBookingsPick,
+} from '@/features/master-cabinet/model/pick-upcoming-bookings'
 import { ApiError } from '@/shared/api/http'
 import { getMasterCalendar } from '@/shared/api/master-calendar-client'
 import { getMasterProfile } from '@/shared/api/master-profile-client'
+import { listMasterServices } from '@/shared/api/master-services-client'
 import {
   addDaysToYmdDate,
   formatYmdDateInTimeZone,
   MASTER_TIMEZONE,
 } from '@/shared/lib/tz'
 
-const UPCOMING_DAYS = 7
-const UPCOMING_LIMIT = 6
+const UPCOMING_DAYS = 14
 
 type LoadStatus = 'loading' | 'error' | 'success'
 
@@ -25,10 +25,9 @@ export function useMasterCabinet() {
   const [profile, setProfile] = useState<MasterProfileView | null>(null)
   const [profileStatus, setProfileStatus] = useState<LoadStatus>('loading')
   const [profileError, setProfileError] = useState<string | null>(null)
-
-  const [upcomingSlots, setUpcomingSlots] = useState<MasterCalendarSlotView[]>(
-    [],
-  )
+  const [services, setServices] = useState<ServiceView[]>([])
+  const [upcomingBookings, setUpcomingBookings] =
+    useState<UpcomingBookingsPick | null>(null)
   const [calendarStatus, setCalendarStatus] = useState<LoadStatus>('loading')
 
   useEffect(() => {
@@ -39,13 +38,17 @@ export function useMasterCabinet() {
       setProfileError(null)
 
       try {
-        const next = await getMasterProfile()
+        const [nextProfile, serviceList] = await Promise.all([
+          getMasterProfile(),
+          listMasterServices().catch(() => ({ services: [] as ServiceView[] })),
+        ])
 
         if (cancelled) {
           return
         }
 
-        setProfile(next)
+        setProfile(nextProfile)
+        setServices(serviceList.services)
         setProfileStatus('success')
       } catch (error) {
         if (cancelled) {
@@ -87,8 +90,15 @@ export function useMasterCabinet() {
           return
         }
 
-        setUpcomingSlots(
-          pickUpcomingOpenSlots(response.slots, Date.now(), UPCOMING_LIMIT),
+        if (!response) {
+          setUpcomingBookings(null)
+          setCalendarStatus('error')
+
+          return
+        }
+
+        setUpcomingBookings(
+          pickUpcomingBookings(response.slots, response.exceptions, Date.now()),
         )
         setCalendarStatus('success')
       } catch {
@@ -96,7 +106,7 @@ export function useMasterCabinet() {
           return
         }
 
-        setUpcomingSlots([])
+        setUpcomingBookings(null)
         setCalendarStatus('error')
       }
     }
@@ -112,7 +122,8 @@ export function useMasterCabinet() {
     profile: profile ?? undefined,
     profileError,
     isProfileLoading: profileStatus === 'loading',
-    upcomingSlots,
+    services,
+    upcomingBookings,
     isCalendarLoading: calendarStatus === 'loading',
     setProfile,
   }

@@ -4,71 +4,71 @@ import cn from 'classnames'
 
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { Button } from '@/shared/ui/button'
+import { ChevronLeftIcon, ChevronRightIcon } from '@/shared/ui/icon-pack'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 type CalendarToolbarProps = {
   rangeLabel: string
   mode: 'day' | 'week'
   canCreateBooking: boolean
-  onPrev: () => void
+  onPrevDay: () => void
   onToday: () => void
-  onNext: () => void
+  onNextDay: () => void
   onChangeMode: (mode: 'day' | 'week') => void
   onBackToWeek: () => void
   onOpenManual: () => void
   onOpenBlock: () => void
   onOpenException: () => void
+  onOpenExtra: () => void
 }
 
 export function CalendarToolbar({
   rangeLabel,
   mode,
   canCreateBooking,
-  onPrev,
+  onPrevDay,
   onToday,
-  onNext,
+  onNextDay,
   onChangeMode,
   onBackToWeek,
   onOpenManual,
   onOpenBlock,
   onOpenException,
+  onOpenExtra,
 }: CalendarToolbarProps) {
   return (
     <div className={styles.toolbar}>
       <div className={styles.toolbarRow}>
-        <div
-          className={styles.segmented}
-          role="group"
-          aria-label="Период календаря"
-        >
-          <Button
-            type="button"
-            variant="ghost"
-            className={styles.segmentButton}
-            aria-label="Предыдущий период"
-            onClick={onPrev}
-          >
-            Назад
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className={styles.segmentButton}
-            onClick={onToday}
-          >
-            Сегодня
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className={styles.segmentButton}
-            aria-label="Следующий период"
-            onClick={onNext}
-          >
-            Вперёд
-          </Button>
-        </div>
+        {mode === 'day' ? (
+          <div className={styles.dayNav}>
+            <Button
+              type="button"
+              variant="icon"
+              aria-label="Предыдущий день"
+              onClick={onPrevDay}
+            >
+              <ChevronLeftIcon />
+            </Button>
+            <Button
+              type="button"
+              variant="icon"
+              aria-label="Следующий день"
+              onClick={onNextDay}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </div>
+        ) : null}
         <span className={styles.rangeLabel}>{rangeLabel}</span>
+        <Button
+          type="button"
+          variant="ghost"
+          className={styles.todayLink}
+          data-testid={TEST_ID.calendarToday}
+          onClick={onToday}
+        >
+          Сегодня
+        </Button>
       </div>
 
       <div className={styles.toolbarRow}>
@@ -112,6 +112,9 @@ export function CalendarToolbar({
             К неделе
           </Button>
         ) : null}
+      </div>
+
+      <div className={styles.actionGrid}>
         <Button
           type="button"
           onClick={onOpenManual}
@@ -132,7 +135,16 @@ export function CalendarToolbar({
           onClick={onOpenException}
           data-testid={TEST_ID.calendarExceptionOpen}
         >
-          Исключение
+          График дня
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onOpenExtra}
+          disabled={!canCreateBooking}
+          data-testid={TEST_ID.calendarExtraOpen}
+        >
+          Доп. слот
         </Button>
       </div>
     </div>

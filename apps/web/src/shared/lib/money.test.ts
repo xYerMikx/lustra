@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatByn, formatPriceLabel } from '@/shared/lib/money'
+import { extraPaySuffix, formatByn, formatPriceLabel } from '@/shared/lib/money'
 
 describe('money', () => {
   it('formats BYN amounts', () => {
@@ -26,5 +26,10 @@ describe('money', () => {
         currency: 'BYN',
       }),
     ).toBe('50 BYN–70 BYN')
+  })
+
+  it('formats extra-pay suffix', () => {
+    expect(extraPaySuffix(null)).toBe('')
+    expect(extraPaySuffix('15.00')).toBe(' · +15 BYN')
   })
 })

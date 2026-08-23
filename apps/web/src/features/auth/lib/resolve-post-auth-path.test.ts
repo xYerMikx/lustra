@@ -11,6 +11,7 @@ const clientUser = {
   emailVerified: false,
   telegramLinked: false,
   profileStatus: null,
+  onboardingStep: null,
 }
 
 const draftMaster = {
@@ -22,6 +23,7 @@ const draftMaster = {
   emailVerified: false,
   telegramLinked: false,
   profileStatus: 'draft' as const,
+  onboardingStep: 'profile' as const,
 }
 
 describe('resolvePostAuthPath', () => {
@@ -37,6 +39,12 @@ describe('resolvePostAuthPath', () => {
 
   it('sends draft masters to onboarding', () => {
     expect(resolvePostAuthPath(draftMaster)).toBe('/app/onboarding')
+  })
+
+  it('sends finished draft masters to the cabinet', () => {
+    expect(
+      resolvePostAuthPath({ ...draftMaster, onboardingStep: 'done' }),
+    ).toBe('/app')
   })
 
   it('sends admins to admin queue', () => {

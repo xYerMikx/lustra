@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   isMasterWorkspacePath,
   isWorkspaceItemActive,
+  workspaceNavItems,
 } from '@/features/app-shell/model/master-workspace-nav'
 
 describe('master workspace nav', () => {
@@ -19,5 +20,20 @@ describe('master workspace nav', () => {
     ).toBe(true)
     expect(isWorkspaceItemActive('/app', '/app')).toBe(true)
     expect(isWorkspaceItemActive('/app/master/calendar', '/app')).toBe(false)
+  })
+
+  it('hides first-steps after onboarding is done', () => {
+    expect(
+      workspaceNavItems(
+        [{ href: '/app/onboarding', label: 'Первые шаги', icon: 'onboarding' }],
+        'done',
+      ),
+    ).toEqual([])
+    expect(
+      workspaceNavItems(
+        [{ href: '/app/onboarding', label: 'Первые шаги', icon: 'onboarding' }],
+        'services',
+      ),
+    ).toHaveLength(1)
   })
 })

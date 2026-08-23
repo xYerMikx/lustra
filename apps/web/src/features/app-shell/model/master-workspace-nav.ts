@@ -1,3 +1,5 @@
+import type { OnboardingStep } from '@lustra/contracts'
+
 export type MasterWorkspaceItem = {
   href: string
   label: string
@@ -14,13 +16,24 @@ export const MASTER_WORKSPACE_PRIMARY: MasterWorkspaceItem[] = [
 export const MASTER_WORKSPACE_MORE: MasterWorkspaceItem[] = [
   { href: '/app/master/ledger', label: 'Касса', icon: 'ledger' },
   { href: '/app/master/reviews', label: 'Отзывы', icon: 'reviews' },
-  { href: '/app/onboarding', label: 'Онбординг', icon: 'onboarding' },
+  { href: '/app/onboarding', label: 'Первые шаги', icon: 'onboarding' },
 ]
 
 export const MASTER_WORKSPACE_ALL: MasterWorkspaceItem[] = [
   ...MASTER_WORKSPACE_PRIMARY,
   ...MASTER_WORKSPACE_MORE,
 ]
+
+export function workspaceNavItems(
+  items: MasterWorkspaceItem[],
+  onboardingStep: OnboardingStep | null,
+): MasterWorkspaceItem[] {
+  if (onboardingStep === 'done') {
+    return items.filter((item) => item.href !== '/app/onboarding')
+  }
+
+  return items
+}
 
 export function isMasterWorkspacePath(pathname: string): boolean {
   if (pathname === '/app' || pathname === '/app/onboarding') {

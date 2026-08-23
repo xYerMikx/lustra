@@ -24,6 +24,16 @@ test.describe('master calendar', () => {
     await expect(page.getByTestId(TEST_ID.calendarExceptionChip).first()).toBeVisible()
   })
 
+  test('pages the week strip and opens an extra-slot dialog', async ({ page }) => {
+    await loginAs(page, MASTER_EMAIL)
+    await page.goto('/app/master/calendar')
+    await expect(page.getByTestId(TEST_ID.calendarToday)).toBeVisible()
+    await expect(page.getByTestId(TEST_ID.calendarStripNext)).toBeVisible()
+
+    await page.getByTestId(TEST_ID.calendarExtraOpen).click()
+    await expect(page.getByTestId(TEST_ID.dialogExtraSlot)).toBeVisible()
+  })
+
   test('creates a manual booking from the calendar', async ({ page }) => {
     await loginAs(page, MASTER_EMAIL)
     await page.goto('/app/master/calendar')
