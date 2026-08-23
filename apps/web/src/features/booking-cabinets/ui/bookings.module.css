@@ -277,3 +277,10 @@
     line-height: var(--text-26--line-height);
   }
 }
+
+.probeNote {
+  margin: 0;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}

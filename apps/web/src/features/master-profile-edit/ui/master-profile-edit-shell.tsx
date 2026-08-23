@@ -95,12 +95,12 @@ export function MasterProfileEditShell() {
         <p className={styles.copy}>
           Имя, ссылка на страницу, район и описание для клиентов.
         </p>
-        <TelegramLinkCard linked={session.telegramLinked} />
         <MasterProfileEditForm
           profile={profile}
           districts={districts}
           onProfileSaved={setProfile}
         />
+        <TelegramLinkCard linked={session.telegramLinked} audience="master" />
       </section>
     </div>
   )

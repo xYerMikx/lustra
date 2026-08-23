@@ -6,6 +6,7 @@ import {
   Delete,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -18,6 +19,7 @@ import { JwtGuard } from '@/common/auth/jwt.guard'
 import { Roles } from '@/common/auth/roles.decorator'
 import { RolesGuard } from '@/common/auth/roles.guard'
 import { DomainError } from '@/common/errors/domain-error'
+import { ProbeTelegramUseCase } from '@/modules/notifications/app/probe-telegram.usecase'
 import { HandleTelegramUpdateUseCase } from '@/modules/telegram/app/handle-telegram-update.usecase'
 import { StartTelegramLinkUseCase } from '@/modules/telegram/app/start-telegram-link.usecase'
 import { UnlinkTelegramUseCase } from '@/modules/telegram/app/unlink-telegram.usecase'
@@ -28,6 +30,7 @@ export class TelegramController {
     private readonly startLink: StartTelegramLinkUseCase,
     private readonly unlink: UnlinkTelegramUseCase,
     private readonly handleUpdate: HandleTelegramUpdateUseCase,
+    private readonly probeTelegram: ProbeTelegramUseCase,
   ) {}
 
   @Post('link/start')
@@ -45,6 +48,18 @@ export class TelegramController {
   @Roles('client', 'master', 'admin')
   remove(@CurrentUser() user: AuthUser): Promise<OkResponse> {
     return this.unlink.execute(user)
+  }
+
+  @Post('probe/:bookingId')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles('client', 'master')
+  probe(
+    @CurrentUser() user: AuthUser,
+    @Param('bookingId', ParseUUIDPipe) bookingId: string,
+  ): Promise<OkResponse> {
+    return this.probeTelegram.execute(user, bookingId)
   }
 
   @Post('webhook/:secret')

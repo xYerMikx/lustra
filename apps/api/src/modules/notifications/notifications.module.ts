@@ -9,6 +9,7 @@ import {
 import { CancelRemindersUseCase } from '@/modules/notifications/app/cancel-reminders.usecase'
 import { EnqueueCancelNoticesUseCase } from '@/modules/notifications/app/enqueue-cancel-notices.usecase'
 import { HandleOutboxEventUseCase } from '@/modules/notifications/app/handle-outbox-event.usecase'
+import { ProbeTelegramUseCase } from '@/modules/notifications/app/probe-telegram.usecase'
 import { PublishOutboxUseCase } from '@/modules/notifications/app/publish-outbox.usecase'
 import { ScheduleRemindersUseCase } from '@/modules/notifications/app/schedule-reminders.usecase'
 import { SendTelegramUseCase } from '@/modules/notifications/app/send-telegram.usecase'
@@ -31,6 +32,7 @@ import { TelegramBotSender } from '@/modules/notifications/infra/telegram-bot.se
       useExisting: TelegramBotSender,
     },
     SendTelegramUseCase,
+    ProbeTelegramUseCase,
     {
       provide: NOTIFICATION_QUEUE,
       useFactory: (sendTelegram: SendTelegramUseCase) => {
@@ -45,6 +47,6 @@ import { TelegramBotSender } from '@/modules/notifications/infra/telegram-bot.se
     PublishOutboxUseCase,
     OutboxPoller,
   ],
-  exports: [TELEGRAM_SENDER],
+  exports: [TELEGRAM_SENDER, NOTIFICATION_STORE, ProbeTelegramUseCase],
 })
 export class NotificationsModule {}

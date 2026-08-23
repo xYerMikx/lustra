@@ -69,6 +69,8 @@ export const TEST_ID = {
   bookingNotFound: 'booking-not-found',
   telegramConnect: 'telegram-connect',
   telegramLinked: 'telegram-linked',
+  notifyProbe: 'notify-probe',
+  notifyProbeStatus: 'notify-probe-status',
 
   reviewPrompt: 'review-prompt',
   reviewText: 'review-text',

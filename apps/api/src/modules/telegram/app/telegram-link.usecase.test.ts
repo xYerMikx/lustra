@@ -9,6 +9,7 @@ import { FixedClock } from '@/common/time/clock.service'
 import { StartTelegramLinkUseCase } from '@/modules/telegram/app/start-telegram-link.usecase'
 import { HandleTelegramUpdateUseCase } from '@/modules/telegram/app/handle-telegram-update.usecase'
 import type { AuthTokenRepository } from '@/modules/auth/infra/auth-token.repository'
+import type { AuthUserRepository } from '@/modules/auth/infra/auth-user.repository'
 import type { TelegramAccountRepository } from '@/modules/telegram/infra/telegram-account.repository'
 import type { TelegramSender } from '@/modules/notifications/app/notifications.ports'
 import { hashToken } from '@/modules/auth/domain/token-hash'
@@ -84,12 +85,16 @@ describe('HandleTelegramUpdateUseCase', () => {
     const telegram: TelegramSender = {
       send: vi.fn().mockResolvedValue({ kind: 'sent' }),
     }
+    const users = {
+      findById: vi.fn().mockResolvedValue({ role: 'client' }),
+    }
     const useCase = new HandleTelegramUpdateUseCase(
       tokens as unknown as AuthTokenRepository,
       accounts as unknown as TelegramAccountRepository,
       createTransactions(),
       new FixedClock(new Date('2026-08-20T12:00:00.000Z')),
       telegram,
+      users as unknown as AuthUserRepository,
     )
 
     await useCase.execute({
@@ -112,6 +117,68 @@ describe('HandleTelegramUpdateUseCase', () => {
     expect(telegram.send).toHaveBeenCalledWith(
       '42',
       expect.stringContaining('подключён'),
+      undefined,
+    )
+  })
+
+  it('invites the user to Lumira when /start has no payload', async () => {
+    const telegram: TelegramSender = {
+      send: vi.fn().mockResolvedValue({ kind: 'sent' }),
+    }
+    const useCase = new HandleTelegramUpdateUseCase(
+      { findByHash: vi.fn() } as unknown as AuthTokenRepository,
+      { upsertLink: vi.fn() } as unknown as TelegramAccountRepository,
+      createTransactions(),
+      new FixedClock(new Date('2026-08-20T12:00:00.000Z')),
+      telegram,
+      { findById: vi.fn() } as unknown as AuthUserRepository,
+    )
+
+    await useCase.execute({
+      message: {
+        text: '/start',
+        chat: { id: 42 },
+      },
+    })
+
+    expect(telegram.send).toHaveBeenCalledWith(
+      '42',
+      expect.stringContaining('откройте Lumira'),
+      undefined,
+    )
+  })
+
+  it('sends an open-app button when PUBLIC_APP_URL is https', async () => {
+    const previous = process.env.PUBLIC_APP_URL
+    process.env.PUBLIC_APP_URL = 'https://app.lumira.by'
+
+    const telegram: TelegramSender = {
+      send: vi.fn().mockResolvedValue({ kind: 'sent' }),
+    }
+    const useCase = new HandleTelegramUpdateUseCase(
+      { findByHash: vi.fn() } as unknown as AuthTokenRepository,
+      { upsertLink: vi.fn() } as unknown as TelegramAccountRepository,
+      createTransactions(),
+      new FixedClock(new Date('2026-08-20T12:00:00.000Z')),
+      telegram,
+      { findById: vi.fn() } as unknown as AuthUserRepository,
+    )
+
+    await useCase.execute({
+      message: {
+        text: '/start',
+        chat: { id: 42 },
+      },
+    })
+
+    process.env.PUBLIC_APP_URL = previous
+
+    expect(telegram.send).toHaveBeenCalledWith(
+      '42',
+      expect.stringContaining('откройте Lumira'),
+      expect.objectContaining({
+        buttons: [expect.objectContaining({ url: 'https://app.lumira.by/app' })],
+      }),
     )
   })
 })

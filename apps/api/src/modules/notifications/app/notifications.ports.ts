@@ -23,8 +23,21 @@ export type TelegramSendOutcome =
   | { kind: 'blocked' }
   | { kind: 'failed'; error: string }
 
+export type TelegramInlineButton = {
+  text: string
+  url: string
+}
+
+export type TelegramSendOptions = {
+  buttons?: TelegramInlineButton[]
+}
+
 export type TelegramSender = {
-  send(chatId: string, text: string): Promise<TelegramSendOutcome>
+  send(
+    chatId: string,
+    text: string,
+    options?: TelegramSendOptions,
+  ): Promise<TelegramSendOutcome>
 }
 
 export const TELEGRAM_SENDER = Symbol('TELEGRAM_SENDER')

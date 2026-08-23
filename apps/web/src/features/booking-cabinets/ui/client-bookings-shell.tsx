@@ -31,7 +31,7 @@ export function ClientBookingsShell() {
         <h1 className={styles.title}>Мои записи</h1>
       </header>
 
-      <TelegramLinkCard linked={session.telegramLinked} />
+      <TelegramLinkCard linked={session.telegramLinked} audience="client" />
 
       <div className={styles.tabs} role="tablist" aria-label="Период">
         <button

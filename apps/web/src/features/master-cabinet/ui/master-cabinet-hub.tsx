@@ -77,7 +77,7 @@ export function MasterCabinetHub() {
         ) : null}
 
         {!session.emailVerified ? <EmailVerifyBanner /> : null}
-        <TelegramLinkCard linked={session.telegramLinked} />
+        <TelegramLinkCard linked={session.telegramLinked} audience="master" />
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Публичная страница</h2>

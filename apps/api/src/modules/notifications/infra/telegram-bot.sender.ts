@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import type {
   TelegramSendOutcome,
+  TelegramSendOptions,
   TelegramSender,
 } from '@/modules/notifications/app/notifications.ports'
 
@@ -9,7 +10,11 @@ import type {
 export class TelegramBotSender implements TelegramSender {
   private readonly logger = new Logger(TelegramBotSender.name)
 
-  async send(chatId: string, text: string): Promise<TelegramSendOutcome> {
+  async send(
+    chatId: string,
+    text: string,
+    options?: TelegramSendOptions,
+  ): Promise<TelegramSendOutcome> {
     const token = process.env.TELEGRAM_BOT_TOKEN?.trim()
 
     if (!token) {
@@ -28,6 +33,18 @@ export class TelegramBotSender implements TelegramSender {
           chat_id: chatId,
           text,
           disable_web_page_preview: true,
+          ...(options?.buttons?.length
+            ? {
+                reply_markup: {
+                  inline_keyboard: [
+                    options.buttons.map((button) => ({
+                      text: button.text,
+                      url: button.url,
+                    })),
+                  ],
+                },
+              }
+            : {}),
         }),
       })
 
@@ -42,15 +59,19 @@ export class TelegramBotSender implements TelegramSender {
       }
 
       if (!response.ok || body.ok === false) {
+        const error = body.description ?? `telegram HTTP ${response.status}`
+        this.logger.error(error, 'telegram sendMessage failed')
+
         return {
           kind: 'failed',
-          error: body.description ?? `telegram HTTP ${response.status}`,
+          error,
         }
       }
 
       return { kind: 'sent' }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'telegram fetch failed'
+      this.logger.error(message, 'telegram sendMessage failed')
 
       return { kind: 'failed', error: message }
     }

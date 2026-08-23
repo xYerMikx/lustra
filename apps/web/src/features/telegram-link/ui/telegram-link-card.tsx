@@ -1,52 +1,54 @@
 'use client'
 
+import {
+  telegramLinkCopy,
+  type TelegramLinkAudience,
+} from '@/features/telegram-link/model/telegram-link-copy'
 import { useTelegramLink } from '@/features/telegram-link/model/use-telegram-link'
 import styles from '@/features/telegram-link/ui/telegram-link-card.module.css'
 import { Button } from '@/shared/ui/button'
+import { TelegramIcon } from '@/shared/ui/icon-pack'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 type TelegramLinkCardProps = {
   linked: boolean
+  audience: TelegramLinkAudience
 }
 
-export function TelegramLinkCard({ linked }: TelegramLinkCardProps) {
+export function TelegramLinkCard({ linked, audience }: TelegramLinkCardProps) {
   const telegram = useTelegramLink(linked)
-
-  if (telegram.linked) {
-    return (
-      <div className={styles.card} data-testid={TEST_ID.telegramLinked}>
-        <h2 className={styles.title}>Telegram подключён</h2>
-        <p className={styles.copy}>
-          Напоминания о записях придут в бот. Тихие часы: с 23:00 до 07:00.
-        </p>
-      </div>
-    )
-  }
+  const copy = telegramLinkCopy({
+    linked: telegram.linked,
+    audience,
+  })
 
   return (
-    <div className={styles.card} data-testid={TEST_ID.telegramConnect}>
-      <h2 className={styles.title}>Подключите Telegram</h2>
-      <p className={styles.copy}>
-        Клиенту — за сутки или сразу, если запись на сегодня. Мастеру — за 2
-        часа. Ночью (23:00–07:00) сообщения ждут до утра.
-      </p>
-      <div className={styles.actions}>
+    <div
+      className={styles.card}
+      data-testid={telegram.linked ? TEST_ID.telegramLinked : TEST_ID.telegramConnect}
+    >
+      <span className={styles.iconWrap} aria-hidden="true">
+        <TelegramIcon className={styles.icon} />
+      </span>
+      <p className={styles.copy}>{copy}</p>
+      {telegram.linked ? (
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={telegram.busy}
+          onClick={() => void telegram.disconnect()}
+        >
+          Отключить
+        </Button>
+      ) : (
         <Button
           type="button"
           disabled={telegram.busy}
           onClick={() => void telegram.connect()}
         >
-          {telegram.busy ? 'Открываем…' : 'Подключить Telegram'}
+          {telegram.busy ? 'Открываем…' : 'Подключить'}
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          disabled={telegram.busy}
-          onClick={() => void telegram.refresh()}
-        >
-          Я подключил
-        </Button>
-      </div>
+      )}
       {telegram.error ? (
         <p className={styles.error} role="alert">
           {telegram.error}

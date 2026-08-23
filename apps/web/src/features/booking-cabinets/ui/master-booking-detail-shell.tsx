@@ -10,6 +10,7 @@ import { canRescheduleBooking } from '@/features/booking-cabinets/model/can-resc
 import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-master-bookings'
 import { BookingCancelWarning } from '@/features/booking-cabinets/ui/booking-cancel-warning'
 import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
+import { DevNotifyProbeCard } from '@/features/booking-cabinets/ui/dev-notify-probe-card'
 import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import { ClientSocialLink } from '@/features/booking-cabinets/ui/client-social-link'
 import { MasterBookingBackLink } from '@/features/booking-cabinets/ui/master-booking-back-link'
@@ -121,6 +122,8 @@ export function MasterBookingDetailShell({
             <span className={styles.cardHint}>{booking.masterNote}</span>
           </BookingInfoCard>
         ) : null}
+
+        <DevNotifyProbeCard bookingId={booking.id} />
 
         <div className={styles.actions}>
           {canConfirm ? (

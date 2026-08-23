@@ -13,3 +13,11 @@ export function unlinkTelegram() {
     method: 'DELETE',
   })
 }
+
+export function probeTelegramNotification(bookingId: string) {
+  return apiFetch<OkResponse>(
+    `/telegram/probe/${encodeURIComponent(bookingId)}`,
+    { method: 'POST' },
+  )
+}
+
