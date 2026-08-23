@@ -1,0 +1,193 @@
+---
+import ServiceCategoryGroup from './service-category-group.astro'
+
+interface CatalogGroup {
+  name: string
+  slug: string
+  categoryHref: string
+  services: Array<{ title: string; href: string }>
+}
+
+interface Props {
+  eyebrow: string
+  title: string
+  lead: string
+  catalogCta: string
+  catalogHref: string
+  emptyMessage: string
+  groups: CatalogGroup[]
+}
+
+const {
+  eyebrow,
+  title,
+  lead,
+  catalogCta,
+  catalogHref,
+  emptyMessage,
+  groups,
+} = Astro.props
+
+const filledGroups = groups.filter((group) => group.services.length > 0)
+const isEmpty = filledGroups.length === 0
+---
+
+<main>
+  <section class="hero-lite" aria-labelledby="uslugi-title">
+    <div class="wrap">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 id="uslugi-title">{title}</h1>
+      <p class="lead">{lead}</p>
+      <a class="btn btn-primary" href={catalogHref}>{catalogCta}</a>
+    </div>
+  </section>
+
+  <section class="catalog section" aria-label="Направления услуг">
+    <div class="wrap">
+      {
+        isEmpty ? (
+          <p class="page-empty" role="status">
+            {emptyMessage}
+          </p>
+        ) : (
+          <>
+            <nav class="jump" aria-label="Направления">
+              <ul>
+                {filledGroups.map((group) => (
+                  <li>
+                    <a href={`#${group.slug}`}>{group.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {filledGroups.map((group) => (
+              <ServiceCategoryGroup
+                name={group.name}
+                slug={group.slug}
+                categoryHref={group.categoryHref}
+                services={group.services}
+                emptyMessage={emptyMessage}
+              />
+            ))}
+          </>
+        )
+      }
+
+      <div class="closing">
+        <h2>Не нашли нужную услугу?</h2>
+        <p>Откройте каталог — фильтр по имени и району покажет мастеров Минска.</p>
+        <a class="btn btn-primary" href={catalogHref}>{catalogCta}</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .hero-lite {
+    padding: var(--spacing-64) 0 var(--spacing-40);
+    background:
+      radial-gradient(
+        ellipse 70% 60% at 80% 0%,
+        color-mix(in srgb, var(--color-gold) 18%, transparent),
+        transparent 55%
+      ),
+      var(--color-bg);
+  }
+
+  .wrap {
+    width: min(960px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+  }
+
+  .hero-lite .wrap {
+    width: min(760px, calc(100% - var(--spacing-40)));
+  }
+
+  .eyebrow {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-12);
+  }
+
+  h1 {
+    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    line-height: 1.15;
+    max-width: 16ch;
+    margin-bottom: var(--spacing-16);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    max-width: 42ch;
+    margin-bottom: var(--spacing-32);
+    line-height: 1.55;
+  }
+
+  .catalog {
+    padding-top: 0;
+  }
+
+  .jump {
+    margin-bottom: var(--spacing-24);
+  }
+
+  .jump ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+  }
+
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    padding: 0 var(--spacing-16);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+  }
+
+  .jump a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .page-empty {
+    color: var(--color-text-2);
+    line-height: 1.55;
+    margin-bottom: var(--spacing-32);
+    padding: var(--spacing-24);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+    background: var(--color-surface);
+  }
+
+  .closing {
+    margin-top: var(--spacing-40);
+    padding-top: var(--spacing-40);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .closing h2 {
+    font-size: var(--text-32);
+    line-height: var(--text-32--line-height);
+    margin-bottom: var(--spacing-12);
+  }
+
+  .closing p {
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-24);
+    line-height: 1.5;
+  }
+</style>
