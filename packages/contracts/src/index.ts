@@ -184,7 +184,9 @@ export {
   REVIEW_TEXT_MAX,
   REVIEW_REPLY_MAX,
   ReviewStatusSchema,
+  ReviewAuthorRoleSchema,
   CreateReviewInputSchema,
+  CreateMasterClientReviewInputSchema,
   ReplyToReviewInputSchema,
   BookingReviewRefSchema,
   PublicReviewViewSchema,
@@ -194,8 +196,13 @@ export {
   MasterReviewViewSchema,
   MasterReviewListResponseSchema,
   ReplyToReviewResponseSchema,
+  ReceivedClientReviewViewSchema,
+  ReceivedClientReviewListResponseSchema,
+  CreateMasterClientReviewResponseSchema,
   type ReviewStatus,
+  type ReviewAuthorRole,
   type CreateReviewInput,
+  type CreateMasterClientReviewInput,
   type ReplyToReviewInput,
   type BookingReviewRef,
   type PublicReviewView,
@@ -205,6 +212,9 @@ export {
   type MasterReviewView,
   type MasterReviewListResponse,
   type ReplyToReviewResponse,
+  type ReceivedClientReviewView,
+  type ReceivedClientReviewListResponse,
+  type CreateMasterClientReviewResponse,
 } from './review'
 
 export {

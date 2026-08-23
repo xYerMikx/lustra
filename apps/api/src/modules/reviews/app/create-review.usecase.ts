@@ -5,6 +5,7 @@ import type {
 } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
+import { isDevelopment } from '@/common/env/is-production'
 import { DomainError } from '@/common/errors/domain-error'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import { ClockService } from '@/common/time/clock.service'
@@ -36,8 +37,9 @@ export class CreateReviewUseCase {
     const decision = resolveCreateReview({
       status: booking.status,
       completedAt: booking.completedAt,
-      hasReview: booking.hasReview,
+      hasReview: booking.hasClientReview,
       now: this.clock.now(),
+      relaxTimeGuards: isDevelopment,
     })
 
     if (!decision.ok && decision.reason === 'already_reviewed') {
@@ -61,6 +63,8 @@ export class CreateReviewUseCase {
         masterId: booking.masterId,
         clientUserId: currentUser.id,
         currentUserId: currentUser.id,
+        authorRole: 'client',
+        serviceTitle: booking.serviceTitle,
         rating: input.rating,
         text,
         status,

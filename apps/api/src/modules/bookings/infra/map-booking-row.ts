@@ -22,11 +22,12 @@ export const BOOKING_CABINET_SELECT = {
   clientComment: true,
   confirmedAt: true,
   completedAt: true,
-  review: {
+  reviews: {
     select: {
       id: true,
       status: true,
       rating: true,
+      authorRole: true,
     },
   },
   masterNote: true,
@@ -54,6 +55,13 @@ export const BOOKING_CABINET_SELECT = {
   },
 } as const
 
+type BookingReviewRow = {
+  id: string
+  status: BookingReviewRef['status']
+  rating: number | null
+  authorRole: 'client' | 'master'
+}
+
 type BookingCabinetRow = {
   id: string
   masterId: string
@@ -70,7 +78,7 @@ type BookingCabinetRow = {
   clientComment: string | null
   confirmedAt: Date | null
   completedAt: Date | null
-  review: BookingReviewRef | null
+  reviews: BookingReviewRow[]
   masterNote: string | null
   channel: ContactChannel | null
   master: {
@@ -88,8 +96,27 @@ type BookingCabinetRow = {
   }
 }
 
+function pickReviewRef(
+  reviews: BookingReviewRow[],
+  authorRole: BookingReviewRow['authorRole'],
+): BookingReviewRef | null {
+  const match = reviews.find((item) => item.authorRole === authorRole)
+
+  if (!match) {
+    return null
+  }
+
+  return {
+    id: match.id,
+    status: match.status,
+    rating: match.rating,
+  }
+}
+
 export function mapBookingRow(row: BookingCabinetRow): BookingRecord {
   const location = row.master.locations[0] ?? null
+  const clientReview = pickReviewRef(row.reviews, 'client')
+  const masterReview = pickReviewRef(row.reviews, 'master')
 
   return {
     id: row.id,
@@ -107,7 +134,10 @@ export function mapBookingRow(row: BookingCabinetRow): BookingRecord {
     clientComment: row.clientComment,
     confirmedAt: row.confirmedAt,
     completedAt: row.completedAt,
-    review: row.review,
+    review: clientReview,
+    receivedReview: masterReview,
+    clientReview: masterReview,
+    clientHasAccount: Boolean(row.clientUserId),
     masterNote: row.masterNote,
     channel: row.channel,
     masterDisplayName: row.master.displayName,

@@ -67,6 +67,7 @@ function bookingAt(hour: number, extra: Partial<E2eBooking> & Pick<E2eBooking, '
     addressHint: 'Фрунзенский, ориентир ТЦ',
     addressExact: 'ул. Притыцкого 29, каб. 3',
     review: extra.status === 'completed' ? null : null,
+    clientReview: null,
     ...extra,
   }
 }
@@ -301,6 +302,7 @@ export function createWorld(): MockWorld {
         text: 'Очень аккуратно, буду возвращаться.',
         createdAt: new Date().toISOString(),
         clientFirstName: 'Маша',
+        serviceTitle: 'Маникюр комбинированный',
         masterReply: null,
         repliedAt: null,
         verified: true,

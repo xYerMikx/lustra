@@ -15,7 +15,7 @@ const CABINET_TITLE: Record<Exclude<UserRole, 'master'>, string> = {
 }
 
 const CABINET_COPY: Record<Exclude<UserRole, 'master'>, string> = {
-  client: 'Ваши записи к мастерам и избранное.',
+  client: 'Ваши записи, отзывы и избранное.',
   admin: 'Модерация мастеров и служебные действия.',
 }
 
@@ -23,6 +23,9 @@ const CABINET_ACTIONS: Record<Exclude<UserRole, 'master'>, ReactNode> = {
   client: (
     <>
       <ButtonLink href="/app/client/bookings">Мои записи</ButtonLink>
+      <ButtonLink href="/app/client/reviews" variant="ghost">
+        Отзывы
+      </ButtonLink>
       <ButtonLink href="/app/client/favorites" variant="ghost">
         Избранное
       </ButtonLink>

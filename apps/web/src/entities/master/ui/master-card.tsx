@@ -11,7 +11,9 @@ type MasterCardProps = {
 export function MasterCard({ master }: MasterCardProps) {
   const district = master.districtName ?? 'Минск'
   const ratingLabel =
-    master.ratingCount > 0 ? master.ratingAvg.toFixed(1) : 'новый'
+    master.ratingCount > 0
+      ? `${master.ratingAvg.toFixed(1)} · ${master.ratingCount}`
+      : 'новый'
   const specialty =
     master.specialty ?? master.headline ?? 'Услуги уточняются'
   const priceLabel =

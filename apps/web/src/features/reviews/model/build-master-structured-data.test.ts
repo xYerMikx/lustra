@@ -15,6 +15,7 @@ const review: PublicReviewView = {
   text: 'Аккуратно',
   createdAt: '2026-08-12T12:00:00.000Z',
   clientFirstName: 'Мария',
+  serviceTitle: 'Маникюр',
   masterReply: null,
   repliedAt: null,
   verified: true,

@@ -41,4 +41,12 @@ describe('canLeaveReview', () => {
       false,
     )
   })
+
+  it('skips the window when time guards are relaxed', () => {
+    expect(
+      canLeaveReview(booking({}), new Date('2026-08-16T12:00:01.000Z'), {
+        relaxTimeGuards: true,
+      }),
+    ).toBe(true)
+  })
 })

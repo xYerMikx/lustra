@@ -12,11 +12,14 @@ const admin = {
 
 const pendingReview = {
   id: 'r1',
+  authorRole: 'client' as const,
   rating: 5,
   text: 'супер',
+  serviceTitle: 'Маникюр',
   status: 'pending_review' as const,
   createdAt: new Date('2026-08-13T12:00:00.000Z'),
   masterId: 'm1',
+  clientUserId: 'c1',
   master: { slug: 'anna', displayName: 'Анна' },
   client: { firstName: 'Оля' },
 }

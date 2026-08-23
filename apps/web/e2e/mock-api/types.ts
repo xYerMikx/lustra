@@ -56,6 +56,10 @@ export type E2eBooking = {
   addressHint: string | null
   addressExact: string | null
   review: BookingClientView['review']
+  clientReview: (NonNullable<BookingMasterView['clientReview']> & {
+    text: string | null
+    createdAt: string
+  }) | null
 }
 
 export type E2ePortfolioItem = PortfolioItemView & {
@@ -152,6 +156,13 @@ export function toClientBooking(booking: E2eBooking): BookingClientView {
     confirmedAt: booking.confirmedAt,
     completedAt: booking.completedAt,
     review: booking.review,
+    receivedReview: booking.clientReview
+      ? {
+          id: booking.clientReview.id,
+          status: booking.clientReview.status,
+          rating: booking.clientReview.rating,
+        }
+      : null,
     addressHint: booking.addressHint,
     addressExact:
       booking.status === 'confirmed' || booking.status === 'completed'
@@ -185,6 +196,15 @@ export function toMasterBooking(booking: E2eBooking): BookingMasterView {
       socialHandle: null,
       source: null,
     },
+    review: booking.review,
+    clientReview: booking.clientReview
+      ? {
+          id: booking.clientReview.id,
+          status: booking.clientReview.status,
+          rating: booking.clientReview.rating,
+        }
+      : null,
+    clientHasAccount: Boolean(booking.clientUserId),
   }
 }
 

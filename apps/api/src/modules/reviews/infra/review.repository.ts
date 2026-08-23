@@ -65,9 +65,10 @@ export class ReviewRepository implements ReviewStore {
         id: true,
         masterId: true,
         clientUserId: true,
+        serviceTitle: true,
         status: true,
         completedAt: true,
-        review: { select: { id: true } },
+        reviews: { select: { id: true, authorRole: true } },
       },
     })
 
@@ -79,9 +80,11 @@ export class ReviewRepository implements ReviewStore {
       id: row.id,
       masterId: row.masterId,
       clientUserId: row.clientUserId,
+      serviceTitle: row.serviceTitle,
       status: BOOKING_STATUS[row.status],
       completedAt: row.completedAt,
-      hasReview: Boolean(row.review),
+      hasClientReview: row.reviews.some((item) => item.authorRole === 'client'),
+      hasMasterReview: row.reviews.some((item) => item.authorRole === 'master'),
     }
   }
 
@@ -123,6 +126,7 @@ export class ReviewRepository implements ReviewStore {
       where: {
         id: input.reviewId,
         masterId: input.masterId,
+        authorRole: 'client',
         status: 'published',
         masterReply: null,
       },
@@ -150,7 +154,12 @@ export class ReviewRepository implements ReviewStore {
 
   async listPublishedByMasterId(masterId: string): Promise<ReviewRecord[]> {
     const rows = await this.tx.getClient().review.findMany({
-      where: { masterId, status: 'published' },
+      where: {
+        masterId,
+        authorRole: 'client',
+        status: 'published',
+        rating: { not: null },
+      },
       orderBy: { createdAt: 'desc' },
       take: 50,
       select: REVIEW_SELECT,
@@ -163,6 +172,7 @@ export class ReviewRepository implements ReviewStore {
     const rows = await this.tx.getClient().review.findMany({
       where: {
         masterId,
+        authorRole: 'client',
         status: { in: [...MASTER_LIST_STATUSES] },
       },
       orderBy: { createdAt: 'desc' },
@@ -171,5 +181,37 @@ export class ReviewRepository implements ReviewStore {
     })
 
     return rows.map(mapReviewRow)
+  }
+
+  async listReceivedByClientUserId(
+    clientUserId: string,
+  ): Promise<ReviewRecord[]> {
+    const rows = await this.tx.getClient().review.findMany({
+      where: {
+        clientUserId,
+        authorRole: 'master',
+        status: { in: [...MASTER_LIST_STATUSES] },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: REVIEW_SELECT,
+    })
+
+    return rows.map(mapReviewRow)
+  }
+
+  async findClientRating(clientUserId: string): Promise<{
+    ratingAvg: number
+    ratingCount: number
+  }> {
+    const row = await this.tx.getClient().clientProfile.findUnique({
+      where: { userId: clientUserId },
+      select: { ratingAvg: true, ratingCount: true },
+    })
+
+    return {
+      ratingAvg: row ? Number(row.ratingAvg) : 0,
+      ratingCount: row?.ratingCount ?? 0,
+    }
   }
 }

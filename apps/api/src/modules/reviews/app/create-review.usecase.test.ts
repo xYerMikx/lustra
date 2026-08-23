@@ -32,6 +32,8 @@ const created: ReviewRecord = {
   id: 'r1',
   bookingId: 'b1',
   masterId: 'm1',
+  authorRole: 'client',
+  serviceTitle: 'Маникюр',
   rating: 5,
   text: 'Отлично',
   status: 'published',
@@ -39,6 +41,7 @@ const created: ReviewRecord = {
   masterReply: null,
   repliedAt: null,
   clientFirstName: 'Анна',
+  masterDisplayName: 'Анна',
 }
 
 function buildStore(overrides: Partial<ReviewStore> = {}): ReviewStore {
@@ -49,15 +52,19 @@ function buildStore(overrides: Partial<ReviewStore> = {}): ReviewStore {
       id: 'b1',
       masterId: 'm1',
       clientUserId: 'c1',
+      serviceTitle: 'Маникюр',
       status: 'completed',
       completedAt: new Date('2026-08-10T12:00:00.000Z'),
-      hasReview: false,
+      hasClientReview: false,
+      hasMasterReview: false,
     }),
     findById: vi.fn(),
     createReview: vi.fn().mockResolvedValue(created),
     replyToReview: vi.fn(),
     listPublishedByMasterId: vi.fn(),
     listForMaster: vi.fn(),
+    listReceivedByClientUserId: vi.fn(),
+    findClientRating: vi.fn(),
     ...overrides,
   }
 }
@@ -82,6 +89,8 @@ describe('CreateReviewUseCase', () => {
         bookingId: 'b1',
         status: 'published',
         rating: 5,
+        authorRole: 'client',
+        serviceTitle: 'Маникюр',
       }),
     )
   })
@@ -107,9 +116,11 @@ describe('CreateReviewUseCase', () => {
         id: 'b1',
         masterId: 'm1',
         clientUserId: 'c1',
+        serviceTitle: 'Маникюр',
         status: 'confirmed',
         completedAt: null,
-        hasReview: false,
+        hasClientReview: false,
+        hasMasterReview: false,
       }),
     })
     const useCase = new CreateReviewUseCase(store, createTransactions(), clock)
@@ -128,9 +139,11 @@ describe('CreateReviewUseCase', () => {
         id: 'b1',
         masterId: 'm1',
         clientUserId: 'other',
+        serviceTitle: 'Маникюр',
         status: 'completed',
         completedAt: new Date('2026-08-10T12:00:00.000Z'),
-        hasReview: false,
+        hasClientReview: false,
+        hasMasterReview: false,
       }),
     })
     const useCase = new CreateReviewUseCase(store, createTransactions(), clock)

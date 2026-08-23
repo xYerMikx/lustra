@@ -181,6 +181,8 @@ model ClientProfile {
   noShowCount        Int       @default(0)
   lastBookingAt      DateTime? @db.Timestamptz
   trustScore         Int       @default(100)
+  ratingAvg          Decimal   @default(0) @db.Decimal(3, 2)
+  ratingCount        Int       @default(0)
   createdAt          DateTime  @default(now()) @db.Timestamptz
   updatedAt          DateTime  @updatedAt @db.Timestamptz
 
@@ -648,7 +650,7 @@ model Booking {
 
   slots  BookingSlot[]
   events BookingEvent[]
-  review Review?
+  reviews Review[]
   ledgerEntries LedgerEntry[]
 
   @@index([masterId, startsAt])
@@ -752,24 +754,33 @@ enum ReviewStatus {
   hidden
 }
 
+enum ReviewAuthorRole {
+  client
+  master
+}
+
 model Review {
-  id           String       @id @default(uuid())
-  bookingId    String       @unique
+  id           String           @id @default(uuid())
+  bookingId    String
+  authorRole   ReviewAuthorRole
   masterId     String
   clientUserId String
-  rating       Int // CHECK 1..5 в SQL-миграции
-  text         String?      @db.VarChar(800)
-  status       ReviewStatus @default(pending_review)
-  masterReply  String?      @db.VarChar(500)
+  rating       Int? // CHECK: null или 1..5 в SQL-миграции
+  text         String?          @db.VarChar(800)
+  serviceTitle String
+  status       ReviewStatus     @default(pending_review)
+  masterReply  String?          @db.VarChar(500)
   repliedAt    DateTime? @db.Timestamptz
-  createdAt    DateTime     @default(now()) @db.Timestamptz
+  createdAt    DateTime         @default(now()) @db.Timestamptz
 
   booking Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
   client  User          @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
   photos  ReviewPhoto[]
 
-  @@index([masterId, status, createdAt])
+  @@unique([bookingId, authorRole])
+  @@index([masterId, authorRole, status, createdAt])
+  @@index([clientUserId, authorRole, status, createdAt])
 }
 
 model ReviewPhoto {

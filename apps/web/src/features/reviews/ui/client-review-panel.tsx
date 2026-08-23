@@ -5,7 +5,9 @@ import type { BookingClientView, ClientReviewView } from '@lustra/contracts'
 
 import { canLeaveReview } from '@/features/reviews/model/can-leave-review'
 import { LeaveReviewForm } from '@/features/reviews/ui/leave-review-form'
+import { ReceivedMasterReviewNote } from '@/features/reviews/ui/received-master-review-note'
 import styles from '@/features/reviews/ui/reviews.module.css'
+import { isDevelopment } from '@/shared/lib/is-development'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 type ClientReviewPanelProps = {
@@ -40,12 +42,17 @@ export function ClientReviewPanel({ booking }: ClientReviewPanelProps) {
     )
   }
 
-  if (!canLeaveReview(booking, now)) {
-    return null
+  const receivedNote = (
+    <ReceivedMasterReviewNote review={booking.receivedReview} />
+  )
+
+  if (!canLeaveReview(booking, now, { relaxTimeGuards: isDevelopment })) {
+    return receivedNote
   }
 
   return (
     <div className={styles.form}>
+      {receivedNote}
       <p className={styles.text} data-testid={TEST_ID.reviewPrompt}>
         Как прошёл визит?
       </p>

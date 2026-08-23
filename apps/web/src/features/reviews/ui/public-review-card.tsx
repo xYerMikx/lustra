@@ -16,6 +16,7 @@ export function PublicReviewCard({ review }: PublicReviewCardProps) {
         <RatingStars value={review.rating} />
         <span>{formatReviewDate(review.createdAt)}</span>
       </div>
+      <p className={styles.service}>{review.serviceTitle}</p>
       {review.text ? <p className={styles.text}>{review.text}</p> : null}
       {review.masterReply ? (
         <p className={styles.reply}>Ответ мастера: {review.masterReply}</p>

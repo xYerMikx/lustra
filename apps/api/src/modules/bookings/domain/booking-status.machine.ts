@@ -109,12 +109,16 @@ export function resolveMasterComplete(input: {
   status: BookingStatus
   startsAt: Date
   now: Date
+  relaxTimeGuards?: boolean
 }): CompleteBookingResult {
   if (input.status !== 'confirmed') {
     return { ok: false, reason: 'not_confirmed' }
   }
 
-  if (input.now.getTime() < input.startsAt.getTime()) {
+  if (
+    !input.relaxTimeGuards &&
+    input.now.getTime() < input.startsAt.getTime()
+  ) {
     return { ok: false, reason: 'visit_not_started' }
   }
 

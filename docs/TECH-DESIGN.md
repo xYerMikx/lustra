@@ -186,6 +186,8 @@ model ClientProfile {
   noShowCount       Int      @default(0)
   lastBookingAt     DateTime?
   trustScore        Int      @default(100)         // 0..100, видит только мастер (защита от «отменяльщиков»)
+  ratingAvg         Decimal  @default(0) @db.Decimal(3,2)
+  ratingCount       Int      @default(0)
 }
 
 model Favorite {
@@ -545,7 +547,7 @@ model Booking {
 
   slots                BookingSlot[]
   events               BookingEvent[]
-  review               Review?
+  reviews              Review[]
 
   @@index([masterId, startsAt])
   @@index([clientUserId, startsAt])
@@ -584,23 +586,32 @@ model BookingEvent {                                   // полный ауди�
 
 ```prisma
 enum ReviewStatus { pending_review published rejected hidden }
+enum ReviewAuthorRole { client master }
 enum OutboxStatus { pending processing done failed }
 enum NotifyChannel { telegram email }
 enum NotifyStatus  { queued sent failed skipped }
 
 model Review {
-  id          String       @id @default(uuid())
-  bookingId   String       @unique                    // один отзыв на бронь
-  masterId    String
+  id           String           @id @default(uuid())
+  bookingId    String
+  authorRole   ReviewAuthorRole
+  masterId     String
   clientUserId String
-  rating      Int                                     // CHECK 1..5
-  text        String?      @db.VarChar(800)
-  status      ReviewStatus @default(pending_review)
-  masterReply String?      @db.VarChar(500)
-  repliedAt   DateTime?
-  photos      ReviewPhoto[]
-  @@index([masterId, status, createdAt])
+  rating       Int?                                   // null или 1..5; комментарий без оценки допустим для master→client
+  text         String?          @db.VarChar(800)
+  serviceTitle String                                 // снимок услуги на момент отзыва
+  status       ReviewStatus     @default(pending_review)
+  masterReply  String?          @db.VarChar(500)
+  repliedAt    DateTime?
+  photos       ReviewPhoto[]
+  @@unique([bookingId, authorRole])                   // по одному отзыву с каждой стороны
+  @@index([masterId, authorRole, status, createdAt])
+  @@index([clientUserId, authorRole, status, createdAt])
 }
+
+// Публичный каталог и /m/[slug] показывают только authorRole=client + published + rating != null.
+// Комментарий мастера без оценки (rating IS NULL) в байесовское среднее не входит.
+
 
 model ReviewPhoto {
   reviewId String
@@ -714,7 +725,8 @@ ALTER TABLE "AvailabilityRule" ADD CONSTRAINT rule_sane
 -- 4. Значения, на которые опирается генератор
 ALTER TABLE "MasterBookingPolicy" ADD CONSTRAINT policy_granularity
   CHECK ("granularityMin" IN (15,30,60));
-ALTER TABLE "Review" ADD CONSTRAINT review_rating_range CHECK (rating BETWEEN 1 AND 5);
+ALTER TABLE "Review" ADD CONSTRAINT review_rating_range
+  CHECK ("rating" IS NULL OR ("rating" BETWEEN 1 AND 5));
 ALTER TABLE "Service" ADD CONSTRAINT service_duration_step
   CHECK ("durationMin" > 0 AND "durationMin" % 15 = 0);
 
@@ -949,7 +961,7 @@ bookings/
 | `scheduling` | ReplaceWeeklyRules · UpsertException · CreateBlock · DeleteBlock · AddExtraSlot · UpdateSlotNote · EnsureSlots (job) · GetAvailability |
 | `bookings` | HoldSlot · ConfirmBooking · CreateManualBooking · CancelBooking (client/master) · RescheduleBooking · CompleteBooking · MarkNoShow · ExpireHolds (job) · AutoComplete (job) · ExpirePending (job) |
 | `catalog` | SearchMasters · GetMasterPublicPage · GetFilterFacets · GetSitemapEntries · TrackProfileView |
-| `reviews` | CreateReview · ReplyToReview · ModerateReview · RecalculateMasterRating (job) |
+| `reviews` | CreateReview · CreateMasterClientReview · ListClientReviews · ReplyToReview · ModerateReview · RecalculateMasterRating · RecalculateClientRating |
 | `notifications` | PublishOutbox (job) · SendTelegram · SendEmail · ScheduleReminders · CancelReminders |
 | `telegram` | HandleUpdate · LinkAccount · HandleInlineAction (confirm/cancel) · UnlinkAccount |
 | `moderation` | ListQueue · DecideModeration · BanMaster · HideReview · ResolveReport |
@@ -1063,6 +1075,8 @@ POST /api/v1/bookings/:id/cancel             { reason? }
 GET  /api/v1/bookings                        ?scope=upcoming|past&cursor=
 GET  /api/v1/bookings/:id
 POST /api/v1/reviews                         { bookingId, rating, text?, mediaIds? }
+GET  /api/v1/client/reviews
+POST /api/v1/master/client-reviews           { bookingId, rating?, text? }  // оценка и/или комментарий, только после complete
 
 # Мастер
 GET  /api/v1/master/calendar                 ?from=&to=   → слоты + брони + блоки одним ответом
@@ -1082,6 +1096,8 @@ POST /api/v1/master/ledger/entries           { kind, categoryId, amount, occurre
 POST /api/v1/master/ledger/categories        { kind, name }  // своя метка, например «Азер»
 DEL  /api/v1/master/ledger/entries/:id       // только source=manual
 ```
+
+`complete` в production только после `startsAt`; окно отзыва — 14 дней после `completedAt`. При `NODE_ENV=development` оба ограничения снимаются, чтобы вручную прогонять complete → отзыв без ожидания слота.
 
 Касса: `LedgerCategory` / `LedgerEntry`. Завершение брони в той же транзакции пишет `source=booking` на категорию `service`. Чаевые — отдельные `manual` строки. Уникальность `bookingId` только для `source=booking`, чтобы чаевые можно было привязать к визиту.
 

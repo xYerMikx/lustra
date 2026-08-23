@@ -12,6 +12,9 @@ export const ReviewStatusSchema = z.enum([
 ])
 export type ReviewStatus = z.infer<typeof ReviewStatusSchema>
 
+export const ReviewAuthorRoleSchema = z.enum(['client', 'master'])
+export type ReviewAuthorRole = z.infer<typeof ReviewAuthorRoleSchema>
+
 export const CreateReviewInputSchema = z
   .object({
     bookingId: z.string().uuid(),
@@ -20,6 +23,20 @@ export const CreateReviewInputSchema = z
   })
   .strict()
 export type CreateReviewInput = z.infer<typeof CreateReviewInputSchema>
+
+export const CreateMasterClientReviewInputSchema = z
+  .object({
+    bookingId: z.string().uuid(),
+    rating: z.number().int().min(1).max(5).optional(),
+    text: z.string().trim().max(REVIEW_TEXT_MAX).optional(),
+  })
+  .strict()
+  .refine((value) => value.rating != null || Boolean(value.text), {
+    message: 'Укажите оценку или комментарий',
+  })
+export type CreateMasterClientReviewInput = z.infer<
+  typeof CreateMasterClientReviewInputSchema
+>
 
 export const ReplyToReviewInputSchema = z
   .object({
@@ -31,7 +48,7 @@ export type ReplyToReviewInput = z.infer<typeof ReplyToReviewInputSchema>
 export const BookingReviewRefSchema = z.object({
   id: z.string().uuid(),
   status: ReviewStatusSchema,
-  rating: z.number().int().min(1).max(5),
+  rating: z.number().int().min(1).max(5).nullable(),
 })
 export type BookingReviewRef = z.infer<typeof BookingReviewRefSchema>
 
@@ -41,6 +58,7 @@ export const PublicReviewViewSchema = z.object({
   text: z.string().nullable(),
   createdAt: z.string().datetime(),
   clientFirstName: z.string(),
+  serviceTitle: z.string(),
   masterReply: z.string().nullable(),
   repliedAt: z.string().datetime().nullable(),
   verified: z.literal(true),
@@ -72,6 +90,7 @@ export const MasterReviewViewSchema = z.object({
   status: ReviewStatusSchema,
   createdAt: z.string().datetime(),
   clientFirstName: z.string(),
+  serviceTitle: z.string(),
   masterReply: z.string().nullable(),
   repliedAt: z.string().datetime().nullable(),
   verified: z.literal(true),
@@ -89,3 +108,33 @@ export const ReplyToReviewResponseSchema = z.object({
   review: MasterReviewViewSchema,
 })
 export type ReplyToReviewResponse = z.infer<typeof ReplyToReviewResponseSchema>
+
+export const ReceivedClientReviewViewSchema = z.object({
+  id: z.string().uuid(),
+  rating: z.number().int().min(1).max(5).nullable(),
+  text: z.string().nullable(),
+  status: ReviewStatusSchema,
+  createdAt: z.string().datetime(),
+  masterDisplayName: z.string(),
+  serviceTitle: z.string(),
+  verified: z.literal(true),
+})
+export type ReceivedClientReviewView = z.infer<
+  typeof ReceivedClientReviewViewSchema
+>
+
+export const ReceivedClientReviewListResponseSchema = z.object({
+  ratingAvg: z.number(),
+  ratingCount: z.number().int().nonnegative(),
+  items: z.array(ReceivedClientReviewViewSchema),
+})
+export type ReceivedClientReviewListResponse = z.infer<
+  typeof ReceivedClientReviewListResponseSchema
+>
+
+export const CreateMasterClientReviewResponseSchema = z.object({
+  review: ReceivedClientReviewViewSchema,
+})
+export type CreateMasterClientReviewResponse = z.infer<
+  typeof CreateMasterClientReviewResponseSchema
+>

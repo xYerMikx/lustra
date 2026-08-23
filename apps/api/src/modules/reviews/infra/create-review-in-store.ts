@@ -8,17 +8,33 @@ import {
   type TxClient,
 } from '@/modules/reviews/infra/map-review-row'
 
+function publishedRatings(rows: Array<{ rating: number | null }>): number[] {
+  const ratings: number[] = []
+
+  for (const row of rows) {
+    if (row.rating != null) {
+      ratings.push(row.rating)
+    }
+  }
+
+  return ratings
+}
+
 export async function recalculateMasterRatingInStore(
   db: TxClient,
   masterId: string,
   now: Date,
 ): Promise<void> {
   const published = await db.review.findMany({
-    where: { masterId, status: 'published' },
+    where: {
+      masterId,
+      authorRole: 'client',
+      status: 'published',
+    },
     select: { rating: true },
   })
 
-  const result = bayesianRating(published.map((row) => row.rating))
+  const result = bayesianRating(publishedRatings(published))
 
   await db.masterStats.upsert({
     where: { masterId },
@@ -38,6 +54,32 @@ export async function recalculateMasterRatingInStore(
   })
 }
 
+export async function recalculateClientRatingInStore(
+  db: TxClient,
+  clientUserId: string,
+  now: Date,
+): Promise<void> {
+  const published = await db.review.findMany({
+    where: {
+      clientUserId,
+      authorRole: 'master',
+      status: 'published',
+    },
+    select: { rating: true },
+  })
+
+  const result = bayesianRating(publishedRatings(published))
+
+  await db.clientProfile.updateMany({
+    where: { userId: clientUserId },
+    data: {
+      ratingAvg: result.avg.toFixed(2),
+      ratingCount: result.count,
+      updatedAt: now,
+    },
+  })
+}
+
 export async function createReviewInStore(
   db: TxClient,
   input: CreateReviewStoreInput,
@@ -47,6 +89,8 @@ export async function createReviewInStore(
       bookingId: input.bookingId,
       masterId: input.masterId,
       clientUserId: input.clientUserId,
+      authorRole: input.authorRole,
+      serviceTitle: input.serviceTitle,
       rating: input.rating,
       text: input.text,
       status: input.status,
@@ -67,6 +111,7 @@ export async function createReviewInStore(
         reviewId: created.id,
         bookingId: input.bookingId,
         masterId: input.masterId,
+        authorRole: input.authorRole,
         rating: input.rating,
         status: input.status,
         currentUserId: input.currentUserId,
@@ -75,7 +120,11 @@ export async function createReviewInStore(
   })
 
   if (input.status === 'published') {
-    await recalculateMasterRatingInStore(db, input.masterId, input.now)
+    if (input.authorRole === 'client') {
+      await recalculateMasterRatingInStore(db, input.masterId, input.now)
+    } else {
+      await recalculateClientRatingInStore(db, input.clientUserId, input.now)
+    }
   }
 
   return mapReviewRow(created)

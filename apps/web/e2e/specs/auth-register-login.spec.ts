@@ -26,6 +26,26 @@ test.describe('auth register and login', () => {
     await expect(page.getByTestId(TEST_ID.pageClientCabinet)).toBeVisible()
   })
 
+  test('selects the master chip from the landing query', async ({ page }) => {
+    await page.goto('/app/register?role=master&utm_source=landing')
+
+    await expect(page.getByTestId(TEST_ID.authRoleMaster)).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  test('sends a signed-in user from landing register to the cabinet', async ({
+    page,
+  }) => {
+    await loginAs(page, CLIENT_EMAIL)
+    await expect(page.getByTestId(TEST_ID.pageClientCabinet)).toBeVisible()
+
+    await page.goto('/app/register?role=master&utm_source=landing')
+
+    await expect(page.getByTestId(TEST_ID.pageClientCabinet)).toBeVisible()
+  })
+
   test('registers a master and starts onboarding', async ({ page }) => {
     await page.goto('/app/register')
     await page.getByTestId(TEST_ID.authRoleMaster).click()
