@@ -1,10 +1,8 @@
 ---
-import {
-  TERMS_META,
-  TERMS_SECTIONS,
-  type TermsBlock,
-  type TermsInline,
-} from '@/lib/terms-document'
+import LegalDocument from '@/components/legal-document.astro'
+import { OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+import { TERMS_META, type TermsBlock, type TermsInline } from '@/lib/terms-document'
+import { TERMS_SECTIONS } from '@/lib/terms-sections'
 
 function isRichParagraph(
   block: TermsBlock,
@@ -13,68 +11,42 @@ function isRichParagraph(
 }
 ---
 
-<main class="terms">
-  <a class="back" href="/">← Lumira</a>
-  <h1>{TERMS_META.title}</h1>
-  <p class="meta">
-    Редакция от {TERMS_META.edition} · Оператор: {TERMS_META.operatorStatus}
-    {' '}
-    {TERMS_META.operatorName}
-  </p>
-  <p class="lead">{TERMS_META.lead}</p>
-
-  <dl class="facts">
+<LegalDocument
+  title={TERMS_META.title}
+  meta={`Редакция от ${TERMS_META.edition} · Оператор: ${TERMS_META.operatorStatus} ${TERMS_META.operatorName}`}
+  lead={TERMS_META.lead}
+  tocLabel="Содержание"
+  toc={TERMS_SECTIONS.map((section) => ({ id: section.id, title: section.title }))}
+>
+  <dl slot="facts" class="facts">
+    {
+      OPERATOR_FACTS.map((fact) => (
+        <div class="fact">
+          <dt class="fact-label">{fact.label}</dt>
+          <dd class="fact-value">{fact.value}</dd>
+        </div>
+      ))
+    }
     <div class="fact">
-      <dt>ФИО</dt>
-      <dd>{TERMS_META.operatorName}</dd>
-    </div>
-    <div class="fact">
-      <dt>Статус</dt>
-      <dd>{TERMS_META.operatorStatus}</dd>
-    </div>
-    <div class="fact">
-      <dt>УНП</dt>
-      <dd>{TERMS_META.unp}</dd>
-    </div>
-    <div class="fact">
-      <dt>Страна</dt>
-      <dd>{TERMS_META.country}</dd>
-    </div>
-    <div class="fact">
-      <dt>Город</dt>
-      <dd>{TERMS_META.city}</dd>
-    </div>
-    <div class="fact">
-      <dt>Почта</dt>
-      <dd>
-        <a href={`mailto:${TERMS_META.email}`}>{TERMS_META.email}</a>
+      <dt class="fact-label">Почта</dt>
+      <dd class="fact-value">
+        <a class="fact-mail" href={`mailto:${PLATFORM_OPERATOR.supportEmail}`}>
+          {PLATFORM_OPERATOR.supportEmail}
+        </a>
       </dd>
     </div>
   </dl>
 
-  <nav class="toc" aria-label="Содержание">
-    <p class="toc-title">Содержание</p>
-    <ol>
-      {
-        TERMS_SECTIONS.map((section) => (
-          <li>
-            <a href={`#${section.id}`}>{section.title}</a>
-          </li>
-        ))
-      }
-    </ol>
-  </nav>
-
   {
     TERMS_SECTIONS.map((section) => (
       <section class="chapter" id={section.id}>
-        <h2>{section.title}</h2>
+        <h2 class="chapter-title">{section.title}</h2>
         {section.blocks.map((block) => {
           if (block.type === 'ul') {
             return (
-              <ul>
+              <ul class="list">
                 {block.items.map((item) => (
-                  <li>{item}</li>
+                  <li class="item">{item}</li>
                 ))}
               </ul>
             )
@@ -82,69 +54,28 @@ function isRichParagraph(
 
           if (isRichParagraph(block)) {
             return (
-              <p>
+              <p class="copy">
                 {block.parts.map((part) =>
                   typeof part === 'string' ? (
                     part
                   ) : (
-                    <a href={part.href}>{part.label}</a>
+                    <a class="inline-link" href={part.href}>
+                      {part.label}
+                    </a>
                   ),
                 )}
               </p>
             )
           }
 
-          return <p>{block.text}</p>
+          return <p class="copy">{block.text}</p>
         })}
       </section>
     ))
   }
-</main>
+</LegalDocument>
 
 <style>
-  .terms {
-    width: min(720px, calc(100% - var(--spacing-40)));
-    margin-inline: auto;
-    padding: var(--spacing-40) 0 var(--spacing-96);
-  }
-
-  .back {
-    display: inline-block;
-    margin-bottom: var(--spacing-32);
-    font-size: var(--text-13);
-    line-height: var(--text-13--line-height);
-    color: var(--color-text-2);
-  }
-
-  .back:hover {
-    color: var(--color-accent);
-  }
-
-  h1 {
-    font-size: clamp(var(--text-32), 6vw, var(--text-40));
-    line-height: 1.15;
-    margin-bottom: var(--spacing-16);
-  }
-
-  h2 {
-    font-size: var(--text-26);
-    line-height: var(--text-26--line-height);
-    margin-bottom: var(--spacing-16);
-  }
-
-  .meta {
-    color: var(--color-text-3);
-    font-size: var(--text-13);
-    line-height: var(--text-13--line-height);
-    margin-bottom: var(--spacing-16);
-  }
-
-  .lead {
-    color: var(--color-text-2);
-    margin-bottom: var(--spacing-32);
-    line-height: 1.55;
-  }
-
   .facts {
     display: grid;
     gap: 0;
@@ -160,45 +91,18 @@ function isRichParagraph(
     border-bottom: 1px solid var(--color-border);
   }
 
-  .fact dt {
+  .fact-label {
     color: var(--color-text-3);
     font-size: var(--text-13);
     line-height: var(--text-13--line-height);
   }
 
-  .fact dd {
+  .fact-value {
     margin: 0;
     color: var(--color-text);
   }
 
-  .toc {
-    margin-bottom: var(--spacing-40);
-    padding: var(--spacing-24);
-    background: var(--color-surface-2);
-    border-radius: var(--radius-8);
-  }
-
-  .toc-title {
-    font-size: var(--text-13);
-    line-height: var(--text-13--line-height);
-    color: var(--color-text-3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: var(--spacing-12);
-  }
-
-  .toc ol {
-    margin: 0;
-    padding-left: var(--spacing-20);
-    display: grid;
-    gap: var(--spacing-8);
-  }
-
-  .toc a {
-    color: var(--color-text-2);
-  }
-
-  .toc a:hover {
+  .fact-mail {
     color: var(--color-accent);
   }
 
@@ -207,37 +111,39 @@ function isRichParagraph(
     scroll-margin-top: calc(var(--spacing-56) + var(--spacing-16));
   }
 
-  .chapter p,
-  .chapter li {
+  .chapter-title {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .copy,
+  .item {
     color: var(--color-text-2);
     line-height: 1.6;
   }
 
-  .chapter p + p,
-  .chapter p + ul,
-  .chapter ul + p {
+  .copy + .copy,
+  .copy + .list,
+  .list + .copy {
     margin-top: var(--spacing-16);
   }
 
-  .chapter ul {
+  .list {
     margin: 0;
     padding-left: var(--spacing-24);
     display: grid;
     gap: var(--spacing-8);
   }
 
-  .chapter a {
+  .inline-link {
     color: var(--color-accent);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 
-  .chapter a:hover {
+  .inline-link:hover {
     color: var(--color-accent-700);
-  }
-
-  .facts a {
-    color: var(--color-accent);
   }
 
   @media (max-width: 640px) {
