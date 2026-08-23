@@ -30,6 +30,7 @@ export function buildAppNavItems(user: MeResponse | null): AppNavItem[] {
 
     if (user.role === 'client') {
       items.push({ href: '/app/client/favorites', label: 'Избранное' })
+      items.push({ href: '/app/client/reviews', label: 'Отзывы' })
     }
 
     if (user.role === 'master') {

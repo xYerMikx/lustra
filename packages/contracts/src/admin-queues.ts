@@ -71,8 +71,10 @@ export type AdminListReviewsQuery = z.infer<typeof AdminListReviewsQuerySchema>
 
 export const AdminReviewCardSchema = z.object({
   id: z.string().uuid(),
-  rating: z.number().int().min(1).max(5),
+  authorRole: z.enum(['client', 'master']),
+  rating: z.number().int().min(1).max(5).nullable(),
   text: z.string().nullable(),
+  serviceTitle: z.string(),
   status: ReviewStatusSchema,
   masterId: z.string().uuid(),
   masterSlug: z.string(),

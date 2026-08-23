@@ -38,6 +38,7 @@ describe('buildAppNavItems', () => {
       { href: '/catalog', label: 'Каталог' },
       { href: '/app/client/bookings', label: 'Записи' },
       { href: '/app/client/favorites', label: 'Избранное' },
+      { href: '/app/client/reviews', label: 'Отзывы' },
       { href: '/app', label: 'Кабинет' },
     ])
   })

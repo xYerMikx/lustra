@@ -17,6 +17,8 @@ import {
 } from '@/features/auth/model/load-session'
 import { logout } from '@/shared/api/auth-client'
 import { TEST_ID } from '@/shared/lib/test-id'
+import { LogoutIcon } from '@/shared/ui/icon-pack'
+import { Spinner } from '@/shared/ui/spinner'
 import styles from '@/shared/ui/site-chrome/site-chrome.module.css'
 
 type SessionState =
@@ -113,11 +115,20 @@ export function AppHeader() {
               className={styles.logout}
               onClick={handleLogout}
               disabled={loggingOut}
+              aria-label={loggingOut ? 'Выходим' : 'Выйти'}
+              aria-busy={loggingOut}
+              title="Выйти"
               data-testid={TEST_ID.appLogout}
             >
-              {loggingOut ? 'Выходим…' : 'Выйти'}
+              <LogoutIcon />
             </button>
           </div>
+        ) : null}
+
+        {session.status === 'loading' ? (
+          <span className={styles.headerPending} role="status" aria-label="Загружаем">
+            <Spinner />
+          </span>
         ) : null}
 
         {session.status === 'guest' ? (

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 
+import { formatAdminReviewHeadline, formatAdminReviewMeta } from '@/features/admin-moderation/model/format-admin-review-copy'
 import { useAdminReviewsQueue } from '@/features/admin-moderation/model/use-admin-reviews-queue'
 import { AdminQueueNav } from '@/features/admin-moderation/ui/admin-queue-nav'
 import styles from '@/features/admin-moderation/ui/admin-moderation.module.css'
@@ -50,16 +51,28 @@ export function AdminReviewsQueueShell() {
           <ul className={styles.list}>
             {queue.items.map((item) => {
               const busy = queue.busyId === item.id
+              const metaLabel = formatAdminReviewMeta({
+                serviceTitle: item.serviceTitle,
+                masterDisplayName: item.masterDisplayName,
+              })
 
               return (
                 <li key={item.id} className={styles.card}>
                   <div>
                     <div className={styles.cardTitle}>
-                      {item.rating} из 5 · {item.clientFirstName}
+                      {formatAdminReviewHeadline({
+                        authorRole: item.authorRole,
+                        rating: item.rating,
+                        clientFirstName: item.clientFirstName,
+                      })}
                     </div>
                     <div className={styles.cardMeta}>
-                      {item.masterDisplayName}
-                      {' · '}
+                      {metaLabel ? (
+                        <>
+                          {metaLabel}
+                          {' · '}
+                        </>
+                      ) : null}
                       <Link
                         className={styles.slugLink}
                         href={`/m/${item.masterSlug}`}

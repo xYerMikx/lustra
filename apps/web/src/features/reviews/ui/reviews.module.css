@@ -48,6 +48,13 @@
   font-weight: var(--font-weight-600);
 }
 
+.service {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
 .text {
   margin: 0;
   color: var(--color-text-2);

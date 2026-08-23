@@ -18,6 +18,7 @@ describe('toBookingClientView', () => {
     expect(view.masterDisplayName).toBe('Анна')
     expect(view.completedAt).toBeNull()
     expect(view.review).toBeNull()
+    expect(view.receivedReview).toBeNull()
     expect(view.addressExact).toBeNull()
 
     expect(() => assertNoPrivateBookingKeys(view)).not.toThrow()
@@ -41,6 +42,9 @@ describe('toBookingMasterView', () => {
     const view = toBookingMasterView(sampleBookingRecord())
 
     expect(view.masterNote).toBe('secret')
+    expect(view.clientHasAccount).toBe(true)
+    expect(view.review).toBeNull()
+    expect(view.clientReview).toBeNull()
     expect(view.client.name).toBe('Клиент')
     expect(view.client.phone).toBe('+375291112233')
     expect(view.client.socialHandle).toBeNull()

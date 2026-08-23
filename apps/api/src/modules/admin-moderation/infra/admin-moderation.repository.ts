@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import type { MasterStatus, ModerationStatus, Prisma, ReviewStatus } from '@lustra/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
-import { recalculateMasterRatingInStore } from '@/modules/reviews/infra/create-review-in-store'
+import {
+  recalculateClientRatingInStore,
+  recalculateMasterRatingInStore,
+} from '@/modules/reviews/infra/create-review-in-store'
 
 export type AdminMasterRecord = {
   id: string
@@ -33,11 +36,14 @@ export type AdminPortfolioRecord = {
 
 export type AdminReviewRecord = {
   id: string
-  rating: number
+  authorRole: 'client' | 'master'
+  rating: number | null
   text: string | null
+  serviceTitle: string
   status: ReviewStatus
   createdAt: Date
   masterId: string
+  clientUserId: string
   master: {
     slug: string
     displayName: string
@@ -224,7 +230,11 @@ export class AdminModerationRepository {
         select: REVIEW_SELECT,
       })
 
-      await recalculateMasterRatingInStore(tx, updated.masterId, now)
+      if (updated.authorRole === 'client') {
+        await recalculateMasterRatingInStore(tx, updated.masterId, now)
+      } else {
+        await recalculateClientRatingInStore(tx, updated.clientUserId, now)
+      }
 
       return updated
     })
@@ -252,11 +262,14 @@ const PORTFOLIO_SELECT = {
 
 const REVIEW_SELECT = {
   id: true,
+  authorRole: true,
   rating: true,
   text: true,
+  serviceTitle: true,
   status: true,
   createdAt: true,
   masterId: true,
+  clientUserId: true,
   master: {
     select: {
       slug: true,

@@ -14,6 +14,7 @@ import { ClientSocialLink } from '@/features/booking-cabinets/ui/client-social-l
 import { MasterBookingBackLink } from '@/features/booking-cabinets/ui/master-booking-back-link'
 import { toClientSocialLink } from '@/features/booking-cabinets/model/to-client-social-link'
 import { RescheduleBookingForm } from '@/features/booking-cabinets/ui/reschedule-booking-form'
+import { MasterClientReviewPanel } from '@/features/reviews'
 import { safeReturnPath } from '@/features/master-calendar/model/calendar-href'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { formatByn } from '@/shared/lib/money'
@@ -192,6 +193,8 @@ export function MasterBookingDetailShell({
         {detail.actionError ? (
           <p className={styles.error}>{detail.actionError}</p>
         ) : null}
+
+        <MasterClientReviewPanel booking={booking} />
       </div>
     </section>
   )

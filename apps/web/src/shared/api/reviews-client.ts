@@ -1,8 +1,11 @@
 import type {
   CreateReviewInput,
   CreateReviewResponse,
+  CreateMasterClientReviewInput,
+  CreateMasterClientReviewResponse,
   MasterReviewListResponse,
   PublicReviewListResponse,
+  ReceivedClientReviewListResponse,
   ReplyToReviewInput,
   ReplyToReviewResponse,
 } from '@lustra/contracts'
@@ -16,8 +19,19 @@ export function createReview(input: CreateReviewInput) {
   })
 }
 
+export function createMasterClientReview(input: CreateMasterClientReviewInput) {
+  return apiFetch<CreateMasterClientReviewResponse>('/master/client-reviews', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
 export function listMasterReviews() {
   return apiFetch<MasterReviewListResponse>('/master/reviews')
+}
+
+export function listClientReviews() {
+  return apiFetch<ReceivedClientReviewListResponse>('/client/reviews')
 }
 
 export function replyToReview(reviewId: string, input: ReplyToReviewInput) {

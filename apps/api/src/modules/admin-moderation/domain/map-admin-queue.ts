@@ -26,8 +26,10 @@ export function toAdminReviewCard(record: AdminReviewRecord): AdminReviewCard {
 
   return {
     id: record.id,
+    authorRole: record.authorRole,
     rating: record.rating,
     text: record.text,
+    serviceTitle: record.serviceTitle,
     status: record.status,
     masterId: record.masterId,
     masterSlug: record.master.slug,

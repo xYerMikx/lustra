@@ -32,6 +32,8 @@ const published: ReviewRecord = {
   id: 'r1',
   bookingId: 'b1',
   masterId: 'm1',
+  authorRole: 'client',
+  serviceTitle: 'Маникюр',
   rating: 5,
   text: 'Отлично',
   status: 'published',
@@ -39,6 +41,7 @@ const published: ReviewRecord = {
   masterReply: null,
   repliedAt: null,
   clientFirstName: 'Анна',
+  masterDisplayName: 'Анна',
 }
 
 const replied: ReviewRecord = {
@@ -57,6 +60,8 @@ function buildStore(overrides: Partial<ReviewStore> = {}): ReviewStore {
     replyToReview: vi.fn().mockResolvedValue(replied),
     listPublishedByMasterId: vi.fn(),
     listForMaster: vi.fn(),
+    listReceivedByClientUserId: vi.fn(),
+    findClientRating: vi.fn(),
     ...overrides,
   }
 }
@@ -98,5 +103,19 @@ describe('ReplyToReviewUseCase', () => {
     ).rejects.toMatchObject({
       code: 'NOT_FOUND',
     } satisfies Partial<DomainError>)
+  })
+
+  it('hides a master-authored review as not found', async () => {
+    const store = buildStore({
+      findById: vi.fn().mockResolvedValue({ ...published, authorRole: 'master' }),
+    })
+    const useCase = new ReplyToReviewUseCase(store, createTransactions(), clock)
+
+    await expect(
+      useCase.execute(currentUser, 'r1', { text: 'Спасибо!' }),
+    ).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+    } satisfies Partial<DomainError>)
+    expect(store.replyToReview).not.toHaveBeenCalled()
   })
 })

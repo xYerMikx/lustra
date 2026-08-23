@@ -124,6 +124,7 @@ export function handleClientBookings(
       addressHint: 'Фрунзенский, ориентир ТЦ',
       addressExact: 'ул. Притыцкого 29, каб. 3',
       review: null,
+      clientReview: null,
     }
 
     world.bookings.push(booking)
@@ -264,6 +265,7 @@ export function handleClientBookings(
       text: String(body.text ?? '').trim() || null,
       createdAt: new Date().toISOString(),
       clientFirstName: gated.user.firstName,
+      serviceTitle: booking.serviceTitle,
       masterReply: null,
       repliedAt: null,
       verified: true as const,
@@ -281,12 +283,53 @@ export function handleClientBookings(
       text: review.text,
       createdAt: review.createdAt,
       clientFirstName: review.clientFirstName,
+      serviceTitle: booking.serviceTitle,
       masterReply: null,
       repliedAt: null,
       verified: true,
     })
 
     return { response: { status: 201, body: { review } } }
+  }
+
+  if (method === 'GET' && pathname === '/client/reviews') {
+    const gated = requireUser(world, request, 'client')
+
+    if ('response' in gated) {
+      return gated
+    }
+
+    const items = world.bookings
+      .filter(
+        (item) => item.clientUserId === gated.user.id && item.clientReview,
+      )
+      .map((item) => ({
+        id: item.clientReview!.id,
+        rating: item.clientReview!.rating,
+        text: item.clientReview!.text,
+        status: item.clientReview!.status,
+        createdAt: item.clientReview!.createdAt,
+        masterDisplayName: item.masterDisplayName,
+        serviceTitle: item.serviceTitle,
+        verified: true as const,
+      }))
+    const ratings = items.flatMap((item) =>
+      item.rating == null ? [] : [item.rating],
+    )
+
+    return {
+      response: {
+        status: 200,
+        body: {
+          ratingAvg:
+            ratings.length === 0
+              ? 0
+              : ratings.reduce((sum, value) => sum + value, 0) / ratings.length,
+          ratingCount: ratings.length,
+          items,
+        },
+      },
+    }
   }
 
   if (pathname.startsWith('/favorites')) {
@@ -336,7 +379,11 @@ export function handleMasterBookings(
 ): HandlerResult | null {
   const { method, pathname } = request
 
-  if (!pathname.startsWith('/master/bookings') && pathname !== '/master/clients') {
+  if (
+    !pathname.startsWith('/master/bookings') &&
+    pathname !== '/master/clients' &&
+    pathname !== '/master/client-reviews'
+  ) {
     return null
   }
 
@@ -348,6 +395,70 @@ export function handleMasterBookings(
 
   if (method === 'GET' && pathname === '/master/clients') {
     return { response: { status: 200, body: { items: [] } } }
+  }
+
+  if (method === 'POST' && pathname === '/master/client-reviews') {
+    const body = asRecord(request.body)
+    const booking = findMasterBooking(
+      world,
+      String(body.bookingId ?? ''),
+      gated.user.id,
+    )
+
+    if (!booking || booking.status !== 'completed') {
+      return {
+        response: apiError(409, 'INVALID_STATE', 'Отзыв можно оставить после визита'),
+      }
+    }
+
+    if (!booking.clientUserId) {
+      return {
+        response: apiError(
+          409,
+          'INVALID_STATE',
+          'Отзыв можно оставить только клиенту с аккаунтом',
+        ),
+      }
+    }
+
+    if (booking.clientReview) {
+      return {
+        response: apiError(409, 'INVALID_STATE', 'Отзыв по этой записи уже оставлен'),
+      }
+    }
+
+    const rating = body.rating == null ? null : Number(body.rating)
+    const text = String(body.text ?? '').trim() || null
+
+    if (rating == null && !text) {
+      return {
+        response: apiError(400, 'VALIDATION_FAILED', 'Укажите оценку или комментарий'),
+      }
+    }
+
+    const review = {
+      id: randomUUID(),
+      status: 'published' as const,
+      rating,
+      text,
+      createdAt: new Date().toISOString(),
+    }
+
+    booking.clientReview = review
+
+    return {
+      response: {
+        status: 201,
+        body: {
+          review: {
+            ...review,
+            masterDisplayName: booking.masterDisplayName,
+            serviceTitle: booking.serviceTitle,
+            verified: true,
+          },
+        },
+      },
+    }
   }
 
   if (method === 'GET' && pathname === '/master/bookings') {
@@ -400,6 +511,7 @@ export function handleMasterBookings(
       addressHint: null,
       addressExact: null,
       review: null,
+      clientReview: null,
     }
 
     world.bookings.push(booking)

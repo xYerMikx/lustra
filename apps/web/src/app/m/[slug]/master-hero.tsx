@@ -16,7 +16,7 @@ export function MasterHero({ master }: MasterHeroProps) {
   const district = master.primaryLocation?.districtName ?? 'Минск'
   const ratingLabel =
     master.ratingCount > 0
-      ? `рейтинг ${master.ratingAvg.toFixed(1)}`
+      ? `рейтинг ${master.ratingAvg.toFixed(1)} · ${master.ratingCount}`
       : 'новый мастер'
   const cover = pickCoverItem(master.portfolio)
 

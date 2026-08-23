@@ -1,5 +1,9 @@
-import type { Prisma, ReviewStatus as PrismaReviewStatus } from '@lustra/db'
-import type { ReviewStatus } from '@lustra/contracts'
+import type {
+  Prisma,
+  ReviewAuthorRole as PrismaReviewAuthorRole,
+  ReviewStatus as PrismaReviewStatus,
+} from '@lustra/db'
+import type { ReviewAuthorRole, ReviewStatus } from '@lustra/contracts'
 
 import type { ReviewRecord } from '@/modules/reviews/domain/map-review'
 
@@ -10,10 +14,17 @@ const REVIEW_STATUS: Record<PrismaReviewStatus, ReviewStatus> = {
   hidden: 'hidden',
 }
 
+const AUTHOR_ROLE: Record<PrismaReviewAuthorRole, ReviewAuthorRole> = {
+  client: 'client',
+  master: 'master',
+}
+
 export const REVIEW_SELECT = {
   id: true,
   bookingId: true,
   masterId: true,
+  authorRole: true,
+  serviceTitle: true,
   rating: true,
   text: true,
   status: true,
@@ -25,13 +36,20 @@ export const REVIEW_SELECT = {
       firstName: true,
     },
   },
+  master: {
+    select: {
+      displayName: true,
+    },
+  },
 } as const
 
 type ReviewRow = {
   id: string
   bookingId: string
   masterId: string
-  rating: number
+  authorRole: PrismaReviewAuthorRole
+  serviceTitle: string
+  rating: number | null
   text: string | null
   status: PrismaReviewStatus
   createdAt: Date
@@ -40,6 +58,9 @@ type ReviewRow = {
   client: {
     firstName: string
   }
+  master: {
+    displayName: string
+  }
 }
 
 export function mapReviewRow(row: ReviewRow): ReviewRecord {
@@ -47,6 +68,8 @@ export function mapReviewRow(row: ReviewRow): ReviewRecord {
     id: row.id,
     bookingId: row.bookingId,
     masterId: row.masterId,
+    authorRole: AUTHOR_ROLE[row.authorRole],
+    serviceTitle: row.serviceTitle,
     rating: row.rating,
     text: row.text,
     status: REVIEW_STATUS[row.status],
@@ -54,6 +77,7 @@ export function mapReviewRow(row: ReviewRow): ReviewRecord {
     masterReply: row.masterReply,
     repliedAt: row.repliedAt,
     clientFirstName: row.client.firstName,
+    masterDisplayName: row.master.displayName,
   }
 }
 

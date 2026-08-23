@@ -22,6 +22,7 @@ export function MasterReviewCard({ review, onReplied }: MasterReviewCardProps) {
         <RatingStars value={review.rating} />
         <span>{formatReviewDate(review.createdAt)}</span>
       </div>
+      <p className={styles.service}>{review.serviceTitle}</p>
       {review.status === 'pending_review' ? (
         <p className={styles.status}>На проверке</p>
       ) : null}

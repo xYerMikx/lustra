@@ -126,3 +126,23 @@
   font-size: var(--text-15);
   line-height: var(--text-15--line-height);
 }
+
+.formPending {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--spacing-12);
+  min-height: 280px;
+  color: var(--color-text-2);
+}
+
+.formPendingSpinner {
+  width: var(--spacing-24);
+  height: var(--spacing-24);
+}
+
+.formPendingLabel {
+  margin: 0;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
