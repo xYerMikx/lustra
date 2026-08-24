@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { rankByCompletedVisits } from '@/modules/bookings/domain/rank-master-clients-by-completed'
+import {
+  compareByCompletedVisits,
+  rankByCompletedVisits,
+} from '@/modules/bookings/domain/rank-master-clients-by-completed'
 
 describe('rankByCompletedVisits', () => {
   it('orders by COUNT(completed) and ignores a stale visitsCount column', () => {
@@ -33,5 +36,29 @@ describe('rankByCompletedVisits', () => {
       'regular',
       'stale',
     ])
+  })
+
+  it('takes current and other as a named object', () => {
+    const fewer = {
+      id: 'fewer',
+      name: 'Оля',
+      visitsCountColumn: 0,
+      completedCount: 1,
+      lastCompletedAt: null,
+    }
+    const more = {
+      id: 'more',
+      name: 'Анна',
+      visitsCountColumn: 0,
+      completedCount: 3,
+      lastCompletedAt: null,
+    }
+
+    expect(
+      compareByCompletedVisits({ current: fewer, other: more }),
+    ).toBeGreaterThan(0)
+    expect(
+      compareByCompletedVisits({ current: more, other: fewer }),
+    ).toBeLessThan(0)
   })
 })

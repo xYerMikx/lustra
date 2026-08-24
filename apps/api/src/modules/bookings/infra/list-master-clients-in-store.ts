@@ -2,7 +2,7 @@ import type { Prisma } from '@lustra/db'
 
 import type { MasterClientRecord } from '@/modules/bookings/app/booking.ports'
 import { resolveStoredSocialHandle } from '@/modules/bookings/domain/guest-lookup-plan'
-import { handleNeedleFromQuery } from '@/modules/bookings/domain/master-client-search'
+import { nickFromQuery } from '@/modules/bookings/domain/master-client-search'
 import { rankByCompletedVisits } from '@/modules/bookings/domain/rank-master-clients-by-completed'
 import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 
@@ -19,29 +19,29 @@ export async function listMasterClientsInStore(
     limit?: number
   },
 ): Promise<MasterClientRecord[]> {
-  const needle = input.query.trim()
-  const handleNeedle = handleNeedleFromQuery(needle)
+  const queryText = input.query.trim()
+  const nickQuery = nickFromQuery(queryText)
   const take = input.limit ?? 20
   const isFrequent = input.sort === 'frequent'
 
   const rows = await db.masterClient.findMany({
     where: {
       masterId: input.masterId,
-      ...(needle
+      ...(queryText
         ? {
             OR: [
-              { name: { contains: needle, mode: 'insensitive' } },
-              { phone: { contains: needle } },
-              { note: { contains: needle, mode: 'insensitive' } },
+              { name: { contains: queryText, mode: 'insensitive' } },
+              { phone: { contains: queryText } },
+              { note: { contains: queryText, mode: 'insensitive' } },
               {
                 instagramHandle: {
-                  contains: handleNeedle,
+                  contains: nickQuery,
                   mode: 'insensitive',
                 },
               },
               {
                 telegramHandle: {
-                  contains: handleNeedle,
+                  contains: nickQuery,
                   mode: 'insensitive',
                 },
               },
@@ -124,6 +124,9 @@ export async function listMasterClientsInStore(
   const order = new Map(ranked.map((row, index) => [row.id, index]))
 
   return [...mapped]
-    .sort((left, right) => (order.get(left.id) ?? 0) - (order.get(right.id) ?? 0))
+    .sort(
+      (current, other) =>
+        (order.get(current.id) ?? 0) - (order.get(other.id) ?? 0),
+    )
     .slice(0, take)
 }

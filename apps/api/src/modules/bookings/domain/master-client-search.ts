@@ -1,4 +1,4 @@
-export function handleNeedleFromQuery(query: string): string {
+export function nickFromQuery(query: string): string {
   return query.trim().replace(/^@+/u, '')
 }
 
@@ -15,13 +15,13 @@ export function clientMatchesQuery(
   client: SearchableMasterClient,
   query: string,
 ): boolean {
-  const needle = query.trim().toLowerCase()
+  const normalizedQuery = query.trim().toLowerCase()
 
-  if (!needle) {
+  if (!normalizedQuery) {
     return true
   }
 
-  const handleNeedle = handleNeedleFromQuery(query).toLowerCase()
+  const normalizedNick = nickFromQuery(query).toLowerCase()
   const name = client.name.toLowerCase()
   const phone = (client.phone ?? '').toLowerCase()
   const note = (client.note ?? '').toLowerCase()
@@ -29,11 +29,11 @@ export function clientMatchesQuery(
   const telegram = (client.telegramHandle ?? '').toLowerCase()
 
   return (
-    name.includes(needle) ||
-    phone.includes(needle) ||
-    note.includes(needle) ||
-    instagram.includes(handleNeedle) ||
-    telegram.includes(handleNeedle)
+    name.includes(normalizedQuery) ||
+    phone.includes(normalizedQuery) ||
+    note.includes(normalizedQuery) ||
+    instagram.includes(normalizedNick) ||
+    telegram.includes(normalizedNick)
   )
 }
 

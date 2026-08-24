@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import cn from 'classnames'
+import type { MasterClientView } from '@lustra/contracts'
 
 import { todayYmdDate } from '@/features/master-calendar/model/calendar-range'
 import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
@@ -10,9 +11,8 @@ import {
   useMasterClients,
   type ClientsTab,
 } from '@/features/master-clients/model/use-master-clients'
-import { MasterClientRow } from '@/features/master-clients/ui/master-client-row'
+import { MasterClientsBody } from '@/features/master-clients/ui/master-clients-body'
 import styles from '@/features/master-clients/ui/master-clients.module.css'
-import { Button } from '@/shared/ui/button'
 import { TEST_ID } from '@/shared/lib/test-id'
 
 const TABS: Array<{ id: ClientsTab; label: string; testId: string }> = [
@@ -26,6 +26,10 @@ export function MasterClientsShell() {
   const list = useMasterClients(tab, query)
   const booking = useBookFromClient(list.reload)
   const today = todayYmdDate()
+
+  const bookClient = (client: MasterClientView) => {
+    void booking.openForClient(client)
+  }
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageMasterClients}>
@@ -78,47 +82,15 @@ export function MasterClientsShell() {
         </p>
       ) : null}
 
-      {list.status === 'idle' ? (
-        <p className={styles.empty}>
-          Введите имя, телефон или @ник — поиск идёт по книге этого мастера.
-        </p>
-      ) : null}
-
-      {list.status === 'loading' ? (
-        <p className={styles.notice}>Загружаем клиентов…</p>
-      ) : null}
-
-      {list.status === 'error' ? (
-        <div>
-          <p className={styles.error}>{list.errorMessage}</p>
-          <Button type="button" variant="ghost" onClick={list.reload}>
-            Повторить
-          </Button>
-        </div>
-      ) : null}
-
-      {list.status === 'empty' ? (
-        <p className={styles.empty}>
-          {tab === 'frequent'
-            ? 'Пока нет завершённых визитов, чтобы собрать частых клиентов.'
-            : 'Никого не нашли. Проверьте написание ника без учёта регистра.'}
-        </p>
-      ) : null}
-
-      {list.status === 'success' ? (
-        <ul className={styles.list} data-testid={TEST_ID.clientsList}>
-          {list.items.map((client) => (
-            <MasterClientRow
-              key={client.id}
-              client={client}
-              busy={booking.busyId === client.id}
-              onBook={(next) => {
-                void booking.openForClient(next)
-              }}
-            />
-          ))}
-        </ul>
-      ) : null}
+      <MasterClientsBody
+        status={list.status}
+        tab={tab}
+        errorMessage={list.errorMessage}
+        items={list.items}
+        busyId={booking.busyId}
+        onRetry={list.reload}
+        onBook={bookClient}
+      />
 
       {booking.dialog ? (
         <ManualBookingDialog

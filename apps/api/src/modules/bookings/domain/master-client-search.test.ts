@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   clientMatchesQuery,
   clientsVisibleToMaster,
-  handleNeedleFromQuery,
+  nickFromQuery,
 } from '@/modules/bookings/domain/master-client-search'
 
 const anna = {
@@ -22,9 +22,9 @@ const otherMasterAnna = {
 }
 
 describe('master client search', () => {
-  it('strips leading @ from handle queries', () => {
-    expect(handleNeedleFromQuery('@anna.nails')).toBe('anna.nails')
-    expect(handleNeedleFromQuery('  @@Olya ')).toBe('Olya')
+  it('strips leading @ from nick queries', () => {
+    expect(nickFromQuery('@anna.nails')).toBe('anna.nails')
+    expect(nickFromQuery('  @@Olya ')).toBe('Olya')
   })
 
   it('matches a client by @nick on instagram or telegram', () => {

@@ -6,30 +6,34 @@ export type FrequentClientRank = {
   lastCompletedAt: string | null
 }
 
-export function compareByCompletedVisits(
-  left: FrequentClientRank,
-  right: FrequentClientRank,
-): number {
-  if (right.completedCount !== left.completedCount) {
-    return right.completedCount - left.completedCount
+export function compareByCompletedVisits(input: {
+  current: FrequentClientRank
+  other: FrequentClientRank
+}): number {
+  const { current, other } = input
+
+  if (other.completedCount !== current.completedCount) {
+    return other.completedCount - current.completedCount
   }
 
-  const leftLast = left.lastCompletedAt ?? ''
-  const rightLast = right.lastCompletedAt ?? ''
+  const currentLast = current.lastCompletedAt ?? ''
+  const otherLast = other.lastCompletedAt ?? ''
 
-  if (rightLast !== leftLast) {
-    if (rightLast > leftLast) {
+  if (otherLast !== currentLast) {
+    if (otherLast > currentLast) {
       return 1
     }
 
     return -1
   }
 
-  return left.name.localeCompare(right.name, 'ru')
+  return current.name.localeCompare(other.name, 'ru')
 }
 
 export function rankByCompletedVisits(
   rows: FrequentClientRank[],
 ): FrequentClientRank[] {
-  return [...rows].sort(compareByCompletedVisits)
+  return [...rows].sort((current, other) =>
+    compareByCompletedVisits({ current, other }),
+  )
 }

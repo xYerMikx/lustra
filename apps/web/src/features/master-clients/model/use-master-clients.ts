@@ -7,7 +7,7 @@ import { listMasterClients } from '@/shared/api/master-clients-client'
 import { ApiError } from '@/shared/api/http'
 
 export type ClientsTab = 'search' | 'frequent'
-type ListStatus = 'idle' | 'loading' | 'error' | 'empty' | 'success'
+export type ListStatus = 'idle' | 'loading' | 'error' | 'empty' | 'success'
 
 export function useMasterClients(tab: ClientsTab, query: string) {
   const [items, setItems] = useState<MasterClientView[]>([])
@@ -16,6 +16,10 @@ export function useMasterClients(tab: ClientsTab, query: string) {
   )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
+
+  const reload = () => {
+    setReloadToken((value) => value + 1)
+  }
 
   useEffect(() => {
     const trimmed = query.trim()
@@ -73,6 +77,6 @@ export function useMasterClients(tab: ClientsTab, query: string) {
     items,
     status,
     errorMessage,
-    reload: () => setReloadToken((value) => value + 1),
+    reload,
   }
 }
