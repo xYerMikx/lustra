@@ -54,10 +54,6 @@ export function ClientBookBody({ flow }: ClientBookBodyProps) {
       )
     }
 
-    const selectMaster = (master: BookMasterCandidate) => {
-      void flow.pickMaster(master)
-    }
-
     return (
       <MasterStep
         serviceTitle={flow.selectedService.title}
