@@ -23,7 +23,7 @@ export type RecommendedServiceView = z.infer<typeof RecommendedServiceViewSchema
 
 export const ClientRecommendationsResponseSchema = z
   .object({
-    services: z.array(RecommendedServiceViewSchema).max(3),
+    recommendations: z.array(RecommendedServiceViewSchema).max(3),
   })
   .strict()
 export type ClientRecommendationsResponse = z.infer<
