@@ -5,7 +5,6 @@ import { BookingReviewRefSchema } from './review'
 import {
   InstagramHandleSchema,
   TelegramHandleSchema,
-  normalizeSocialHandle,
 } from './social-handle'
 
 export const BookingStatusSchema = z.enum([
@@ -81,7 +80,11 @@ export const ContactChannelSchema = z.enum([
 ])
 export type ContactChannel = z.infer<typeof ContactChannelSchema>
 
-const OptionalSocialHandleSchema = z.preprocess((value) => {
+export const SOCIAL_IDENTITY_NETWORKS = ['instagram', 'telegram'] as const
+export const SocialIdentityNetworkSchema = z.enum(SOCIAL_IDENTITY_NETWORKS)
+export type SocialIdentityNetwork = z.infer<typeof SocialIdentityNetworkSchema>
+
+const RequiredSocialHandleSchema = z.preprocess((value) => {
   if (value === '' || value === null || value === undefined) {
     return undefined
   }
@@ -91,7 +94,7 @@ const OptionalSocialHandleSchema = z.preprocess((value) => {
   }
 
   return value
-}, z.string().trim().max(40).optional())
+}, z.string().trim().min(1, 'Укажите ник в Instagram или Telegram').max(40))
 
 export const CreateManualBookingInputSchema = z
   .object({
@@ -100,38 +103,14 @@ export const CreateManualBookingInputSchema = z
     clientName: z.string().trim().min(1, 'Укажите имя').max(80),
     phone: OptionalByPhoneSchema,
     channel: ManualBookingChannelSchema,
-    socialHandle: OptionalSocialHandleSchema,
+    identityNetwork: SocialIdentityNetworkSchema,
+    socialHandle: RequiredSocialHandleSchema,
     note: z.string().trim().max(500).optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
-    if (value.channel === 'phone' && !value.phone) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['phone'],
-        message: 'Укажите телефон',
-      })
-    }
-
-    if (value.channel !== 'instagram' && value.channel !== 'telegram') {
-      return
-    }
-
-    if (!value.socialHandle) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['socialHandle'],
-        message:
-          value.channel === 'telegram'
-            ? 'Укажите ник в Telegram'
-            : 'Укажите ник в Instagram',
-      })
-
-      return
-    }
-
     const parsed =
-      value.channel === 'telegram'
+      value.identityNetwork === 'telegram'
         ? TelegramHandleSchema.safeParse(value.socialHandle)
         : InstagramHandleSchema.safeParse(value.socialHandle)
 
@@ -144,27 +123,14 @@ export const CreateManualBookingInputSchema = z
     }
   })
   .transform((value) => {
-    if (!value.socialHandle) {
-      return value
-    }
-
-    if (value.channel === 'telegram') {
-      return {
-        ...value,
-        socialHandle: TelegramHandleSchema.parse(value.socialHandle),
-      }
-    }
-
-    if (value.channel === 'instagram') {
-      return {
-        ...value,
-        socialHandle: InstagramHandleSchema.parse(value.socialHandle),
-      }
-    }
+    const parsed =
+      value.identityNetwork === 'telegram'
+        ? TelegramHandleSchema.parse(value.socialHandle)
+        : InstagramHandleSchema.parse(value.socialHandle)
 
     return {
       ...value,
-      socialHandle: normalizeSocialHandle(value.socialHandle),
+      socialHandle: parsed,
     }
   })
 export type CreateManualBookingInput = z.infer<

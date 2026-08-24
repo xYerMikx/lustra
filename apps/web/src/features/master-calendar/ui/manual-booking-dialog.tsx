@@ -15,7 +15,7 @@ import {
   type ManualFormValues,
 } from '@/features/master-calendar/model/build-manual-form-defaults'
 import { buildManualStartsAt } from '@/features/master-calendar/model/build-manual-starts-at'
-import { MANUAL_CHANNEL_OPTIONS } from '@/features/master-calendar/model/channel-options'
+import { IDENTITY_NETWORK_OPTIONS, MANUAL_CHANNEL_OPTIONS } from '@/features/master-calendar/model/channel-options'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ClientSuggest } from '@/features/master-calendar/ui/client-suggest'
 import { ApiError } from '@/shared/api/http'
@@ -58,7 +58,11 @@ export function ManualBookingDialog({
 
   const clientName = watch('clientName')
   const channel = watch('channel')
-  const showSocialHandle = channel === 'instagram' || channel === 'telegram'
+  const identityNetwork = watch('identityNetwork')
+  const handleNetwork =
+    channel === 'instagram' || channel === 'telegram' ? channel : identityNetwork
+  const showIdentityNetwork =
+    channel !== 'instagram' && channel !== 'telegram'
 
   const submitForm = handleSubmit(async (values) => {
     setFormError(null)
@@ -83,6 +87,10 @@ export function ManualBookingDialog({
       clientName: values.clientName,
       phone: values.phone,
       channel: values.channel,
+      identityNetwork:
+        values.channel === 'instagram' || values.channel === 'telegram'
+          ? values.channel
+          : values.identityNetwork,
       socialHandle: values.socialHandle.trim()
         ? values.socialHandle.trim()
         : undefined,
@@ -176,14 +184,44 @@ export function ManualBookingDialog({
 
                 if (client.source === 'instagram' || client.source === 'telegram') {
                   setValue('channel', client.source, { shouldDirty: true })
+                  setValue('identityNetwork', client.source, { shouldDirty: true })
                 }
               }}
             />
           </div>
 
+          {showIdentityNetwork ? (
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="manual-identity">
+                Ник в
+              </label>
+              <FormSelect
+                id="manual-identity"
+                control={control}
+                name="identityNetwork"
+                options={IDENTITY_NETWORK_OPTIONS}
+              />
+            </div>
+          ) : null}
+
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="manual-handle">
+              {handleNetwork === 'telegram' ? 'Ник в Telegram' : 'Ник в Instagram'}
+            </label>
+            <input
+              id="manual-handle"
+              className={styles.input}
+              placeholder="@username"
+              autoComplete="off"
+              required
+              data-testid={TEST_ID.dialogManualHandle}
+              {...register('socialHandle', { required: true })}
+            />
+          </div>
+
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-phone">
-              Телефон
+              Телефон (необязательно)
             </label>
             <input
               id="manual-phone"
@@ -206,23 +244,6 @@ export function ManualBookingDialog({
               options={MANUAL_CHANNEL_OPTIONS}
             />
           </div>
-
-          {showSocialHandle ? (
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor="manual-handle">
-                {channel === 'telegram' ? 'Ник в Telegram' : 'Ник в Instagram'}
-              </label>
-              <input
-                id="manual-handle"
-                className={styles.input}
-                placeholder="@username"
-                autoComplete="off"
-                required
-                data-testid={TEST_ID.dialogManualHandle}
-                {...register('socialHandle', { required: true })}
-              />
-            </div>
-          ) : null}
 
           <div className={styles.field}>
             <label className={styles.label} htmlFor="manual-note">

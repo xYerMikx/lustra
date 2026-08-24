@@ -36,6 +36,7 @@ export type BookingRecord = {
   clientName: string
   clientPhone: string | null
   clientNote: string | null
+  clientSocialHandle: string | null
   clientSource: ContactChannel | null
 }
 
@@ -101,7 +102,8 @@ export function toBookingMasterView(record: BookingRecord): BookingMasterView {
       name: record.clientName,
       phone: record.clientPhone,
       note: record.clientNote,
-      socialHandle: socialHandleFromNote(record.clientNote),
+      socialHandle:
+        record.clientSocialHandle ?? socialHandleFromNote(record.clientNote),
       source: record.clientSource,
     },
     review: record.review,

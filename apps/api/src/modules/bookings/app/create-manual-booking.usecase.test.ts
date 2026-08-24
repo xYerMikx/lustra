@@ -115,6 +115,7 @@ describe('CreateManualBookingUseCase', () => {
       clientName: 'Оля',
       phone: '+375291112233',
       channel: 'instagram',
+      identityNetwork: 'instagram',
       socialHandle: 'olya.nails',
       note: 'из директа',
     })
@@ -127,6 +128,7 @@ describe('CreateManualBookingUseCase', () => {
         channel: 'instagram',
         phone: '+375291112233',
         socialHandle: 'olya.nails',
+        identityNetwork: 'instagram',
         clientName: 'Оля',
       }),
     )
@@ -152,6 +154,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'phone',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
 
@@ -177,6 +181,7 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'instagram',
+        identityNetwork: 'instagram',
         socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
@@ -208,6 +213,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'walk_in',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'TIME_OVERLAP' } satisfies Partial<DomainError>)
   })
@@ -229,6 +236,7 @@ describe('CreateManualBookingUseCase', () => {
       startsAt,
       clientName: 'Оля',
       channel: 'instagram',
+      identityNetwork: 'instagram',
       socialHandle: 'olya.nails',
     })
 
@@ -236,6 +244,7 @@ describe('CreateManualBookingUseCase', () => {
       expect.objectContaining({
         phone: null,
         socialHandle: 'olya.nails',
+        identityNetwork: 'instagram',
         clientName: 'Оля',
       }),
     )
@@ -261,6 +270,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'other',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' })
   })

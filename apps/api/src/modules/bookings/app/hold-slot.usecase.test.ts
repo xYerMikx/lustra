@@ -107,6 +107,7 @@ function buildStore(overrides: Partial<BookingStore> = {}): BookingStore {
       clientName: 'Анна',
       clientPhone: null,
       clientNote: null,
+      clientSocialHandle: null,
     }),
     confirmHold: vi.fn(),
     cancelBooking: vi.fn(),
@@ -175,6 +176,7 @@ describe('HoldSlotUseCase', () => {
         clientName: 'Анна',
         clientPhone: null,
         clientNote: null,
+      clientSocialHandle: null,
       }),
     })
     const ensureSlots = {
@@ -308,6 +310,7 @@ describe('HoldSlotUseCase', () => {
         clientName: 'Анна',
         clientPhone: null,
         clientNote: null,
+      clientSocialHandle: null,
       }),
     })
     const ensureSlots = {

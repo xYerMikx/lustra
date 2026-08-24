@@ -4,12 +4,12 @@ import { OutboxEventType } from '@/common/events/outbox-event-type'
 import { DomainError } from '@/common/errors/domain-error'
 import type { CreateManualBookingStoreInput } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
-import { clientNoteFromHandle } from '@/modules/bookings/domain/social-handle-note'
 import { attachBookingToGranules } from '@/modules/bookings/infra/attach-booking-to-granules'
 import {
   BOOKING_CABINET_SELECT,
   mapBookingRow,
 } from '@/modules/bookings/infra/map-booking-row'
+import { upsertGuestMasterClient } from '@/modules/bookings/infra/upsert-guest-master-client'
 
 type TxClient = Prisma.TransactionClient
 
@@ -21,6 +21,7 @@ export async function createManualBookingInStore(
     masterId: input.masterId,
     name: input.clientName,
     phone: input.phone,
+    identityNetwork: input.identityNetwork,
     socialHandle: input.socialHandle,
     source: input.channel,
   })
@@ -92,54 +93,4 @@ export async function createManualBookingInStore(
   }
 
   return mapBookingRow(row)
-}
-
-async function upsertGuestMasterClient(
-  db: TxClient,
-  input: {
-    masterId: string
-    name: string
-    phone: string | null
-    socialHandle: string | null
-    source: CreateManualBookingStoreInput['channel']
-  },
-): Promise<{ id: string; isBlocked: boolean }> {
-  const handleNote = clientNoteFromHandle(input.socialHandle)
-
-  // Identity matching by Instagram/Telegram handle is not implemented yet.
-  // Match only a concrete phone — `phone: null` would collide with every
-  // guest who has no number (Prisma treats that as IS NULL).
-  if (input.phone) {
-    const existing = await db.masterClient.findFirst({
-      where: {
-        masterId: input.masterId,
-        phone: input.phone,
-      },
-      select: { id: true, isBlocked: true, note: true },
-    })
-
-    if (existing) {
-      await db.masterClient.update({
-        where: { id: existing.id },
-        data: {
-          name: input.name,
-          source: input.source,
-          note: handleNote ?? existing.note,
-        },
-      })
-
-      return existing
-    }
-  }
-
-  return db.masterClient.create({
-    data: {
-      masterId: input.masterId,
-      name: input.name,
-      phone: input.phone,
-      note: handleNote,
-      source: input.source,
-    },
-    select: { id: true, isBlocked: true },
-  })
 }

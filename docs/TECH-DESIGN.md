@@ -494,7 +494,9 @@ model MasterClient {                                 // «клиент, кото
   masterId    String
   userId      String?                                 // заполнен, если у человека есть аккаунт
   name        String
-  phone       String?                                 // E.164
+  phone       String?                                 // E.164, опционален; unique вместе с masterId если не NULL
+  instagramHandle String?                             // lower, unique с masterId если не NULL
+  telegramHandle  String?                             // lower, unique с masterId если не NULL
   note        String?                                 // приватная заметка мастера
   tags        Json?                                   // ["постоянный","аллергия"]
   source      ContactChannel?

@@ -1,6 +1,7 @@
 import type { Prisma } from '@lustra/db'
 
 import type { MasterClientRecord } from '@/modules/bookings/app/booking.ports'
+import { resolveStoredSocialHandle } from '@/modules/bookings/domain/guest-lookup-plan'
 import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 
 type DbClient = Prisma.TransactionClient
@@ -15,6 +16,7 @@ export async function listMasterClientsInStore(
   },
 ): Promise<MasterClientRecord[]> {
   const needle = input.query.trim()
+  const handleNeedle = needle.replace(/^@/u, '')
   const take = input.limit ?? 20
 
   const rows = await db.masterClient.findMany({
@@ -26,6 +28,8 @@ export async function listMasterClientsInStore(
               { name: { contains: needle, mode: 'insensitive' } },
               { phone: { contains: needle } },
               { note: { contains: needle, mode: 'insensitive' } },
+              { instagramHandle: { contains: handleNeedle, mode: 'insensitive' } },
+              { telegramHandle: { contains: handleNeedle, mode: 'insensitive' } },
             ],
           }
         : {}),
@@ -41,6 +45,8 @@ export async function listMasterClientsInStore(
       phone: true,
       source: true,
       note: true,
+      instagramHandle: true,
+      telegramHandle: true,
       visitsCount: true,
       lastVisitAt: true,
     },
@@ -51,7 +57,12 @@ export async function listMasterClientsInStore(
     name: row.name,
     phone: row.phone,
     source: row.source,
-    socialHandle: socialHandleFromNote(row.note),
+    socialHandle: resolveStoredSocialHandle({
+      instagramHandle: row.instagramHandle,
+      telegramHandle: row.telegramHandle,
+      note: row.note,
+      socialHandleFromNote,
+    }),
     visitsCount: row.visitsCount,
     lastVisitAt: row.lastVisitAt ? row.lastVisitAt.toISOString() : null,
   }))

@@ -107,7 +107,8 @@ export type CreateManualBookingStoreInput = {
   channel: ManualBookingChannel
   clientName: string
   phone: string | null
-  socialHandle: string | null
+  identityNetwork: 'instagram' | 'telegram'
+  socialHandle: string
   masterNote: string | null
   now: Date
 }

@@ -6,16 +6,16 @@
 
 Общая ветка: **`cursor/booking-cabinets-foundation-505e`** (после merge — `develop`).
 
-Субагенты **M1 / M2 / C1 / R1** ветвятся **от этой базы**, не от голого `develop` до merge. Склейка гостя в одну карточку по нику **не входит** в базу и не стартует, пока не выбран вариант ниже.
+Субагенты **M1 / M2 / C1 / R1** ветвятся **от этой базы**, не от голого `develop` до merge.
 
 Уже в базе (не повторять в фича-ветках):
 
-- `CreateManualBookingInput`: имя обязательно; телефон опционален; для `instagram` / `telegram` обязателен ник; для `phone` обязателен телефон; `walk_in` / `other` — достаточно имени.
-- Ручная запись без телефона создаёт `MasterClient` с `phone = null`. **Не** матчить `phone: null` (это склеило бы всех безымянных гостей).
-- Повтор по **тому же телефону** по-прежнему обновляет карточку (как раньше).
-- `GET /master/clients?query=&sort=recent|frequent` + в view `visitsCount`, `lastVisitAt` (колонки Prisma, пока почти всегда 0 / null).
-- Контракт `packages/contracts/src/recommendations.ts` (`GET /client/recommendations`, лимит 3). Ручки ещё нет — это **R1**.
-- Форма календаря: телефон не `required`; ник required на каналах IG/TG.
+- Ручная запись: **имя + ник Instagram или Telegram обязательны**. Телефон **никогда** не обязателен (в том числе на канале «Телефон»).
+- Идентичность гостя (**A + телефон если есть**): сначала точный phone, иначе `(masterId, instagramHandle|telegramHandle)` в lower-case. Имя не ключ.
+- Колонки `MasterClient.instagramHandle` / `telegramHandle` + частичные unique-индексы. `GET /master/clients` ищет и по ним.
+- `CreateManualBookingInput.identityNetwork` + обязательный `socialHandle`.
+- `GET /master/clients?query=&sort=recent|frequent` + `visitsCount` / `lastVisitAt`.
+- Контракт `recommendations.ts`. Ручки нет — **R1**.
 
 ## Что уже есть (продукт)
 
@@ -24,7 +24,7 @@
 | Календарь мастера `/app/master/calendar` | Ручная запись, автокомплит `GET /master/clients?query=` |
 | Список записей мастера `/app/master/bookings` | Только вкладки. **Нет CTA «записать клиента»** |
 | Книга клиентов | Роут в TECH-DESIGN §20, **страницы нет** |
-| Ник | Живёт в `MasterClient.note` (`@handle`), отдельной колонки нет |
+| Ник | Колонки `instagramHandle` / `telegramHandle` + fallback из `note` |
 | Клиент «Мои записи» | Нет флоу «записаться» из кабинета |
 | Онлайн-запись клиента | Только `/m/[slug]` + `SlotPicker` |
 
@@ -35,7 +35,9 @@
 3. **C1** — клиент из кабинета: услуга → мастер → слот.
 4. **R1** — модуль `recommendations`, частота completed.
 
-## Открытый вопрос: кто такой «этот клиент» (не реализовывать, пока нет решения)
+## Identity (решено)
+
+Выбрано **A + телефон если есть**. Не склеивать по имени. Не искать `ClientProfile`. Merge двух карточек вручную — не в этой волне: при конфликте уникального ника/телефона API отвечает `VALIDATION_FAILED`.
 
 Две разные сущности:
 
