@@ -150,6 +150,7 @@ export const BookingClientViewSchema = z.object({
   confirmedAt: z.string().datetime().nullable(),
   completedAt: z.string().datetime().nullable(),
   review: BookingReviewRefSchema.nullable(),
+  receivedReview: BookingReviewRefSchema.nullable(),
   addressHint: z.string().nullable(),
   /** Exact address only when status is confirmed. */
   addressExact: z.string().nullable(),
@@ -183,6 +184,9 @@ export const BookingMasterViewSchema = z.object({
   masterNote: z.string().nullable(),
   channel: ContactChannelSchema.nullable(),
   client: BookingMasterClientSchema,
+  review: BookingReviewRefSchema.nullable(),
+  clientReview: BookingReviewRefSchema.nullable(),
+  clientHasAccount: z.boolean(),
 })
 export type BookingMasterView = z.infer<typeof BookingMasterViewSchema>
 

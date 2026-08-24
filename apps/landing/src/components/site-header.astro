@@ -1,6 +1,6 @@
 ---
-import { SHOW_WORKS_PREVIEW } from '../lib/flags'
-import { getAppUrl } from '../lib/site'
+import { SHOW_WORKS_PREVIEW } from '@/lib/flags'
+import { getAppUrl } from '@/lib/site'
 
 interface Props {
   catalogHref?: string
@@ -33,6 +33,7 @@ const masterHref =
       <a href="/#how">Как работает</a>
       {SHOW_WORKS_PREVIEW && <a href="/#works">Работы</a>}
       <a href="/#browse">Категории</a>
+      <a href="/services">Все услуги</a>
       <a href="/for-masters">Мастерам</a>
       <a href={catalogHref}>Каталог</a>
       <a class="nav-cta" href={masterHref}>Я мастер</a>

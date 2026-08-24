@@ -51,4 +51,32 @@ describe('PutScheduleExceptionInputSchema', () => {
       endMin: 900,
     })
   })
+
+  it('accepts multiple custom windows and a day granularity', () => {
+    expect(
+      PutScheduleExceptionInputSchema.parse({
+        type: 'custom_hours',
+        intervals: [
+          { startMin: 600, endMin: 720 },
+          { startMin: 840, endMin: 900 },
+        ],
+        granularityMin: 60,
+      }),
+    ).toMatchObject({
+      type: 'custom_hours',
+      granularityMin: 60,
+    })
+  })
+
+  it('rejects overlapping custom windows', () => {
+    expect(
+      PutScheduleExceptionInputSchema.safeParse({
+        type: 'custom_hours',
+        intervals: [
+          { startMin: 600, endMin: 720 },
+          { startMin: 660, endMin: 780 },
+        ],
+      }).success,
+    ).toBe(false)
+  })
 })

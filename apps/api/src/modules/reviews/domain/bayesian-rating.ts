@@ -1,6 +1,3 @@
-export const BAYES_M = 5
-export const BAYES_C = 4.5
-
 export type RatingStar = 1 | 2 | 3 | 4 | 5
 
 export type RatingHistogram = Record<RatingStar, number>
@@ -20,8 +17,8 @@ export function isRatingStar(value: number): value is RatingStar {
 }
 
 /**
- * Bayesian average: (Σratings + m·C) / (n + m).
- * With n=0 the catalog shows a new master, so avg stays 0.
+ * Arithmetic mean of published star ratings.
+ * Comments without a rating are ignored. With n=0 the catalog shows a new master.
  */
 export function bayesianRating(ratings: number[]): BayesianRating {
   const histogram = emptyHistogram()
@@ -45,10 +42,8 @@ export function bayesianRating(ratings: number[]): BayesianRating {
     total += star * histogram[star]
   }
 
-  const avg = (total + BAYES_M * BAYES_C) / (counted + BAYES_M)
-
   return {
-    avg: roundRating(avg),
+    avg: roundRating(total / counted),
     count: counted,
     histogram,
   }

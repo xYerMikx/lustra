@@ -21,6 +21,7 @@ export function MasterNavLink({ item, active, variant }: MasterNavLinkProps) {
         active && styles.linkActive,
       )}
       aria-current={active ? 'page' : undefined}
+      data-testid={`nav-${item.icon}`}
     >
       <MasterWorkspaceIcon name={item.icon} />
       <span>{item.label}</span>

@@ -86,6 +86,7 @@ export async function cancelBookingInStore(
       payload: {
         bookingId: input.bookingId,
         status: input.toStatus,
+        cancelledByType: input.cancelledByType,
         reason: input.reason,
       },
     },

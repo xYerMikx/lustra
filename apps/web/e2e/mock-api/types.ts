@@ -5,6 +5,8 @@ import type {
   BookingMasterView,
   BookingStatus,
   CatalogMasterCard,
+  LedgerKind,
+  LedgerSource,
   DistrictView,
   MasterCalendarSlotView,
   MasterProfileView,
@@ -28,6 +30,7 @@ export type E2eUser = {
   emailVerified: boolean
   telegramLinked: boolean
   profileStatus: AuthUserView['profileStatus']
+  onboardingStep: AuthUserView['onboardingStep']
 }
 
 export type E2eBooking = {
@@ -54,10 +57,41 @@ export type E2eBooking = {
   addressHint: string | null
   addressExact: string | null
   review: BookingClientView['review']
+  clientReview: (NonNullable<BookingMasterView['clientReview']> & {
+    text: string | null
+    createdAt: string
+  }) | null
 }
 
 export type E2ePortfolioItem = PortfolioItemView & {
   masterId: string
+}
+
+export type E2eLedgerCategory = {
+  id: string
+  masterId: string
+  kind: LedgerKind
+  name: string
+  slug: string
+  isSystem: boolean
+}
+
+export type E2eLedgerEntry = {
+  id: string
+  masterId: string
+  kind: LedgerKind
+  source: LedgerSource
+  categoryId: string
+  categoryName: string
+  amount: string
+  currency: string
+  occurredOn: string
+  occurredAt: string
+  periodStart: string | null
+  periodEnd: string | null
+  bookingId: string | null
+  note: string | null
+  serviceTitle: string | null
 }
 
 export type MockWorld = {
@@ -79,6 +113,8 @@ export type MockWorld = {
   exceptions: ScheduleExceptionView[]
   bookings: E2eBooking[]
   portfolioItems: E2ePortfolioItem[]
+  ledgerCategories: E2eLedgerCategory[]
+  ledgerEntries: E2eLedgerEntry[]
   adminMasters: Array<{
     id: string
     slug: string
@@ -100,6 +136,7 @@ export function toAuthUserView(user: E2eUser): AuthUserView {
     emailVerified: user.emailVerified,
     telegramLinked: user.telegramLinked,
     profileStatus: user.profileStatus,
+    onboardingStep: user.onboardingStep,
   }
 }
 
@@ -121,6 +158,13 @@ export function toClientBooking(booking: E2eBooking): BookingClientView {
     confirmedAt: booking.confirmedAt,
     completedAt: booking.completedAt,
     review: booking.review,
+    receivedReview: booking.clientReview
+      ? {
+          id: booking.clientReview.id,
+          status: booking.clientReview.status,
+          rating: booking.clientReview.rating,
+        }
+      : null,
     addressHint: booking.addressHint,
     addressExact:
       booking.status === 'confirmed' || booking.status === 'completed'
@@ -154,6 +198,15 @@ export function toMasterBooking(booking: E2eBooking): BookingMasterView {
       socialHandle: null,
       source: null,
     },
+    review: booking.review,
+    clientReview: booking.clientReview
+      ? {
+          id: booking.clientReview.id,
+          status: booking.clientReview.status,
+          rating: booking.clientReview.rating,
+        }
+      : null,
+    clientHasAccount: Boolean(booking.clientUserId),
   }
 }
 

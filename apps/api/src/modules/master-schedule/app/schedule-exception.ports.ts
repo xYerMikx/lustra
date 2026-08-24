@@ -1,4 +1,8 @@
-import type { ExceptionType, PutScheduleExceptionInput } from '@lustra/contracts'
+import type {
+  ExceptionType,
+  GranularityMin,
+  PutScheduleExceptionInput,
+} from '@lustra/contracts'
 
 export type ScheduleExceptionRecord = {
   id: string
@@ -7,6 +11,17 @@ export type ScheduleExceptionRecord = {
   type: ExceptionType
   startMin: number | null
   endMin: number | null
+  granularityMin: number | null
+  intervals: Array<{ startMin: number; endMin: number }> | null
+  note: string | null
+}
+
+export type ScheduleExceptionUpsertInput = {
+  type: PutScheduleExceptionInput['type']
+  startMin: number | null
+  endMin: number | null
+  granularityMin: GranularityMin | null
+  intervals: Array<{ startMin: number; endMin: number }> | null
   note: string | null
 }
 
@@ -20,12 +35,7 @@ export type ScheduleExceptionStore = {
   upsert(
     masterId: string,
     ymdDate: string,
-    input: {
-      type: PutScheduleExceptionInput['type']
-      startMin: number | null
-      endMin: number | null
-      note: string | null
-    },
+    input: ScheduleExceptionUpsertInput,
   ): Promise<ScheduleExceptionRecord>
   delete(masterId: string, ymdDate: string): Promise<boolean>
   countBusySlotsInRange(

@@ -8,6 +8,8 @@ export type CalendarSpan = {
   clientName: string | null
   bookingId: string | null
   durationMin: number
+  isExtra: boolean
+  extraPayAmount: string | null
 }
 
 function minutesBetween(startsAt: string, endsAt: string): number {
@@ -20,7 +22,7 @@ function canMerge(
   prev: CalendarSpan,
   slot: MasterCalendarSlotView,
 ): boolean {
-  if (slot.status === 'open' || prev.status !== slot.status) {
+  if (slot.status === 'open' || slot.status === 'closed' || prev.status !== slot.status) {
     return false
   }
 
@@ -61,6 +63,8 @@ export function mergeSlotSpans(
       clientName: slot.clientName,
       bookingId: slot.bookingId,
       durationMin: minutesBetween(slot.startsAt, slot.endsAt),
+      isExtra: slot.isExtra,
+      extraPayAmount: slot.extraPayAmount,
     })
   }
 

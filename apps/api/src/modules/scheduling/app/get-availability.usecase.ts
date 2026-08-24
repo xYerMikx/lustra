@@ -115,6 +115,7 @@ export class GetAvailabilityUseCase {
         startsAt: window.startsAt.toISOString(),
         endsAt: window.endsAt.toISOString(),
         slotIds: window.slotIds,
+        extraPayAmount: window.extraPayAmount,
       }))
 
       return {

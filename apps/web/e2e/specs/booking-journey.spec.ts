@@ -50,6 +50,11 @@ test.describe('client and master booking journey', () => {
 
       await master.page.getByTestId(TEST_ID.masterBookingComplete).click()
       await expect(master.page.getByTestId(bookingStatusTestId('completed'))).toBeVisible()
+      await expect(master.page.getByTestId(TEST_ID.masterReviewPrompt)).toBeVisible()
+      await master.page.getByTestId(reviewStarTestId(5)).click()
+      await master.page.getByTestId(TEST_ID.masterReviewText).fill('Пунктуальная клиентка')
+      await master.page.getByTestId(TEST_ID.masterReviewSubmit).click()
+      await expect(master.page.getByTestId(TEST_ID.masterReviewThanks)).toBeVisible()
 
       await page.reload()
       await expect(page.getByTestId(bookingStatusTestId('completed'))).toBeVisible()

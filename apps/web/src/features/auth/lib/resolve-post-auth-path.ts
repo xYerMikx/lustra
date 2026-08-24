@@ -13,6 +13,10 @@ export function resolvePostAuthPath(
   }
 
   if (user.role === 'master' && user.profileStatus === 'draft') {
+    if (user.onboardingStep === 'done') {
+      return '/app'
+    }
+
     return '/app/onboarding'
   }
 

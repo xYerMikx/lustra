@@ -12,6 +12,8 @@ function slot(
     status: 'open',
     clientName: null,
     bookingId: null,
+    isExtra: false,
+    extraPayAmount: null,
     ...overrides,
   }
 }

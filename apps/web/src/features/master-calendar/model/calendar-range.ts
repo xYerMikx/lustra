@@ -67,5 +67,10 @@ export function rangeForMode(
     return { from: anchorYmdDate, to: anchorYmdDate }
   }
 
-  return weekRangeForDate(anchorYmdDate)
+  const week = weekRangeForDate(anchorYmdDate)
+
+  return {
+    from: week.from,
+    to: addDaysToYmdDate(week.from, 20),
+  }
 }

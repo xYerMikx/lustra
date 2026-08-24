@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { MasterBookingResponse } from '@lustra/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
+import { isDevelopment } from '@/common/env/is-production'
 import { DomainError } from '@/common/errors/domain-error'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 import { ClockService } from '@/common/time/clock.service'
@@ -40,6 +41,7 @@ export class CompleteBookingUseCase {
       status: booking.status,
       startsAt: booking.startsAt,
       now,
+      relaxTimeGuards: isDevelopment,
     })
 
     if (!decision.ok && decision.reason === 'visit_not_started') {

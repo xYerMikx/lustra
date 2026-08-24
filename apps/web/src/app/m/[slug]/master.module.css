@@ -15,9 +15,11 @@
 .cover {
   display: block;
   width: 100%;
+  height: auto;
   max-width: 640px;
   aspect-ratio: 4 / 5;
   object-fit: cover;
+  object-position: center;
   border-radius: var(--radius-14);
   margin-bottom: var(--spacing-24);
   background: var(--color-surface-2);
@@ -149,5 +151,19 @@
   .name {
     font-size: var(--text-40);
     line-height: var(--text-40--line-height);
+  }
+}
+
+@media (min-width: 768px) {
+  .hero {
+    max-width: none;
+  }
+
+  .cover {
+    max-width: 640px;
+  }
+
+  .services {
+    max-width: none;
   }
 }

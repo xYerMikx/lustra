@@ -10,10 +10,14 @@ export type CalendarGridProps = {
   days: DayItems[]
   calendarPath: string
   canBook: boolean
+  todayTick: number
   onSelectDay: (ymdDate: string) => void
   onSelectSlot: (startsAtIso: string) => void
   onRemoveBlock: (blockId: string) => void
   onRemoveException: (ymdDate: string) => void
+  onCloseSlot: (slotId: string) => void
+  onReopenSlot: (slotId: string) => void
+  onVisibleWeekRangeChange: (range: { from: string; to: string }) => void
 }
 
 export function CalendarGrid({
@@ -21,13 +25,24 @@ export function CalendarGrid({
   days,
   calendarPath,
   canBook,
+  todayTick,
   onSelectDay,
   onSelectSlot,
   onRemoveBlock,
   onRemoveException,
+  onCloseSlot,
+  onReopenSlot,
+  onVisibleWeekRangeChange,
 }: CalendarGridProps) {
   if (mode === 'week') {
-    return <WeekGrid days={days} onSelectDay={onSelectDay} />
+    return (
+      <WeekGrid
+        days={days}
+        todayTick={todayTick}
+        onSelectDay={onSelectDay}
+        onVisibleRangeChange={onVisibleWeekRangeChange}
+      />
+    )
   }
 
   const dayView = days[0]
@@ -47,6 +62,8 @@ export function CalendarGrid({
       onSelectSlot={onSelectSlot}
       onRemoveBlock={onRemoveBlock}
       onRemoveException={onRemoveException}
+      onCloseSlot={onCloseSlot}
+      onReopenSlot={onReopenSlot}
     />
   )
 }

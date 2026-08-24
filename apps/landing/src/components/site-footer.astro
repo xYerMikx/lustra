@@ -1,4 +1,6 @@
 ---
+import { PLATFORM_OPERATOR } from '@/lib/operator'
+
 interface Props {
   year?: number
 }
@@ -17,18 +19,24 @@ const year = Astro.props.year ?? new Date().getFullYear()
       <div>
         <p class="col-title">Продукт</p>
         <a href="/">Главная</a>
+        <a href="/services">Все услуги</a>
         <a href="/for-masters">Для мастеров</a>
         <a href="/#faq">FAQ</a>
       </div>
       <div>
         <p class="col-title">Компания</p>
         <a href="/contacts">Контакты</a>
-        <a href="/privacy">Конфиденциальность</a>
-        <a href="/terms">Условия</a>
+        <a href="/privacy">Политика конфиденциальности</a>
+        <a href="/terms">Условия пользования</a>
       </div>
     </nav>
   </div>
-  <p class="copy">© {year} Lumira</p>
+  <div class="copy">
+    <p class="copy-year">© {year} Lumira</p>
+    <p class="copy-legal">
+      Физ. лицо {PLATFORM_OPERATOR.fullName} · УНП {PLATFORM_OPERATOR.unp}
+    </p>
+  </div>
 </footer>
 
 <style>
@@ -95,9 +103,16 @@ const year = Astro.props.year ?? new Date().getFullYear()
     margin: var(--spacing-40) auto 0;
     padding-top: var(--spacing-24);
     border-top: 1px solid var(--color-border);
+    display: grid;
+    gap: var(--spacing-8);
     font-size: var(--text-13);
     line-height: var(--text-13--line-height);
     color: var(--color-text-3);
+  }
+
+  .copy-year,
+  .copy-legal {
+    margin: 0;
   }
 
   @media (max-width: 720px) {

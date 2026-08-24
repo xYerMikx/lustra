@@ -181,6 +181,8 @@ model ClientProfile {
   noShowCount        Int       @default(0)
   lastBookingAt      DateTime? @db.Timestamptz
   trustScore         Int       @default(100)
+  ratingAvg          Decimal   @default(0) @db.Decimal(3, 2)
+  ratingCount        Int       @default(0)
   createdAt          DateTime  @default(now()) @db.Timestamptz
   updatedAt          DateTime  @updatedAt @db.Timestamptz
 
@@ -262,6 +264,8 @@ model MasterProfile {
   bookings     Booking[]
   reviews      Review[]
   favoritedBy  Favorite[]
+  ledgerCategories LedgerCategory[]
+  ledgerEntries    LedgerEntry[]
 
   @@index([status, boostPriority])
 }
@@ -472,6 +476,7 @@ enum SlotStatus {
   held
   booked
   blocked
+  closed
 }
 
 model AvailabilityRule {
@@ -489,13 +494,15 @@ model AvailabilityRule {
 }
 
 model AvailabilityException {
-  id       String        @id @default(uuid())
-  masterId String
-  date     DateTime      @db.Date
-  type     ExceptionType
-  startMin Int?
-  endMin   Int?
-  note     String?
+  id             String        @id @default(uuid())
+  masterId       String
+  date           DateTime      @db.Date
+  type           ExceptionType
+  startMin       Int?
+  endMin         Int?
+  granularityMin Int? // 15|30|60 override for this day
+  intervals      Json? // [{startMin, endMin}] custom working windows
+  note           String?
 
   master MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
 
@@ -531,6 +538,7 @@ model TimeSlot {
   blockId         String?
   note            String?
   isExtra         Boolean    @default(false)
+  extraPayAmount  Decimal?   @db.Decimal(10, 2)
   outsideSchedule Boolean    @default(false)
 
   master       MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
@@ -646,7 +654,8 @@ model Booking {
 
   slots  BookingSlot[]
   events BookingEvent[]
-  review Review?
+  reviews Review[]
+  ledgerEntries LedgerEntry[]
 
   @@index([masterId, startsAt])
   @@index([clientUserId, startsAt])
@@ -679,6 +688,65 @@ model BookingEvent {
   @@index([bookingId, createdAt])
 }
 
+
+// =============================================================================
+// Master ledger (income / expenses)
+// =============================================================================
+
+enum LedgerKind {
+  income
+  expense
+}
+
+enum LedgerSource {
+  booking
+  manual
+}
+
+model LedgerCategory {
+  id         String     @id @default(uuid())
+  masterId   String
+  kind       LedgerKind
+  name       String
+  slug       String
+  isSystem   Boolean    @default(false)
+  createdAt  DateTime   @default(now()) @db.Timestamptz
+  updatedAt  DateTime   @updatedAt @db.Timestamptz
+
+  master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  entries LedgerEntry[]
+
+  @@unique([masterId, kind, slug])
+  @@index([masterId, kind])
+}
+
+model LedgerEntry {
+  id          String       @id @default(uuid())
+  masterId    String
+  kind        LedgerKind
+  source      LedgerSource
+  categoryId  String
+  amount      Decimal      @db.Decimal(10, 2)
+  currency    String       @default("BYN")
+  occurredOn  DateTime     @db.Date
+  occurredAt  DateTime     @db.Timestamptz
+  periodStart DateTime?    @db.Date
+  periodEnd   DateTime?    @db.Date
+  bookingId   String?
+  note        String?      @db.VarChar(500)
+  createdAt   DateTime     @default(now()) @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @db.Timestamptz
+
+  master   MasterProfile  @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  category LedgerCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  booking  Booking?       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([masterId, occurredOn])
+  @@index([masterId, kind, occurredOn])
+  @@index([masterId, categoryId])
+  @@index([bookingId])
+}
+
 // =============================================================================
 // Reviews
 // =============================================================================
@@ -690,24 +758,33 @@ enum ReviewStatus {
   hidden
 }
 
+enum ReviewAuthorRole {
+  client
+  master
+}
+
 model Review {
-  id           String       @id @default(uuid())
-  bookingId    String       @unique
+  id           String           @id @default(uuid())
+  bookingId    String
+  authorRole   ReviewAuthorRole
   masterId     String
   clientUserId String
-  rating       Int // CHECK 1..5 в SQL-миграции
-  text         String?      @db.VarChar(800)
-  status       ReviewStatus @default(pending_review)
-  masterReply  String?      @db.VarChar(500)
+  rating       Int? // CHECK: null или 1..5 в SQL-миграции
+  text         String?          @db.VarChar(800)
+  serviceTitle String
+  status       ReviewStatus     @default(pending_review)
+  masterReply  String?          @db.VarChar(500)
   repliedAt    DateTime? @db.Timestamptz
-  createdAt    DateTime     @default(now()) @db.Timestamptz
+  createdAt    DateTime         @default(now()) @db.Timestamptz
 
   booking Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   master  MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
   client  User          @relation(fields: [clientUserId], references: [id], onDelete: Cascade)
   photos  ReviewPhoto[]
 
-  @@index([masterId, status, createdAt])
+  @@unique([bookingId, authorRole])
+  @@index([masterId, authorRole, status, createdAt])
+  @@index([clientUserId, authorRole, status, createdAt])
 }
 
 model ReviewPhoto {

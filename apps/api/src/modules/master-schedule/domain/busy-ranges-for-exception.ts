@@ -9,17 +9,20 @@ export type BusyRange = {
   endsAt: Date
 }
 
-/**
- * UTC ranges that would stop being working time after applying the exception.
- * Held/booked granules in these ranges must block the write.
- */
-export function busyRangesForException(input: {
+export type ExceptionBusyInput = {
   ymdDate: string
   type: 'day_off' | 'custom_hours'
   startMin?: number | null
   endMin?: number | null
+  intervals?: Array<{ startMin: number; endMin: number }> | null
   timeZone?: string
-}): BusyRange[] {
+}
+
+/**
+ * UTC ranges that would stop being working time after applying the exception.
+ * Held/booked granules in these ranges must block the write.
+ */
+export function busyRangesForException(input: ExceptionBusyInput): BusyRange[] {
   const timeZone = input.timeZone ?? MASTER_TIMEZONE
   const dayStart = zonedLocalToUtc(input.ymdDate, 0, timeZone)
   const dayEnd = zonedLocalToUtc(addDaysToYmdDate(input.ymdDate, 1), 0, timeZone)
@@ -28,19 +31,50 @@ export function busyRangesForException(input: {
     return [{ startsAt: dayStart, endsAt: dayEnd }]
   }
 
-  const startMin = input.startMin ?? 0
-  const endMin = input.endMin ?? 0
-  const customStart = zonedLocalToUtc(input.ymdDate, startMin, timeZone)
-  const customEnd = zonedLocalToUtc(input.ymdDate, endMin, timeZone)
-  const ranges: BusyRange[] = []
+  const windows = workingWindows(input)
 
-  if (customStart > dayStart) {
-    ranges.push({ startsAt: dayStart, endsAt: customStart })
+  if (windows.length === 0) {
+    return [{ startsAt: dayStart, endsAt: dayEnd }]
   }
 
-  if (customEnd < dayEnd) {
-    ranges.push({ startsAt: customEnd, endsAt: dayEnd })
+  const ranges: BusyRange[] = []
+  let cursor = dayStart
+
+  for (const window of windows) {
+    const windowStart = zonedLocalToUtc(input.ymdDate, window.startMin, timeZone)
+    const windowEnd = zonedLocalToUtc(input.ymdDate, window.endMin, timeZone)
+
+    if (windowStart > cursor) {
+      ranges.push({ startsAt: cursor, endsAt: windowStart })
+    }
+
+    cursor = windowEnd
+  }
+
+  if (cursor < dayEnd) {
+    ranges.push({ startsAt: cursor, endsAt: dayEnd })
   }
 
   return ranges
+}
+
+function workingWindows(input: ExceptionBusyInput): Array<{
+  startMin: number
+  endMin: number
+}> {
+  if (input.intervals && input.intervals.length > 0) {
+    return [...input.intervals]
+      .filter((item) => item.endMin > item.startMin)
+      .sort((left, right) => left.startMin - right.startMin)
+  }
+
+  if (
+    input.startMin == null ||
+    input.endMin == null ||
+    input.endMin <= input.startMin
+  ) {
+    return []
+  }
+
+  return [{ startMin: input.startMin, endMin: input.endMin }]
 }

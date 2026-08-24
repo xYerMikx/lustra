@@ -1,4 +1,4 @@
-import type { BookingStatus, ReviewStatus } from '@lustra/contracts'
+import type { BookingStatus, ReviewAuthorRole, ReviewStatus } from '@lustra/contracts'
 
 import type { ReviewRecord } from '@/modules/reviews/domain/map-review'
 
@@ -6,9 +6,11 @@ export type ReviewBookingRecord = {
   id: string
   masterId: string
   clientUserId: string | null
+  serviceTitle: string
   status: BookingStatus
   completedAt: Date | null
-  hasReview: boolean
+  hasClientReview: boolean
+  hasMasterReview: boolean
 }
 
 export type CreateReviewStoreInput = {
@@ -16,7 +18,9 @@ export type CreateReviewStoreInput = {
   masterId: string
   clientUserId: string
   currentUserId: string
-  rating: number
+  authorRole: ReviewAuthorRole
+  serviceTitle: string
+  rating: number | null
   text: string | null
   status: Extract<ReviewStatus, 'published' | 'pending_review'>
   now: Date
@@ -38,4 +42,9 @@ export type ReviewStore = {
   replyToReview(input: ReplyToReviewStoreInput): Promise<ReviewRecord | null>
   listPublishedByMasterId(masterId: string): Promise<ReviewRecord[]>
   listForMaster(masterId: string): Promise<ReviewRecord[]>
+  listReceivedByClientUserId(clientUserId: string): Promise<ReviewRecord[]>
+  findClientRating(clientUserId: string): Promise<{
+    ratingAvg: number
+    ratingCount: number
+  }>
 }

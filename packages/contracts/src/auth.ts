@@ -71,6 +71,36 @@ export const OkResponseSchema = z.object({
 })
 export type OkResponse = z.infer<typeof OkResponseSchema>
 
+export const OnboardingStepSchema = z.enum([
+  'profile',
+  'services',
+  'schedule',
+  'portfolio',
+  'done',
+])
+export type OnboardingStep = z.infer<typeof OnboardingStepSchema>
+
+/** First incomplete wizard step. Portfolio is optional — location+service+schedule is enough. */
+export function resolveOnboardingStep(input: {
+  hasLocation: boolean
+  hasService: boolean
+  hasSchedule: boolean
+}): OnboardingStep {
+  if (!input.hasLocation) {
+    return 'profile'
+  }
+
+  if (!input.hasService) {
+    return 'services'
+  }
+
+  if (!input.hasSchedule) {
+    return 'schedule'
+  }
+
+  return 'done'
+}
+
 export const AuthUserViewSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
@@ -80,6 +110,7 @@ export const AuthUserViewSchema = z.object({
   emailVerified: z.boolean(),
   telegramLinked: z.boolean(),
   profileStatus: MasterProfileStatusSchema.nullable(),
+  onboardingStep: OnboardingStepSchema.nullable(),
 })
 export type AuthUserView = z.infer<typeof AuthUserViewSchema>
 

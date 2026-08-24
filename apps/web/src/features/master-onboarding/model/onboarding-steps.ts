@@ -1,3 +1,5 @@
+import type { OnboardingStep } from '@lustra/contracts'
+
 export const ONBOARDING_STEPS = [
   { id: 'profile', label: 'Профиль' },
   { id: 'services', label: 'Услуги' },
@@ -6,6 +8,20 @@ export const ONBOARDING_STEPS = [
 ] as const
 
 export type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]['id']
+
+export function wizardStepFromOnboarding(
+  step: OnboardingStep | null,
+): OnboardingStepId {
+  if (step === 'services' || step === 'schedule') {
+    return step
+  }
+
+  if (step === 'portfolio' || step === 'done') {
+    return 'portfolio'
+  }
+
+  return 'profile'
+}
 
 export function stepStatus(
   stepId: OnboardingStepId,

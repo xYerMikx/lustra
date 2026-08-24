@@ -34,7 +34,11 @@ export class ReplyToReviewUseCase {
 
     const existing = await this.reviews.findById(reviewId)
 
-    if (!existing || existing.masterId !== masterId) {
+    if (
+      !existing ||
+      existing.masterId !== masterId ||
+      existing.authorRole !== 'client'
+    ) {
       throw DomainError.notFound('Отзыв не найден')
     }
 

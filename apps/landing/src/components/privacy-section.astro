@@ -1,0 +1,36 @@
+---
+import PrivacyBlock from '@/components/privacy-block.astro'
+import type { PrivacySectionData } from '@/lib/privacy-policy'
+
+interface Props {
+  section: PrivacySectionData
+}
+
+const { section } = Astro.props
+const headingId = `${section.id}-title`
+---
+
+<section class="section" id={section.id} aria-labelledby={headingId}>
+  <h2 class="heading" id={headingId}>{section.title}</h2>
+  <div class="blocks">
+    {section.blocks.map((block) => <PrivacyBlock block={block} />)}
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-top: var(--spacing-32);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .heading {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .blocks {
+    display: grid;
+    gap: var(--spacing-16);
+  }
+</style>

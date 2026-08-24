@@ -15,6 +15,7 @@ export function resolveCreateReview(input: {
   completedAt: Date | null
   hasReview: boolean
   now: Date
+  relaxTimeGuards?: boolean
 }): CreateReviewEligibility {
   if (input.hasReview) {
     return { ok: false, reason: 'already_reviewed' }
@@ -22,6 +23,10 @@ export function resolveCreateReview(input: {
 
   if (input.status !== 'completed' || !input.completedAt) {
     return { ok: false, reason: 'not_completed' }
+  }
+
+  if (input.relaxTimeGuards) {
+    return { ok: true }
   }
 
   const elapsed = input.now.getTime() - input.completedAt.getTime()

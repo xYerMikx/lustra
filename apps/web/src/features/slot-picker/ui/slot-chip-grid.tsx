@@ -5,6 +5,7 @@ import cn from 'classnames'
 
 import {
   groupSlotsByPeriod,
+  slotChipCaption,
   slotTimeLabel,
 } from '@/features/slot-picker/model/group-slots-by-period'
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'
@@ -49,7 +50,7 @@ export function SlotChipGrid({
                 onClick={() => onSelect(slot)}
                 data-testid={slotChipTestId(slotTimeLabel(slot.startsAt, timezone))}
               >
-                {slotTimeLabel(slot.startsAt, timezone)}
+                {slotChipCaption(slot, timezone)}
               </button>
             ))}
           </div>

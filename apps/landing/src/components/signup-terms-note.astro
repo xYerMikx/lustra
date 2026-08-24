@@ -1,0 +1,51 @@
+---
+interface Props {
+  variant?: 'default' | 'on-accent'
+}
+
+const variant = Astro.props.variant ?? 'default'
+---
+
+<p class:list={['signup-terms-note', variant === 'on-accent' && 'on-accent']}>
+  Регистрируясь, вы принимаете
+  {' '}
+  <a href="/terms">условия пользования</a>
+  {' '}
+  и
+  {' '}
+  <a href="/privacy">политику конфиденциальности</a>.
+</p>
+
+<style>
+  .signup-terms-note {
+    margin: var(--spacing-16) 0 0;
+    max-width: 48ch;
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+  }
+
+  .signup-terms-note a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .signup-terms-note a:hover {
+    color: var(--color-accent-700);
+  }
+
+  .on-accent {
+    margin-inline: auto;
+    color: color-mix(in srgb, var(--color-on-accent) 82%, transparent);
+  }
+
+  .on-accent a {
+    color: var(--color-on-accent);
+  }
+
+  .on-accent a:hover {
+    color: var(--color-on-accent);
+    opacity: 0.85;
+  }
+</style>

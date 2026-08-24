@@ -78,7 +78,6 @@
   border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
 }
 
-.logout,
 .loginLink {
   appearance: none;
   border: 0;
@@ -90,6 +89,30 @@
   color: var(--color-text-2);
   cursor: pointer;
   text-decoration: none;
+}
+
+.logout {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: transparent;
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.headerPending {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  color: var(--color-text-2);
 }
 
 .logout:hover,

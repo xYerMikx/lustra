@@ -67,6 +67,7 @@ function bookingAt(hour: number, extra: Partial<E2eBooking> & Pick<E2eBooking, '
     addressHint: 'Фрунзенский, ориентир ТЦ',
     addressExact: 'ул. Притыцкого 29, каб. 3',
     review: extra.status === 'completed' ? null : null,
+    clientReview: null,
     ...extra,
   }
 }
@@ -91,6 +92,7 @@ export function createWorld(): MockWorld {
         emailVerified: true,
         telegramLinked: false,
         profileStatus: null,
+        onboardingStep: null,
       }),
       user({
         id: CLIENT_OTHER_ID,
@@ -102,6 +104,7 @@ export function createWorld(): MockWorld {
         emailVerified: true,
         telegramLinked: false,
         profileStatus: null,
+        onboardingStep: null,
       }),
       user({
         id: MASTER_USER_ID,
@@ -113,6 +116,7 @@ export function createWorld(): MockWorld {
         emailVerified: true,
         telegramLinked: false,
         profileStatus: 'published',
+        onboardingStep: 'done',
       }),
       user({
         id: DRAFT_MASTER_USER_ID,
@@ -124,6 +128,7 @@ export function createWorld(): MockWorld {
         emailVerified: false,
         telegramLinked: false,
         profileStatus: 'draft',
+        onboardingStep: 'profile',
       }),
       user({
         id: ADMIN_ID,
@@ -135,6 +140,7 @@ export function createWorld(): MockWorld {
         emailVerified: true,
         telegramLinked: false,
         profileStatus: null,
+        onboardingStep: null,
       }),
     ],
     resetTokens: new Map(),
@@ -301,6 +307,7 @@ export function createWorld(): MockWorld {
         text: 'Очень аккуратно, буду возвращаться.',
         createdAt: new Date().toISOString(),
         clientFirstName: 'Маша',
+        serviceTitle: 'Маникюр комбинированный',
         masterReply: null,
         repliedAt: null,
         verified: true,
@@ -364,16 +371,40 @@ export function createWorld(): MockWorld {
       },
     ],
     availability: [
-      { ...slot10, slotIds: [SLOT_10_ID] },
-      { ...slot11, slotIds: [SLOT_11_ID] },
-      { ...slot14, slotIds: [SLOT_14_ID] },
-      { ...slot15, slotIds: [SLOT_15_ID] },
+      { ...slot10, slotIds: [SLOT_10_ID], extraPayAmount: null },
+      { ...slot11, slotIds: [SLOT_11_ID], extraPayAmount: null },
+      { ...slot14, slotIds: [SLOT_14_ID], extraPayAmount: null },
+      { ...slot15, slotIds: [SLOT_15_ID], extraPayAmount: null },
     ],
     conflictStartsAt: slot15.startsAt,
     calendarSlots: [
-      { id: SLOT_10_ID, ...slot10, status: 'open', clientName: null, bookingId: null },
-      { id: SLOT_11_ID, ...slot11, status: 'open', clientName: null, bookingId: null },
-      { id: SLOT_14_ID, ...slot14, status: 'open', clientName: null, bookingId: null },
+      {
+        id: SLOT_10_ID,
+        ...slot10,
+        status: 'open',
+        clientName: null,
+        bookingId: null,
+        isExtra: false,
+        extraPayAmount: null,
+      },
+      {
+        id: SLOT_11_ID,
+        ...slot11,
+        status: 'open',
+        clientName: null,
+        bookingId: null,
+        isExtra: false,
+        extraPayAmount: null,
+      },
+      {
+        id: SLOT_14_ID,
+        ...slot14,
+        status: 'open',
+        clientName: null,
+        bookingId: null,
+        isExtra: false,
+        extraPayAmount: null,
+      },
     ],
     blocks: [],
     exceptions: [],
@@ -411,6 +442,14 @@ export function createWorld(): MockWorld {
       }),
     ],
     portfolioItems: [],
+    ledgerCategories: [
+      { id: 'c-service', masterId: MASTER_PROFILE_ID, kind: 'income', name: 'Услуги', slug: 'service', isSystem: true },
+      { id: 'c-tip', masterId: MASTER_PROFILE_ID, kind: 'income', name: 'Чаевые', slug: 'tip', isSystem: true },
+      { id: 'c-materials', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Материалы', slug: 'materials', isSystem: true },
+      { id: 'c-rent', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Аренда', slug: 'rent', isSystem: true },
+      { id: 'c-other', masterId: MASTER_PROFILE_ID, kind: 'expense', name: 'Прочее', slug: 'other', isSystem: true },
+    ],
+    ledgerEntries: [],
     adminMasters: [
       {
         id: PENDING_MASTER_PROFILE_ID,

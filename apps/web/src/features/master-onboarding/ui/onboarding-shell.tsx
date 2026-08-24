@@ -16,6 +16,7 @@ import {
 } from '@/features/master-onboarding/model/onboarding-data-reducer'
 import {
   ONBOARDING_STEPS,
+  wizardStepFromOnboarding,
   type OnboardingStepId,
 } from '@/features/master-onboarding/model/onboarding-steps'
 import { OnboardingProgress } from '@/features/master-onboarding/ui/onboarding-progress'
@@ -23,6 +24,7 @@ import { StepBasicsForm } from '@/features/master-onboarding/ui/step-basics-form
 import { StepPortfolioCta } from '@/features/master-onboarding/ui/step-portfolio-cta'
 import { StepScheduleForm } from '@/features/master-onboarding/ui/step-schedule-form'
 import { StepServiceForm } from '@/features/master-onboarding/ui/step-service-form'
+import { loadSession } from '@/features/auth/model/load-session'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID, onboardingStepTestId } from '@/shared/lib/test-id'
@@ -70,8 +72,9 @@ const STEP_COPY: Record<
 
 export function OnboardingShell({ user }: OnboardingShellProps) {
   const router = useRouter()
-  const [currentStepId, setCurrentStepId] =
-    useState<OnboardingStepId>('profile')
+  const [currentStepId, setCurrentStepId] = useState<OnboardingStepId>(() =>
+    wizardStepFromOnboarding(user.onboardingStep),
+  )
   const [dataState, dispatchData] = useReducer(
     onboardingDataReducer,
     INITIAL_DATA_STATE,
@@ -147,6 +150,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
 
     dispatchData({ type: 'profile_updated', profile: updated })
+    await loadSession({ force: true })
     setCurrentStepId('services')
 
     return updated
@@ -163,6 +167,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
 
     setCurrentStepId('schedule')
+    await loadSession({ force: true })
 
     return created
   }
@@ -178,6 +183,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
     }
 
     dispatchData({ type: 'schedule_updated', schedule: saved })
+    await loadSession({ force: true })
     setCurrentStepId('portfolio')
 
     return saved
@@ -217,7 +223,7 @@ export function OnboardingShell({ user }: OnboardingShellProps) {
         className={styles.panel}
         data-testid={onboardingStepTestId(currentStepId)}
       >
-        <p className={styles.eyebrow}>Быстрый онбординг · 4 шага</p>
+        <p className={styles.eyebrow}>Быстрый старт · 4 шага</p>
         <h1 className={styles.title}>{stepCopy.title}</h1>
         <p className={styles.copy}>
           Шаг {currentStepIndex + 1} из {ONBOARDING_STEPS.length}.{' '}

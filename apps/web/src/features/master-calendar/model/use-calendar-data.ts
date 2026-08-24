@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import type {
+  CreateExtraSlotInput,
   CreateManualBookingInput,
   CreateTimeBlockInput,
   MasterCalendarView,
@@ -16,9 +17,12 @@ import {
 import { createManualBooking } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
 import {
+  closeScheduleSlot,
+  createExtraSlot,
   createTimeBlock,
   deleteTimeBlock,
   getMasterCalendar,
+  reopenScheduleSlot,
 } from '@/shared/api/master-calendar-client'
 import {
   deleteScheduleException,
@@ -144,6 +148,21 @@ export function useCalendarData(
     [],
   )
 
+  const addExtraSlot = useCallback(async (input: CreateExtraSlotInput) => {
+    await createExtraSlot(input)
+    setReloadToken((value) => value + 1)
+  }, [])
+
+  const closeSlot = useCallback(async (slotId: string) => {
+    await closeScheduleSlot(slotId)
+    setReloadToken((value) => value + 1)
+  }, [])
+
+  const reopenSlot = useCallback(async (slotId: string) => {
+    await reopenScheduleSlot(slotId)
+    setReloadToken((value) => value + 1)
+  }, [])
+
   return {
     range,
     data,
@@ -156,5 +175,8 @@ export function useCalendarData(
     removeException,
     loadManualContext,
     addManualBooking,
+    addExtraSlot,
+    closeSlot,
+    reopenSlot,
   }
 }

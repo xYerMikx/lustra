@@ -14,6 +14,7 @@ function user(partial: Partial<MeResponse> & Pick<MeResponse, 'role' | 'email'>)
     emailVerified: true,
     telegramLinked: false,
     profileStatus: partial.role === 'master' ? 'published' : null,
+    onboardingStep: partial.role === 'master' ? 'done' : null,
     ...partial,
   }
 }
@@ -38,6 +39,7 @@ describe('buildAppNavItems', () => {
       { href: '/catalog', label: 'Каталог' },
       { href: '/app/client/bookings', label: 'Записи' },
       { href: '/app/client/favorites', label: 'Избранное' },
+      { href: '/app/client/reviews', label: 'Отзывы' },
       { href: '/app', label: 'Кабинет' },
     ])
   })

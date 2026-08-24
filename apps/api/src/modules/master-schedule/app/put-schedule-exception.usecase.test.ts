@@ -25,6 +25,8 @@ function buildExceptionStore(
       type: 'day_off',
       startMin: null,
       endMin: null,
+      granularityMin: null,
+      intervals: null,
       note: null,
     }),
     delete: vi.fn().mockResolvedValue(true),
@@ -56,6 +58,31 @@ describe('PutScheduleExceptionUseCase', () => {
       masterId: 'm1',
       fromYmdDate: '2026-08-15',
       toYmdDate: '2026-08-15',
+    })
+  })
+
+  it('applies custom hours across a date range', async () => {
+    const exceptions = buildExceptionStore()
+    const ensureSlots = {
+      execute: vi.fn().mockResolvedValue({ createdHint: 0 }),
+    } as unknown as EnsureSlotsUseCase
+
+    const useCase = new PutScheduleExceptionUseCase(exceptions, ensureSlots)
+    await useCase.execute(currentUser, '2026-08-15', {
+      type: 'custom_hours',
+      intervals: [
+        { startMin: 600, endMin: 720 },
+        { startMin: 840, endMin: 900 },
+      ],
+      granularityMin: 60,
+      untilDate: '2026-08-16',
+    })
+
+    expect(exceptions.upsert).toHaveBeenCalledTimes(2)
+    expect(ensureSlots.execute).toHaveBeenCalledWith({
+      masterId: 'm1',
+      fromYmdDate: '2026-08-15',
+      toYmdDate: '2026-08-16',
     })
   })
 

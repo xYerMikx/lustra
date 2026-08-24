@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   AvailabilityDayView,
   AvailabilityResponse,
@@ -46,6 +46,8 @@ export function useSlotPicker(input: {
     null,
   )
   const [status, setStatus] = useState<LoadStatus>('idle')
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const hasShownAvailability = useRef(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [justTakenStartsAt, setJustTakenStartsAt] = useState<string | null>(null)
   const [flowStep, setFlowStep] = useState<FlowStep>('pick')
@@ -65,8 +67,13 @@ export function useSlotPicker(input: {
       return
     }
 
-    setStatus('loading')
     setErrorMessage(null)
+
+    if (hasShownAvailability.current) {
+      setIsRefreshing(true)
+    } else {
+      setStatus('loading')
+    }
 
     try {
       const response = await fetchMasterAvailability(input.masterId, {
@@ -76,8 +83,11 @@ export function useSlotPicker(input: {
       })
 
       if (!response) {
-        setAvailability(null)
-        setStatus('error')
+        if (!hasShownAvailability.current) {
+          setAvailability(null)
+          setStatus('error')
+        }
+
         setErrorMessage('Не удалось загрузить слоты')
 
         return
@@ -96,15 +106,21 @@ export function useSlotPicker(input: {
 
       const hasOpenSlots = response.days.some((day) => day.hasOpen)
 
+      hasShownAvailability.current = true
       setStatus(hasOpenSlots ? 'success' : 'empty')
     } catch (error) {
-      setAvailability(null)
-      setStatus('error')
+      if (!hasShownAvailability.current) {
+        setAvailability(null)
+        setStatus('error')
+      }
+
       setErrorMessage(
         error instanceof ApiError
           ? error.message
           : 'Не удалось загрузить слоты',
       )
+    } finally {
+      setIsRefreshing(false)
     }
   }, [input.masterId, serviceId, range.from, range.to])
 
@@ -310,6 +326,7 @@ export function useSlotPicker(input: {
     days,
     daySlots,
     status,
+    isRefreshing,
     errorMessage,
     justTakenStartsAt,
     flowStep,

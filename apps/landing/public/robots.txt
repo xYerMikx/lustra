@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# Static assets and brand marks
+Allow: /og.png
+Allow: /favicon.ico
+Allow: /apple-touch-icon.png
+Allow: /site.webmanifest
+
+Host: https://lumira.by
 Sitemap: https://lumira.by/sitemap.xml

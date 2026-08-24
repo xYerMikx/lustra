@@ -67,10 +67,28 @@ export const MasterCalendarSlotStatusSchema = z.enum([
   'held',
   'booked',
   'blocked',
+  'closed',
 ])
 export type MasterCalendarSlotStatus = z.infer<
   typeof MasterCalendarSlotStatusSchema
 >
+
+export const ExtraPayAmountSchema = z
+  .number()
+  .positive()
+  .finite()
+  .max(500)
+  .refine((value) => Math.abs(value * 100 - Math.round(value * 100)) < 1e-8, {
+    message: 'Доплата — максимум 2 знака после запятой',
+  })
+
+export const CreateExtraSlotInputSchema = z
+  .object({
+    startsAt: z.string().datetime(),
+    extraPayAmount: ExtraPayAmountSchema,
+  })
+  .strict()
+export type CreateExtraSlotInput = z.infer<typeof CreateExtraSlotInputSchema>
 
 export const MasterCalendarSlotViewSchema = z.object({
   id: z.string().uuid(),
@@ -79,6 +97,8 @@ export const MasterCalendarSlotViewSchema = z.object({
   status: MasterCalendarSlotStatusSchema,
   clientName: z.string().nullable(),
   bookingId: z.string().uuid().nullable(),
+  isExtra: z.boolean(),
+  extraPayAmount: z.string().nullable(),
 })
 export type MasterCalendarSlotView = z.infer<typeof MasterCalendarSlotViewSchema>
 

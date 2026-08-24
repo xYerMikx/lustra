@@ -5,7 +5,7 @@ import { OnboardingPageClient } from '@/features/master-onboarding'
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'
 
 export const metadata: Metadata = {
-  title: 'Онбординг мастера',
+  title: 'Первые шаги',
 }
 
 export default function MasterOnboardingPage() {

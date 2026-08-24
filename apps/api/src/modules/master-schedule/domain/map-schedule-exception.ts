@@ -1,4 +1,5 @@
 import type { ScheduleExceptionView } from '@lustra/contracts'
+import { isGranularityMin } from '@lustra/contracts'
 
 import type { ScheduleExceptionRecord } from '@/modules/master-schedule/app/schedule-exception.ports'
 
@@ -19,6 +20,11 @@ export function toScheduleExceptionView(
     type: record.type,
     startMin: record.startMin,
     endMin: record.endMin,
+    granularityMin:
+      record.granularityMin != null && isGranularityMin(record.granularityMin)
+        ? record.granularityMin
+        : null,
+    intervals: record.intervals,
     note: record.note,
   }
 }

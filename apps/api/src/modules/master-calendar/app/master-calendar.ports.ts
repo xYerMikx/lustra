@@ -4,6 +4,7 @@ import type {
   ScheduleExceptionView,
   TimeBlockView,
 } from '@lustra/contracts'
+import { isGranularityMin } from '@lustra/contracts'
 
 export type CalendarMasterRecord = {
   id: string
@@ -17,6 +18,8 @@ export type CalendarSlotRecord = {
   status: MasterCalendarSlotStatus
   clientName: string | null
   bookingId: string | null
+  isExtra: boolean
+  extraPayAmount: string | null
 }
 
 export type CalendarBlockRecord = {
@@ -33,6 +36,8 @@ export type CalendarExceptionRecord = {
   type: ScheduleExceptionView['type']
   startMin: number | null
   endMin: number | null
+  granularityMin: number | null
+  intervals: ScheduleExceptionView['intervals']
   note: string | null
 }
 
@@ -68,7 +73,12 @@ export function toCalendarSlotView(
     endsAt: record.endsAt.toISOString(),
     status: record.status,
     clientName: showClientName ? record.clientName : null,
-    bookingId: record.status === 'open' ? null : record.bookingId,
+    bookingId:
+      record.status === 'booked' || record.status === 'held'
+        ? record.bookingId
+        : null,
+    isExtra: record.isExtra,
+    extraPayAmount: record.extraPayAmount,
   }
 }
 
@@ -91,6 +101,11 @@ export function toCalendarExceptionView(
     type: record.type,
     startMin: record.startMin,
     endMin: record.endMin,
+    granularityMin:
+      record.granularityMin != null && isGranularityMin(record.granularityMin)
+        ? record.granularityMin
+        : null,
+    intervals: record.intervals,
     note: record.note,
   }
 }

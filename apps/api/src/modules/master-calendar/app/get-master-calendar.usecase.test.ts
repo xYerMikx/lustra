@@ -23,6 +23,8 @@ describe('GetMasterCalendarUseCase', () => {
           status: 'open',
           clientName: null,
           bookingId: null,
+          isExtra: false,
+          extraPayAmount: null,
         },
       ]),
       listBlocks: vi.fn().mockResolvedValue([
@@ -41,6 +43,8 @@ describe('GetMasterCalendarUseCase', () => {
           type: 'day_off',
           startMin: null,
           endMin: null,
+          granularityMin: null,
+          intervals: null,
           note: null,
         },
       ]),

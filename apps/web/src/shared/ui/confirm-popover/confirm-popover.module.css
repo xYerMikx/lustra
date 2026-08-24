@@ -3,11 +3,12 @@
   display: inline-flex;
 }
 
-.panel {
-  position: absolute;
-  z-index: var(--z-40);
-  right: 0;
-  bottom: calc(100% + var(--spacing-8));
+.panel,
+.panelReady {
+  position: fixed;
+  z-index: var(--z-50);
+  top: var(--confirm-top, 0);
+  left: var(--confirm-left, 0);
   width: max-content;
   max-width: calc(var(--spacing-96) * 3);
   padding: var(--spacing-12);
@@ -17,6 +18,14 @@
   box-shadow: var(--shadow-2);
   display: grid;
   gap: var(--spacing-12);
+}
+
+.panel {
+  visibility: hidden;
+}
+
+.panelReady {
+  visibility: visible;
 }
 
 .title {
@@ -32,11 +41,4 @@
   flex-wrap: wrap;
   gap: var(--spacing-8);
   justify-content: flex-end;
-}
-
-@media (max-width: 767px) {
-  .panel {
-    right: auto;
-    left: 0;
-  }
 }

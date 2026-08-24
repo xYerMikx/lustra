@@ -13,7 +13,14 @@ import { buildMasterSlug } from '@/modules/auth/domain/slugify'
 export type AuthUserRecord = Prisma.UserGetPayload<{
   include: {
     telegram: { select: { id: true } }
-    masterProfile: { select: { status: true } }
+    masterProfile: {
+      select: {
+        status: true
+        locations: { select: { id: true }; take: 1 }
+        services: { where: { isActive: true }; select: { id: true }; take: 1 }
+        rules: { select: { id: true }; take: 1 }
+      }
+    }
   }
 }>
 
@@ -27,7 +34,14 @@ type CreateUserInput = {
 
 const AUTH_USER_INCLUDE = {
   telegram: { select: { id: true } },
-  masterProfile: { select: { status: true } },
+  masterProfile: {
+    select: {
+      status: true,
+      locations: { select: { id: true }, take: 1 },
+      services: { where: { isActive: true }, select: { id: true }, take: 1 },
+      rules: { select: { id: true }, take: 1 },
+    },
+  },
 } satisfies Prisma.UserInclude
 
 function buildRoleProfileData(

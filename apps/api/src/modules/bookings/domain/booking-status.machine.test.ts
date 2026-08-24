@@ -125,6 +125,17 @@ describe('resolveMasterComplete', () => {
     ).toEqual({ ok: false, reason: 'visit_not_started' })
   })
 
+  it('allows a future confirmed booking when time guards are relaxed', () => {
+    expect(
+      resolveMasterComplete({
+        status: 'confirmed',
+        startsAt: new Date('2026-08-20T10:00:00.000Z'),
+        now,
+        relaxTimeGuards: true,
+      }),
+    ).toEqual({ ok: true })
+  })
+
   it('rejects non-confirmed statuses', () => {
     expect(
       resolveMasterComplete({

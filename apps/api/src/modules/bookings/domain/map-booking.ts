@@ -25,6 +25,9 @@ export type BookingRecord = {
   confirmedAt: Date | null
   completedAt: Date | null
   review: BookingReviewRef | null
+  receivedReview: BookingReviewRef | null
+  clientReview: BookingReviewRef | null
+  clientHasAccount: boolean
   masterNote: string | null
   channel: ContactChannel | null
   masterDisplayName: string
@@ -64,6 +67,7 @@ export function toBookingClientView(record: BookingRecord): BookingClientView {
       ? record.completedAt.toISOString()
       : null,
     review: record.review,
+    receivedReview: record.receivedReview,
     addressHint: record.addressHint,
     addressExact: showExact ? record.addressExact : null,
   }
@@ -100,6 +104,9 @@ export function toBookingMasterView(record: BookingRecord): BookingMasterView {
       socialHandle: socialHandleFromNote(record.clientNote),
       source: record.clientSource,
     },
+    review: record.review,
+    clientReview: record.clientReview,
+    clientHasAccount: record.clientHasAccount,
   }
 }
 

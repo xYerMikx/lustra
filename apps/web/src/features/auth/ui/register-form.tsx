@@ -10,6 +10,7 @@ import {
   type RegisterRole,
 } from '@lustra/contracts'
 
+import { parseRegisterRole } from '@/features/auth/lib/parse-register-role'
 import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
 import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'
@@ -29,6 +30,7 @@ export function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const nextPath = searchParams.get('next')
+  const initialRole = parseRegisterRole(searchParams.get('role'))
   const [formError, setFormError] = useState<string | null>(null)
   const {
     control,
@@ -42,7 +44,7 @@ export function RegisterForm() {
       firstName: '',
       email: '',
       password: '',
-      role: 'client',
+      role: initialRole,
       acceptTerms: false,
     },
   })

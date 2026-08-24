@@ -16,6 +16,7 @@ describe('buildBookableWindows', () => {
       id,
       startsAt,
       endsAt: new Date(startsAt.getTime() + 30 * 60_000),
+      extraPayAmount: null,
     }
   }
 

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import type { ExceptionType } from '@lustra/contracts'
+import { Prisma } from '@lustra/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {
   ScheduleExceptionRecord,
   ScheduleExceptionStore,
+  ScheduleExceptionUpsertInput,
 } from '@/modules/master-schedule/app/schedule-exception.ports'
 import { ymdDateToUtcMidnight } from '@/modules/master-schedule/domain/map-schedule-exception'
+import { parseScheduleIntervals } from '@/modules/scheduling/domain/parse-schedule-intervals'
 
 const EXCEPTION_SELECT = {
   id: true,
@@ -15,6 +18,8 @@ const EXCEPTION_SELECT = {
   type: true,
   startMin: true,
   endMin: true,
+  granularityMin: true,
+  intervals: true,
   note: true,
 } as const
 
@@ -54,14 +59,13 @@ export class ScheduleExceptionRepository implements ScheduleExceptionStore {
   async upsert(
     masterId: string,
     ymdDate: string,
-    input: {
-      type: ExceptionType
-      startMin: number | null
-      endMin: number | null
-      note: string | null
-    },
+    input: ScheduleExceptionUpsertInput,
   ): Promise<ScheduleExceptionRecord> {
     const date = ymdDateToUtcMidnight(ymdDate)
+    const intervals =
+      input.intervals == null
+        ? Prisma.JsonNull
+        : (input.intervals as Prisma.InputJsonValue)
     const row = await this.prisma.availabilityException.upsert({
       where: {
         masterId_date: { masterId, date },
@@ -72,12 +76,16 @@ export class ScheduleExceptionRepository implements ScheduleExceptionStore {
         type: input.type,
         startMin: input.startMin,
         endMin: input.endMin,
+        granularityMin: input.granularityMin,
+        intervals,
         note: input.note,
       },
       update: {
         type: input.type,
         startMin: input.startMin,
         endMin: input.endMin,
+        granularityMin: input.granularityMin,
+        intervals,
         note: input.note,
       },
       select: EXCEPTION_SELECT,
@@ -120,6 +128,8 @@ function toRecord(row: {
   type: ExceptionType
   startMin: number | null
   endMin: number | null
+  granularityMin: number | null
+  intervals: unknown
   note: string | null
 }): ScheduleExceptionRecord {
   return {
@@ -129,6 +139,8 @@ function toRecord(row: {
     type: row.type,
     startMin: row.startMin,
     endMin: row.endMin,
+    granularityMin: row.granularityMin,
+    intervals: parseScheduleIntervals(row.intervals),
     note: row.note,
   }
 }

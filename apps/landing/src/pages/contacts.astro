@@ -1,19 +1,19 @@
 ---
 import { getEntry } from 'astro:content'
-import BaseLayout from '../layouts/base-layout.astro'
-import LegalStub from '../components/legal-stub.astro'
+import BaseLayout from '@/layouts/base-layout.astro'
+import ContactsPage from '@/components/contacts-page.astro'
 
 const content = (await getEntry('sections', 'contacts'))!.data
 ---
 
 <BaseLayout
-  title="Контакты · Lumira"
-  description="Контакты команды Lumira — поддержка и партнёрство."
+  title="Контакты и поддержка · Lumira"
+  description="Свяжитесь с поддержкой Lumira: support@lumira.by. Реквизиты оператора платформы в Минске, Республика Беларусь."
   canonicalPath="/contacts"
 >
-  <LegalStub
+  <ContactsPage
     title={content.title!}
     lead={content.lead}
-    paragraphs={content.body ?? []}
+    notes={content.body ?? []}
   />
 </BaseLayout>

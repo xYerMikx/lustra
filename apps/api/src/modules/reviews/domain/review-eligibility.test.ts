@@ -48,4 +48,16 @@ describe('resolveCreateReview', () => {
       }),
     ).toEqual({ ok: false, reason: 'window_closed' })
   })
+
+  it('skips the review window when time guards are relaxed', () => {
+    expect(
+      resolveCreateReview({
+        status: 'completed',
+        completedAt,
+        hasReview: false,
+        now: new Date('2026-08-16T12:00:01.000Z'),
+        relaxTimeGuards: true,
+      }),
+    ).toEqual({ ok: true })
+  })
 })

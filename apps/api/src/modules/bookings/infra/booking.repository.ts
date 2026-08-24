@@ -23,6 +23,7 @@ import { cancelBookingInStore } from '@/modules/bookings/infra/cancel-booking-in
 import { completeBookingInStore } from '@/modules/bookings/infra/complete-booking-in-store'
 import { markNoShowInStore } from '@/modules/bookings/infra/mark-no-show-in-store'
 import { confirmHoldInStore } from '@/modules/bookings/infra/confirm-hold-in-store'
+import { confirmPendingInStore } from '@/modules/bookings/infra/confirm-pending-in-store'
 import { createHoldInStore } from '@/modules/bookings/infra/create-hold-in-store'
 import { createManualBookingInStore } from '@/modules/bookings/infra/create-manual-booking-in-store'
 import { listMasterClientsInStore } from '@/modules/bookings/infra/list-master-clients-in-store'
@@ -219,8 +220,21 @@ export class BookingRepository implements BookingStore {
         endsAt: true,
         status: true,
         holdExpiresAt: true,
+        extraPayAmount: true,
       },
     })
+    .then((rows) =>
+      rows.map((row) => ({
+        id: row.id,
+        startsAt: row.startsAt,
+        endsAt: row.endsAt,
+        status: row.status,
+        holdExpiresAt: row.holdExpiresAt,
+        extraPayAmount: row.extraPayAmount
+          ? Number(row.extraPayAmount).toFixed(2)
+          : null,
+      })),
+    )
   }
 
   createHold(input: CreateHoldInput): Promise<BookingRecord> {
@@ -255,40 +269,10 @@ export class BookingRepository implements BookingStore {
     return listMasterClientsInStore(this.tx.getClient(), input)
   }
 
-  async confirmPending(
+  confirmPending(
     input: ConfirmPendingStoreInput,
   ): Promise<BookingRecord | null> {
-    const db = this.tx.getClient()
-
-    const updated = await db.booking.updateMany({
-      where: {
-        id: input.bookingId,
-        masterId: input.masterId,
-        status: 'pending',
-      },
-      data: {
-        status: 'confirmed',
-        confirmedAt: input.now,
-        version: { increment: 1 },
-      },
-    })
-
-    if (updated.count === 0) {
-      return null
-    }
-
-    await db.bookingEvent.create({
-      data: {
-        bookingId: input.bookingId,
-        actorType: 'master',
-        actorId: input.currentUserId,
-        fromStatus: 'pending',
-        toStatus: 'confirmed',
-        payload: {},
-      },
-    })
-
-    return this.findBookingById(input.bookingId)
+    return confirmPendingInStore(this.tx.getClient(), input)
   }
 
   completeBooking(

@@ -1,0 +1,114 @@
+---
+interface ServiceItem {
+  title: string
+  href: string
+}
+
+interface Props {
+  name: string
+  slug: string
+  categoryHref: string
+  services: ServiceItem[]
+  emptyMessage: string
+}
+
+const { name, slug, categoryHref, services, emptyMessage } = Astro.props
+const headingId = `category-${slug}`
+---
+
+<section class="group" id={slug} aria-labelledby={headingId}>
+  <div class="head">
+    <h2 id={headingId}>{name}</h2>
+    <a class="all" href={categoryHref}>Все мастера</a>
+  </div>
+
+  {
+    services.length === 0 ? (
+      <p class="empty">{emptyMessage}</p>
+    ) : (
+      <ul>
+        {services.map((service) => (
+          <li>
+            <a href={service.href}>{service.title}</a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .group {
+    padding: var(--spacing-32) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-8) var(--spacing-16);
+    margin-bottom: var(--spacing-16);
+  }
+
+  h2 {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+  }
+
+  .all {
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
+    min-height: var(--spacing-40);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .all:hover {
+    color: var(--color-accent-700);
+  }
+
+  .empty {
+    color: var(--color-text-2);
+    line-height: 1.5;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-8);
+  }
+
+  ul a {
+    display: flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    padding: 0 var(--spacing-16);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+    background: var(--color-surface);
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+    transition:
+      border-color var(--duration-150) ease,
+      color var(--duration-150) ease;
+  }
+
+  ul a:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 720px) {
+    ul {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

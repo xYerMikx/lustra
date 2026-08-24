@@ -1,0 +1,34 @@
+---
+import LegalDocument from '@/components/legal-document.astro'
+import PrivacySection from '@/components/privacy-section.astro'
+import type { PrivacyDocumentData } from '@/lib/privacy-policy'
+
+interface Props {
+  document: PrivacyDocumentData
+}
+
+const { document } = Astro.props
+---
+
+<LegalDocument
+  title={document.title}
+  meta={`${document.updatedLabel} · ${document.operatorLine}`}
+  lead={document.lead}
+  notice={document.notice}
+  tocLabel="Содержание политики"
+  toc={document.sections.map((section) => ({
+    id: section.id,
+    title: section.title,
+  }))}
+>
+  <div class="sections">
+    {document.sections.map((section) => <PrivacySection section={section} />)}
+  </div>
+</LegalDocument>
+
+<style>
+  .sections {
+    display: grid;
+    gap: var(--spacing-32);
+  }
+</style>

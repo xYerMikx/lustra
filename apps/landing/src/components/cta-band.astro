@@ -1,4 +1,6 @@
 ---
+import SignupTermsNote from './signup-terms-note.astro'
+
 interface Props {
   title: string
   lead: string
@@ -20,6 +22,7 @@ const { title, lead, primaryCta, secondaryCta, catalogHref, masterHref } =
       <a class="btn btn-primary" href={catalogHref}>{primaryCta}</a>
       <a class="btn btn-secondary" href={masterHref}>{secondaryCta}</a>
     </div>
+    <SignupTermsNote variant="on-accent" />
   </div>
 </section>
 

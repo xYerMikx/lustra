@@ -1,4 +1,5 @@
 import type {
+  GeneratedSlotStart,
   ScheduleExceptionInput,
   ScheduleRuleInput,
   TimeBlockInput,
@@ -41,15 +42,10 @@ export type SchedulingStore = {
     from: Date,
     to: Date,
   ): Promise<OpenTimeSlot[]>
-  upsertOpenTimeSlots(
-    masterId: string,
-    starts: Date[],
-    granularityMin: number,
-  ): Promise<void>
-  deleteMissingOpenTimeSlots(
+  replaceOpenScheduleSlots(
     masterId: string,
     rangeFrom: Date,
     rangeTo: Date,
-    keepStarts: Date[],
-  ): Promise<number>
+    generated: GeneratedSlotStart[],
+  ): Promise<void>
 }

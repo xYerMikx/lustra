@@ -89,4 +89,27 @@ test.describe('master onboarding', () => {
     await page.getByTestId(TEST_ID.onboardingPortfolioAdd).click()
     await expect(page.getByTestId(TEST_ID.pageMasterPortfolio)).toBeVisible()
   })
+
+  test('resumes at the last unfinished step after leaving the wizard', async ({
+    page,
+  }) => {
+    await openOnboarding(page)
+    await saveProfileStep(page)
+    await page.getByTestId(TEST_ID.onboardingSkip).click()
+    await expect(page.getByTestId(TEST_ID.pageMasterCabinet)).toBeVisible()
+    await page.goto('/app/onboarding')
+    await expect(page.getByTestId(onboardingStepTestId('services'))).toBeVisible()
+  })
+
+  test('hides the first-steps tab after the required steps are done', async ({
+    page,
+  }) => {
+    await openOnboarding(page)
+    await saveProfileStep(page)
+    await saveFirstServiceFromTemplate(page)
+    await saveWeekdaySchedule(page)
+    await page.getByTestId(TEST_ID.onboardingSkip).click()
+    await expect(page.getByTestId(TEST_ID.pageMasterCabinet)).toBeVisible()
+    await expect(page.getByTestId(TEST_ID.navFirstSteps)).toHaveCount(0)
+  })
 })
