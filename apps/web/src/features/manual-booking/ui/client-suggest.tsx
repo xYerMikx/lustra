@@ -3,8 +3,9 @@
 import cn from 'classnames'
 import type { MasterClientView } from '@lustra/contracts'
 
-import { useClientSuggest } from '@/features/master-calendar/model/use-client-suggest'
-import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { clientSuggestMeta } from '@/features/manual-booking/model/client-suggest-meta'
+import { useClientSuggest } from '@/features/manual-booking/model/use-client-suggest'
+import styles from '@/features/manual-booking/ui/manual-booking.module.css'
 
 type ClientSuggestProps = {
   id: string
@@ -13,20 +14,6 @@ type ClientSuggestProps = {
   onChange: (name: string) => void
   onPick: (client: MasterClientView) => void
   testId?: string
-}
-
-function clientSuggestMeta(client: MasterClientView): string {
-  const parts: string[] = []
-
-  if (client.phone) {
-    parts.push(client.phone)
-  }
-
-  if (client.socialHandle) {
-    parts.push(`@${client.socialHandle}`)
-  }
-
-  return parts.join(' · ')
 }
 
 export function ClientSuggest({

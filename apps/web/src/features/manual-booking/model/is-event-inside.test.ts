@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isEventInside } from '@/features/master-calendar/model/is-event-inside'
+import { isEventInside } from '@/features/manual-booking/model/is-event-inside'
 
 describe('isEventInside', () => {
   it('is true when contains reports the target', () => {

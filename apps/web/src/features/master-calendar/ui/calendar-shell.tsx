@@ -21,7 +21,7 @@ import { CalendarNotice } from '@/features/master-calendar/ui/calendar-notice'
 import { CalendarToolbar } from '@/features/master-calendar/ui/calendar-toolbar'
 import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
 import { ExtraSlotDialog } from '@/features/master-calendar/ui/extra-slot-dialog'
-import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
+import { ManualBookingDialog } from '@/features/manual-booking/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -135,9 +135,9 @@ export function CalendarShell() {
     }
 
     try {
-      const context = await calendar.loadManualContext()
+      const formData = await calendar.loadManualBookingFormData()
 
-      if (context.services.length === 0) {
+      if (formData.services.length === 0) {
         setFeedback({
           tone: 'error',
           text: 'Сначала добавьте услугу в кабинете',
@@ -146,7 +146,7 @@ export function CalendarShell() {
         return
       }
 
-      setManual({ startsAtIso, ...context })
+      setManual({ startsAtIso, ...formData })
     } catch (error) {
       showError(error, 'Не удалось открыть запись')
     }

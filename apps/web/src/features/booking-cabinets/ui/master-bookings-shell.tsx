@@ -3,14 +3,14 @@
 import { useState } from 'react'
 import cn from 'classnames'
 
-import {
-  formatBookingWhen,
-} from '@/features/booking-cabinets/model/booking-labels'
+import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import {
   useMasterBookingsList,
   type MasterBookingsScope,
 } from '@/features/booking-cabinets/model/use-master-bookings'
 import { BookingListRow } from '@/features/booking-cabinets/ui/booking-list-row'
+import { MasterBookingsEmpty } from '@/features/booking-cabinets/ui/master-bookings-empty'
+import { MasterBookingsHeader } from '@/features/booking-cabinets/ui/master-bookings-header'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { Button } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
@@ -30,12 +30,17 @@ export function MasterBookingsShell() {
   const [scope, setScope] = useState<MasterBookingsScope>('upcoming')
   const list = useMasterBookingsList(scope)
 
+  const handleBooked = () => {
+    if (scope === 'upcoming') {
+      list.reload()
+    }
+
+    setScope('upcoming')
+  }
+
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageMasterBookings}>
-      <header>
-        <p className={styles.eyebrow}>Кабинет мастера</p>
-        <h1 className={styles.title}>Записи</h1>
-      </header>
+      <MasterBookingsHeader onBooked={handleBooked} />
 
       <div className={styles.tabs} role="tablist" aria-label="Фильтр записей">
         {SCOPES.map((item) => (
@@ -65,7 +70,7 @@ export function MasterBookingsShell() {
       ) : null}
 
       {list.status === 'empty' ? (
-        <p className={styles.empty}>В этом фильтре записей нет.</p>
+        <MasterBookingsEmpty onBooked={handleBooked} />
       ) : null}
 
       {list.status === 'success' ? (

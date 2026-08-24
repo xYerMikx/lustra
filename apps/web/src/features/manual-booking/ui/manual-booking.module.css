@@ -1,0 +1,88 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.label {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}
+
+.input {
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  padding: 0 var(--spacing-12);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.fieldError {
+  color: var(--color-danger);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.dialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12);
+}
+
+.suggestRoot {
+  position: relative;
+}
+
+.suggestList {
+  position: absolute;
+  z-index: var(--z-30);
+  top: calc(100% + var(--spacing-4));
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: var(--spacing-4);
+  list-style: none;
+  max-height: calc(6 * var(--spacing-40));
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2);
+}
+
+.suggestOption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-4);
+  min-height: 44px;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 0;
+  border-radius: var(--radius-4);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestOptionActive {
+  background: var(--color-surface-2);
+}
+
+.suggestName {
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.suggestPhone {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+}

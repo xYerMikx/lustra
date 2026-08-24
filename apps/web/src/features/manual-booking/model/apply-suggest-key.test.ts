@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { applySuggestKey } from '@/features/master-calendar/model/apply-suggest-key'
+import { applySuggestKey } from '@/features/manual-booking/model/apply-suggest-key'
 
 const base = {
   open: true,
