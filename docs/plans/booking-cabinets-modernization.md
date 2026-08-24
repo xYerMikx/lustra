@@ -2,92 +2,81 @@
 
 Источник истины по протоколу и схеме: `docs/TECH-DESIGN.md` §7, §11, §18, §20. Продукт: `docs/PRD.md` F-07, F-10, F-12.
 
-Это **план параллелизации**, не реализация. Код не меняется в этом документе.
+## База для субагентов
 
-## Что уже есть
+Общая ветка: **`cursor/booking-cabinets-foundation-505e`** (после merge — `develop`).
+
+Субагенты **M1 / M2 / C1 / R1** ветвятся **от этой базы**, не от голого `develop` до merge. Склейка гостя в одну карточку по нику **не входит** в базу и не стартует, пока не выбран вариант ниже.
+
+Уже в базе (не повторять в фича-ветках):
+
+- `CreateManualBookingInput`: имя обязательно; телефон опционален; для `instagram` / `telegram` обязателен ник; для `phone` обязателен телефон; `walk_in` / `other` — достаточно имени.
+- Ручная запись без телефона создаёт `MasterClient` с `phone = null`. **Не** матчить `phone: null` (это склеило бы всех безымянных гостей).
+- Повтор по **тому же телефону** по-прежнему обновляет карточку (как раньше).
+- `GET /master/clients?query=&sort=recent|frequent` + в view `visitsCount`, `lastVisitAt` (колонки Prisma, пока почти всегда 0 / null).
+- Контракт `packages/contracts/src/recommendations.ts` (`GET /client/recommendations`, лимит 3). Ручки ещё нет — это **R1**.
+- Форма календаря: телефон не `required`; ник required на каналах IG/TG.
+
+## Что уже есть (продукт)
 
 | Поверхность | Сейчас |
 |---|---|
-| Календарь мастера `/app/master/calendar` | Ручная запись (`ManualBookingDialog` + `POST /master/bookings`), автокомплит `GET /master/clients?query=` |
-| Список записей мастера `/app/master/bookings` | Только вкладки предстоящие / на подтверждение / прошлые. **Нет CTA «записать клиента»** |
-| Книга клиентов | Роут `/app/master/clients` есть в TECH-DESIGN §20, **страницы нет** |
-| Поиск клиентов API | Имя, телефон, подстрока в `note` (ник Instagram/Telegram парсится из заметки, отдельной колонки `socialHandle` нет) |
-| `MasterClient.visitsCount` / `lastVisitAt` | Поля в Prisma **нигде не обновляются и не отдаются** |
-| Клиент «Мои записи» | Предстоящие / прошлые. Пустое состояние ведёт в каталог текстом. **Нет флоу «записаться» из кабинета** |
-| Онлайн-запись клиента | Только с `/m/[slug]` через `SlotPicker` (услуга → день → слот → hold → confirm) |
-| Рекомендации услуг | Нет модуля, нет ручки |
+| Календарь мастера `/app/master/calendar` | Ручная запись, автокомплит `GET /master/clients?query=` |
+| Список записей мастера `/app/master/bookings` | Только вкладки. **Нет CTA «записать клиента»** |
+| Книга клиентов | Роут в TECH-DESIGN §20, **страницы нет** |
+| Ник | Живёт в `MasterClient.note` (`@handle`), отдельной колонки нет |
+| Клиент «Мои записи» | Нет флоу «записаться» из кабинета |
+| Онлайн-запись клиента | Только `/m/[slug]` + `SlotPicker` |
 
-Ручная запись требует телефон (`CreateManualBookingInput.phone`) — гость только с Instagram/Telegram без номера сейчас не проходит контракт.
+## Цели (MVP волны после базы)
 
-## Цели (MVP этой волны)
+1. **M1** — мастер из списка записей создаёт бронь той же формой.
+2. **M2** — страница `/app/master/clients`, поиск и вкладка «Частые» (считать `completed`, не верить мёртвому `visitsCount`).
+3. **C1** — клиент из кабинета: услуга → мастер → слот.
+4. **R1** — модуль `recommendations`, частота completed.
 
-1. **Мастер из списка записей** создаёт бронь за клиента (кнопка + та же форма, что в календаре), без ухода «в никуда».
-2. **Мастер ищет постоянных клиентов** по имени, телефону, нику Instagram («стена») и Telegram, и видит **частых** отдельным списком/вкладкой.
-3. **Клиент из кабинета** записывается: услуга → мастер → слот, переиспользуя hold/confirm.
-4. **Подсказка услуги** — отдельный сервис `recommendations`, в v1 без ML: частота `completed` броней клиента.
+## Открытый вопрос: кто такой «этот клиент» (не реализовывать, пока нет решения)
 
-Сложную персонализацию, коллаборативную фильтрацию, «похожие мастера» — **не делать**. Заложить порт, чтобы алгоритм менялся без переписывания UI.
+Две разные сущности:
 
-## Не в этой волне
+| | `ClientProfile` | `MasterClient` |
+|---|---|---|
+| Чья | Платформенный аккаунт клиента (`User.role=client`) | Карточка **в книге одного мастера** |
+| ID | UUID, мастер его не вводит | UUID, мастер его не вводит |
+| Уникальность | email/userId | Сейчас фактически только `(masterId, userId)` unique; телефон **не unique** |
 
-- Склейка гостя с аккаунтом по телефону без подтверждения (TECH-DESIGN § риски).
-- Полноценный CRM (`PATCH /master/clients/:id`, теги, блок).
-- Drag-to-book в календаре, депозит, Google Calendar.
-- Рекомендации мастеру «кому написать».
+Онлайн-запись клиента с аккаунтом: `upsertMasterClient` по `(masterId, userId)` — одна карточка.
+
+Ручная запись: мастер печатает имя и/или ник. Имя не уникально («Анна»). UUID мастер не наберёт. `ClientProfile` мастер не видит и не должен — это чужой аккаунт.
+
+**Почему сейчас плодятся карточки:** матч гостя идёт **только по точному телефону**. Без номера каждый `POST` = новый `MasterClient`. Suggest в форме ищет уже созданные карточки, но если мастер не выбрал строку из списка, а заново вбил то же имя — это снова новый гость.
+
+Ник Instagram/Telegram **почти** уникален в своей сети (нормализовать: lower, без `@`). Это лучший ручной ключ без телефона. Риски: смена ника; два канала (IG и TG) у одного человека; опечатка = вторая карточка; теоретический collision между сетями (`@anna` в IG ≠ `@anna` в TG — ключ должен быть `(channel, handle)`).
+
+Варианты (выбрать одно, потом кодить):
+
+**A. Ключ `(masterId, channel, normalizedHandle)`**  
+Повторная запись с тем же `@nick` в Instagram обновляет карточку. Имя можно менять. Телефон, если позже появился, дописывается. Нет ника и нет телефона (`walk_in`) — всегда новая карточка (осознанно).  
+Нужна колонка `socialHandle` + unique частичный индекс, не парсинг `note`.
+
+**B. Как A, плюс телефон как второй ключ**  
+Сначала phone, иначе handle. Если нашли две разные карточки (старая по телефону, новая по нику) — **не склеивать автоматически**; показать мастеру «это один человек?» (UI merge). Auto-merge без подтверждения опасен.
+
+**C. Явный выбор из книги**  
+Форма требует pick из suggest либо «новый клиент». Свободный ввод имени без pick всегда создаёт новую карточку. Идентичность = то, что мастер ткнул. Просто, честно, больше кликов.
+
+**D. Связь с `ClientProfile`**  
+Только если у брони есть `userId` (человек записался сам) или клиент подтвердил «это я» по ссылке. Мастер **не** ищет по глобальному каталогу пользователей (приватность, IDOR).
+
+Рекомендация к обсуждению: **C для UX ввода + A для серверного upsert**, B как follow-up для merge. Не делать D в этой волне.
 
 ---
 
-## Контракты (заморозить до старта агентов)
+## Контракты (уже в базе; фича-ветки не переписывают форму)
 
-Чтобы ветки не дрались за `packages/contracts/src/booking.ts`, новые схемы класть в **разные файлы**. `index.ts` трогать аккуратно (append-only экспорты).
+`packages/contracts/src/booking.ts` — manual input + list clients.  
+`packages/contracts/src/recommendations.ts` — только R1 добавляет Nest-модуль, не ломая схему.
 
-### A. Книга клиентов — только агент **M2**
-
-Файл: `packages/contracts/src/booking.ts` (расширение существующих схем).
-
-```ts
-// ListMasterClientsQuerySchema
-{
-  query: z.string().trim().max(80).default(''),
-  sort: z.enum(['recent', 'frequent']).default('recent'),
-}
-
-// MasterClientViewSchema — добавить (не ломая текущие поля)
-visitsCount: z.number().int().nonnegative()
-lastVisitAt: z.string().datetime().nullable()
-```
-
-`CreateManualBookingInput`: телефон **опционален**, если есть `socialHandle` (хотя бы одно из `phone` | `socialHandle`). Иначе 400 `VALIDATION_FAILED`.
-
-Не менять `POST /master/bookings` протокол слотов/EXCLUDE.
-
-### B. Рекомендации — только агент **R1**
-
-Новый файл: `packages/contracts/src/recommendations.ts`.
-
-```ts
-GET /client/recommendations
-Response: {
-  services: Array<{
-    serviceTitle: string
-    serviceId: string | null      // null, если услуга удалена — только снимок
-    categoryId: string | null
-    completedCount: number
-    lastCompletedAt: string       // ISO
-    lastMaster: {
-      id: string
-      slug: string
-      displayName: string
-    } | null
-  }>
-}
-```
-
-Лимит: 3. Пустой массив — валидный ответ, не 404.
-
-### C. Клиентский букинг из кабинета — агент **C1**
-
-Новых write-ручек нет. Чтение: существующие `GET /bookings?scope=past`, каталог, `GET /catalog/masters/:slug`, `POST /bookings/holds`. Рекомендации — опциональный read; UI обязан работать при пустом `services[]`.
 
 ---
 
@@ -148,36 +137,37 @@ Response: {
 
 ## Нарезка веток (4 агента)
 
-База каждой ветки: свежий `develop`. Имена для cloud-агентов: `cursor/<slug>-505e`. Слияние в `develop` по очереди, если конфликты в `contracts/src/index.ts`.
+База каждой ветки: **`cursor/booking-cabinets-foundation-505e`** (или `develop` после merge базы). Не трогать `CreateManualBookingInputSchema` и `recommendations.ts` форму ответа.
 
 ```
-                    ┌─ M1 web: CTA + shared manual form ─┐
-develop ────────────┼─ M2 api+web: clients search/frequent ┼──► develop
-                    ├─ C1 web: client book from cabinet ───┤
-                    └─ R1 api: recommendations module ─────┘
+foundation ──┬─ M1 web: CTA + shared manual form
+             ├─ M2 web+api: /app/master/clients + COUNT completed
+             ├─ C1 web: client book from cabinet
+             └─ R1 api: recommendations module
 ```
 
 | ID | Ветка (пример) | Владеет | Не трогает |
 |---|---|---|---|
-| **M1** | `cursor/master-book-from-list-505e` | `features/manual-booking/` (extract из calendar), CTA в `master-bookings-shell`, e2e «записать с /bookings» | `booking.ts` contracts, recommendations, client cabinet |
-| **M2** | `cursor/master-client-book-505e` | contracts query/view + optional phone, `list-master-clients*`, страница `/app/master/clients`, вкладки поиск/частые, префилл формы | extract диалога (импортирует то, что уже в calendar **или** ждёт M1) |
-| **C1** | `cursor/client-book-from-cabinet-505e` | `client-bookings-shell` CTA, `features/client-book-flow/`, роут `/app/client/book`, reuse `SlotPicker` | `POST /master/bookings`, книга мастера |
-| **R1** | `cursor/client-recommendations-505e` | `modules/recommendations/**`, `contracts/src/recommendations.ts`, unit-тесты ранжирования | UI кабинета (C1 читает API, если 404/пусто — fallback) |
+| **M1** | `cursor/master-book-from-list-505e` | extract `features/manual-booking/`, CTA на `/app/master/bookings` | contracts, recommendations module |
+| **M2** | `cursor/master-client-book-505e` | страница клиентов, COUNT для `sort=frequent`, префилл формы | schema manual booking, identity upsert |
+| **C1** | `cursor/client-book-from-cabinet-505e` | `/app/client/book`, CTA в кабинете | master bookings API |
+| **R1** | `cursor/client-recommendations-505e` | Nest-модуль + тесты ранжирования | форма `recommendations.ts` (только реализация) |
 
-### Зависимости и как не ждать
+Склейку по нику (раздел «кто такой клиент») **не класть** в M2, пока не выбран вариант A–D.
 
-- **M1 ∥ M2:** M1 выносит диалог, **не** меняя поиск. M2 расширяет API и `ClientSuggest`/фильтр. Если M1 ещё не влит — M2 вешает «Записать» на календарный диалог по текущему импорту; после merge M1 переключить импорт на `features/manual-booking`.
-- **C1 ∥ R1:** C1 рисует слот «рекомендации» только если `services.length > 0`. Пока R1 нет — всегда каталог. Контракт B зафиксирован здесь: R1 не меняет форму после старта C1.
-- **R1 не зависит от M\***. Модуль читает `Booking` + `MasterProfile` через свой порт, не через `BookingsModule` god-service.
+### Зависимости
 
-### Порядок merge при конфликте `index.ts`
+- **M1 ∥ M2:** M1 выносит диалог. M2 импортирует его из calendar или из `manual-booking` после M1.
+- **C1 ∥ R1:** пустой/отсутствующий recommendations → каталог.
+- **R1** не зависит от M*.
 
-1. R1 (новый файл, почти без пересечений)
-2. M1 (только web)
-3. M2 (booking contracts)
-4. C1 (web + вызов recommendations)
+### Порядок merge
 
-Или merge M1 и R1 сразу параллельно.
+1. foundation → develop
+2. R1 и M1 параллельно
+3. M2 (после решения identity — или без upsert)
+4. C1
+
 
 ---
 
@@ -193,13 +183,11 @@ develop ────────────┼─ M2 api+web: clients search/fr
 
 **M2**
 
-- `packages/contracts/src/booking.ts`
-- `apps/api/.../list-master-clients-in-store.ts` + usecase + tests
-- `CreateManualBookingInputSchema` refine phone XOR socialHandle
 - `apps/web/src/app/app/master/clients/page.tsx`
-- `apps/web/src/features/master-clients/` (список, вкладки, поиск)
+- `apps/web/src/features/master-clients/`
+- `list-master-clients-in-store.ts` — COUNT completed for `sort=frequent` (контракт уже есть)
 - Навигация в `master-cabinet` hub
-- Тесты: поиск по `@nick`, sort frequent, IDOR чужой книги
+- Не менять upsert по нику, пока нет решения identity
 
 **C1**
 
@@ -237,15 +225,15 @@ Postman: новые ручки через MCP (`GET /master/clients?sort=frequen
 
 ## Промпты субагентам
 
-Каждый агент: ветка от `develop`, kebab-case файлы, `@/` импорты, braces, без `as never`, PR в `develop`, не в `main`.
+Каждый агент: ветка **от foundation**, kebab-case, `@/` импорты, braces, без `as never`, PR в `develop`.
 
-**M1.** Extract manual booking UI from `features/master-calendar` into `features/manual-booking`. Add «Записать клиента» on `/app/master/bookings` (header + empty). Reuse `POST /master/bookings`. No contract changes. Calendar must keep working. File ≤ 300 lines.
+**M1.** Extract manual booking UI from `features/master-calendar` into `features/manual-booking`. Add «Записать клиента» on `/app/master/bookings`. Reuse existing `POST /master/bookings` (phone optional already). No contract edits.
 
-**M2.** Extend `ListMasterClientsQuery` with `sort=recent|frequent` and `MasterClientView` visitsCount/lastVisitAt. Search name, phone, Instagram/Telegram handle. New `/app/master/clients` with Search and Frequent tabs; «Записать» prefills the existing manual form. Make phone optional when socialHandle is set. Do not invent a recommendations module.
+**M2.** Page `/app/master/clients` with Search and Frequent (`sort=frequent` already on the API). Compute frequent from completed bookings. Prefill the existing form. Do **not** change guest upsert/identity.
 
-**C1.** Client cabinet: «Записаться» → `/app/client/book` (service → master → existing SlotPicker). If `GET /client/recommendations` returns services, show them first; if empty/error, catalog/favorites/past bookings only. Do not change master booking APIs.
+**C1.** Client cabinet: «Записаться» → `/app/client/book`. Recommendations optional.
 
-**R1.** New Nest module `recommendations`, `GET /client/recommendations`, contracts in `recommendations.ts`. Rank by completed booking frequency, limit 3, last master per service. No ML. Unit tests on rank function. No web UI in this PR.
+**R1.** Nest module implementing existing `ClientRecommendationsResponseSchema`. No schema reshape. No web UI.
 
 ---
 

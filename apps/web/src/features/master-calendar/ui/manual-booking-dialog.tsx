@@ -90,7 +90,7 @@ export function ManualBookingDialog({
     })
 
     if (!parsed.success) {
-      setFormError('Проверьте имя, телефон и услугу')
+      setFormError('Проверьте имя, контакты и услугу')
 
       return
     }
@@ -173,6 +173,10 @@ export function ManualBookingDialog({
                 setValue('socialHandle', client.socialHandle ?? '', {
                   shouldDirty: true,
                 })
+
+                if (client.source === 'instagram' || client.source === 'telegram') {
+                  setValue('channel', client.source, { shouldDirty: true })
+                }
               }}
             />
           </div>
@@ -187,7 +191,7 @@ export function ManualBookingDialog({
               inputMode="tel"
               placeholder="+375291112233"
               data-testid={TEST_ID.dialogManualPhone}
-              {...register('phone', { required: true })}
+              {...register('phone')}
             />
           </div>
 
@@ -213,7 +217,9 @@ export function ManualBookingDialog({
                 className={styles.input}
                 placeholder="@username"
                 autoComplete="off"
-                {...register('socialHandle')}
+                required
+                data-testid={TEST_ID.dialogManualHandle}
+                {...register('socialHandle', { required: true })}
               />
             </div>
           ) : null}

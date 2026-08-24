@@ -1,7 +1,12 @@
 import { z } from 'zod'
 
-import { ByPhoneSchema } from './phone'
+import { OptionalByPhoneSchema } from './phone'
 import { BookingReviewRefSchema } from './review'
+import {
+  InstagramHandleSchema,
+  TelegramHandleSchema,
+  normalizeSocialHandle,
+} from './social-handle'
 
 export const BookingStatusSchema = z.enum([
   'hold',
@@ -76,17 +81,92 @@ export const ContactChannelSchema = z.enum([
 ])
 export type ContactChannel = z.infer<typeof ContactChannelSchema>
 
+const OptionalSocialHandleSchema = z.preprocess((value) => {
+  if (value === '' || value === null || value === undefined) {
+    return undefined
+  }
+
+  if (typeof value === 'string' && value.trim() === '') {
+    return undefined
+  }
+
+  return value
+}, z.string().trim().max(40).optional())
+
 export const CreateManualBookingInputSchema = z
   .object({
     serviceId: z.string().uuid(),
     startsAt: z.string().datetime(),
     clientName: z.string().trim().min(1, 'Укажите имя').max(80),
-    phone: ByPhoneSchema,
+    phone: OptionalByPhoneSchema,
     channel: ManualBookingChannelSchema,
-    socialHandle: z.string().trim().max(40).optional(),
+    socialHandle: OptionalSocialHandleSchema,
     note: z.string().trim().max(500).optional(),
   })
   .strict()
+  .superRefine((value, ctx) => {
+    if (value.channel === 'phone' && !value.phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['phone'],
+        message: 'Укажите телефон',
+      })
+    }
+
+    if (value.channel !== 'instagram' && value.channel !== 'telegram') {
+      return
+    }
+
+    if (!value.socialHandle) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['socialHandle'],
+        message:
+          value.channel === 'telegram'
+            ? 'Укажите ник в Telegram'
+            : 'Укажите ник в Instagram',
+      })
+
+      return
+    }
+
+    const parsed =
+      value.channel === 'telegram'
+        ? TelegramHandleSchema.safeParse(value.socialHandle)
+        : InstagramHandleSchema.safeParse(value.socialHandle)
+
+    if (!parsed.success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['socialHandle'],
+        message: parsed.error.issues[0]?.message ?? 'Проверьте ник',
+      })
+    }
+  })
+  .transform((value) => {
+    if (!value.socialHandle) {
+      return value
+    }
+
+    if (value.channel === 'telegram') {
+      return {
+        ...value,
+        socialHandle: TelegramHandleSchema.parse(value.socialHandle),
+      }
+    }
+
+    if (value.channel === 'instagram') {
+      return {
+        ...value,
+        socialHandle: InstagramHandleSchema.parse(value.socialHandle),
+      }
+    }
+
+    return {
+      ...value,
+      socialHandle: normalizeSocialHandle(value.socialHandle),
+    }
+  })
 export type CreateManualBookingInput = z.infer<
   typeof CreateManualBookingInputSchema
 >
@@ -94,6 +174,7 @@ export type CreateManualBookingInput = z.infer<
 export const ListMasterClientsQuerySchema = z
   .object({
     query: z.string().trim().max(80).default(''),
+    sort: z.enum(['recent', 'frequent']).default('recent'),
   })
   .strict()
 export type ListMasterClientsQuery = z.infer<
@@ -106,6 +187,8 @@ export const MasterClientViewSchema = z.object({
   phone: z.string().nullable(),
   source: ContactChannelSchema.nullable(),
   socialHandle: z.string().nullable(),
+  visitsCount: z.number().int().nonnegative(),
+  lastVisitAt: z.string().datetime().nullable(),
 })
 export type MasterClientView = z.infer<typeof MasterClientViewSchema>
 

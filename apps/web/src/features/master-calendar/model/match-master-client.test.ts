@@ -9,6 +9,8 @@ const clients = [
     phone: '+375291112233',
     source: 'instagram' as const,
     socialHandle: null,
+    visitsCount: 0,
+    lastVisitAt: null,
   },
   {
     id: '2',
@@ -16,6 +18,8 @@ const clients = [
     phone: '+375297776655',
     source: 'phone' as const,
     socialHandle: null,
+    visitsCount: 0,
+    lastVisitAt: null,
   },
 ]
 

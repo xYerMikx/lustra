@@ -10,6 +10,7 @@ export async function listMasterClientsInStore(
   input: {
     masterId: string
     query: string
+    sort?: 'recent' | 'frequent'
     limit?: number
   },
 ): Promise<MasterClientRecord[]> {
@@ -29,7 +30,10 @@ export async function listMasterClientsInStore(
           }
         : {}),
     },
-    orderBy: { updatedAt: 'desc' },
+    orderBy:
+      input.sort === 'frequent'
+        ? [{ visitsCount: 'desc' }, { lastVisitAt: 'desc' }, { name: 'asc' }]
+        : { updatedAt: 'desc' },
     take,
     select: {
       id: true,
@@ -37,6 +41,8 @@ export async function listMasterClientsInStore(
       phone: true,
       source: true,
       note: true,
+      visitsCount: true,
+      lastVisitAt: true,
     },
   })
 
@@ -46,5 +52,7 @@ export async function listMasterClientsInStore(
     phone: row.phone,
     source: row.source,
     socialHandle: socialHandleFromNote(row.note),
+    visitsCount: row.visitsCount,
+    lastVisitAt: row.lastVisitAt ? row.lastVisitAt.toISOString() : null,
   }))
 }

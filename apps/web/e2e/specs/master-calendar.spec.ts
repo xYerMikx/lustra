@@ -41,7 +41,7 @@ test.describe('master calendar', () => {
     await expect(page.getByTestId(TEST_ID.dialogManual)).toBeVisible()
 
     await page.getByTestId(TEST_ID.dialogManualName).fill('Гость из директа')
-    await page.getByTestId(TEST_ID.dialogManualPhone).fill('+375291112233')
+    await page.getByTestId(TEST_ID.dialogManualHandle).fill('@directguest')
     await page.getByTestId(TEST_ID.dialogManualSubmit).click()
 
     await page.goto('/app/master/bookings')

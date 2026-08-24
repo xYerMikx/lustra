@@ -115,6 +115,7 @@ describe('CreateManualBookingUseCase', () => {
       clientName: 'Оля',
       phone: '+375291112233',
       channel: 'instagram',
+      socialHandle: 'olya.nails',
       note: 'из директа',
     })
 
@@ -125,6 +126,7 @@ describe('CreateManualBookingUseCase', () => {
         masterId: 'm1',
         channel: 'instagram',
         phone: '+375291112233',
+        socialHandle: 'olya.nails',
         clientName: 'Оля',
       }),
     )
@@ -175,6 +177,7 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
 
@@ -207,6 +210,35 @@ describe('CreateManualBookingUseCase', () => {
         channel: 'walk_in',
       }),
     ).rejects.toMatchObject({ code: 'TIME_OVERLAP' } satisfies Partial<DomainError>)
+  })
+
+  it('creates a guest booking with Instagram nick and no phone', async () => {
+    const store = buildStore()
+    const ensureSlots = {
+      execute: vi.fn().mockResolvedValue({ createdHint: 0 }),
+    } as unknown as EnsureSlotsUseCase
+    const useCase = new CreateManualBookingUseCase(
+      store,
+      createTransactions(),
+      clock,
+      ensureSlots,
+    )
+
+    await useCase.execute(currentUser, {
+      serviceId: 'svc1',
+      startsAt,
+      clientName: 'Оля',
+      channel: 'instagram',
+      socialHandle: 'olya.nails',
+    })
+
+    expect(store.createManualBooking).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phone: null,
+        socialHandle: 'olya.nails',
+        clientName: 'Оля',
+      }),
+    )
   })
 
   it('hides a missing master profile', async () => {

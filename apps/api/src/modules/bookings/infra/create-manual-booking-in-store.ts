@@ -99,31 +99,37 @@ async function upsertGuestMasterClient(
   input: {
     masterId: string
     name: string
-    phone: string
+    phone: string | null
     socialHandle: string | null
     source: CreateManualBookingStoreInput['channel']
   },
 ): Promise<{ id: string; isBlocked: boolean }> {
   const handleNote = clientNoteFromHandle(input.socialHandle)
-  const existing = await db.masterClient.findFirst({
-    where: {
-      masterId: input.masterId,
-      phone: input.phone,
-    },
-    select: { id: true, isBlocked: true, note: true },
-  })
 
-  if (existing) {
-    await db.masterClient.update({
-      where: { id: existing.id },
-      data: {
-        name: input.name,
-        source: input.source,
-        note: handleNote ?? existing.note,
+  // Identity matching by Instagram/Telegram handle is not implemented yet.
+  // Match only a concrete phone — `phone: null` would collide with every
+  // guest who has no number (Prisma treats that as IS NULL).
+  if (input.phone) {
+    const existing = await db.masterClient.findFirst({
+      where: {
+        masterId: input.masterId,
+        phone: input.phone,
       },
+      select: { id: true, isBlocked: true, note: true },
     })
 
-    return existing
+    if (existing) {
+      await db.masterClient.update({
+        where: { id: existing.id },
+        data: {
+          name: input.name,
+          source: input.source,
+          note: handleNote ?? existing.note,
+        },
+      })
+
+      return existing
+    }
   }
 
   return db.masterClient.create({

@@ -128,6 +128,7 @@ export const TEST_ID = {
   dialogManual: 'dialog-manual',
   dialogManualName: 'dialog-manual-name',
   dialogManualPhone: 'dialog-manual-phone',
+  dialogManualHandle: 'dialog-manual-handle',
   dialogManualSubmit: 'dialog-manual-submit',
 
   masterBookingsList: 'master-bookings-list',
