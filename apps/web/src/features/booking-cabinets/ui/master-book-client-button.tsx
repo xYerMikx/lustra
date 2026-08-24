@@ -4,9 +4,9 @@ import { useState } from 'react'
 import type { CreateManualBookingInput } from '@lustra/contracts'
 
 import {
-  loadManualBookingContext,
-  type ManualBookingContext,
-} from '@/features/manual-booking/model/load-manual-booking-context'
+  loadManualBookingFormData,
+  type ManualBookingFormData,
+} from '@/features/manual-booking/model/load-manual-booking-form-data'
 import { ManualBookingDialog } from '@/features/manual-booking/ui/manual-booking-dialog'
 import { todayYmdDate } from '@/features/master-calendar/model/calendar-range'
 import { createManualBooking } from '@/shared/api/bookings-client'
@@ -25,22 +25,22 @@ export function MasterBookClientButton({
 }: MasterBookClientButtonProps) {
   const toast = useToast()
   const [opening, setOpening] = useState(false)
-  const [context, setContext] = useState<ManualBookingContext | null>(null)
+  const [dialog, setDialog] = useState<ManualBookingFormData | null>(null)
   const today = todayYmdDate()
 
   const openDialog = async () => {
     setOpening(true)
 
     try {
-      const next = await loadManualBookingContext()
+      const formData = await loadManualBookingFormData()
 
-      if (next.services.length === 0) {
+      if (formData.services.length === 0) {
         toast.error('Сначала добавьте услугу в кабинете')
 
         return
       }
 
-      setContext(next)
+      setDialog(formData)
     } catch (error) {
       toast.error(
         error instanceof ApiError ? error.message : 'Не удалось открыть запись',
@@ -48,6 +48,10 @@ export function MasterBookClientButton({
     } finally {
       setOpening(false)
     }
+  }
+
+  const closeDialog = () => {
+    setDialog(null)
   }
 
   const submitBooking = async (input: CreateManualBookingInput) => {
@@ -68,14 +72,14 @@ export function MasterBookClientButton({
       >
         Записать клиента
       </Button>
-      {context ? (
+      {dialog ? (
         <ManualBookingDialog
           defaultDate={today}
           defaultStartsAt={null}
           minDate={today}
-          services={context.services}
-          clients={context.clients}
-          onClose={() => setContext(null)}
+          services={dialog.services}
+          clients={dialog.clients}
+          onClose={closeDialog}
           onSubmit={submitBooking}
         />
       ) : null}

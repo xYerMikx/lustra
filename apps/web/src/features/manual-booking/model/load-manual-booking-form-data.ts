@@ -3,12 +3,12 @@ import type { MasterClientView, ServiceView } from '@lustra/contracts'
 import { listMasterClients } from '@/shared/api/master-clients-client'
 import { listMasterServices } from '@/shared/api/master-services-client'
 
-export type ManualBookingContext = {
+export type ManualBookingFormData = {
   services: ServiceView[]
   clients: MasterClientView[]
 }
 
-export async function loadManualBookingContext(): Promise<ManualBookingContext> {
+export async function loadManualBookingFormData(): Promise<ManualBookingFormData> {
   const [servicesResponse, clientsResponse] = await Promise.all([
     listMasterServices(),
     listMasterClients(),

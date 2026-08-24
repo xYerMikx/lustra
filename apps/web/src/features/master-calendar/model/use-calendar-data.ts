@@ -9,7 +9,7 @@ import type {
   PutScheduleExceptionInput,
 } from '@lustra/contracts'
 
-import { loadManualBookingContext } from '@/features/manual-booking/model/load-manual-booking-context'
+import { loadManualBookingFormData } from '@/features/manual-booking/model/load-manual-booking-form-data'
 import {
   rangeForMode,
   type CalendarViewMode,
@@ -124,10 +124,6 @@ export function useCalendarData(
     setReloadToken((value) => value + 1)
   }, [])
 
-  const loadManualContext = useCallback(async () => {
-    return loadManualBookingContext()
-  }, [])
-
   const addManualBooking = useCallback(
     async (input: CreateManualBookingInput) => {
       await createManualBooking(input)
@@ -161,7 +157,7 @@ export function useCalendarData(
     removeBlock,
     addException,
     removeException,
-    loadManualContext,
+    loadManualBookingFormData,
     addManualBooking,
     addExtraSlot,
     closeSlot,
