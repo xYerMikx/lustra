@@ -97,6 +97,7 @@ export const TEST_ID = {
   onboardingPortfolioAdd: 'onboarding-portfolio-add',
   pageMasterPortfolio: 'page-master-portfolio',
   pageMasterLedger: 'page-master-ledger',
+  pageMasterClients: 'page-master-clients',
   portfolioFileInput: 'portfolio-file-input',
   portfolioEmpty: 'portfolio-empty',
   portfolioCoverBadge: 'portfolio-cover-badge',
@@ -130,6 +131,12 @@ export const TEST_ID = {
   dialogManualPhone: 'dialog-manual-phone',
   dialogManualHandle: 'dialog-manual-handle',
   dialogManualSubmit: 'dialog-manual-submit',
+
+  clientsTabSearch: 'clients-tab-search',
+  clientsTabFrequent: 'clients-tab-frequent',
+  clientsSearchInput: 'clients-search-input',
+  clientsList: 'clients-list',
+  clientsBookButton: 'clients-book-button',
 
   masterBookingsList: 'master-bookings-list',
   masterBookingConfirm: 'master-booking-confirm',

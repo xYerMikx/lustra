@@ -4,6 +4,7 @@ import type { MasterWorkspaceItem } from '@/features/app-shell/model/master-work
 import {
   BookingsIcon,
   CalendarIcon,
+  ClientsIcon,
   HomeIcon,
   LedgerIcon,
   OnboardingIcon,
@@ -15,6 +16,7 @@ const ICONS: Record<MasterWorkspaceItem['icon'], ReactNode> = {
   home: <HomeIcon />,
   calendar: <CalendarIcon />,
   bookings: <BookingsIcon />,
+  clients: <ClientsIcon />,
   portfolio: <PortfolioIcon />,
   reviews: <ReviewsIcon />,
   ledger: <LedgerIcon />,
