@@ -5,7 +5,7 @@ import cn from 'classnames'
 import type { MasterClientView } from '@lustra/contracts'
 
 import { todayYmdDate } from '@/features/master-calendar/model/calendar-range'
-import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
+import { ManualBookingDialog } from '@/features/manual-booking/ui/manual-booking-dialog'
 import { useBookFromClient } from '@/features/master-clients/model/use-book-from-client'
 import {
   useMasterClients,

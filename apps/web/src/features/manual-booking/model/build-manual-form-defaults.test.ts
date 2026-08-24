@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildManualFormDefaults } from '@/features/master-calendar/model/build-manual-form-defaults'
+import { buildManualFormDefaults } from '@/features/manual-booking/model/build-manual-form-defaults'
 
 describe('buildManualFormDefaults', () => {
   const services = [{ id: 'svc1' }]

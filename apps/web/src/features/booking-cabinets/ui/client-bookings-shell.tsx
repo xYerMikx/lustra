@@ -6,10 +6,11 @@ import cn from 'classnames'
 import { useClientSession } from '@/features/auth'
 import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { useClientBookingsList } from '@/features/booking-cabinets/model/use-client-bookings'
+import { ClientBookingsEmpty } from '@/features/booking-cabinets/ui/client-bookings-empty'
 import { BookingListRow } from '@/features/booking-cabinets/ui/booking-list-row'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'
 import { TelegramLinkCard } from '@/features/telegram-link'
-import { Button } from '@/shared/ui/button'
+import { Button, ButtonLink } from '@/shared/ui/button'
 import { formatByn } from '@/shared/lib/money'
 import { TEST_ID } from '@/shared/lib/test-id'
 
@@ -21,14 +22,19 @@ export function ClientBookingsShell() {
   const list = useClientBookingsList(scope)
   const emptyCopy =
     scope === 'upcoming'
-      ? 'Пока нет предстоящих записей. Выберите мастера в каталоге.'
+      ? 'Пока нет предстоящих записей.'
       : 'Прошлых записей пока нет.'
 
   return (
     <section className={styles.shell} data-testid={TEST_ID.pageClientBookings}>
-      <header>
-        <p className={styles.eyebrow}>Кабинет клиента</p>
-        <h1 className={styles.title}>Мои записи</h1>
+      <header className={styles.titleRow}>
+        <div>
+          <p className={styles.eyebrow}>Кабинет клиента</p>
+          <h1 className={styles.title}>Мои записи</h1>
+        </div>
+        <ButtonLink href="/app/client/book" data-testid={TEST_ID.clientBookCta}>
+          Записаться
+        </ButtonLink>
       </header>
 
       <TelegramLinkCard linked={session.telegramLinked} audience="client" />
@@ -66,7 +72,10 @@ export function ClientBookingsShell() {
       ) : null}
 
       {list.status === 'empty' ? (
-        <p className={styles.empty}>{emptyCopy}</p>
+        <ClientBookingsEmpty
+          copy={emptyCopy}
+          showBookCta={scope === 'upcoming'}
+        />
       ) : null}
 
       {list.status === 'success' ? (

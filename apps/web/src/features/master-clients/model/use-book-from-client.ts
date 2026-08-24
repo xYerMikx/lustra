@@ -7,7 +7,7 @@ import type {
   ServiceView,
 } from '@lustra/contracts'
 
-import { loadManualBookingContext } from '@/features/master-clients/model/load-manual-booking-context'
+import { loadManualBookingFormData } from '@/features/manual-booking/model/load-manual-booking-form-data'
 import { createManualBooking } from '@/shared/api/bookings-client'
 import { ApiError } from '@/shared/api/http'
 
@@ -27,15 +27,15 @@ export function useBookFromClient(onBooked: () => void) {
     setBusyId(client.id)
 
     try {
-      const context = await loadManualBookingContext()
+      const formData = await loadManualBookingFormData()
 
-      if (context.services.length === 0) {
+      if (formData.services.length === 0) {
         setNotice('Сначала добавьте услугу в кабинете')
 
         return
       }
 
-      setDialog({ client, ...context })
+      setDialog({ client, ...formData })
     } catch (error) {
       setNotice(
         error instanceof ApiError

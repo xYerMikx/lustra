@@ -12,6 +12,13 @@ export const TEST_ID = {
   pageMasterPublic: 'page-master-public',
   pageOnboarding: 'page-onboarding',
   pageClientBookings: 'page-client-bookings',
+  pageClientBook: 'page-client-book',
+  clientBookCta: 'client-book-cta',
+  clientBookServiceStep: 'client-book-service-step',
+  clientBookMasterStep: 'client-book-master-step',
+  clientBookSlotStep: 'client-book-slot-step',
+  clientBookServiceSearch: 'client-book-service-search',
+  clientBookBack: 'client-book-back',
   pageClientBookingDetail: 'page-client-booking-detail',
   pageFavorites: 'page-favorites',
   pageCalendar: 'page-calendar',
@@ -109,6 +116,8 @@ export const TEST_ID = {
   bookingsTabUpcoming: 'bookings-tab-upcoming',
   bookingsTabPast: 'bookings-tab-past',
   bookingsTabPending: 'bookings-tab-pending',
+  bookingsManualOpen: 'bookings-manual-open',
+  bookingsEmptyManualOpen: 'bookings-empty-manual-open',
 
   calendarBlockOpen: 'calendar-block-open',
   calendarExceptionOpen: 'calendar-exception-open',
@@ -169,6 +178,14 @@ export function slotChipTestId(timeLabel: string): string {
 
 export function serviceOptionTestId(serviceId: string): string {
   return `service-option-${serviceId}`
+}
+
+export function bookServiceOptionTestId(key: string): string {
+  return `book-service-${key.replace(/[^a-zA-Z0-9_-]+/g, '-')}`
+}
+
+export function bookMasterOptionTestId(slug: string): string {
+  return `book-master-${slug}`
 }
 
 export function bookingStatusTestId(status: string): string {
