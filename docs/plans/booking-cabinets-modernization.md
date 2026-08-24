@@ -77,7 +77,7 @@
 ## Контракты (уже в базе; фича-ветки не переписывают форму)
 
 `packages/contracts/src/booking.ts` — manual input + list clients.  
-`packages/contracts/src/recommendations.ts` — только R1 добавляет Nest-модуль, не ломая схему.
+`packages/contracts/src/recommendations.ts` — ответ `{ recommendations }`, не каталог услуг.
 
 
 ---
@@ -139,7 +139,7 @@
 
 ## Нарезка веток (4 агента)
 
-База каждой ветки: **`cursor/booking-cabinets-foundation-505e`** (или `develop` после merge базы). Не трогать `CreateManualBookingInputSchema` и `recommendations.ts` форму ответа.
+База каждой ветки: **`cursor/booking-cabinets-foundation-505e`** (или `develop` после merge базы). Не трогать `CreateManualBookingInputSchema`. Ответ рекомендаций: `{ recommendations }`.
 
 ```
 foundation ──┬─ M1 web: CTA + shared manual form
@@ -153,7 +153,7 @@ foundation ──┬─ M1 web: CTA + shared manual form
 | **M1** | `cursor/master-book-from-list-505e` | extract `features/manual-booking/`, CTA на `/app/master/bookings` | contracts, recommendations module |
 | **M2** | `cursor/master-client-book-505e` | страница клиентов, COUNT для `sort=frequent`, префилл формы | schema manual booking, identity upsert |
 | **C1** | `cursor/client-book-from-cabinet-505e` | `/app/client/book`, CTA в кабинете | master bookings API |
-| **R1** | `cursor/client-recommendations-505e` | Nest-модуль + тесты ранжирования | форма `recommendations.ts` (только реализация) |
+| **R1** | `cursor/client-recommendations-505e` | Nest-модуль + тесты ранжирования | ключ ответа `recommendations` |
 
 Склейку по нику (раздел «кто такой клиент») **не класть** в M2, пока не выбран вариант A–D.
 
@@ -235,7 +235,7 @@ Postman: новые ручки через MCP (`GET /master/clients?sort=frequen
 
 **C1.** Client cabinet: «Записаться» → `/app/client/book`. Recommendations optional.
 
-**R1.** Nest module implementing existing `ClientRecommendationsResponseSchema`. No schema reshape. No web UI.
+**R1.** Nest module implementing `ClientRecommendationsResponseSchema` (`recommendations`, not `services`). No web UI.
 
 ---
 

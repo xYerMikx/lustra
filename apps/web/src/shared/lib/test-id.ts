@@ -115,6 +115,8 @@ export const TEST_ID = {
   bookingsTabUpcoming: 'bookings-tab-upcoming',
   bookingsTabPast: 'bookings-tab-past',
   bookingsTabPending: 'bookings-tab-pending',
+  bookingsManualOpen: 'bookings-manual-open',
+  bookingsEmptyManualOpen: 'bookings-empty-manual-open',
 
   calendarBlockOpen: 'calendar-block-open',
   calendarExceptionOpen: 'calendar-exception-open',

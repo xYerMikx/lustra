@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildManualStartsAt } from '@/features/master-calendar/model/build-manual-starts-at'
+import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'
 
 describe('buildManualStartsAt', () => {
   it('builds an ISO instant in Europe/Minsk', () => {

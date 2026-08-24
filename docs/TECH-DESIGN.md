@@ -1092,7 +1092,7 @@ POST /api/v1/master/bookings                 { serviceId, startsAt, clientName, 
 PATCH /api/v1/master/bookings/:id            { note?, priceAmount? }
 POST /api/v1/master/bookings/:id/(confirm|complete|no-show|cancel|reschedule)
 GET  /api/v1/master/clients                  ?query=&sort=recent|frequent
-GET  /api/v1/client/recommendations          → топ-3 услуг по частоте completed (модуль отдельно)
+GET  /api/v1/client/recommendations          → { recommendations } топ-3 по частоте completed (модуль отдельно)
 PATCH /api/v1/master/clients/:id             { name?, phone?, note?, tags?, isBlocked? }
 GET  /api/v1/master/ledger                   ?from=&to=&kind=&categoryId=  → касса (только master)
 POST /api/v1/master/ledger/entries           { kind, categoryId, amount, occurredOn?, periodStart?, periodEnd?, note?, bookingId? }

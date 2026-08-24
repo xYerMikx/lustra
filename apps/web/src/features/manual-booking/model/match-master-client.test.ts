@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { matchMasterClient } from '@/features/master-calendar/model/match-master-client'
+import { matchMasterClient } from '@/features/manual-booking/model/match-master-client'
 
 const clients = [
   {
