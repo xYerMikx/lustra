@@ -21,7 +21,7 @@ import { CalendarNotice } from '@/features/master-calendar/ui/calendar-notice'
 import { CalendarToolbar } from '@/features/master-calendar/ui/calendar-toolbar'
 import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
 import { ExtraSlotDialog } from '@/features/master-calendar/ui/extra-slot-dialog'
-import { ManualBookingDialog } from '@/features/master-calendar/ui/manual-booking-dialog'
+import { ManualBookingDialog } from '@/features/manual-booking/ui/manual-booking-dialog'
 import { ApiError } from '@/shared/api/http'
 import { TEST_ID } from '@/shared/lib/test-id'
 

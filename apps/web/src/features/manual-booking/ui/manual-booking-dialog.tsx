@@ -13,11 +13,11 @@ import formStyles from '@/features/auth/ui/auth-form.module.css'
 import {
   buildManualFormDefaults,
   type ManualFormValues,
-} from '@/features/master-calendar/model/build-manual-form-defaults'
-import { buildManualStartsAt } from '@/features/master-calendar/model/build-manual-starts-at'
-import { IDENTITY_NETWORK_OPTIONS, MANUAL_CHANNEL_OPTIONS } from '@/features/master-calendar/model/channel-options'
-import styles from '@/features/master-calendar/ui/calendar.module.css'
-import { ClientSuggest } from '@/features/master-calendar/ui/client-suggest'
+} from '@/features/manual-booking/model/build-manual-form-defaults'
+import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'
+import { IDENTITY_NETWORK_OPTIONS, MANUAL_CHANNEL_OPTIONS } from '@/features/manual-booking/model/channel-options'
+import styles from '@/features/manual-booking/ui/manual-booking.module.css'
+import { ClientSuggest } from '@/features/manual-booking/ui/client-suggest'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
 import { Dialog } from '@/shared/ui/dialog'

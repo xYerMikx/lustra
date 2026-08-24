@@ -6,9 +6,9 @@ import {
 } from 'react'
 import type { MasterClientView } from '@lustra/contracts'
 
-import { applySuggestKey } from '@/features/master-calendar/model/apply-suggest-key'
-import { filterMasterClients } from '@/features/master-calendar/model/filter-master-clients'
-import { isEventInside } from '@/features/master-calendar/model/is-event-inside'
+import { applySuggestKey } from '@/features/manual-booking/model/apply-suggest-key'
+import { filterMasterClients } from '@/features/manual-booking/model/filter-master-clients'
+import { isEventInside } from '@/features/manual-booking/model/is-event-inside'
 
 type UseClientSuggestInput = {
   value: string
