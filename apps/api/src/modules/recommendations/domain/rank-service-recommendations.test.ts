@@ -103,7 +103,7 @@ describe('rankServiceRecommendations', () => {
     })
   })
 
-  it('returns at most three services', () => {
+  it('returns at most three recommendations', () => {
     const ranked = rankServiceRecommendations([
       row({
         serviceId: MANICURE_ID,

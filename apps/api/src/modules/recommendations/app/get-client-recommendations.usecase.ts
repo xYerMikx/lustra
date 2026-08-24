@@ -19,7 +19,7 @@ export class GetClientRecommendationsUseCase {
     const rows = await this.bookings.listCompletedByClient(currentUser.id)
 
     return {
-      services: rankServiceRecommendations(rows),
+      recommendations: rankServiceRecommendations(rows),
     }
   }
 }

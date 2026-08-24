@@ -72,15 +72,15 @@ describe('GetClientRecommendationsUseCase', () => {
     expect(store.listCompletedByClient).toHaveBeenCalledTimes(1)
     expect(store.listCompletedByClient).toHaveBeenCalledWith(client.id)
     expect(store.listCompletedByClient).not.toHaveBeenCalledWith(otherClientId)
-    expect(result.services.map((item) => item.serviceTitle)).toEqual([
+    expect(result.recommendations.map((item) => item.serviceTitle)).toEqual([
       'Маникюр',
       'Брови',
     ])
-    expect(result.services[0]?.completedCount).toBe(2)
+    expect(result.recommendations[0]?.completedCount).toBe(2)
     expect(JSON.stringify(result)).not.toContain('trustScore')
     expect(JSON.stringify(result)).not.toContain('masterNote')
-    expect(result.services[0]).not.toHaveProperty('trustScore')
-    expect(result.services[0]).not.toHaveProperty('masterNote')
+    expect(result.recommendations[0]).not.toHaveProperty('trustScore')
+    expect(result.recommendations[0]).not.toHaveProperty('masterNote')
   })
 
   it('returns an empty list when the client has no completed bookings', async () => {
@@ -91,6 +91,6 @@ describe('GetClientRecommendationsUseCase', () => {
 
     const result = await useCase.execute(client)
 
-    expect(result).toEqual({ services: [] })
+    expect(result).toEqual({ recommendations: [] })
   })
 })
