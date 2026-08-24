@@ -1,0 +1,136 @@
+---
+interface TocItem {
+  id: string
+  title: string
+}
+
+interface Props {
+  title: string
+  meta: string
+  lead: string
+  notice?: string
+  tocLabel?: string
+  toc: TocItem[]
+}
+
+const {
+  title,
+  meta,
+  lead,
+  notice,
+  tocLabel = 'Содержание',
+  toc,
+} = Astro.props
+---
+
+<main class="legal-document">
+  <a class="back" href="/">← Lumira</a>
+  <h1 class="title">{title}</h1>
+  <p class="meta">{meta}</p>
+  <p class="lead">{lead}</p>
+  {notice ? <p class="notice">{notice}</p> : null}
+  <slot name="facts" />
+  <nav class="toc" aria-label={tocLabel}>
+    <p class="toc-title">Содержание</p>
+    <ol class="toc-list">
+      {
+        toc.map((item) => (
+          <li class="toc-item">
+            <a class="toc-link" href={`#${item.id}`}>
+              {item.title}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+  <slot />
+</main>
+
+<style>
+  .legal-document {
+    width: min(720px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    padding: var(--spacing-40) 0 var(--spacing-96);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    margin-bottom: var(--spacing-16);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-2);
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+
+  .title {
+    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-16);
+  }
+
+  .meta {
+    color: var(--color-text-3);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-16);
+    line-height: 1.55;
+  }
+
+  .notice {
+    color: var(--color-text-2);
+    line-height: 1.55;
+    padding: var(--spacing-16);
+    margin-bottom: var(--spacing-32);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+  }
+
+  .toc {
+    margin-bottom: var(--spacing-40);
+    padding: var(--spacing-24);
+    background: var(--color-surface-2);
+    border-radius: var(--radius-8);
+  }
+
+  .toc-title {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .toc-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--spacing-4);
+  }
+
+  .toc-link {
+    display: flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    color: var(--color-text-2);
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+  }
+
+  .toc-link:hover {
+    color: var(--color-accent);
+  }
+</style>

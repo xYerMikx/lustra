@@ -1,0 +1,146 @@
+---
+import type { PrivacyBlock } from '@/lib/privacy-policy'
+
+interface Props {
+  block: PrivacyBlock
+}
+
+const { block } = Astro.props
+---
+
+{
+  block.type === 'p' && (
+    <p class="copy">{block.text}</p>
+  )
+}
+
+{
+  block.type === 'note' && (
+    <p class="note">{block.text}</p>
+  )
+}
+
+{
+  block.type === 'link' && (
+    <p class="copy">
+      <a class="inline-link" href={block.href}>
+        {block.label}
+      </a>
+    </p>
+  )
+}
+
+{
+  block.type === 'ul' && (
+    <ul class="list">
+      {block.items.map((item) => (
+        <li class="item">{item}</li>
+      ))}
+    </ul>
+  )
+}
+
+{
+  block.type === 'table' && (
+    <div class="table-wrap">
+      <table class="table">
+        {block.caption ? <caption class="caption">{block.caption}</caption> : null}
+        <thead class="head">
+          <tr class="row">
+            {block.headers.map((header) => (
+              <th class="cell head-cell" scope="col">
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {block.rows.map((row) => (
+            <tr class="row">
+              {row.map((cell) => (
+                <td class="cell">{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+<style>
+  .copy,
+  .note,
+  .item {
+    color: var(--color-text-2);
+    line-height: var(--text-16--line-height);
+  }
+
+  .list,
+  .table-wrap {
+    margin: 0;
+  }
+
+  .note {
+    padding: var(--spacing-16);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+  }
+
+  .inline-link {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
+    min-height: var(--spacing-40);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .inline-link:hover {
+    color: var(--color-accent-700);
+  }
+
+  .list {
+    margin: 0;
+    padding-left: var(--spacing-24);
+    display: grid;
+    gap: var(--spacing-8);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-8);
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-15);
+    line-height: var(--text-15--line-height);
+  }
+
+  .caption {
+    text-align: left;
+    padding: var(--spacing-12) var(--spacing-16);
+    color: var(--color-text-3);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    caption-side: top;
+  }
+
+  .cell {
+    padding: var(--spacing-12) var(--spacing-16);
+    text-align: left;
+    vertical-align: top;
+    color: var(--color-text-2);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .head-cell {
+    color: var(--color-text);
+    font-weight: var(--font-weight-600);
+    background: var(--color-surface-2);
+    border-top: 0;
+  }
+</style>

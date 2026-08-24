@@ -1,0 +1,60 @@
+---
+import { getEntry } from 'astro:content'
+import BaseLayout from '@/layouts/base-layout.astro'
+import ServicesCatalog from '@/components/services-catalog.astro'
+import { getAppUrl } from '@/lib/site'
+import {
+  catalogHrefForService,
+  groupServicesByCategory,
+} from '@/lib/service-catalog'
+
+const copy = (await getEntry('sections', 'services'))!.data
+const browse = (await getEntry('sections', 'browse'))!.data
+const catalogHref = getAppUrl('/catalog')
+
+const groups = groupServicesByCategory(browse.categories ?? []).map((group) => ({
+  name: group.name,
+  slug: group.slug,
+  categoryHref: getAppUrl(`/catalog/${group.slug}`),
+  services: group.services.map((service) => ({
+    title: service.title,
+    href: catalogHrefForService(getAppUrl, group.slug, service.title),
+  })),
+}))
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: copy.title,
+  description: copy.lead,
+  itemListElement: groups
+    .flatMap((group) =>
+      group.services.map((service) => ({
+        '@type': 'ListItem',
+        name: service.title,
+        url: service.href,
+      })),
+    )
+    .map((item, index) => ({
+      ...item,
+      position: index + 1,
+    })),
+}
+---
+
+<BaseLayout
+  title="Все бьюти-услуги в Минске — каталог · Lumira"
+  description="Полный каталог бьюти-услуг Lumira в Минске: ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг. Найдите мастера и запишитесь онлайн."
+  canonicalPath="/services"
+  jsonLd={jsonLd}
+>
+  <ServicesCatalog
+    eyebrow={copy.eyebrow!}
+    title={copy.title!}
+    lead={copy.lead!}
+    catalogCta={copy.primaryCta!}
+    catalogHref={catalogHref}
+    emptyMessage={copy.emptyMessage!}
+    groups={groups}
+  />
+</BaseLayout>

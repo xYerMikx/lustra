@@ -10,9 +10,19 @@ interface Props {
   lead: string
   categories: LinkItem[]
   districts: LinkItem[]
+  allServicesHref?: string
+  allServicesLabel?: string
 }
 
-const { eyebrow, title, lead, categories, districts } = Astro.props
+const {
+  eyebrow,
+  title,
+  lead,
+  categories,
+  districts,
+  allServicesHref,
+  allServicesLabel = 'Все услуги',
+} = Astro.props
 ---
 
 <section class="browse section" id="browse" aria-labelledby="browse-title">
@@ -47,6 +57,14 @@ const { eyebrow, title, lead, categories, districts } = Astro.props
         </ul>
       </div>
     </div>
+
+    {
+      allServicesHref ? (
+        <p class="all-services">
+          <a href={allServicesHref}>{allServicesLabel}</a>
+        </p>
+      ) : null
+    }
   </div>
 </section>
 
@@ -118,6 +136,18 @@ const { eyebrow, title, lead, categories, districts } = Astro.props
   a:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
+  }
+
+  .all-services {
+    margin-top: var(--spacing-32);
+  }
+
+  .all-services a {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
   }
 
   @media (max-width: 720px) {

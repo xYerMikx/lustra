@@ -54,6 +54,7 @@ const sections = defineCollection({
         .optional(),
       benefits: z.array(stepSchema).min(1).optional(),
       body: z.array(z.string().min(1)).min(1).optional(),
+      emptyMessage: z.string().min(1).optional(),
     })
     .refine(
       (data) =>

@@ -1,0 +1,149 @@
+---
+import { OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+
+interface Props {
+  title: string
+  lead?: string
+  notes: string[]
+}
+
+const { title, lead, notes } = Astro.props
+
+const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
+---
+
+<main class="contacts">
+  <a class="back" href="/">← Lumira</a>
+  <h1>{title}</h1>
+  {lead ? <p class="lead">{lead}</p> : null}
+
+  <section class="block" aria-labelledby="support-title">
+    <h2 class="heading" id="support-title">Почта поддержки</h2>
+    <p class="note">Отвечаем в течение рабочего дня.</p>
+    <a class="email" href={mailto}>{PLATFORM_OPERATOR.supportEmail}</a>
+  </section>
+
+  <section class="block" aria-labelledby="operator-title">
+    <h2 class="heading" id="operator-title">Оператор платформы</h2>
+    <dl class="facts">
+      {
+        OPERATOR_FACTS.map((fact) => (
+          <div class="fact">
+            <dt class="fact-label">{fact.label}</dt>
+            <dd class="fact-value">{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  {
+    notes.length > 0 ? (
+      <div class="notes">
+        {notes.map((text) => (
+          <p class="note">{text}</p>
+        ))}
+      </div>
+    ) : null
+  }
+</main>
+
+<style>
+  .contacts {
+    width: min(720px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    padding: var(--spacing-40) 0 var(--spacing-96);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    margin-bottom: var(--spacing-16);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-2);
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    line-height: 1.15;
+    margin-bottom: var(--spacing-16);
+  }
+
+  .lead {
+    color: var(--color-text-2);
+    margin-bottom: var(--spacing-8);
+    line-height: 1.55;
+  }
+
+  .block {
+    margin-top: var(--spacing-40);
+  }
+
+  .heading {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-12);
+  }
+
+  .note {
+    color: var(--color-text-2);
+    line-height: 1.6;
+  }
+
+  .email {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--spacing-40);
+    margin-top: var(--spacing-8);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-600);
+  }
+
+  .email:hover {
+    color: var(--color-accent-700);
+  }
+
+  .facts {
+    margin: 0;
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-12) var(--spacing-16);
+    padding: var(--spacing-16) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .fact-label {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+  }
+
+  .fact-value {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-16);
+    line-height: var(--text-16--line-height);
+  }
+
+  .notes {
+    display: grid;
+    gap: var(--spacing-12);
+    margin-top: var(--spacing-40);
+  }
+
+  @media (max-width: 640px) {
+    .fact {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-4);
+    }
+  }
+</style>

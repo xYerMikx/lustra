@@ -1,0 +1,155 @@
+---
+import LegalDocument from '@/components/legal-document.astro'
+import { OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+import { TERMS_META, type TermsBlock, type TermsInline } from '@/lib/terms-document'
+import { TERMS_SECTIONS } from '@/lib/terms-sections'
+
+function isRichParagraph(
+  block: TermsBlock,
+): block is { type: 'p'; parts: TermsInline[] } {
+  return block.type === 'p' && 'parts' in block
+}
+---
+
+<LegalDocument
+  title={TERMS_META.title}
+  meta={`Редакция от ${TERMS_META.edition} · Оператор: ${TERMS_META.operatorStatus} ${TERMS_META.operatorName}`}
+  lead={TERMS_META.lead}
+  tocLabel="Содержание"
+  toc={TERMS_SECTIONS.map((section) => ({ id: section.id, title: section.title }))}
+>
+  <dl slot="facts" class="facts">
+    {
+      OPERATOR_FACTS.map((fact) => (
+        <div class="fact">
+          <dt class="fact-label">{fact.label}</dt>
+          <dd class="fact-value">{fact.value}</dd>
+        </div>
+      ))
+    }
+    <div class="fact">
+      <dt class="fact-label">Почта</dt>
+      <dd class="fact-value">
+        <a class="fact-mail" href={`mailto:${PLATFORM_OPERATOR.supportEmail}`}>
+          {PLATFORM_OPERATOR.supportEmail}
+        </a>
+      </dd>
+    </div>
+  </dl>
+
+  {
+    TERMS_SECTIONS.map((section) => (
+      <section class="chapter" id={section.id}>
+        <h2 class="chapter-title">{section.title}</h2>
+        {section.blocks.map((block) => {
+          if (block.type === 'ul') {
+            return (
+              <ul class="list">
+                {block.items.map((item) => (
+                  <li class="item">{item}</li>
+                ))}
+              </ul>
+            )
+          }
+
+          if (isRichParagraph(block)) {
+            return (
+              <p class="copy">
+                {block.parts.map((part) =>
+                  typeof part === 'string' ? (
+                    part
+                  ) : (
+                    <a class="inline-link" href={part.href}>
+                      {part.label}
+                    </a>
+                  ),
+                )}
+              </p>
+            )
+          }
+
+          return <p class="copy">{block.text}</p>
+        })}
+      </section>
+    ))
+  }
+</LegalDocument>
+
+<style>
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 0 0 var(--spacing-40);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .fact {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--spacing-12);
+    padding: var(--spacing-12) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .fact-label {
+    color: var(--color-text-3);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+  }
+
+  .fact-value {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .fact-mail {
+    color: var(--color-accent);
+  }
+
+  .chapter {
+    margin-bottom: var(--spacing-40);
+    scroll-margin-top: calc(var(--spacing-56) + var(--spacing-16));
+  }
+
+  .chapter-title {
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-16);
+  }
+
+  .copy,
+  .item {
+    color: var(--color-text-2);
+    line-height: 1.6;
+  }
+
+  .copy + .copy,
+  .copy + .list,
+  .list + .copy {
+    margin-top: var(--spacing-16);
+  }
+
+  .list {
+    margin: 0;
+    padding-left: var(--spacing-24);
+    display: grid;
+    gap: var(--spacing-8);
+  }
+
+  .inline-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .inline-link:hover {
+    color: var(--color-accent-700);
+  }
+
+  @media (max-width: 640px) {
+    .fact {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-4);
+    }
+  }
+</style>

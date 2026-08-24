@@ -21,4 +21,4 @@ export function getAppUrl(path = '/'): string {
   return `${APP_URL}${normalized}`
 }
 
-export const DEFAULT_OG_PATH = '/og.svg'
+export const DEFAULT_OG_PATH = '/og.png'
