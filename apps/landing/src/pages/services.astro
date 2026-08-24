@@ -8,7 +8,7 @@ import {
   groupServicesByCategory,
 } from '@/lib/service-catalog'
 
-const copy = (await getEntry('sections', 'uslugi'))!.data
+const copy = (await getEntry('sections', 'services'))!.data
 const browse = (await getEntry('sections', 'browse'))!.data
 const catalogHref = getAppUrl('/catalog')
 
@@ -45,7 +45,7 @@ const jsonLd = {
 <BaseLayout
   title="Все услуги · Lumira"
   description="Каталог бьюти-услуг Lumira в Минске — ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг."
-  canonicalPath="/uslugi"
+  canonicalPath="/services"
 >
   <script
     slot="head"

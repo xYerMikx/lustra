@@ -8,7 +8,7 @@ export const PLATFORM_OPERATOR = {
   unp: 'CE8134257',
   country: 'Республика Беларусь',
   city: 'Минск',
-  supportEmail: 'hello@lumira.by',
+  supportEmail: 'support@lumira.by',
 } as const
 
 export const OPERATOR_FACTS = [
