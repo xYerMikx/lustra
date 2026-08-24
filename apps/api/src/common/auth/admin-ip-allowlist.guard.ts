@@ -17,6 +17,63 @@ function parseAllowlist(raw: string | undefined): string[] {
     .filter(Boolean)
 }
 
+function headerValue(
+  headers: FastifyRequest['headers'],
+  name: string,
+): string | undefined {
+  const raw = headers[name]
+
+  if (Array.isArray(raw)) {
+    return raw[0]
+  }
+
+  return raw
+}
+
+/**
+ * Client IP behind Cloudflare → Railway.
+ * Prefer CF-Connecting-IP, then first hop of X-Forwarded-For, then socket IP.
+ */
+export function resolveClientIp(request: FastifyRequest): string | null {
+  const cfConnecting = headerValue(request.headers, 'cf-connecting-ip')
+
+  if (cfConnecting) {
+    return normalizeIp(cfConnecting)
+  }
+
+  const forwarded = headerValue(request.headers, 'x-forwarded-for')
+
+  if (forwarded) {
+    const first = forwarded.split(',')[0]?.trim()
+
+    if (first) {
+      return normalizeIp(first)
+    }
+  }
+
+  const realIp = headerValue(request.headers, 'x-real-ip')
+
+  if (realIp) {
+    return normalizeIp(realIp)
+  }
+
+  return normalizeIp(request.ip)
+}
+
+function normalizeIp(ip: string | undefined): string | null {
+  if (!ip) {
+    return null
+  }
+
+  const trimmed = ip.trim()
+
+  if (trimmed.startsWith('::ffff:')) {
+    return trimmed.slice('::ffff:'.length)
+  }
+
+  return trimmed
+}
+
 /**
  * Fail-closed IP gate for /admin routes.
  * - Production + empty ADMIN_IP_ALLOWLIST → deny all
@@ -38,7 +95,7 @@ export class AdminIpAllowlistGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<FastifyRequest>()
-    const ip = normalizeIp(request.ip)
+    const ip = resolveClientIp(request)
 
     if (!ip || !allowlist.includes(ip)) {
       throw new ForbiddenException('Админ-доступ с этого IP запрещён')
@@ -46,16 +103,4 @@ export class AdminIpAllowlistGuard implements CanActivate {
 
     return true
   }
-}
-
-function normalizeIp(ip: string | undefined): string | null {
-  if (!ip) {
-    return null
-  }
-
-  if (ip.startsWith('::ffff:')) {
-    return ip.slice('::ffff:'.length)
-  }
-
-  return ip
 }

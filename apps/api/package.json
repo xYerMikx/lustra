@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit --incremental false",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "ensure-admin": "tsx --env-file=.env src/scripts/ensure-admin.ts"
+    "ensure-admin": "tsx src/scripts/ensure-admin.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1109.0",
