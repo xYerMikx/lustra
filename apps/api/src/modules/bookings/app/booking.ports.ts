@@ -106,8 +106,9 @@ export type CreateManualBookingStoreInput = {
   granularityMin: number
   channel: ManualBookingChannel
   clientName: string
-  phone: string
-  socialHandle: string | null
+  phone: string | null
+  identityNetwork: 'instagram' | 'telegram'
+  socialHandle: string
   masterNote: string | null
   now: Date
 }
@@ -131,6 +132,8 @@ export type MasterClientRecord = {
   phone: string | null
   source: ContactChannel | null
   socialHandle: string | null
+  visitsCount: number
+  lastVisitAt: string | null
 }
 
 export type ListBookingsScope = 'upcoming' | 'past' | 'pending'
@@ -182,6 +185,7 @@ export type BookingStore = {
   listMasterClients(input: {
     masterId: string
     query: string
+    sort?: 'recent' | 'frequent'
     limit?: number
   }): Promise<MasterClientRecord[]>
   createManualBooking(

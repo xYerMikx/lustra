@@ -1,6 +1,7 @@
 export type { IconProps } from '@/shared/ui/icon-pack/icon-frame'
 export { BookingsIcon } from '@/shared/ui/icon-pack/bookings-icon'
 export { CalendarIcon } from '@/shared/ui/icon-pack/calendar-icon'
+export { ClientsIcon } from '@/shared/ui/icon-pack/clients-icon'
 export { CatalogIcon } from '@/shared/ui/icon-pack/catalog-icon'
 export { CheckIcon } from '@/shared/ui/icon-pack/check-icon'
 export { ChevronLeftIcon } from '@/shared/ui/icon-pack/chevron-left-icon'

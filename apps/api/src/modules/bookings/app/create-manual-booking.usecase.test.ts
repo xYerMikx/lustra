@@ -115,6 +115,8 @@ describe('CreateManualBookingUseCase', () => {
       clientName: 'Оля',
       phone: '+375291112233',
       channel: 'instagram',
+      identityNetwork: 'instagram',
+      socialHandle: 'olya.nails',
       note: 'из директа',
     })
 
@@ -125,6 +127,8 @@ describe('CreateManualBookingUseCase', () => {
         masterId: 'm1',
         channel: 'instagram',
         phone: '+375291112233',
+        socialHandle: 'olya.nails',
+        identityNetwork: 'instagram',
         clientName: 'Оля',
       }),
     )
@@ -150,6 +154,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'phone',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
 
@@ -175,6 +181,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'instagram',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' })
 
@@ -205,8 +213,41 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'walk_in',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'TIME_OVERLAP' } satisfies Partial<DomainError>)
+  })
+
+  it('creates a guest booking with Instagram nick and no phone', async () => {
+    const store = buildStore()
+    const ensureSlots = {
+      execute: vi.fn().mockResolvedValue({ createdHint: 0 }),
+    } as unknown as EnsureSlotsUseCase
+    const useCase = new CreateManualBookingUseCase(
+      store,
+      createTransactions(),
+      clock,
+      ensureSlots,
+    )
+
+    await useCase.execute(currentUser, {
+      serviceId: 'svc1',
+      startsAt,
+      clientName: 'Оля',
+      channel: 'instagram',
+      identityNetwork: 'instagram',
+      socialHandle: 'olya.nails',
+    })
+
+    expect(store.createManualBooking).toHaveBeenCalledWith(
+      expect.objectContaining({
+        phone: null,
+        socialHandle: 'olya.nails',
+        identityNetwork: 'instagram',
+        clientName: 'Оля',
+      }),
+    )
   })
 
   it('hides a missing master profile', async () => {
@@ -229,6 +270,8 @@ describe('CreateManualBookingUseCase', () => {
         clientName: 'Оля',
         phone: '+375291112233',
         channel: 'other',
+        identityNetwork: 'instagram',
+        socialHandle: 'olya.nails',
       }),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' })
   })

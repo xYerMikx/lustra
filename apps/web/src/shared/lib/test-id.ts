@@ -12,6 +12,13 @@ export const TEST_ID = {
   pageMasterPublic: 'page-master-public',
   pageOnboarding: 'page-onboarding',
   pageClientBookings: 'page-client-bookings',
+  pageClientBook: 'page-client-book',
+  clientBookCta: 'client-book-cta',
+  clientBookServiceStep: 'client-book-service-step',
+  clientBookMasterStep: 'client-book-master-step',
+  clientBookSlotStep: 'client-book-slot-step',
+  clientBookServiceSearch: 'client-book-service-search',
+  clientBookBack: 'client-book-back',
   pageClientBookingDetail: 'page-client-booking-detail',
   pageFavorites: 'page-favorites',
   pageCalendar: 'page-calendar',
@@ -97,6 +104,7 @@ export const TEST_ID = {
   onboardingPortfolioAdd: 'onboarding-portfolio-add',
   pageMasterPortfolio: 'page-master-portfolio',
   pageMasterLedger: 'page-master-ledger',
+  pageMasterClients: 'page-master-clients',
   portfolioFileInput: 'portfolio-file-input',
   portfolioEmpty: 'portfolio-empty',
   portfolioCoverBadge: 'portfolio-cover-badge',
@@ -108,6 +116,8 @@ export const TEST_ID = {
   bookingsTabUpcoming: 'bookings-tab-upcoming',
   bookingsTabPast: 'bookings-tab-past',
   bookingsTabPending: 'bookings-tab-pending',
+  bookingsManualOpen: 'bookings-manual-open',
+  bookingsEmptyManualOpen: 'bookings-empty-manual-open',
 
   calendarBlockOpen: 'calendar-block-open',
   calendarExceptionOpen: 'calendar-exception-open',
@@ -128,7 +138,14 @@ export const TEST_ID = {
   dialogManual: 'dialog-manual',
   dialogManualName: 'dialog-manual-name',
   dialogManualPhone: 'dialog-manual-phone',
+  dialogManualHandle: 'dialog-manual-handle',
   dialogManualSubmit: 'dialog-manual-submit',
+
+  clientsTabSearch: 'clients-tab-search',
+  clientsTabFrequent: 'clients-tab-frequent',
+  clientsSearchInput: 'clients-search-input',
+  clientsList: 'clients-list',
+  clientsBookButton: 'clients-book-button',
 
   masterBookingsList: 'master-bookings-list',
   masterBookingConfirm: 'master-booking-confirm',
@@ -161,6 +178,14 @@ export function slotChipTestId(timeLabel: string): string {
 
 export function serviceOptionTestId(serviceId: string): string {
   return `service-option-${serviceId}`
+}
+
+export function bookServiceOptionTestId(key: string): string {
+  return `book-service-${key.replace(/[^a-zA-Z0-9_-]+/g, '-')}`
+}
+
+export function bookMasterOptionTestId(slug: string): string {
+  return `book-master-${slug}`
 }
 
 export function bookingStatusTestId(status: string): string {

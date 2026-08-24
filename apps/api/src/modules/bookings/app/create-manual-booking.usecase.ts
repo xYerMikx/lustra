@@ -127,10 +127,9 @@ export class CreateManualBookingUseCase {
           granularityMin: policy.granularityMin,
           channel: input.channel,
           clientName: input.clientName,
-          phone: input.phone,
-          socialHandle: input.socialHandle?.trim()
-            ? input.socialHandle.trim()
-            : null,
+          phone: input.phone ?? null,
+          identityNetwork: input.identityNetwork,
+          socialHandle: input.socialHandle,
           masterNote,
           now,
         })

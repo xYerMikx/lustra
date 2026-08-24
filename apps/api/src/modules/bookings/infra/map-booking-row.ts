@@ -4,7 +4,9 @@ import type {
   ContactChannel,
 } from '@lustra/contracts'
 
+import { resolveStoredSocialHandle } from '@/modules/bookings/domain/guest-lookup-plan'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
+import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 
 export const BOOKING_CABINET_SELECT = {
   id: true,
@@ -51,6 +53,8 @@ export const BOOKING_CABINET_SELECT = {
       phone: true,
       note: true,
       source: true,
+      instagramHandle: true,
+      telegramHandle: true,
     },
   },
 } as const
@@ -93,6 +97,8 @@ type BookingCabinetRow = {
     phone: string | null
     note: string | null
     source: ContactChannel | null
+    instagramHandle: string | null
+    telegramHandle: string | null
   }
 }
 
@@ -146,6 +152,12 @@ export function mapBookingRow(row: BookingCabinetRow): BookingRecord {
     clientName: row.masterClient.name,
     clientPhone: row.masterClient.phone,
     clientNote: row.masterClient.note,
+    clientSocialHandle: resolveStoredSocialHandle({
+      instagramHandle: row.masterClient.instagramHandle,
+      telegramHandle: row.masterClient.telegramHandle,
+      note: row.masterClient.note,
+      socialHandleFromNote,
+    }),
     clientSource: row.masterClient.source,
   }
 }

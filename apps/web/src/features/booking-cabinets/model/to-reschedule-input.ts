@@ -3,7 +3,7 @@ import {
   type RescheduleBookingInput,
 } from '@lustra/contracts'
 
-import { buildManualStartsAt } from '@/features/master-calendar/model/build-manual-starts-at'
+import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'
 import { splitInstantLocal } from '@/features/master-calendar/model/split-instant-local'
 
 export type RescheduleFormValues = {

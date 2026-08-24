@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import type { CreateExtraSlotInput } from '@lustra/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
-import { buildManualStartsAt } from '@/features/master-calendar/model/build-manual-starts-at'
+import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { ApiError } from '@/shared/api/http'
 import { Button } from '@/shared/ui/button'
