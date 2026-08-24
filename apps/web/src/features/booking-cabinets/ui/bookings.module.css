@@ -208,6 +208,13 @@
   line-height: var(--text-15--line-height);
 }
 
+.emptyStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+}
+
 .emptyText {
   margin: 0;
 }

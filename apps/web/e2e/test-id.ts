@@ -11,6 +11,8 @@ export {
   onboardingStepTestId,
   onboardingTemplateTestId,
   reviewStarTestId,
+  bookMasterOptionTestId,
+  bookServiceOptionTestId,
   serviceOptionTestId,
   slotChipTestId,
   portfolioCardTestId,
