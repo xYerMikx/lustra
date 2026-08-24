@@ -10,6 +10,11 @@ import FaqSection from '../components/faq-section.astro'
 import CtaBand from '../components/cta-band.astro'
 import { SHOW_WORKS_PREVIEW } from '../lib/flags'
 import { getAppUrl } from '../lib/site'
+import {
+  DEFAULT_DESCRIPTION,
+  organizationJsonLd,
+  websiteJsonLd,
+} from '../lib/seo'
 
 const hero = (await getEntry('sections', 'hero'))!.data
 const how = (await getEntry('sections', 'how-it-works'))!.data
@@ -41,11 +46,17 @@ const districts = (browse.districts ?? []).map((item) => ({
   name: item.name,
   href: getAppUrl(`/catalog?district=${item.slug}`),
 }))
+
+const homeTitle =
+  'Lumira — запись к бьюти-мастерам в Минске онлайн'
+const homeDescription = DEFAULT_DESCRIPTION
 ---
 
 <BaseLayout
-  title="Lumira — бьюти-мастера Минска"
-  description="Lumira — агрегатор бьюти-мастеров в Минске. Найдите мастера и запишитесь онлайн."
+  title={homeTitle}
+  description={homeDescription}
+  canonicalPath="/"
+  jsonLd={[organizationJsonLd(), websiteJsonLd()]}
 >
   <main>
     <Hero

@@ -43,16 +43,11 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  title="Все услуги · Lumira"
-  description="Каталог бьюти-услуг Lumira в Минске — ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг."
+  title="Все бьюти-услуги в Минске — каталог · Lumira"
+  description="Полный каталог бьюти-услуг Lumira в Минске: ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг. Найдите мастера и запишитесь онлайн."
   canonicalPath="/services"
+  jsonLd={jsonLd}
 >
-  <script
-    slot="head"
-    type="application/ld+json"
-    is:inline
-    set:html={JSON.stringify(jsonLd)}
-  />
   <ServicesCatalog
     eyebrow={copy.eyebrow!}
     title={copy.title!}

@@ -1,50 +1,102 @@
 ---
-import "../styles/global.css";
-import SiteHeader from "../components/site-header.astro";
-import SiteFooter from "../components/site-footer.astro";
-import { DEFAULT_OG_PATH } from "../lib/site";
+import '../styles/global.css'
+import SiteHeader from '@/components/site-header.astro'
+import SiteFooter from '@/components/site-footer.astro'
+import {
+  DEFAULT_DESCRIPTION,
+  OG_IMAGE,
+  SITE_NAME,
+  absoluteUrl,
+} from '@/lib/seo'
 
 interface Props {
-  title: string;
-  description?: string;
-  canonicalPath?: string;
-  ogType?: string;
-  ogImagePath?: string;
+  title: string
+  description?: string
+  canonicalPath?: string
+  ogType?: string
+  ogImagePath?: string
+  noindex?: boolean
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
 }
 
 const {
   title,
-  description = "Lumira — агрегатор бьюти-мастеров в Минске.",
+  description = DEFAULT_DESCRIPTION,
   canonicalPath = Astro.url.pathname,
-  ogType = "website",
-  ogImagePath = DEFAULT_OG_PATH,
-} = Astro.props;
+  ogType = 'website',
+  ogImagePath = OG_IMAGE.path,
+  noindex = false,
+  jsonLd,
+} = Astro.props
 
-const siteOrigin = Astro.site?.href?.replace(/\/$/, "") ?? Astro.url.origin;
-const canonical = `${siteOrigin}${canonicalPath === "/" ? "/" : canonicalPath.replace(/\/$/, "") || "/"}`;
-const ogImage = `${siteOrigin}${ogImagePath.startsWith("/") ? ogImagePath : `/${ogImagePath}`}`;
+const siteOrigin = Astro.site?.href?.replace(/\/$/, '') ?? 'https://lumira.by'
+const path =
+  canonicalPath === '/'
+    ? '/'
+    : canonicalPath.replace(/\/$/, '') || '/'
+const canonical =
+  path === '/' ? `${siteOrigin}/` : `${siteOrigin}${path}`
+const ogImage = absoluteUrl(ogImagePath)
+const robots = noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+const jsonLdBlocks = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : []
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="ru-BY">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta name="googlebot" content={robots} />
+    <meta name="author" content={SITE_NAME} />
+    <meta name="application-name" content={SITE_NAME} />
     <meta name="theme-color" content="#faf7f4" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="ru-BY" href={canonical} />
+    <link rel="alternate" hreflang="ru" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
     <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="ru_BY" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:secure_url" content={ogImage} />
+    <meta property="og:image:type" content={OG_IMAGE.type} />
+    <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+    <meta property="og:image:alt" content={OG_IMAGE.alt} />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <link rel="alternate" hreflang="ru-BY" href={canonical} />
-    <title>{title}</title>
+    <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
+
+    {
+      jsonLdBlocks.map((block) => (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(block)}
+        />
+      ))
+    }
     <slot name="head" />
   </head>
   <body>
