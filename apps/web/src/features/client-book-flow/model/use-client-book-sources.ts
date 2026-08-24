@@ -93,11 +93,11 @@ async function loadRecommendations(): Promise<RecommendedServiceView[]> {
   try {
     const response = await fetchClientRecommendations()
 
-    if (!response?.services?.length) {
+    if (!response?.recommendations?.length) {
       return []
     }
 
-    return response.services
+    return response.recommendations
   } catch {
     return []
   }
