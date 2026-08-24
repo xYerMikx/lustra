@@ -29,6 +29,10 @@ export function useClientBookSources() {
   const [templates, setTemplates] = useState<ServiceTemplateView[]>([])
   const [reloadToken, setReloadToken] = useState(0)
 
+  const reload = () => {
+    setReloadToken((value) => value + 1)
+  }
+
   useEffect(() => {
     let cancelled = false
 
@@ -85,7 +89,7 @@ export function useClientBookSources() {
     pastBookings,
     categories,
     templates,
-    reload: () => setReloadToken((value) => value + 1),
+    reload,
   }
 }
 

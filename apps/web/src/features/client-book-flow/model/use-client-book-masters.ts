@@ -15,11 +15,17 @@ type MastersStatus = 'idle' | 'loading' | 'error' | 'success'
 export function useClientBookMasters(
   service: ClientBookServiceOption | null,
 ) {
-  const [status, setStatus] = useState<MastersStatus>('idle')
+  const [status, setStatus] = useState<MastersStatus>(
+    service ? 'loading' : 'idle',
+  )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [favorites, setFavorites] = useState<CatalogMasterCard[]>([])
   const [catalog, setCatalog] = useState<CatalogMasterCard[]>([])
   const [reloadToken, setReloadToken] = useState(0)
+
+  const reload = () => {
+    setReloadToken((value) => value + 1)
+  }
 
   useEffect(() => {
     if (!service) {
@@ -78,7 +84,7 @@ export function useClientBookMasters(
     errorMessage,
     favorites,
     catalog,
-    reload: () => setReloadToken((value) => value + 1),
+    reload,
   }
 }
 
