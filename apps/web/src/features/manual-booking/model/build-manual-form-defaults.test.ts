@@ -23,4 +23,19 @@ describe('buildManualFormDefaults', () => {
     expect(values.date).toBe('2026-08-21')
     expect(values.startTime).toBe('10:00')
   })
+
+  it('prefills name, phone, handle and channel from a book client', () => {
+    const values = buildManualFormDefaults('2026-08-21', null, services, {
+      name: 'Анна',
+      phone: '+375291112233',
+      socialHandle: 'anna.nails',
+      source: 'telegram',
+    })
+
+    expect(values.clientName).toBe('Анна')
+    expect(values.phone).toBe('+375291112233')
+    expect(values.socialHandle).toBe('anna.nails')
+    expect(values.channel).toBe('telegram')
+    expect(values.identityNetwork).toBe('telegram')
+  })
 })

@@ -147,6 +147,9 @@ export function MasterCabinetHub() {
             <ButtonLink href="/app/master/calendar" fullWidth>
               Открыть календарь
             </ButtonLink>
+            <ButtonLink href="/app/master/clients" variant="ghost" fullWidth>
+              Клиенты
+            </ButtonLink>
             <ButtonLink href="/app/master/ledger" variant="ghost" fullWidth>
               Касса
             </ButtonLink>

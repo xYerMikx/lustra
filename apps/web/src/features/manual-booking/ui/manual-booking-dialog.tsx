@@ -30,6 +30,7 @@ type ManualBookingDialogProps = {
   minDate: string
   services: ServiceView[]
   clients: MasterClientView[]
+  prefillClient?: MasterClientView | null
   onClose: () => void
   onSubmit: (input: CreateManualBookingInput) => Promise<void>
 }
@@ -40,6 +41,7 @@ export function ManualBookingDialog({
   minDate,
   services,
   clients,
+  prefillClient = null,
   onClose,
   onSubmit,
 }: ManualBookingDialogProps) {
@@ -53,7 +55,19 @@ export function ManualBookingDialog({
     watch,
     formState: { isSubmitting },
   } = useForm<ManualFormValues>({
-    defaultValues: buildManualFormDefaults(defaultDate, defaultStartsAt, services),
+    defaultValues: buildManualFormDefaults(
+      defaultDate,
+      defaultStartsAt,
+      services,
+      prefillClient
+        ? {
+            name: prefillClient.name,
+            phone: prefillClient.phone,
+            socialHandle: prefillClient.socialHandle,
+            source: prefillClient.source,
+          }
+        : null,
+    ),
   })
 
   const clientName = watch('clientName')
