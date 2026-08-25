@@ -1,11 +1,10 @@
 'use client'
 
-import cn from 'classnames'
-
 import styles from '@/features/master-calendar/ui/calendar.module.css'
+import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon } from '@/shared/ui/icon-pack'
-import { TEST_ID } from '@/shared/lib/test-id'
+import { Tab, Tabs } from '@/shared/ui/tabs'
 
 type CalendarToolbarProps = {
   rangeLabel: string
@@ -72,36 +71,18 @@ export function CalendarToolbar({
       </div>
 
       <div className={styles.toolbarRow}>
-        <div
-          className={styles.segmented}
-          role="group"
+        <Tabs
+          value={mode}
+          onChange={(next) => {
+            if (next === 'day' || next === 'week') {
+              onChangeMode(next)
+            }
+          }}
           aria-label="Вид календаря"
         >
-          <Button
-            type="button"
-            variant="ghost"
-            className={cn(
-              styles.segmentButton,
-              mode === 'day' && styles.segmentButtonActive,
-            )}
-            aria-pressed={mode === 'day'}
-            onClick={() => onChangeMode('day')}
-          >
-            День
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className={cn(
-              styles.segmentButton,
-              mode === 'week' && styles.segmentButtonActive,
-            )}
-            aria-pressed={mode === 'week'}
-            onClick={() => onChangeMode('week')}
-          >
-            Неделя
-          </Button>
-        </div>
+          <Tab value="day">День</Tab>
+          <Tab value="week">Неделя</Tab>
+        </Tabs>
         {mode === 'day' ? (
           <Button
             type="button"
