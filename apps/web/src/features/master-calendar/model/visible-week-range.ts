@@ -30,3 +30,28 @@ export function visibleWeekRange(
 export function weekCardStride(cardWidth: number, gap: number): number {
   return cardWidth + gap
 }
+
+/** First card index of the carousel page that contains `ymdDate`. */
+export function carouselPageStartIndex(
+  dates: string[],
+  ymdDate: string,
+  visibleCount: number,
+): number {
+  const index = dates.indexOf(ymdDate)
+
+  if (index < 0) {
+    return 0
+  }
+
+  const size = Math.max(1, visibleCount)
+
+  return Math.floor(index / size) * size
+}
+
+export function scrollLeftForChild(
+  scrollLeft: number,
+  viewportLeft: number,
+  childLeft: number,
+): number {
+  return Math.max(0, Math.round(scrollLeft + (childLeft - viewportLeft)))
+}
