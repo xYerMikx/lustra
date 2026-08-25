@@ -34,6 +34,8 @@ jobs:
           cache: pnpm
 
       - name: Install and build landing
+        env:
+          PUBLIC_APP_URL: https://app.lumira.by
         run: |
           pnpm install --frozen-lockfile
           pnpm --filter @lustra/landing build
