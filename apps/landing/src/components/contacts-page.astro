@@ -1,5 +1,6 @@
 ---
 import { OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+import PaymentMarks from '@/components/payment-marks.astro'
 
 interface Props {
   title: string
@@ -10,6 +11,7 @@ interface Props {
 const { title, lead, notes } = Astro.props
 
 const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
+const phoneHref = PLATFORM_OPERATOR.phoneHref
 ---
 
 <main class="contacts">
@@ -19,8 +21,9 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
 
   <section class="block" aria-labelledby="support-title">
     <h2 class="heading" id="support-title">Почта поддержки</h2>
-    <p class="note">Отвечаем в течение рабочего дня.</p>
+    <p class="note">{PLATFORM_OPERATOR.hours}</p>
     <a class="email" href={mailto}>{PLATFORM_OPERATOR.supportEmail}</a>
+    <a class="email" href={phoneHref}>Телефон: {PLATFORM_OPERATOR.phone}</a>
   </section>
 
   <section class="block" aria-labelledby="operator-title">
@@ -35,6 +38,12 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
         ))
       }
     </dl>
+    <div class="marks-wrap">
+      <PaymentMarks />
+    </div>
+    <p class="note">
+      <a class="email" href="/payment">Оплата, возврат и безопасность платежей</a>
+    </p>
   </section>
 
   {
@@ -138,6 +147,10 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
     display: grid;
     gap: var(--spacing-12);
     margin-top: var(--spacing-40);
+  }
+
+  .marks-wrap {
+    margin-top: var(--spacing-24);
   }
 
   @media (max-width: 640px) {

@@ -1,0 +1,165 @@
+---
+import { LEGAL_NOTICES, OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+import PaymentMarks from '@/components/payment-marks.astro'
+
+const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
+const phoneHref = PLATFORM_OPERATOR.phoneHref
+---
+
+<section class="band" aria-labelledby="operator-band-title">
+  <div class="wrap">
+    <p class="eyebrow">Реквизиты</p>
+    <h2 class="title" id="operator-band-title">Оператор платформы</h2>
+    <p class="lead">
+      Сведения для связи и оплаты пакетов продвижения. Запись клиента к мастеру
+      бесплатна.
+    </p>
+
+    <dl class="facts">
+      {
+        OPERATOR_FACTS.map((fact) => {
+          let href: string | null = null
+
+          if (fact.label === 'E-mail') {
+            href = mailto
+          }
+
+          if (fact.label === 'Телефон') {
+            href = phoneHref
+          }
+
+          return (
+            <div class="fact">
+              <dt class="label">{fact.label}</dt>
+              <dd class="value">
+                {href ? (
+                  <a class="link" href={href}>
+                    {fact.value}
+                  </a>
+                ) : (
+                  fact.value
+                )}
+              </dd>
+            </div>
+          )
+        })
+      }
+    </dl>
+
+    <PaymentMarks />
+
+    <ul class="notices">
+      <li>{LEGAL_NOTICES.tradeRegistry}</li>
+      <li>{LEGAL_NOTICES.householdRegistry}</li>
+      <li>{LEGAL_NOTICES.licenses}</li>
+      <li>{LEGAL_NOTICES.domainOwner}</li>
+      <li>{LEGAL_NOTICES.belgie}</li>
+    </ul>
+
+    <p class="links">
+      <a class="link" href="/payment">Оплата и возврат</a>
+      <a class="link" href="/terms">Условия пользования</a>
+      <a class="link" href="/privacy">Политика конфиденциальности</a>
+      <a class="link" href="/contacts">Контакты</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .band {
+    padding: var(--spacing-64) 0;
+    background: var(--color-surface-2);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .wrap {
+    width: min(1120px, calc(100% - var(--spacing-40)));
+    margin-inline: auto;
+    display: grid;
+    gap: var(--spacing-24);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .title {
+    font-size: var(--text-32);
+    line-height: var(--text-32--line-height);
+    max-width: 18ch;
+  }
+
+  .lead {
+    margin: 0;
+    color: var(--color-text-2);
+    max-width: 52ch;
+    line-height: 1.55;
+  }
+
+  .facts {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .fact {
+    display: grid;
+    gap: var(--spacing-4);
+    padding: var(--spacing-16) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .label {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+  }
+
+  .value {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-16);
+    line-height: var(--text-16--line-height);
+  }
+
+  .notices {
+    margin: 0;
+    padding-left: var(--spacing-24);
+    display: grid;
+    gap: var(--spacing-8);
+    color: var(--color-text-2);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-12) var(--spacing-24);
+    margin: 0;
+  }
+
+  .link {
+    color: var(--color-accent);
+    min-height: var(--spacing-40);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .link:hover {
+    color: var(--color-accent-700);
+  }
+
+  @media (max-width: 720px) {
+    .facts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

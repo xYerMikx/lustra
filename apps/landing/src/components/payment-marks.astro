@@ -1,0 +1,58 @@
+---
+import { PAYMENT_MARKS } from '@/lib/payment-marks'
+
+interface Props {
+  caption?: string
+}
+
+const caption =
+  Astro.props.caption ??
+  'Принимаем оплату через bePaid: Visa, Mastercard, Белкарт, ЕРИП. Apple Pay, Google Pay и Samsung Pay — на странице оплаты, если метод включён эквайером.'
+---
+
+<div class="marks">
+  <p class="caption">{caption}</p>
+  <ul class="list">
+    {
+      PAYMENT_MARKS.map((mark) => (
+        <li class="item">
+          <img class="logo" src={mark.src} alt={mark.alt} width="120" height="40" />
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .marks {
+    display: grid;
+    gap: var(--spacing-16);
+  }
+
+  .caption {
+    margin: 0;
+    color: var(--color-text-2);
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    max-width: 72ch;
+  }
+
+  .list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+  }
+
+  .item {
+    display: flex;
+  }
+
+  .logo {
+    display: block;
+    width: auto;
+    height: var(--spacing-40);
+  }
+</style>

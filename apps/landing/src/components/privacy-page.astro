@@ -5,9 +5,10 @@ import type { PrivacyDocumentData } from '@/lib/privacy-policy'
 
 interface Props {
   document: PrivacyDocumentData
+  tocLabel?: string
 }
 
-const { document } = Astro.props
+const { document, tocLabel = 'Содержание политики' } = Astro.props
 ---
 
 <LegalDocument
@@ -15,12 +16,13 @@ const { document } = Astro.props
   meta={`${document.updatedLabel} · ${document.operatorLine}`}
   lead={document.lead}
   notice={document.notice}
-  tocLabel="Содержание политики"
+  tocLabel={tocLabel}
   toc={document.sections.map((section) => ({
     id: section.id,
     title: section.title,
   }))}
 >
+  <slot name="facts" slot="facts" />
   <div class="sections">
     {document.sections.map((section) => <PrivacySection section={section} />)}
   </div>

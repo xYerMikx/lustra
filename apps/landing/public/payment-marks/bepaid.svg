@@ -1,0 +1,5 @@
+<!-- visA-style wordmarks for acquirer homepage. Brand colors live in the SVG. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" role="img" aria-label="bePaid">
+  <rect width="120" height="40" rx="6" fill="#1A9F5C"/>
+  <text x="60" y="26" text-anchor="middle" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">bePaid</text>
+</svg>

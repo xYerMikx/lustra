@@ -1,6 +1,6 @@
 ---
 import LegalDocument from '@/components/legal-document.astro'
-import { OPERATOR_FACTS, PLATFORM_OPERATOR } from '@/lib/operator'
+import { OPERATOR_FACTS } from '@/lib/operator'
 import { TERMS_META, type TermsBlock, type TermsInline } from '@/lib/terms-document'
 import { TERMS_SECTIONS } from '@/lib/terms-sections'
 
@@ -27,14 +27,6 @@ function isRichParagraph(
         </div>
       ))
     }
-    <div class="fact">
-      <dt class="fact-label">Почта</dt>
-      <dd class="fact-value">
-        <a class="fact-mail" href={`mailto:${PLATFORM_OPERATOR.supportEmail}`}>
-          {PLATFORM_OPERATOR.supportEmail}
-        </a>
-      </dd>
-    </div>
   </dl>
 
   {
@@ -100,10 +92,6 @@ function isRichParagraph(
   .fact-value {
     margin: 0;
     color: var(--color-text);
-  }
-
-  .fact-mail {
-    color: var(--color-accent);
   }
 
   .chapter {

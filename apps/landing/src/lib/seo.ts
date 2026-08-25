@@ -39,12 +39,17 @@ export function organizationJsonLd() {
       '@type': 'PostalAddress',
       addressLocality: PLATFORM_OPERATOR.city,
       addressCountry: 'BY',
+      streetAddress: PLATFORM_OPERATOR.postalAddress,
     },
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
       email: PLATFORM_OPERATOR.supportEmail,
       availableLanguage: ['ru'],
+      hoursAvailable: {
+        '@type': 'OpeningHoursSpecification',
+        description: PLATFORM_OPERATOR.hours,
+      },
     },
   }
 }
