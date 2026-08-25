@@ -11,6 +11,14 @@ import { paymentDocument } from '@/lib/payment-document'
   canonicalPath="/payment"
 >
   <PrivacyPage document={paymentDocument} tocLabel="Содержание">
-    <PaymentMarks slot="facts" />
+    <div class="marks" slot="facts">
+      <PaymentMarks />
+    </div>
   </PrivacyPage>
 </BaseLayout>
+
+<style>
+  .marks {
+    margin-bottom: var(--spacing-32);
+  }
+</style>

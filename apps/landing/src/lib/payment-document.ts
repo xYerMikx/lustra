@@ -131,7 +131,7 @@ const paymentSections: PrivacySectionData[] = [
       {
         type: 'link',
         href: '/terms',
-        label: 'Условия пользования',
+        label: 'Публичная оферта',
       },
     ],
   },

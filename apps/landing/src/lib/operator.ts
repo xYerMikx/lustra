@@ -1,6 +1,6 @@
 /**
  * Legal identity of the landing operator (Belarus individual + UNP).
- * Shared by homepage, /contacts, /payment and footer — keep a single source of truth.
+ * Shared by footer, /contacts, /payment and terms — keep a single source of truth.
  *
  * Street, mobile and tax-registration date: fill from the UNP certificate
  * before sending the site to the acquirer. Do not invent them here.

@@ -109,6 +109,18 @@
   text-align: right;
 }
 
+.checkLink {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-600);
+}
+
+.legalNote {
+  margin: 0;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}
+
 .forgotLink,
 .inlineLink {
   display: inline-flex;

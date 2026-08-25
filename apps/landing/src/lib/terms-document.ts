@@ -15,7 +15,7 @@ export type TermsSection = {
 
 /** Identity from the shared operator record used on /contacts. */
 export const TERMS_META = {
-  title: 'Условия пользования',
+  title: 'Публичная оферта',
   edition: '25 августа 2026 г.',
   lead:
     'Правила информационной платформы Lumira для клиентов и мастеров красоты в Минске. Регистрируясь или пользуясь сайтом, вы принимаете эту редакцию.',
