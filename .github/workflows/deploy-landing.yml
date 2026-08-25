@@ -35,8 +35,13 @@ jobs:
 
       - name: Install and build landing
         env:
-          PUBLIC_APP_URL: https://app.lumira.by
+          PUBLIC_APP_URL: ${{ vars.PUBLIC_APP_URL }}
         run: |
+          if [ -z "${PUBLIC_APP_URL}" ]; then
+            echo "Missing repository variable PUBLIC_APP_URL"
+            exit 1
+          fi
+
           pnpm install --frozen-lockfile
           pnpm --filter @lustra/landing build
 
