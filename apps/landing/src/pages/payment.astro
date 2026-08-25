@@ -1,0 +1,24 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro'
+import PaymentMarks from '@/components/payment-marks.astro'
+import PrivacyPage from '@/components/privacy-page.astro'
+import { paymentDocument } from '@/lib/payment-document'
+---
+
+<BaseLayout
+  title={`${paymentDocument.title} · Lumira`}
+  description={paymentDocument.description}
+  canonicalPath="/payment"
+>
+  <PrivacyPage document={paymentDocument} tocLabel="Содержание">
+    <div class="marks" slot="facts">
+      <PaymentMarks />
+    </div>
+  </PrivacyPage>
+</BaseLayout>
+
+<style>
+  .marks {
+    margin-bottom: var(--spacing-32);
+  }
+</style>

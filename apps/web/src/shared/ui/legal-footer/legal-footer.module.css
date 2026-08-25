@@ -1,0 +1,63 @@
+.footer {
+  margin-top: var(--spacing-40);
+  padding: var(--spacing-32) 0 var(--spacing-24);
+  border-top: 1px solid var(--color-border);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8) var(--spacing-16);
+  margin-bottom: var(--spacing-16);
+}
+
+.link,
+.email {
+  color: var(--color-text-2);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.link:hover,
+.email:hover {
+  color: var(--color-accent);
+}
+
+.fact {
+  margin: 0 0 var(--spacing-8);
+  color: var(--color-text-2);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.ribbon {
+  margin: var(--spacing-16) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-16) var(--spacing-20);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  min-height: var(--spacing-40);
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: var(--spacing-32);
+  max-width: var(--spacing-80);
+  object-fit: contain;
+}
+
+.copy {
+  margin: var(--spacing-16) 0 0;
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+}

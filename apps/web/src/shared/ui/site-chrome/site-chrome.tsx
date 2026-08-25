@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { AppHeader } from '@/features/app-shell'
 import { MasterWorkspaceFrame } from '@/features/app-shell/ui/master-workspace-frame'
+import { LegalFooter } from '@/shared/ui/legal-footer'
 import styles from '@/shared/ui/site-chrome/site-chrome.module.css'
 
 type SiteChromeProps = {
@@ -13,6 +14,7 @@ export function SiteChrome({ children }: SiteChromeProps) {
     <div className={styles.shell}>
       <AppHeader />
       <MasterWorkspaceFrame>{children}</MasterWorkspaceFrame>
+      <LegalFooter />
     </div>
   )
 }
