@@ -1,7 +1,11 @@
 import { z } from 'zod'
 
-import { ByPhoneSchema } from './phone'
+import { OptionalByPhoneSchema } from './phone'
 import { BookingReviewRefSchema } from './review'
+import {
+  InstagramHandleSchema,
+  TelegramHandleSchema,
+} from './social-handle'
 
 export const BookingStatusSchema = z.enum([
   'hold',
@@ -76,17 +80,59 @@ export const ContactChannelSchema = z.enum([
 ])
 export type ContactChannel = z.infer<typeof ContactChannelSchema>
 
+export const SOCIAL_IDENTITY_NETWORKS = ['instagram', 'telegram'] as const
+export const SocialIdentityNetworkSchema = z.enum(SOCIAL_IDENTITY_NETWORKS)
+export type SocialIdentityNetwork = z.infer<typeof SocialIdentityNetworkSchema>
+
+const RequiredSocialHandleSchema = z.preprocess((value) => {
+  if (value === '' || value === null || value === undefined) {
+    return undefined
+  }
+
+  if (typeof value === 'string' && value.trim() === '') {
+    return undefined
+  }
+
+  return value
+}, z.string().trim().min(1, 'Укажите ник в Instagram или Telegram').max(40))
+
 export const CreateManualBookingInputSchema = z
   .object({
     serviceId: z.string().uuid(),
     startsAt: z.string().datetime(),
     clientName: z.string().trim().min(1, 'Укажите имя').max(80),
-    phone: ByPhoneSchema,
+    phone: OptionalByPhoneSchema,
     channel: ManualBookingChannelSchema,
-    socialHandle: z.string().trim().max(40).optional(),
+    identityNetwork: SocialIdentityNetworkSchema,
+    socialHandle: RequiredSocialHandleSchema,
     note: z.string().trim().max(500).optional(),
   })
   .strict()
+  .superRefine((value, ctx) => {
+    const parsed =
+      value.identityNetwork === 'telegram'
+        ? TelegramHandleSchema.safeParse(value.socialHandle)
+        : InstagramHandleSchema.safeParse(value.socialHandle)
+
+    if (!parsed.success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['socialHandle'],
+        message: parsed.error.issues[0]?.message ?? 'Проверьте ник',
+      })
+    }
+  })
+  .transform((value) => {
+    const parsed =
+      value.identityNetwork === 'telegram'
+        ? TelegramHandleSchema.parse(value.socialHandle)
+        : InstagramHandleSchema.parse(value.socialHandle)
+
+    return {
+      ...value,
+      socialHandle: parsed,
+    }
+  })
 export type CreateManualBookingInput = z.infer<
   typeof CreateManualBookingInputSchema
 >
@@ -94,6 +140,7 @@ export type CreateManualBookingInput = z.infer<
 export const ListMasterClientsQuerySchema = z
   .object({
     query: z.string().trim().max(80).default(''),
+    sort: z.enum(['recent', 'frequent']).default('recent'),
   })
   .strict()
 export type ListMasterClientsQuery = z.infer<
@@ -106,6 +153,8 @@ export const MasterClientViewSchema = z.object({
   phone: z.string().nullable(),
   source: ContactChannelSchema.nullable(),
   socialHandle: z.string().nullable(),
+  visitsCount: z.number().int().nonnegative(),
+  lastVisitAt: z.string().datetime().nullable(),
 })
 export type MasterClientView = z.infer<typeof MasterClientViewSchema>
 

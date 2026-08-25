@@ -22,7 +22,12 @@ const CABINET_COPY: Record<Exclude<UserRole, 'master'>, string> = {
 const CABINET_ACTIONS: Record<Exclude<UserRole, 'master'>, ReactNode> = {
   client: (
     <>
-      <ButtonLink href="/app/client/bookings">Мои записи</ButtonLink>
+      <ButtonLink href="/app/client/book" data-testid={TEST_ID.clientBookCta}>
+        Записаться
+      </ButtonLink>
+      <ButtonLink href="/app/client/bookings" variant="ghost">
+        Мои записи
+      </ButtonLink>
       <ButtonLink href="/app/client/reviews" variant="ghost">
         Отзывы
       </ButtonLink>

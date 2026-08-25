@@ -183,7 +183,11 @@ export {
   type TelegramLinkStartResponse,
 } from './telegram'
 
-export { ByPhoneSchema, normalizeByPhone } from './phone'
+export {
+  ByPhoneSchema,
+  OptionalByPhoneSchema,
+  normalizeByPhone,
+} from './phone'
 export {
   InstagramHandleSchema,
   TelegramHandleSchema,
@@ -240,6 +244,8 @@ export {
   RescheduleBookingInputSchema,
   MANUAL_BOOKING_CHANNELS,
   ManualBookingChannelSchema,
+  SOCIAL_IDENTITY_NETWORKS,
+  SocialIdentityNetworkSchema,
   ContactChannelSchema,
   CreateManualBookingInputSchema,
   ListMasterClientsQuerySchema,
@@ -263,6 +269,7 @@ export {
   type MasterCancelBookingInput,
   type RescheduleBookingInput,
   type ManualBookingChannel,
+  type SocialIdentityNetwork,
   type ContactChannel,
   type CreateManualBookingInput,
   type ListMasterClientsQuery,
@@ -366,3 +373,12 @@ export {
   type LedgerCategoryResponse,
   type LedgerEntryResponse,
 } from './master-ledger'
+
+export {
+  RecommendedMasterRefSchema,
+  RecommendedServiceViewSchema,
+  ClientRecommendationsResponseSchema,
+  type RecommendedMasterRef,
+  type RecommendedServiceView,
+  type ClientRecommendationsResponse,
+} from './recommendations'

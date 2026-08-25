@@ -29,6 +29,7 @@ export class ListMasterClientsUseCase {
     const items = await this.bookings.listMasterClients({
       masterId,
       query: query.query,
+      sort: query.sort,
       limit: 20,
     })
 

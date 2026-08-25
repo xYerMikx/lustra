@@ -12,6 +12,7 @@ import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { login } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { publicSiteUrl } from '@/shared/lib/public-site-url'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 import { PasswordInput } from '@/shared/ui/field'
@@ -32,6 +33,8 @@ export function LoginForm() {
       password: '',
     },
   })
+
+  const site = publicSiteUrl()
 
   const submitForm = async (values: LoginInput) => {
     setFormError(null)
@@ -112,6 +115,20 @@ export function LoginForm() {
       >
         {isSubmitting ? 'Входим…' : 'Войти'}
       </Button>
+      <p className={styles.legalNote}>
+        Входя, вы принимаете
+        {' '}
+        <a className={styles.checkLink} href={`${site}/terms`}>
+          публичную оферту
+        </a>
+        {' '}
+        и
+        {' '}
+        <a className={styles.checkLink} href={`${site}/privacy`}>
+          политику конфиденциальности
+        </a>
+        .
+      </p>
     </form>
   )
 }

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { ByPhoneSchema, normalizeByPhone } from './phone'
+import {
+  ByPhoneSchema,
+  OptionalByPhoneSchema,
+  normalizeByPhone,
+} from './phone'
 
 describe('normalizeByPhone', () => {
   it('keeps E.164 Belarus mobiles', () => {
@@ -27,5 +31,16 @@ describe('ByPhoneSchema', () => {
     expect(ByPhoneSchema.safeParse('+375171112233').success).toBe(false)
     expect(ByPhoneSchema.safeParse('+79001234567').success).toBe(false)
     expect(ByPhoneSchema.safeParse('').success).toBe(false)
+  })
+})
+
+describe('OptionalByPhoneSchema', () => {
+  it('treats empty input as omitted', () => {
+    expect(OptionalByPhoneSchema.parse('')).toBeUndefined()
+    expect(OptionalByPhoneSchema.parse(undefined)).toBeUndefined()
+  })
+
+  it('still normalizes a filled number', () => {
+    expect(OptionalByPhoneSchema.parse('80291112233')).toBe('+375291112233')
   })
 })

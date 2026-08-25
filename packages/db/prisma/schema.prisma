@@ -589,20 +589,22 @@ enum ActorType {
 }
 
 model MasterClient {
-  id          String          @id @default(uuid())
-  masterId    String
-  userId      String? // мягкая ссылка -> User.id (заполнена, если есть аккаунт)
-  name        String
-  phone       String?
-  note        String?
-  tags        Json?
-  source      ContactChannel?
-  visitsCount Int             @default(0)
-  totalSpent  Decimal         @default(0) @db.Decimal(10, 2)
-  lastVisitAt DateTime? @db.Timestamptz
-  isBlocked   Boolean         @default(false)
-  createdAt   DateTime        @default(now()) @db.Timestamptz
-  updatedAt   DateTime        @updatedAt @db.Timestamptz
+  id               String          @id @default(uuid())
+  masterId         String
+  userId           String? // мягкая ссылка -> User.id (заполнена, если есть аккаунт)
+  name             String
+  phone            String?
+  instagramHandle  String?
+  telegramHandle   String?
+  note             String?
+  tags             Json?
+  source           ContactChannel?
+  visitsCount      Int             @default(0)
+  totalSpent       Decimal         @default(0) @db.Decimal(10, 2)
+  lastVisitAt      DateTime? @db.Timestamptz
+  isBlocked        Boolean         @default(false)
+  createdAt        DateTime        @default(now()) @db.Timestamptz
+  updatedAt        DateTime        @updatedAt @db.Timestamptz
 
   master   MasterProfile @relation(fields: [masterId], references: [id], onDelete: Cascade)
   bookings Booking[]
@@ -610,6 +612,8 @@ model MasterClient {
   @@unique([masterId, userId])
   @@index([masterId, phone])
   @@index([masterId, name])
+  @@index([masterId, instagramHandle])
+  @@index([masterId, telegramHandle])
 }
 
 model Booking {

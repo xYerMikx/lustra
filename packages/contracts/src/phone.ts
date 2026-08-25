@@ -28,3 +28,16 @@ export const ByPhoneSchema = z
   .refine((value) => BY_MOBILE.test(value), {
     message: 'Телефон в формате +375XXXXXXXXX',
   })
+
+/** Empty / omitted phone → undefined; otherwise same rules as ByPhoneSchema. */
+export const OptionalByPhoneSchema = z.preprocess((value) => {
+  if (value === '' || value === null || value === undefined) {
+    return undefined
+  }
+
+  if (typeof value === 'string' && value.trim() === '') {
+    return undefined
+  }
+
+  return value
+}, ByPhoneSchema.optional())

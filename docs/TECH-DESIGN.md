@@ -494,7 +494,9 @@ model MasterClient {                                 // «клиент, кото
   masterId    String
   userId      String?                                 // заполнен, если у человека есть аккаунт
   name        String
-  phone       String?                                 // E.164
+  phone       String?                                 // E.164, опционален; unique вместе с masterId если не NULL
+  instagramHandle String?                             // lower, unique с masterId если не NULL
+  telegramHandle  String?                             // lower, unique с masterId если не NULL
   note        String?                                 // приватная заметка мастера
   tags        Json?                                   // ["постоянный","аллергия"]
   source      ContactChannel?
@@ -1086,10 +1088,11 @@ POST /api/v1/master/schedule/blocks          { startsAt, endsAt, reason, note? }
 DEL  /api/v1/master/schedule/blocks/:id
 POST /api/v1/master/schedule/slots/extra     { startsAt, durationMin }        // открыть окно вне графика
 PATCH /api/v1/master/schedule/slots/:id      { note?, status? }               // пометить/освободить окно
-POST /api/v1/master/bookings                 { serviceId, startsAt, client:{ id? | name, phone? }, channel, note? }
+POST /api/v1/master/bookings                 { serviceId, startsAt, clientName, phone?, channel, socialHandle?, note? }
 PATCH /api/v1/master/bookings/:id            { note?, priceAmount? }
 POST /api/v1/master/bookings/:id/(confirm|complete|no-show|cancel|reschedule)
-GET  /api/v1/master/clients                  ?query=   → книга клиентов (автокомплит ручной записи)
+GET  /api/v1/master/clients                  ?query=&sort=recent|frequent
+GET  /api/v1/client/recommendations          → { recommendations } топ-3 по частоте completed (модуль отдельно)
 PATCH /api/v1/master/clients/:id             { name?, phone?, note?, tags?, isBlocked? }
 GET  /api/v1/master/ledger                   ?from=&to=&kind=&categoryId=  → касса (только master)
 POST /api/v1/master/ledger/entries           { kind, categoryId, amount, occurredOn?, periodStart?, periodEnd?, note?, bookingId? }
@@ -1343,6 +1346,8 @@ JS на лендинге — только два острова (меню, ак�
 | 10 | Лендинг + юр. страницы + аналитика + запуск | Lighthouse ≥95×4, бюджеты соблюдены |
 
 Срезы 5 и 6 — критический путь: они делаются с тестами **до** UI-полировки и до лендинга.
+
+Запись из кабинетов (мастер: CTA + книга клиентов; клиент: запись из «Моих записей» + сервис рекомендаций v1) — волна после базы `docs/plans/booking-cabinets-modernization.md`. Ручная бронь: имя обязательно, телефон опционален, ник обязателен на каналах Instagram/Telegram.
 
 ## 29. Smoke test data (маркеры и cleanup)
 

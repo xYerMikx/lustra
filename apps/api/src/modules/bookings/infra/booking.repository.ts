@@ -264,6 +264,7 @@ export class BookingRepository implements BookingStore {
   listMasterClients(input: {
     masterId: string
     query: string
+    sort?: 'recent' | 'frequent'
     limit?: number
   }): Promise<MasterClientRecord[]> {
     return listMasterClientsInStore(this.tx.getClient(), input)

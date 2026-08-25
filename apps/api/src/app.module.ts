@@ -21,6 +21,7 @@ import { MasterServicesModule } from '@/modules/master-services/master-services.
 import { SchedulingModule } from '@/modules/scheduling/scheduling.module'
 import { MasterLedgerModule } from '@/modules/master-ledger/master-ledger.module'
 import { NotificationsModule } from '@/modules/notifications/notifications.module'
+import { RecommendationsModule } from '@/modules/recommendations/recommendations.module'
 import { TelegramModule } from '@/modules/telegram/telegram.module'
 
 @Module({
@@ -52,6 +53,7 @@ import { TelegramModule } from '@/modules/telegram/telegram.module'
     FavoritesModule,
     MasterLedgerModule,
     NotificationsModule,
+    RecommendationsModule,
     TelegramModule,
   ],
   providers: [

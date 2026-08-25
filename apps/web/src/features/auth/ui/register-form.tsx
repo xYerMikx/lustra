@@ -17,6 +17,7 @@ import styles from '@/features/auth/ui/auth-form.module.css'
 import { RoleSegment } from '@/features/auth/ui/role-segment'
 import { register as registerAccount } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'
+import { publicSiteUrl } from '@/shared/lib/public-site-url'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 import { PasswordInput } from '@/shared/ui/field'
@@ -50,6 +51,7 @@ export function RegisterForm() {
   })
 
   const role = watch('role')
+  const site = publicSiteUrl()
 
   const submitForm = async (values: RegisterInput) => {
     setFormError(null)
@@ -144,11 +146,20 @@ export function RegisterForm() {
             data-testid={TEST_ID.authRegisterTerms}
             {...register('acceptTerms')}
           />
-          <span>Принимаю условия использования и политику конфиденциальности</span>
+          <span>Принимаю публичную оферту и политику конфиденциальности</span>
         </label>
         {errors.acceptTerms ? (
           <span className={styles.fieldError}>{errors.acceptTerms.message}</span>
         ) : null}
+        <p className={styles.legalNote}>
+          <a className={styles.checkLink} href={`${site}/terms`}>
+            Публичная оферта
+          </a>
+          {' · '}
+          <a className={styles.checkLink} href={`${site}/privacy`}>
+            Политика конфиденциальности
+          </a>
+        </p>
 
         {formError ? (
           <p className={styles.error} role="alert" data-testid={TEST_ID.authFormError}>
