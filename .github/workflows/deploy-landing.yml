@@ -8,6 +8,7 @@ on:
       - 'apps/landing/**'
       - 'packages/ui/**'
       - '.github/workflows/deploy-landing.yml'
+      - 'scripts/deploy-landing-ftp.py'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
 
@@ -49,25 +50,14 @@ jobs:
         env:
           HOSTER_FTP_HOST: ${{ secrets.HOSTER_FTP_HOST }}
           HOSTER_FTP_USER: ${{ secrets.HOSTER_FTP_USER }}
-          LFTP_PASSWORD: ${{ secrets.HOSTER_FTP_PASSWORD }}
+          HOSTER_FTP_PASSWORD: ${{ secrets.HOSTER_FTP_PASSWORD }}
           HOSTER_FTP_DIR: ${{ secrets.HOSTER_FTP_DIR }}
         run: |
-          if [ -z "${HOSTER_FTP_HOST}" ] || [ -z "${HOSTER_FTP_USER}" ] || [ -z "${LFTP_PASSWORD}" ]; then
+          if [ -z "${HOSTER_FTP_HOST}" ] || [ -z "${HOSTER_FTP_USER}" ] || [ -z "${HOSTER_FTP_PASSWORD}" ]; then
             echo "Missing HOSTER_FTP_HOST / HOSTER_FTP_USER / HOSTER_FTP_PASSWORD"
             exit 1
           fi
 
-          remote_dir="${HOSTER_FTP_DIR:-.}"
           sudo apt-get update -qq
           sudo apt-get install -y -qq lftp
-
-          {
-            echo 'set cmd:fail-exit yes'
-            echo 'set ftp:ssl-allow no'
-            echo 'set net:max-retries 3'
-            echo 'set net:timeout 30'
-            echo 'lcd apps/landing/dist'
-            echo "cd ${remote_dir}"
-            echo 'mirror --reverse --delete --verbose --exclude-glob .well-known/**'
-            echo 'bye'
-          } | lftp -u "${HOSTER_FTP_USER}" "ftp://${HOSTER_FTP_HOST}"
+          python3 scripts/deploy-landing-ftp.py
