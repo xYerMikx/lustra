@@ -25,9 +25,15 @@ export function AnalyticsConsent() {
       return
     }
 
-    const stored = parseAnalyticsConsent(
-      window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY),
-    )
+    let stored: AnalyticsConsent | null = null
+
+    try {
+      stored = parseAnalyticsConsent(
+        window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY),
+      )
+    } catch {
+      stored = null
+    }
 
     setConsent(stored)
 
@@ -43,7 +49,12 @@ export function AnalyticsConsent() {
   const privacyHref = `${publicSiteUrl()}/privacy/#cookies`
 
   const persist = (next: AnalyticsConsent) => {
-    window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, next)
+    try {
+      window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, next)
+    } catch {
+      // Private mode can block storage; still close the banner.
+    }
+
     setConsent(next)
 
     if (next === 'granted') {
