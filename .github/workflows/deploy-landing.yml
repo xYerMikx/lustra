@@ -37,6 +37,10 @@ jobs:
       - name: Install and build landing
         env:
           PUBLIC_APP_URL: ${{ vars.PUBLIC_APP_URL }}
+          PUBLIC_YANDEX_METRIKA_ID: ${{ vars.PUBLIC_YANDEX_METRIKA_ID }}
+          PUBLIC_GA_MEASUREMENT_ID: ${{ vars.PUBLIC_GA_MEASUREMENT_ID }}
+          PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
+          PUBLIC_YANDEX_METRIKA_WEBVISOR: ${{ vars.PUBLIC_YANDEX_METRIKA_WEBVISOR }}
         run: |
           if [ -z "${PUBLIC_APP_URL}" ]; then
             echo "Missing repository variable PUBLIC_APP_URL"

@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css'
-import SiteHeader from '@/components/site-header.astro'
+import AnalyticsConsent from '@/components/analytics-consent.astro'
 import SiteFooter from '@/components/site-footer.astro'
+import SiteHeader from '@/components/site-header.astro'
+import { getLandingGoogleSiteVerification } from '@/lib/analytics'
 import { FONT_PRELOADS } from '@/lib/font-preloads'
 import {
   DEFAULT_DESCRIPTION,
@@ -44,6 +46,8 @@ const jsonLdBlocks = jsonLd
     ? jsonLd
     : [jsonLd]
   : []
+
+const googleVerification = getLandingGoogleSiteVerification()
 ---
 
 <!doctype html>
@@ -61,6 +65,11 @@ const jsonLdBlocks = jsonLd
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="yandex-verification" content="850dcfa6d6439521" />
+    {
+      googleVerification && (
+        <meta name="google-site-verification" content={googleVerification} />
+      )
+    }
     <link rel="canonical" href={canonical} />
     {
       FONT_PRELOADS.map((href) => (
@@ -116,5 +125,6 @@ const jsonLdBlocks = jsonLd
     <SiteHeader />
     <slot />
     <SiteFooter />
+    <AnalyticsConsent />
   </body>
 </html>
