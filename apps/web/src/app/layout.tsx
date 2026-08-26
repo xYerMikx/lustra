@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/app/app-providers";
+import {
+  getGoogleSiteVerification,
+  getYandexSiteVerification,
+} from "@/shared/lib/analytics";
 
 const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
@@ -14,6 +18,9 @@ const playfair = Playfair_Display({
   display: "swap",
   variable: "--font-display",
 });
+
+const googleVerification = getGoogleSiteVerification();
+const yandexVerification = getYandexSiteVerification();
 
 export const metadata: Metadata = {
   title: {
@@ -53,6 +60,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  verification: {
+    ...(googleVerification ? { google: googleVerification } : {}),
+    ...(yandexVerification ? { yandex: yandexVerification } : {}),
   },
 };
 

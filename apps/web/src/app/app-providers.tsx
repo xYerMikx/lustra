@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 
+import { AnalyticsConsent } from '@/shared/ui/analytics-consent'
 import { ToastProvider } from '@/shared/ui/toast'
 
 type AppProvidersProps = {
@@ -9,5 +10,10 @@ type AppProvidersProps = {
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
-  return <ToastProvider>{children}</ToastProvider>
+  return (
+    <ToastProvider>
+      {children}
+      <AnalyticsConsent />
+    </ToastProvider>
+  )
 }
