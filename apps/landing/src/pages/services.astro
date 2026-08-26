@@ -7,6 +7,7 @@ import {
   catalogHrefForService,
   groupServicesByCategory,
 } from '@/lib/service-catalog'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
 
 const copy = (await getEntry('sections', 'services'))!.data
 const browse = (await getEntry('sections', 'browse'))!.data
@@ -22,7 +23,11 @@ const groups = groupServicesByCategory(browse.categories ?? []).map((group) => (
   })),
 }))
 
-const jsonLd = {
+const title = 'Все бьюти-услуги в Минске и Беларуси — каталог · Lumira'
+const description =
+  'Полный каталог бьюти-услуг Lumira: ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг. Найдите мастера в Минске и запишитесь онлайн.'
+
+const itemListJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: copy.title,
@@ -43,10 +48,17 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  title="Все бьюти-услуги в Минске — каталог · Lumira"
-  description="Полный каталог бьюти-услуг Lumira в Минске: ногти, брови, волосы, макияж, косметология, депиляция, массаж, тату и пирсинг. Найдите мастера и запишитесь онлайн."
+  title={title}
+  description={description}
   canonicalPath="/services"
-  jsonLd={jsonLd}
+  jsonLd={[
+    itemListJsonLd,
+    webPageJsonLd({ title, description, path: '/services' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Все услуги', path: '/services' },
+    ]),
+  ]}
 >
   <ServicesCatalog
     eyebrow={copy.eyebrow!}

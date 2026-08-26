@@ -1,19 +1,31 @@
 ---
 import { getEntry } from 'astro:content'
-import BaseLayout from '../layouts/base-layout.astro'
-import ForMastersPage from '../components/for-masters-page.astro'
-import { getAppUrl } from '../lib/site'
+import BaseLayout from '@/layouts/base-layout.astro'
+import ForMastersPage from '@/components/for-masters-page.astro'
+import { getAppUrl } from '@/lib/site'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
 
 const content = (await getEntry('sections', 'for-masters'))!.data
 const masterHref = getAppUrl(
   '/app/register?role=master&utm_source=landing-for-masters',
 )
+
+const title = 'Для мастеров — онлайн-запись и витрина · Lumira'
+const description =
+  'Lumira для бьюти-мастеров Беларуси: онлайн-запись клиентов, календарь, витрина услуг и портфолио. Регистрация бесплатна; продвижение в каталоге оплачивается отдельно.'
 ---
 
 <BaseLayout
-  title="Для мастеров — онлайн-запись и витрина · Lumira"
-  description="Lumira для бьюти-мастеров Минска: онлайн-запись клиентов, календарь, витрина услуг и портфолио. Регистрация бесплатна; продвижение в каталоге оплачивается отдельно."
+  title={title}
+  description={description}
   canonicalPath="/for-masters"
+  jsonLd={[
+    webPageJsonLd({ title, description, path: '/for-masters' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Для мастеров', path: '/for-masters' },
+    ]),
+  ]}
 >
   <ForMastersPage
     eyebrow={content.eyebrow!}

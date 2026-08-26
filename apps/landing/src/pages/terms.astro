@@ -1,12 +1,24 @@
 ---
 import BaseLayout from '@/layouts/base-layout.astro'
 import TermsDocument from '@/components/terms-document.astro'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
+
+const title = 'Публичная оферта · Lumira'
+const description =
+  'Публичная оферта платформы Lumira: правила для клиентов и бьюти-мастеров в Минске, оплата и возврат по законодательству Республики Беларусь.'
 ---
 
 <BaseLayout
-  title="Публичная оферта · Lumira"
-  description="Публичная оферта платформы Lumira: правила для клиентов и бьюти-мастеров в Минске, оплата и возврат по законодательству Республики Беларусь."
+  title={title}
+  description={description}
   canonicalPath="/terms"
+  jsonLd={[
+    webPageJsonLd({ title, description, path: '/terms' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Публичная оферта', path: '/terms' },
+    ]),
+  ]}
 >
   <TermsDocument />
 </BaseLayout>

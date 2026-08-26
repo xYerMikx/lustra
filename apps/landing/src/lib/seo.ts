@@ -3,13 +3,13 @@ import { PLATFORM_OPERATOR } from '@/lib/operator'
 export const SITE_NAME = 'Lumira'
 export const SITE_ORIGIN = 'https://lumira.by'
 export const DEFAULT_DESCRIPTION =
-  'Lumira — агрегатор бьюти-мастеров в Минске. Выбирайте по услуге и району, смотрите свободные окна и записывайтесь онлайн.'
+  'Lumira — агрегатор бьюти-мастеров в Минске и по Беларуси. Выбирайте по услуге и району, смотрите свободные окна и записывайтесь онлайн.'
 
 export const OG_IMAGE = {
   path: '/og.png',
   width: 1200,
   height: 630,
-  alt: 'Lumira — бьюти-мастера Минска',
+  alt: 'Lumira — бьюти-мастера Минска и Беларуси',
   type: 'image/png',
 } as const
 
@@ -24,8 +24,27 @@ export function absoluteUrl(path: string): string {
     return `${SITE_ORIGIN}/`
   }
 
-  return `${SITE_ORIGIN}${normalized.replace(/\/$/, '')}`
+  const withoutSlash = normalized.replace(/\/$/, '')
+
+  const isAsset = /\.[a-z0-9]+$/i.test(withoutSlash)
+
+  if (isAsset) {
+    return `${SITE_ORIGIN}${withoutSlash}`
+  }
+
+  return `${SITE_ORIGIN}${withoutSlash}/`
 }
+
+const areaServed = [
+  {
+    '@type': 'Country',
+    name: 'Belarus',
+  },
+  {
+    '@type': 'City',
+    name: 'Minsk',
+  },
+] as const
 
 export function organizationJsonLd() {
   return {
@@ -41,10 +60,12 @@ export function organizationJsonLd() {
       addressCountry: 'BY',
       streetAddress: PLATFORM_OPERATOR.postalAddress,
     },
+    areaServed: [...areaServed],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer support',
       email: PLATFORM_OPERATOR.supportEmail,
+      areaServed: 'BY',
       availableLanguage: ['ru'],
       hoursAvailable: {
         '@type': 'OpeningHoursSpecification',
@@ -87,5 +108,24 @@ export function webPageJsonLd(input: {
       url: SITE_ORIGIN,
     },
     inLanguage: 'ru-BY',
+    about: {
+      '@type': 'Thing',
+      name: 'Запись к бьюти-мастерам в Беларуси',
+    },
+  }
+}
+
+export function breadcrumbJsonLd(
+  items: Array<{ name: string; path: string }>,
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
   }
 }

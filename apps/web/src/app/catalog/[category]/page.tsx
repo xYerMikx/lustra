@@ -4,6 +4,10 @@ import { notFound } from 'next/navigation'
 import { CatalogBrowse } from '@/features/catalog-browse'
 import { parseCatalogSearchParams } from '@/features/catalog-browse/model/parse-catalog-search-params'
 import {
+  catalogCategoryDescription,
+  catalogCategoryTitle,
+} from '@/features/catalog-browse/model/catalog-seo'
+import {
   listCatalogCategories,
   listCatalogDistricts,
   listCatalogServiceTemplates,
@@ -33,8 +37,16 @@ export async function generateMetadata({
     (item) => item.slug === categorySlug,
   )
 
+  if (!category) {
+    return {
+      title: 'Каталог',
+      robots: { index: false, follow: true },
+    }
+  }
+
   return {
-    title: category ? `Каталог · ${category.name}` : 'Каталог',
+    title: catalogCategoryTitle(category.name),
+    description: catalogCategoryDescription(category.name),
   }
 }
 

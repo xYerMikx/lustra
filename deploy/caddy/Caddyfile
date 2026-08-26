@@ -5,6 +5,10 @@
 {$DOMAIN} {
 	encode gzip zstd
 	root * /srv/landing
+
+	@hashed path /_astro/*
+	header @hashed Cache-Control "public, max-age=31536000, immutable"
+
 	file_server
 
 	handle_errors {
