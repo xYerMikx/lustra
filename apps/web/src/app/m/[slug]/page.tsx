@@ -2,6 +2,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { MasterHero } from '@/app/m/[slug]/master-hero'
+import {
+  masterPageDescription,
+  masterPageShouldIndex,
+  masterPageTitle,
+} from '@/app/m/[slug]/master-page-seo'
 import { MasterServicesList } from '@/app/m/[slug]/master-services-list'
 import styles from '@/app/m/[slug]/master.module.css'
 import { PublicPortfolioGallery } from '@/features/master-portfolio'
@@ -54,8 +59,30 @@ export async function generateMetadata({
   const { slug } = await params
   const master = await loadMaster(slug)
 
+  if (!master) {
+    return {
+      title: 'Мастер',
+      robots: { index: false, follow: false },
+    }
+  }
+
+  const indexable = masterPageShouldIndex({
+    status: master.status,
+    serviceCount: master.services.length,
+    portfolioCount: master.portfolio.length,
+  })
+
   return {
-    title: master?.displayName ?? 'Мастер',
+    title: masterPageTitle(master.displayName),
+    description: masterPageDescription({
+      displayName: master.displayName,
+      headline: master.headline,
+      bio: master.bio,
+      districtName: master.primaryLocation?.districtName,
+    }),
+    robots: indexable
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
   }
 }
 

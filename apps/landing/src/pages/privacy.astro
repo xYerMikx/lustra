@@ -2,12 +2,23 @@
 import BaseLayout from '@/layouts/base-layout.astro'
 import PrivacyPage from '@/components/privacy-page.astro'
 import { privacyDocument } from '@/lib/privacy-document'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
+
+const title = `${privacyDocument.title} · Lumira`
+const description = privacyDocument.description
 ---
 
 <BaseLayout
-  title={`${privacyDocument.title} · Lumira`}
-  description={privacyDocument.description}
+  title={title}
+  description={description}
   canonicalPath="/privacy"
+  jsonLd={[
+    webPageJsonLd({ title, description, path: '/privacy' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Политика конфиденциальности', path: '/privacy' },
+    ]),
+  ]}
 >
   <PrivacyPage document={privacyDocument} />
 </BaseLayout>

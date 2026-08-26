@@ -2,6 +2,7 @@
 import '../styles/global.css'
 import SiteHeader from '@/components/site-header.astro'
 import SiteFooter from '@/components/site-footer.astro'
+import { FONT_PRELOADS } from '@/lib/font-preloads'
 import {
   DEFAULT_DESCRIPTION,
   OG_IMAGE,
@@ -35,7 +36,7 @@ const path =
     ? '/'
     : canonicalPath.replace(/\/$/, '') || '/'
 const canonical =
-  path === '/' ? `${siteOrigin}/` : `${siteOrigin}${path}`
+  path === '/' ? `${siteOrigin}/` : `${siteOrigin}${path}/`
 const ogImage = absoluteUrl(ogImagePath)
 const robots = noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 const jsonLdBlocks = jsonLd
@@ -60,6 +61,17 @@ const jsonLdBlocks = jsonLd
     <meta name="color-scheme" content="light" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="canonical" href={canonical} />
+    {
+      FONT_PRELOADS.map((href) => (
+        <link
+          rel="preload"
+          href={href}
+          as="font"
+          type="font/woff2"
+          crossorigin="anonymous"
+        />
+      ))
+    }
     <link rel="alternate" hreflang="ru-BY" href={canonical} />
     <link rel="alternate" hreflang="ru" href={canonical} />
     <link rel="alternate" hreflang="x-default" href={canonical} />
