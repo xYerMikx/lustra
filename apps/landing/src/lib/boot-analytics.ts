@@ -86,15 +86,45 @@ function startPublicAnalytics(config: PublicAnalyticsConfig) {
   }
 }
 
+const BANNER_OPEN_CLASS = 'is-open'
+
 function hideBanner(banner: HTMLElement) {
+  banner.classList.remove(BANNER_OPEN_CLASS)
   banner.hidden = true
 }
 
+function showBanner(banner: HTMLElement) {
+  banner.hidden = false
+  banner.classList.add(BANNER_OPEN_CLASS)
+}
+
 function persistConsent(next: AnalyticsConsent) {
-  window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, next)
+  try {
+    window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, next)
+  } catch {
+    // Private mode can block storage; the banner is already closed.
+  }
+}
+
+function readStoredConsent(): AnalyticsConsent | null {
+  try {
+    return parseAnalyticsConsent(
+      window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY),
+    )
+  } catch {
+    return null
+  }
 }
 
 export function bootLandingAnalytics() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootLandingAnalytics, {
+      once: true,
+    })
+
+    return
+  }
+
   const config = getLandingAnalyticsConfig()
   const banner = document.getElementById('lumira-analytics-banner')
 
@@ -102,9 +132,7 @@ export function bootLandingAnalytics() {
     return
   }
 
-  const stored = parseAnalyticsConsent(
-    window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY),
-  )
+  const stored = readStoredConsent()
 
   if (stored === 'granted') {
     startPublicAnalytics(config)
@@ -119,19 +147,26 @@ export function bootLandingAnalytics() {
     return
   }
 
-  banner.hidden = false
+  showBanner(banner)
 
-  const accept = document.getElementById('lumira-analytics-accept')
-  const deny = document.getElementById('lumira-analytics-deny')
+  banner.addEventListener('click', (event) => {
+    const target = event.target
 
-  accept?.addEventListener('click', () => {
-    persistConsent('granted')
-    startPublicAnalytics(config)
-    hideBanner(banner)
-  })
+    if (!(target instanceof Element)) {
+      return
+    }
 
-  deny?.addEventListener('click', () => {
-    persistConsent('denied')
-    hideBanner(banner)
+    if (target.closest('#lumira-analytics-accept')) {
+      hideBanner(banner)
+      persistConsent('granted')
+      startPublicAnalytics(config)
+
+      return
+    }
+
+    if (target.closest('#lumira-analytics-deny')) {
+      hideBanner(banner)
+      persistConsent('denied')
+    }
   })
 }
