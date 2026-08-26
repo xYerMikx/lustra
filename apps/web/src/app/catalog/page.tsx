@@ -3,6 +3,10 @@ import type { Metadata } from 'next'
 import { CatalogBrowse } from '@/features/catalog-browse'
 import { parseCatalogSearchParams } from '@/features/catalog-browse/model/parse-catalog-search-params'
 import {
+  catalogIndexDescription,
+  catalogIndexTitle,
+} from '@/features/catalog-browse/model/catalog-seo'
+import {
   listCatalogCategories,
   listCatalogDistricts,
   listCatalogServiceTemplates,
@@ -10,7 +14,8 @@ import {
 } from '@/shared/api/catalog-client'
 
 export const metadata: Metadata = {
-  title: 'Каталог',
+  title: catalogIndexTitle(),
+  description: catalogIndexDescription(),
 }
 
 type PageProps = {

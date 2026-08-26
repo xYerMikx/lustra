@@ -1,20 +1,21 @@
 ---
 import { getCollection, getEntry } from 'astro:content'
-import BaseLayout from '../layouts/base-layout.astro'
-import Hero from '../components/hero.astro'
-import HowItWorks from '../components/how-it-works.astro'
-import WorksMarquee from '../components/works-marquee.astro'
-import ComparisonTable from '../components/comparison-table.astro'
-import CategoriesDistricts from '../components/categories-districts.astro'
-import FaqSection from '../components/faq-section.astro'
-import CtaBand from '../components/cta-band.astro'
-import { SHOW_WORKS_PREVIEW } from '../lib/flags'
-import { getAppUrl } from '../lib/site'
+import BaseLayout from '@/layouts/base-layout.astro'
+import Hero from '@/components/hero.astro'
+import HowItWorks from '@/components/how-it-works.astro'
+import WorksMarquee from '@/components/works-marquee.astro'
+import ComparisonTable from '@/components/comparison-table.astro'
+import CategoriesDistricts from '@/components/categories-districts.astro'
+import FaqSection from '@/components/faq-section.astro'
+import CtaBand from '@/components/cta-band.astro'
+import { SHOW_WORKS_PREVIEW } from '@/lib/flags'
+import { getAppUrl } from '@/lib/site'
 import {
   DEFAULT_DESCRIPTION,
   organizationJsonLd,
+  webPageJsonLd,
   websiteJsonLd,
-} from '../lib/seo'
+} from '@/lib/seo'
 
 const hero = (await getEntry('sections', 'hero'))!.data
 const how = (await getEntry('sections', 'how-it-works'))!.data
@@ -48,7 +49,8 @@ const districts = (browse.districts ?? []).map((item) => ({
 }))
 
 const homeTitle =
-  'Lumira — запись к бьюти-мастерам в Минске онлайн'
+  'Lumira — запись к бьюти-мастерам в Минске и по Беларуси'
+
 const homeDescription = DEFAULT_DESCRIPTION
 ---
 
@@ -56,7 +58,15 @@ const homeDescription = DEFAULT_DESCRIPTION
   title={homeTitle}
   description={homeDescription}
   canonicalPath="/"
-  jsonLd={[organizationJsonLd(), websiteJsonLd()]}
+  jsonLd={[
+    organizationJsonLd(),
+    websiteJsonLd(),
+    webPageJsonLd({
+      title: homeTitle,
+      description: homeDescription,
+      path: '/',
+    }),
+  ]}
 >
   <main>
     <Hero
@@ -99,7 +109,7 @@ const homeDescription = DEFAULT_DESCRIPTION
       lead={browse.lead!}
       categories={categories}
       districts={districts}
-      allServicesHref="/services"
+      allServicesHref="/services/"
       allServicesLabel="Все услуги"
     />
 

@@ -2,14 +2,25 @@
 import { getEntry } from 'astro:content'
 import BaseLayout from '@/layouts/base-layout.astro'
 import ContactsPage from '@/components/contacts-page.astro'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
 
 const content = (await getEntry('sections', 'contacts'))!.data
+const title = 'Контакты и поддержка · Lumira'
+const description =
+  'Напишите в поддержку Lumira на support@lumira.by — отвечаем в рабочий день. Реквизиты оператора платформы в Минске, Республика Беларусь.'
 ---
 
 <BaseLayout
-  title="Контакты и поддержка · Lumira"
-  description="Свяжитесь с поддержкой Lumira: support@lumira.by. Реквизиты оператора платформы в Минске, Республика Беларусь."
+  title={title}
+  description={description}
   canonicalPath="/contacts"
+  jsonLd={[
+    webPageJsonLd({ title, description, path: '/contacts' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Контакты', path: '/contacts' },
+    ]),
+  ]}
 >
   <ContactsPage
     title={content.title!}

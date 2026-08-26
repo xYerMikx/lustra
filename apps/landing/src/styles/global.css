@@ -1,5 +1,4 @@
-@import '@fontsource-variable/manrope/wght.css';
-@import '@fontsource-variable/playfair-display/wght.css';
+@import './fonts.css';
 @import '@lustra/ui/tokens.css';
 
 *,

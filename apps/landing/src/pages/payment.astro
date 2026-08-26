@@ -3,12 +3,23 @@ import BaseLayout from '@/layouts/base-layout.astro'
 import PaymentMarks from '@/components/payment-marks.astro'
 import PrivacyPage from '@/components/privacy-page.astro'
 import { paymentDocument } from '@/lib/payment-document'
+import { breadcrumbJsonLd, webPageJsonLd } from '@/lib/seo'
+
+const title = `${paymentDocument.title} · Lumira`
+const description = paymentDocument.description
 ---
 
 <BaseLayout
-  title={`${paymentDocument.title} · Lumira`}
-  description={paymentDocument.description}
+  title={title}
+  description={description}
   canonicalPath="/payment"
+  jsonLd={[
+    webPageJsonLd({ title, description, path: '/payment' }),
+    breadcrumbJsonLd([
+      { name: 'Lumira', path: '/' },
+      { name: 'Оплата и возврат', path: '/payment' },
+    ]),
+  ]}
 >
   <PrivacyPage document={paymentDocument} tocLabel="Содержание">
     <div class="marks" slot="facts">
