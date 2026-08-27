@@ -2,26 +2,16 @@ import type { LedgerPeriodPreset } from '@lustra/contracts'
 
 import {
   addDaysToYmdDate,
+  endOfYmdMonth,
   formatYmdDateInTimeZone,
+  ymdToUtcDate,
 } from '@/shared/lib/tz'
 
-function pad2(value: number): string {
-  return String(value).padStart(2, '0')
-}
-
 function startOfIsoWeek(ymd: string): string {
-  const [year, month, day] = ymd.split('-').map(Number)
-  const utc = new Date(Date.UTC(year!, month! - 1, day!))
+  const utc = ymdToUtcDate(ymd)
   const iso = utc.getUTCDay() === 0 ? 7 : utc.getUTCDay()
 
   return addDaysToYmdDate(ymd, 1 - iso)
-}
-
-function endOfMonth(ymd: string): string {
-  const [year, month] = ymd.split('-').map(Number)
-  const last = new Date(Date.UTC(year!, month!, 0)).getUTCDate()
-
-  return `${ymd.slice(0, 7)}-${pad2(last)}`
 }
 
 export function ledgerRangeForPreset(
@@ -42,7 +32,7 @@ export function ledgerRangeForPreset(
     return { from: addDaysToYmdDate(weekStart, -7), to: addDaysToYmdDate(weekStart, 6) }
   }
 
-  return { from: `${today.slice(0, 7)}-01`, to: endOfMonth(today) }
+  return { from: `${today.slice(0, 7)}-01`, to: endOfYmdMonth(today) }
 }
 
 export function detectLedgerPreset(

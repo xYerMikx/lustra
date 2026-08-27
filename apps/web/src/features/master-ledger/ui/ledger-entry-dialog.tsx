@@ -6,6 +6,7 @@ import type {
   LedgerKind,
 } from '@lustra/contracts'
 
+import { ledgerDialogTitle } from '@/features/master-ledger/model/ledger-dialog-title'
 import type { LedgerComposerIntent } from '@/features/master-ledger/model/parse-ledger-intent'
 import { LedgerEntryForm } from '@/features/master-ledger/ui/ledger-entry-form'
 import { Dialog } from '@/shared/ui/dialog'
@@ -20,18 +21,6 @@ type LedgerEntryDialogProps = {
   onClose: () => void
   onCreateEntry: (input: CreateLedgerEntryInput) => Promise<void>
   onCreateCategory: (name: string, kind: LedgerKind) => Promise<LedgerCategoryView>
-}
-
-function dialogTitle(intent: LedgerComposerIntent, bookingId?: string): string {
-  if (intent === 'tip' && bookingId) {
-    return 'Чаевые к визиту'
-  }
-
-  if (intent === 'tip') {
-    return 'Чаевые'
-  }
-
-  return 'Расход'
 }
 
 export function LedgerEntryDialog({
@@ -52,7 +41,7 @@ export function LedgerEntryDialog({
 
   return (
     <Dialog
-      title={dialogTitle(intent, bookingId)}
+      title={ledgerDialogTitle(intent, bookingId)}
       titleId="ledger-entry-dialog-title"
       onClose={onClose}
     >

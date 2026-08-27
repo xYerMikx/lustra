@@ -4,6 +4,7 @@ import {
   formatTimeInTimeZone,
   formatYmdDateInTimeZone,
   MASTER_TIMEZONE,
+  ymdToUtcDate,
 } from '@/shared/lib/tz'
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'
 
@@ -48,8 +49,7 @@ export function UpcomingSlotsList({
 }
 
 function formatDayLabel(ymd: string): string {
-  const [year, month, day] = ymd.split('-').map(Number)
-  const date = new Date(Date.UTC(year!, month! - 1, day!))
+  const date = ymdToUtcDate(ymd)
 
   return new Intl.DateTimeFormat('ru-BY', {
     weekday: 'short',

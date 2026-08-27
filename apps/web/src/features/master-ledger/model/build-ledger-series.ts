@@ -1,6 +1,6 @@
 import type { LedgerEntryView, LedgerKind } from '@lustra/contracts'
 
-import { addDaysToYmdDate } from '@/shared/lib/tz'
+import { addDaysToYmdDate, ymdToUtcDate } from '@/shared/lib/tz'
 
 export type LedgerChartPoint = {
   key: string
@@ -23,12 +23,6 @@ function enumerateYmd(from: string, to: string): string[] {
   }
 
   return days
-}
-
-function ymdToUtcDate(ymd: string): Date {
-  const [year, month, day] = ymd.split('-').map(Number)
-
-  return new Date(Date.UTC(year!, month! - 1, day!))
 }
 
 function startOfIsoWeek(ymd: string): string {

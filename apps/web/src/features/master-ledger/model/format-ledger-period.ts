@@ -1,12 +1,4 @@
-function pad2(value: number): string {
-  return String(value).padStart(2, '0')
-}
-
-function ymdToUtcDate(ymd: string): Date {
-  const [year, month, day] = ymd.split('-').map(Number)
-
-  return new Date(Date.UTC(year!, month! - 1, day!))
-}
+import { endOfYmdMonth, ymdToUtcDate } from '@/shared/lib/tz'
 
 function isFullCalendarMonth(from: string, to: string): boolean {
   if (!from.endsWith('-01')) {
@@ -17,10 +9,7 @@ function isFullCalendarMonth(from: string, to: string): boolean {
     return false
   }
 
-  const [year, month] = from.split('-').map(Number)
-  const last = new Date(Date.UTC(year!, month!, 0)).getUTCDate()
-
-  return to === `${from.slice(0, 7)}-${pad2(last)}`
+  return to === endOfYmdMonth(from)
 }
 
 export function formatLedgerPeriodLabel(from: string, to: string): string {
