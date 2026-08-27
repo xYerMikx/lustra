@@ -23,7 +23,9 @@ test.describe('master ledger', () => {
     await page.getByTestId(TEST_ID.ledgerEntrySubmit).click()
 
     await expect(page.getByText('Расход · Материалы')).toBeVisible()
-    await expect(page.getByText('−15,5 BYN')).toBeVisible()
+    await expect(
+      page.getByRole('listitem').filter({ hasText: 'Расход · Материалы' }),
+    ).toContainText('15,5 BYN')
   })
 
   test('opens tip composer from a completed visit', async ({ page }) => {

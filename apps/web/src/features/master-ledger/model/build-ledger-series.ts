@@ -49,15 +49,8 @@ function formatDayNumber(ymd: string): string {
   return String(Number(ymd.slice(8)))
 }
 
-function formatWeekRangeLabel(from: string, to: string): string {
-  const start = Number(from.slice(8))
-  const endLabel = new Intl.DateTimeFormat('ru-BY', {
-    day: 'numeric',
-    month: 'short',
-    timeZone: 'UTC',
-  }).format(ymdToUtcDate(to))
-
-  return `${start}–${endLabel}`
+function formatWeekRangeLabel(from: string): string {
+  return formatDayNumber(from)
 }
 
 function totalsForDay(
@@ -130,7 +123,7 @@ function buildWeeklySeries(
 
   return [...buckets.values()].map((bucket) => ({
     key: bucket.from,
-    label: formatWeekRangeLabel(bucket.from, bucket.to),
+    label: formatWeekRangeLabel(bucket.from),
     income: bucket.income,
     expense: bucket.expense,
   }))

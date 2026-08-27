@@ -338,13 +338,9 @@
     line-height: var(--text-26--line-height);
   }
 
-  .summary {
-    grid-template-columns: 1fr;
-  }
-
   .summaryValue {
-    font-size: var(--text-26);
-    line-height: var(--text-26--line-height);
+    font-size: var(--text-20);
+    line-height: var(--text-20--line-height);
   }
 }
 
