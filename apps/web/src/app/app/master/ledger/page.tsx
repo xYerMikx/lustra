@@ -6,7 +6,7 @@ import { SiteChrome } from '@/shared/ui/site-chrome'
 import styles from '@/app/app/app.module.css'
 
 export const metadata: Metadata = {
-  title: 'Касса',
+  title: 'Финансы',
 }
 
 export default function MasterLedgerPage() {

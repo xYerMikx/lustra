@@ -29,6 +29,22 @@
   gap: var(--spacing-12);
 }
 
+.headerLead {
+  margin: var(--spacing-12) 0 0;
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.headerLeadLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent-700);
+  font-weight: var(--font-weight-600);
+  text-decoration: none;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;

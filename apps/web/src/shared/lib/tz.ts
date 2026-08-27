@@ -59,11 +59,46 @@ export function zonedLocalToUtc(
   return new Date(guess.getTime() - offsetMs)
 }
 
-export function addDaysToYmdDate(ymdDate: string, days: number): string {
-  const [year, month, day] = ymdDate.split('-').map(Number)
-  const utc = new Date(Date.UTC(year!, month! - 1, day! + days))
+function ymdParts(ymd: string): { year: number; month: number; day: number } {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd)
+  const yearToken = match?.[1]
+  const monthToken = match?.[2]
+  const dayToken = match?.[3]
 
+  if (yearToken === undefined || monthToken === undefined || dayToken === undefined) {
+    throw new RangeError(`Invalid YMD date: ${ymd}`)
+  }
+
+  return {
+    year: Number(yearToken),
+    month: Number(monthToken),
+    day: Number(dayToken),
+  }
+}
+
+function formatYmdUtc(utc: Date): string {
   return `${utc.getUTCFullYear()}-${pad2(utc.getUTCMonth() + 1)}-${pad2(utc.getUTCDate())}`
+}
+
+export function ymdToUtcDate(ymd: string): Date {
+  const { year, month, day } = ymdParts(ymd)
+
+  return new Date(Date.UTC(year, month - 1, day))
+}
+
+export function addDaysToYmdDate(ymdDate: string, days: number): string {
+  const utc = ymdToUtcDate(ymdDate)
+  utc.setUTCDate(utc.getUTCDate() + days)
+
+  return formatYmdUtc(utc)
+}
+
+export function endOfYmdMonth(ymd: string): string {
+  const utc = ymdToUtcDate(ymd)
+
+  return formatYmdUtc(
+    new Date(Date.UTC(utc.getUTCFullYear(), utc.getUTCMonth() + 1, 0)),
+  )
 }
 
 export function formatTimeInTimeZone(

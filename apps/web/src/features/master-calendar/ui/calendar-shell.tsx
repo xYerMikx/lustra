@@ -17,6 +17,7 @@ import { useCalendarData } from '@/features/master-calendar/model/use-calendar-d
 import { BlockDialog } from '@/features/master-calendar/ui/block-dialog'
 import styles from '@/features/master-calendar/ui/calendar.module.css'
 import { CalendarBody } from '@/features/master-calendar/ui/calendar-body'
+import { CalendarFinanceHint } from '@/features/master-calendar/ui/calendar-finance-hint'
 import { CalendarNotice } from '@/features/master-calendar/ui/calendar-notice'
 import { CalendarToolbar } from '@/features/master-calendar/ui/calendar-toolbar'
 import { ExceptionDialog } from '@/features/master-calendar/ui/exception-dialog'
@@ -192,6 +193,7 @@ export function CalendarShell() {
       <header className={styles.header}>
         <p className={styles.eyebrow}>Кабинет мастера</p>
         <h1 className={styles.title}>Календарь</h1>
+        <CalendarFinanceHint />
         <CalendarToolbar
           rangeLabel={rangeLabel}
           mode={mode}

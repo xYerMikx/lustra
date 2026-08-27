@@ -9,6 +9,7 @@ import {
   LedgerIcon,
   OnboardingIcon,
   PortfolioIcon,
+  ProfileIcon,
   ReviewsIcon,
 } from '@/shared/ui/icon-pack'
 
@@ -20,6 +21,7 @@ const ICONS: Record<MasterWorkspaceItem['icon'], ReactNode> = {
   portfolio: <PortfolioIcon />,
   reviews: <ReviewsIcon />,
   ledger: <LedgerIcon />,
+  profile: <ProfileIcon />,
   onboarding: <OnboardingIcon />,
 }
 
