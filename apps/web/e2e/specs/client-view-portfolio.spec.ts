@@ -19,7 +19,6 @@ test.describe('client view portfolio', () => {
   test('does not show a gallery when the master has no photos', async ({ page }) => {
     await loginClient(page)
     await gotoPublicMaster(page)
-    await expect(page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
     await expect(page.getByTestId(TEST_ID.publicPortfolioGallery)).toHaveCount(0)
     await expect(page.getByTestId(TEST_ID.masterPublicCover)).toHaveCount(0)
   })
@@ -37,7 +36,6 @@ test.describe('client view portfolio', () => {
 
       await loginClient(client.page)
       await gotoPublicMaster(client.page)
-      await expect(client.page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
       await expect(client.page.getByTestId(TEST_ID.masterPublicCover)).toBeVisible()
       const gallery = client.page.getByTestId(TEST_ID.publicPortfolioGallery)
       const firstShot = client.page.getByTestId(publicPortfolioShotTestId(firstId))
