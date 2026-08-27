@@ -41,10 +41,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../.."),
-<<<<<<< HEAD
   transpilePackages: ["@lustra/contracts", "recharts"],
-=======
-  transpilePackages: ["@lustra/contracts"],
   images: {
     qualities: [75, 90],
     remotePatterns: [
@@ -53,7 +50,6 @@ const nextConfig: NextConfig = {
       ...mediaRemotePatterns(),
     ],
   },
->>>>>>> d7d0b99 (fix(web): open portfolio slides via a helper and use next/image)
   compiler: {
     // SWC analog of babel-plugin-react-remove-properties — prod only.
     reactRemoveProperties: keepTestIds
