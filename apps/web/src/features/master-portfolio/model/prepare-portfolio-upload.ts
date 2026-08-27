@@ -25,7 +25,7 @@ export async function preparePortfolioUpload(file: File): Promise<Blob> {
     bitmap.close()
 
     const blob = await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob((next) => resolve(next), 'image/webp', 0.86)
+      canvas.toBlob((next) => resolve(next), 'image/webp', 0.92)
     })
 
     if (!blob) {

@@ -118,7 +118,11 @@ export const TEST_ID = {
   portfolioCoverBadge: 'portfolio-cover-badge',
   portfolioLightbox: 'portfolio-lightbox',
   portfolioLightboxClose: 'portfolio-lightbox-close',
+  portfolioCarousel: 'portfolio-carousel',
+  portfolioCarouselPrev: 'portfolio-carousel-prev',
+  portfolioCarouselNext: 'portfolio-carousel-next',
   publicPortfolioGallery: 'public-portfolio-gallery',
+  publicPortfolioSentinel: 'public-portfolio-sentinel',
   masterPublicCover: 'master-public-cover',
 
   bookingsTabUpcoming: 'bookings-tab-upcoming',

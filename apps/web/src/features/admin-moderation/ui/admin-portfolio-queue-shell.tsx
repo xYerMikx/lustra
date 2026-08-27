@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { useAdminPortfolioQueue } from '@/features/admin-moderation/model/use-admin-portfolio-queue'
@@ -54,10 +55,14 @@ export function AdminPortfolioQueueShell() {
               return (
                 <li key={item.id} className={styles.card}>
                   <div className={styles.cardMedia}>
-                    <img
+                    <Image
                       className={styles.thumb}
                       src={item.url}
                       alt={item.caption ?? 'Фото работы'}
+                      width={72}
+                      height={90}
+                      sizes="72px"
+                      quality={90}
                     />
                     <div>
                       <div className={styles.cardTitle}>
