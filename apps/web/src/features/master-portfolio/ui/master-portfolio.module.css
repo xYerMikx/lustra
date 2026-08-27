@@ -152,7 +152,7 @@
 }
 
 .publicSection {
-  padding: var(--spacing-8) 0 var(--spacing-32);
+  padding: var(--spacing-8) 0 var(--spacing-24);
   width: 100%;
 }
 
@@ -160,13 +160,13 @@
   font-family: var(--font-display);
   font-size: var(--text-26);
   line-height: var(--text-26--line-height);
-  margin-bottom: var(--spacing-20);
+  margin-bottom: var(--spacing-12);
 }
 
 .publicGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--spacing-12);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-4);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -176,10 +176,9 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-14);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-8);
   background: var(--color-surface-2);
-  box-shadow: var(--shadow-1);
 }
 
 .publicShotButton {
@@ -418,14 +417,28 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .publicSection {
+    padding: var(--spacing-8) 0 var(--spacing-32);
+  }
+
+  .publicTitle {
+    margin-bottom: var(--spacing-20);
+  }
+
   .publicGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-12);
+  }
+
+  .publicShot {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-14);
+    box-shadow: var(--shadow-1);
   }
 }
 
 @media (min-width: 1024px) {
   .publicGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

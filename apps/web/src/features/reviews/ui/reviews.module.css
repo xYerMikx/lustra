@@ -138,3 +138,17 @@
   color: var(--color-text-3);
   font-size: var(--text-13);
 }
+
+@media (max-width: 767px) {
+  .section {
+    padding-bottom: var(--spacing-24);
+  }
+
+  .title {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .list {
+    gap: var(--spacing-12);
+  }
+}
