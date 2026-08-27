@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 import { ANNA_SLUG } from '../accounts'
 import { expect, test } from '../fixtures'
 import { loginClient } from '../helpers/auth'
@@ -5,11 +7,18 @@ import { openMasterPortfolio, uploadStubPhoto } from '../helpers/portfolio'
 import { openIsolatedPage } from '../helpers/second-page'
 import { TEST_ID, publicPortfolioShotTestId } from '../test-id'
 
+async function gotoPublicMaster(page: Page) {
+  await expect(async () => {
+    await page.goto(`/m/${ANNA_SLUG}`)
+
+    await expect(page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
+  }).toPass()
+}
+
 test.describe('client view portfolio', () => {
   test('does not show a gallery when the master has no photos', async ({ page }) => {
     await loginClient(page)
-    await page.goto(`/m/${ANNA_SLUG}`)
-    await expect(page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
+    await gotoPublicMaster(page)
     await expect(page.getByTestId(TEST_ID.publicPortfolioGallery)).toHaveCount(0)
     await expect(page.getByTestId(TEST_ID.masterPublicCover)).toHaveCount(0)
   })
@@ -26,17 +35,65 @@ test.describe('client view portfolio', () => {
       const secondId = await uploadStubPhoto(page, 'work-2.png')
 
       await loginClient(client.page)
-      await client.page.goto(`/m/${ANNA_SLUG}`)
-      await expect(client.page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
+      await gotoPublicMaster(client.page)
       await expect(client.page.getByTestId(TEST_ID.masterPublicCover)).toBeVisible()
-      await expect(client.page.getByTestId(TEST_ID.publicPortfolioGallery)).toBeVisible()
-      await expect(client.page.getByTestId(publicPortfolioShotTestId(firstId))).toBeVisible()
-      await expect(client.page.getByTestId(publicPortfolioShotTestId(secondId))).toBeVisible()
+      const gallery = client.page.getByTestId(TEST_ID.publicPortfolioGallery)
+      const firstShot = client.page.getByTestId(publicPortfolioShotTestId(firstId))
+      const secondShot = client.page.getByTestId(publicPortfolioShotTestId(secondId))
 
-      await client.page.getByTestId(publicPortfolioShotTestId(firstId)).click()
-      await expect(client.page.getByTestId(TEST_ID.portfolioLightbox)).toBeVisible()
+      await expect(gallery).toBeVisible()
+      await expect(firstShot).toBeVisible()
+      await expect(secondShot).toBeVisible()
+
+      await firstShot.click()
+      const lightbox = client.page.getByTestId(TEST_ID.portfolioLightbox)
+
+      await expect(lightbox).toBeVisible()
+      await lightbox.getByTestId(TEST_ID.portfolioCarouselNext).click()
+      await expect(
+        lightbox.getByTestId(publicPortfolioShotTestId(secondId)),
+      ).toHaveAttribute('aria-current', 'true')
+
       await client.page.getByTestId(TEST_ID.portfolioLightboxClose).click()
-      await expect(client.page.getByTestId(TEST_ID.portfolioLightbox)).toHaveCount(0)
+      await expect(lightbox).toHaveCount(0)
+    } finally {
+      await client.context.close()
+    }
+  })
+
+  test('loads later photos when the public gallery is scrolled', async ({
+    page,
+    browser,
+  }) => {
+    const client = await openIsolatedPage(browser)
+
+    try {
+      await openMasterPortfolio(page)
+      const uploaded: string[] = []
+
+      for (let index = 1; index <= 6; index += 1) {
+        uploaded.push(await uploadStubPhoto(page, `work-${index}.png`))
+      }
+
+      const firstId = uploaded[0]
+      const fifthId = uploaded[4]
+      const sixthId = uploaded[5]
+
+      if (!firstId || !fifthId || !sixthId) {
+        throw new Error('expected six uploaded photos')
+      }
+
+      await loginClient(client.page)
+      await gotoPublicMaster(client.page)
+
+      const gallery = client.page.getByTestId(TEST_ID.publicPortfolioGallery)
+
+      await expect(gallery.getByTestId(publicPortfolioShotTestId(firstId))).toBeVisible()
+      await expect(gallery.getByTestId(publicPortfolioShotTestId(fifthId))).toBeVisible()
+      await expect(gallery.getByTestId(publicPortfolioShotTestId(sixthId))).toHaveCount(0)
+
+      await gallery.getByTestId(TEST_ID.publicPortfolioSentinel).scrollIntoViewIfNeeded()
+      await expect(gallery.getByTestId(publicPortfolioShotTestId(sixthId))).toBeVisible()
     } finally {
       await client.context.close()
     }

@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { PAYMENT_MARKS } from '@/shared/lib/payment-marks'
 import { PLATFORM_OPERATOR } from '@/shared/lib/operator'
 import { publicSiteUrl } from '@/shared/lib/public-site-url'
@@ -43,13 +45,13 @@ export function LegalFooter() {
       <ul className={styles.ribbon} aria-label="Способы оплаты">
         {PAYMENT_MARKS.map((mark) => (
           <li key={mark.src} className={styles.item}>
-            <img
+            <Image
               className={styles.logo}
               src={mark.src}
               alt={mark.alt}
+              width={80}
               height={32}
-              loading="lazy"
-              decoding="async"
+              unoptimized
             />
           </li>
         ))}

@@ -259,3 +259,11 @@
     background: var(--color-bg);
   }
 }
+
+@media (max-width: 767px) {
+  .picker {
+    margin-top: var(--spacing-16);
+    padding: var(--spacing-16);
+    gap: var(--spacing-16);
+  }
+}

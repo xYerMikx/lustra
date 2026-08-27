@@ -1,0 +1,35 @@
+.tooltip {
+  padding: var(--spacing-8) var(--spacing-12);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  color: var(--color-text-2);
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+}
+
+.label {
+  margin: 0 0 var(--spacing-8);
+  color: var(--color-text);
+  font-weight: var(--font-weight-600);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+}
+
+.name {
+  color: var(--color-text-3);
+}

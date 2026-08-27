@@ -16,6 +16,7 @@ test.describe('master manage booking', () => {
 
     await page.getByTestId(TEST_ID.masterBookingComplete).click()
     await expect(page.getByTestId(bookingStatusTestId('completed'))).toBeVisible()
+    await expect(page.getByTestId(TEST_ID.bookingAddTip)).toBeVisible()
   })
 
   test('cancels a pending booking with a required reason', async ({ page }) => {

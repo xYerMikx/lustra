@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type {
+  CreateLedgerEntryInput,
   LedgerCategoryView,
   LedgerEntryView,
   LedgerKind,
@@ -11,6 +12,7 @@ import type {
 } from '@lustra/contracts'
 
 import { ledgerRangeForPreset } from '@/features/master-ledger/model/ledger-range'
+import { parseLedgerIntent } from '@/features/master-ledger/model/parse-ledger-intent'
 import {
   createLedgerCategory,
   createLedgerEntry,
@@ -18,6 +20,7 @@ import {
   listMasterLedger,
 } from '@/shared/api/ledger-client'
 import { ApiError } from '@/shared/api/http'
+import { formatYmdDateInTimeZone } from '@/shared/lib/tz'
 
 type ListStatus = 'loading' | 'error' | 'empty' | 'success'
 
@@ -37,6 +40,9 @@ export function useMasterLedger() {
   const to = searchParams.get('to') ?? defaultRange.to
   const kind = (searchParams.get('kind') as LedgerKind | null) ?? undefined
   const categoryId = searchParams.get('categoryId') ?? undefined
+  const intent = parseLedgerIntent(searchParams.get('intent'))
+  const bookingId = searchParams.get('bookingId') ?? undefined
+  const occurredOn = searchParams.get('occurredOn') ?? undefined
 
   const replaceQuery = useCallback(
     (next: Record<string, string | undefined>) => {
@@ -57,7 +63,13 @@ export function useMasterLedger() {
   )
 
   const reload = useCallback(async () => {
-    setStatus('loading')
+    setStatus((current) => {
+      if (current === 'success' || current === 'empty') {
+        return current
+      }
+
+      return 'loading'
+    })
     setErrorMessage(null)
 
     try {
@@ -76,7 +88,7 @@ export function useMasterLedger() {
       setData(null)
       setStatus('error')
       setErrorMessage(
-        error instanceof ApiError ? error.message : 'Не удалось загрузить кассу',
+        error instanceof ApiError ? error.message : 'Не удалось загрузить финансы',
       )
     }
   }, [categoryId, from, kind, to])
@@ -90,17 +102,28 @@ export function useMasterLedger() {
     replaceQuery({ from: range.from, to: range.to })
   }
 
-  const addEntry = async (input: {
-    kind: LedgerKind
-    categoryId: string
-    amount: string
-    note?: string
-    periodStart?: string
-    periodEnd?: string
-  }) => {
+  const openComposer = (nextIntent: 'tip' | 'expense') => {
+    replaceQuery({ intent: nextIntent })
+  }
+
+  const closeComposer = () => {
+    replaceQuery({
+      intent: undefined,
+      bookingId: undefined,
+      occurredOn: undefined,
+    })
+  }
+
+  const addEntry = async (input: CreateLedgerEntryInput) => {
+    const today = formatYmdDateInTimeZone(new Date())
+
     await createLedgerEntry({
       ...input,
-      occurredOn: input.kind === 'expense' ? input.periodEnd ?? to : to,
+      occurredOn:
+        input.kind === 'expense'
+          ? input.periodEnd ?? to
+          : input.occurredOn ?? occurredOn ?? today,
+      bookingId: input.kind === 'income' ? input.bookingId ?? bookingId : undefined,
     })
     await reload()
   }
@@ -127,12 +150,17 @@ export function useMasterLedger() {
     to,
     kind,
     categoryId,
+    intent,
+    bookingId,
+    occurredOn,
     data,
     status,
     errorMessage,
     setPreset,
     setKind: (value?: LedgerKind) => replaceQuery({ kind: value }),
     setCategoryId: (value?: string) => replaceQuery({ categoryId: value }),
+    openComposer,
+    closeComposer,
     addEntry,
     addCategory,
     removeEntry,
