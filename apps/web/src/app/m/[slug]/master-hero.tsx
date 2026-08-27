@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { PublicMasterView } from '@lustra/contracts'
 import cn from 'classnames'
 
@@ -23,12 +24,15 @@ export function MasterHero({ master }: MasterHeroProps) {
   return (
     <section className={cn(styles.hero, cover && styles.heroWithCover)}>
       {cover ? (
-        <img
+        <Image
           className={styles.cover}
           src={cover.url}
           alt={cover.caption ?? master.displayName}
           width={cover.width}
           height={cover.height}
+          sizes="(min-width: 640px) 640px, 100vw"
+          quality={90}
+          priority
           data-testid={TEST_ID.masterPublicCover}
         />
       ) : null}

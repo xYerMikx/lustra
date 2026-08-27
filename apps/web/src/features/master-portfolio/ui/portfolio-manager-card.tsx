@@ -1,6 +1,7 @@
 'use client'
 
 import cn from 'classnames'
+import Image from 'next/image'
 import type { PortfolioItemView } from '@lustra/contracts'
 
 import { portfolioModerationLabel } from '@/features/master-portfolio/model/portfolio-moderation-label'
@@ -35,12 +36,13 @@ export function PortfolioManagerCard({
   return (
     <article className={styles.card} data-testid={portfolioCardTestId(item.id)}>
       <div className={cn(styles.shot, ratioClass)}>
-        <img
+        <Image
           className={styles.image}
           src={item.url}
           alt={item.caption ?? 'Фото работы'}
-          width={item.width}
-          height={item.height}
+          fill
+          sizes="(min-width: 768px) 33vw, 100vw"
+          quality={90}
         />
         {item.isCover ? (
           <span className={styles.coverBadge} data-testid={TEST_ID.portfolioCoverBadge}>

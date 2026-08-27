@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { PortfolioItemView } from '@lustra/contracts'
 
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
@@ -22,15 +23,14 @@ export function PublicPortfolioShot({
         data-testid={publicPortfolioShotTestId(item.id)}
         onClick={onOpen}
       >
-        <img
+        <Image
           className={styles.publicShotImage}
           src={item.url}
           alt={item.caption ?? 'Фото работы'}
-          width={item.width}
-          height={item.height}
-          loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={eager ? 'high' : 'low'}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          quality={90}
+          priority={eager}
           draggable={false}
         />
       </button>

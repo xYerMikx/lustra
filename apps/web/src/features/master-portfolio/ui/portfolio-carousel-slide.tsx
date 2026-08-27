@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { PortfolioItemView } from '@lustra/contracts'
 
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
@@ -18,15 +19,14 @@ export function PortfolioCarouselSlide({
 }: PortfolioCarouselSlideProps) {
   const alt = item.caption ?? 'Фото работы'
   const image = (
-    <img
+    <Image
       className={styles.carouselImage}
       src={item.url}
       alt={alt}
-      width={item.width}
-      height={item.height}
-      loading={eager ? 'eager' : 'lazy'}
-      decoding="async"
-      fetchPriority={eager ? 'high' : 'low'}
+      fill
+      sizes="100vw"
+      quality={90}
+      priority={eager}
       draggable={false}
     />
   )

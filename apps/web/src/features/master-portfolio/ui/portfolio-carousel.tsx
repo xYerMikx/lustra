@@ -3,6 +3,7 @@
 import type { PortfolioItemView } from '@lustra/contracts'
 import cn from 'classnames'
 
+import { openPortfolioSlide } from '@/features/master-portfolio/model/open-portfolio-slide'
 import { usePortfolioCarouselScroll } from '@/features/master-portfolio/model/use-portfolio-carousel-scroll'
 import { PortfolioCarouselArrow } from '@/features/master-portfolio/ui/portfolio-carousel-arrow'
 import { PortfolioCarouselSlide } from '@/features/master-portfolio/ui/portfolio-carousel-slide'
@@ -47,15 +48,19 @@ export function PortfolioCarousel({
       <div className={cn(styles.stage, isLightbox && styles.stageFill)}>
         <div className={cn(styles.viewport, isLightbox && styles.viewportLightbox)}>
           <ul ref={trackRef} className={styles.track} onScroll={handleScroll}>
-            {items.map((item, itemIndex) => (
-              <PortfolioCarouselSlide
-                key={item.id}
-                item={item}
-                active={itemIndex === index}
-                eager={Math.abs(itemIndex - index) <= 1}
-                onOpen={onOpen ? () => onOpen(itemIndex) : undefined}
-              />
-            ))}
+            {items.map((item, itemIndex) => {
+              const openSlide = openPortfolioSlide(onOpen, itemIndex)
+
+              return (
+                <PortfolioCarouselSlide
+                  key={item.id}
+                  item={item}
+                  active={itemIndex === index}
+                  eager={Math.abs(itemIndex - index) <= 1}
+                  onOpen={openSlide}
+                />
+              )
+            })}
           </ul>
         </div>
         {showArrows ? (

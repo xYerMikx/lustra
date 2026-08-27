@@ -24,18 +24,22 @@ export function PublicPortfolioFeed({ items }: PublicPortfolioFeedProps) {
   return (
     <>
       <ul className={styles.publicGrid}>
-        {visibleItems.map((item, itemIndex) => (
-          <PublicPortfolioShot
-            key={item.id}
-            item={item}
-            eager={itemIndex === 0}
-            onOpen={() => {
-              setIndex(itemIndex)
+        {visibleItems.map((item, itemIndex) => {
+          const openShot = () => {
+            setIndex(itemIndex)
 
-              setLightboxOpen(true)
-            }}
-          />
-        ))}
+            setLightboxOpen(true)
+          }
+
+          return (
+            <PublicPortfolioShot
+              key={item.id}
+              item={item}
+              eager={itemIndex === 0}
+              onOpen={openShot}
+            />
+          )
+        })}
       </ul>
       {hasMore ? (
         <div
