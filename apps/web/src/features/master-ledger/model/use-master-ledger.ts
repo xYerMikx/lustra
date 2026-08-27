@@ -88,7 +88,7 @@ export function useMasterLedger() {
       setData(null)
       setStatus('error')
       setErrorMessage(
-        error instanceof ApiError ? error.message : 'Не удалось загрузить кассу',
+        error instanceof ApiError ? error.message : 'Не удалось загрузить финансы',
       )
     }
   }, [categoryId, from, kind, to])

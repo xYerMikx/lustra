@@ -38,7 +38,7 @@ export function MasterLedgerShell() {
   if (ledger.status === 'error') {
     return (
       <section className={styles.section} data-testid={TEST_ID.pageMasterLedger}>
-        <h1 className={styles.title}>Касса</h1>
+        <h1 className={styles.title}>Финансы</h1>
         <p className={styles.error}>{ledger.errorMessage ?? 'Ошибка'}</p>
         <Button type="button" variant="ghost" onClick={() => void ledger.reload()}>
           Повторить
@@ -66,7 +66,7 @@ export function MasterLedgerShell() {
     <section className={styles.section} data-testid={TEST_ID.pageMasterLedger}>
       <header>
         <p className={styles.eyebrow}>Только для мастера</p>
-        <h1 className={styles.title}>Касса</h1>
+        <h1 className={styles.title}>Финансы</h1>
         <p className={styles.period}>{formatLedgerPeriodLabel(ledger.from, ledger.to)}</p>
         <p className={styles.lead}>
           Завершённый визит попадает в доход без чаевых. Чаевые, аренду и материалы
@@ -90,7 +90,7 @@ export function MasterLedgerShell() {
       {summary ? <LedgerSummaryCards summary={summary} /> : null}
 
       {ledger.status === 'loading' && items.length === 0 ? (
-        <p className={styles.empty}>Считаем кассу…</p>
+        <p className={styles.empty}>Считаем финансы…</p>
       ) : null}
 
       <LedgerSeriesChart points={points} />

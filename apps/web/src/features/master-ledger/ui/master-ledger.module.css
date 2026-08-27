@@ -139,23 +139,10 @@
   color: var(--color-text-3);
 }
 
-.chartSvg {
+.chartFrame {
   width: 100%;
   height: 160px;
-  display: block;
-}
-
-.chartBase {
-  stroke: var(--color-border);
-  stroke-width: 0.4;
-}
-
-.barIncome {
-  fill: var(--color-sage);
-}
-
-.barExpense {
-  fill: var(--color-accent);
+  color: var(--color-text-3);
 }
 
 .chartLegend {
@@ -185,27 +172,6 @@
 
 .swatchExpense {
   background: var(--color-accent);
-}
-
-.chartLabels {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--spacing-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--color-text-3);
-  font-size: var(--text-13);
-  line-height: var(--text-13--line-height);
-}
-
-.chartLabels li {
-  flex: 1 1 0;
-  min-width: 0;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .breakdown {
@@ -345,9 +311,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tab,
-  .barIncome,
-  .barExpense {
+  .tab {
     transition: none;
   }
 }

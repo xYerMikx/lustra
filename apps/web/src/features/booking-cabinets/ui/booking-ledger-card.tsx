@@ -19,7 +19,7 @@ export function BookingLedgerCard({
 
   return (
     <article className={styles.card}>
-      <h2 className={styles.cardTitle}>Касса</h2>
+      <h2 className={styles.cardTitle}>Финансы</h2>
       <p className={styles.cardHint}>
         Цена визита ({priceLabel}) уже в доходе. Чаевые — отдельной строкой, если
         клиент оставил.
@@ -29,7 +29,7 @@ export function BookingLedgerCard({
           Добавить чаевые
         </ButtonLink>
         <ButtonLink href="/app/master/ledger" variant="ghost">
-          Открыть кассу
+          Открыть финансы
         </ButtonLink>
       </div>
     </article>

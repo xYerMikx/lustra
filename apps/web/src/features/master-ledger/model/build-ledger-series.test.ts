@@ -4,8 +4,6 @@ import {
   breakdownTickCount,
   buildLedgerBreakdown,
   buildLedgerSeries,
-  ledgerBarHeight,
-  ledgerSeriesMax,
 } from '@/features/master-ledger/model/build-ledger-series'
 
 const visit = {
@@ -44,8 +42,13 @@ describe('buildLedgerSeries', () => {
       income: 0,
       expense: 40,
     })
-    expect(ledgerSeriesMax(points)).toBe(100)
-    expect(ledgerBarHeight(40, 100, 120)).toBe(48)
+    expect(points[0]?.label).not.toMatch(/^\d+$/)
+  })
+
+  it('uses day numbers when the range is longer than a week', () => {
+    const points = buildLedgerSeries([], '2026-08-17', '2026-08-30')
+
+    expect(points[0]?.label).toMatch(/^\d+$/)
   })
 
   it('buckets a month into ISO weeks', () => {

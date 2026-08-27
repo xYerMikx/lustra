@@ -22,10 +22,10 @@ export function MasterBookingsHeader({ onBooked }: MasterBookingsHeaderProps) {
         />
       </div>
       <p className={styles.headerLead}>
-        После визита цена услуги попадает в кассу. Чаевые и расходы можно дописать
+        После визита цена услуги попадает в финансы. Чаевые и расходы можно дописать
         там же.{' '}
         <Link href="/app/master/ledger" className={styles.headerLeadLink}>
-          Касса
+          Финансы
         </Link>
       </p>
     </header>

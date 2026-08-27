@@ -4,11 +4,11 @@ import { loginMaster } from '../helpers/auth'
 import { TEST_ID } from '../test-id'
 
 test.describe('master ledger', () => {
-  test('puts the cash register on the mobile tab bar', async ({ page }) => {
+  test('puts finances on the mobile tab bar', async ({ page }) => {
     await loginMaster(page)
     await expect(page.getByTestId(TEST_ID.ledgerSnapshot)).toBeVisible()
     await expect(
-      page.getByRole('link', { name: 'Касса', exact: true }).last(),
+      page.getByRole('link', { name: 'Финансы', exact: true }).last(),
     ).toBeVisible()
   })
 

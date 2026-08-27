@@ -134,7 +134,7 @@ export function LedgerEntryForm({
               value={newCategoryName}
               onChange={(event) => setNewCategoryName(event.target.value)}
             />
-            <Button type="button" variant="ghost" onClick={() => void addCategory()}>
+            <Button type="button" variant="ghost" onClick={addCategory}>
               Добавить
             </Button>
           </div>

@@ -5,7 +5,7 @@ function pad2(value: number): string {
 function ymdToUtcDate(ymd: string): Date {
   const [year, month, day] = ymd.split('-').map(Number)
 
-  return new Date(Date.UTC(year, month - 1, day))
+  return new Date(Date.UTC(year!, month! - 1, day!))
 }
 
 function isFullCalendarMonth(from: string, to: string): boolean {
@@ -18,7 +18,7 @@ function isFullCalendarMonth(from: string, to: string): boolean {
   }
 
   const [year, month] = from.split('-').map(Number)
-  const last = new Date(Date.UTC(year, month, 0)).getUTCDate()
+  const last = new Date(Date.UTC(year!, month!, 0)).getUTCDate()
 
   return to === `${from.slice(0, 7)}-${pad2(last)}`
 }

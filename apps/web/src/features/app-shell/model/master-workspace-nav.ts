@@ -19,7 +19,7 @@ export const MASTER_WORKSPACE_PRIMARY: MasterWorkspaceItem[] = [
   { href: '/app', label: 'Кабинет', icon: 'home' },
   { href: '/app/master/calendar', label: 'Календарь', icon: 'calendar' },
   { href: '/app/master/bookings', label: 'Записи', icon: 'bookings' },
-  { href: '/app/master/ledger', label: 'Касса', icon: 'ledger' },
+  { href: '/app/master/ledger', label: 'Финансы', icon: 'ledger' },
 ]
 
 export const MASTER_WORKSPACE_MORE: MasterWorkspaceItem[] = [

@@ -1,4 +1,5 @@
 import type { LedgerSummaryView } from '@lustra/contracts'
+import cn from 'classnames'
 
 import { formatByn } from '@/shared/lib/money'
 import styles from '@/features/master-ledger/ui/master-ledger.module.css'
@@ -24,7 +25,7 @@ export function LedgerSummaryCards({ summary }: LedgerSummaryCardsProps) {
           {formatByn(Number(summary.expenseTotal), currency)}
         </strong>
       </li>
-      <li className={`${styles.summaryCard} ${styles.summaryNet}`}>
+      <li className={cn(styles.summaryCard, styles.summaryNet)}>
         <span className={styles.summaryLabel}>Итог</span>
         <strong className={styles.summaryValue}>
           {formatByn(Number(summary.netTotal), currency)}

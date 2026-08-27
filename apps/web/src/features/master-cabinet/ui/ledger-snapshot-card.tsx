@@ -13,7 +13,7 @@ export function LedgerSnapshotCard() {
 
   return (
     <div className={styles.section} data-testid={TEST_ID.ledgerSnapshot}>
-      <h2 className={styles.sectionTitle}>Касса за месяц</h2>
+      <h2 className={styles.sectionTitle}>Финансы за месяц</h2>
       {status === 'success' && summary ? (
         <p className={styles.snapshotValue}>
           {formatByn(Number(summary.netTotal), summary.currency)}
@@ -27,12 +27,12 @@ export function LedgerSnapshotCard() {
         </p>
       ) : (
         <p className={styles.hint}>
-          Здесь считаются доход с визитов, чаевые и расходы. Клиенты кассу не видят.
+          Здесь считаются доход с визитов, чаевые и расходы. Клиенты эти цифры не видят.
         </p>
       )}
       <div className={cn(styles.actions, styles.actionsAfter)}>
         <ButtonLink href="/app/master/ledger" variant="ghost" fullWidth>
-          Открыть кассу
+          Открыть финансы
         </ButtonLink>
       </div>
     </div>

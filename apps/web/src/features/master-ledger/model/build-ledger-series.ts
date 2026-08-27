@@ -28,7 +28,7 @@ function enumerateYmd(from: string, to: string): string[] {
 function ymdToUtcDate(ymd: string): Date {
   const [year, month, day] = ymd.split('-').map(Number)
 
-  return new Date(Date.UTC(year, month - 1, day))
+  return new Date(Date.UTC(year!, month! - 1, day!))
 }
 
 function startOfIsoWeek(ymd: string): string {
@@ -85,14 +85,14 @@ function buildDailySeries(
   items: LedgerSeriesItem[],
   days: string[],
 ): LedgerChartPoint[] {
-  const useWeekday = days.length <= 7
+  const shouldUseWeekday = days.length <= 7
 
   return days.map((ymd) => {
     const totals = totalsForDay(items, ymd)
 
     return {
       key: ymd,
-      label: useWeekday ? formatWeekdayLabel(ymd) : formatDayNumber(ymd),
+      label: shouldUseWeekday ? formatWeekdayLabel(ymd) : formatDayNumber(ymd),
       income: totals.income,
       expense: totals.expense,
     }
@@ -151,20 +151,6 @@ export function buildLedgerSeries(
   return buildWeeklySeries(items, days)
 }
 
-export function ledgerSeriesMax(points: LedgerChartPoint[]): number {
-  return points.reduce((max, point) => {
-    return Math.max(max, point.income, point.expense)
-  }, 0)
-}
-
-export function ledgerBarHeight(value: number, max: number, chartHeight: number): number {
-  if (max <= 0 || value <= 0) {
-    return 0
-  }
-
-  return (value / max) * chartHeight
-}
-
 export type LedgerBreakdownRow = {
   categoryName: string
   kind: LedgerKind
@@ -210,18 +196,4 @@ export function breakdownTickCount(amount: number, max: number, ticks = 10): num
   }
 
   return Math.max(1, Math.round((amount / max) * ticks))
-}
-
-export function isLedgerChartLabelVisible(index: number, total: number): boolean {
-  if (total <= 8) {
-    return true
-  }
-
-  if (index === 0 || index === total - 1) {
-    return true
-  }
-
-  const step = Math.ceil(total / 6)
-
-  return index % step === 0
 }
