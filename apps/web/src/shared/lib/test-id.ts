@@ -122,6 +122,7 @@ export const TEST_ID = {
   portfolioCarouselPrev: 'portfolio-carousel-prev',
   portfolioCarouselNext: 'portfolio-carousel-next',
   publicPortfolioGallery: 'public-portfolio-gallery',
+  publicPortfolioSentinel: 'public-portfolio-sentinel',
   masterPublicCover: 'master-public-cover',
 
   bookingsTabUpcoming: 'bookings-tab-upcoming',
