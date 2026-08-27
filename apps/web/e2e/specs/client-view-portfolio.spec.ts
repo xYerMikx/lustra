@@ -29,14 +29,32 @@ test.describe('client view portfolio', () => {
       await client.page.goto(`/m/${ANNA_SLUG}`)
       await expect(client.page.getByTestId(TEST_ID.pageMasterPublic)).toBeVisible()
       await expect(client.page.getByTestId(TEST_ID.masterPublicCover)).toBeVisible()
-      await expect(client.page.getByTestId(TEST_ID.publicPortfolioGallery)).toBeVisible()
-      await expect(client.page.getByTestId(publicPortfolioShotTestId(firstId))).toBeVisible()
-      await expect(client.page.getByTestId(publicPortfolioShotTestId(secondId))).toBeVisible()
+      const gallery = client.page.getByTestId(TEST_ID.publicPortfolioGallery)
+      const firstShot = client.page.getByTestId(publicPortfolioShotTestId(firstId))
+      const secondShot = client.page.getByTestId(publicPortfolioShotTestId(secondId))
 
-      await client.page.getByTestId(publicPortfolioShotTestId(firstId)).click()
-      await expect(client.page.getByTestId(TEST_ID.portfolioLightbox)).toBeVisible()
+      await expect(gallery).toBeVisible()
+      await expect(firstShot).toBeVisible()
+      await expect(secondShot).toHaveCount(1)
+      await expect(firstShot).toHaveAttribute('aria-current', 'true')
+
+      await gallery.getByTestId(TEST_ID.portfolioCarouselNext).click()
+      await expect(secondShot).toHaveAttribute('aria-current', 'true')
+
+      await gallery.getByTestId(TEST_ID.portfolioCarouselPrev).click()
+      await expect(firstShot).toHaveAttribute('aria-current', 'true')
+
+      await firstShot.click()
+      const lightbox = client.page.getByTestId(TEST_ID.portfolioLightbox)
+
+      await expect(lightbox).toBeVisible()
+      await lightbox.getByTestId(TEST_ID.portfolioCarouselNext).click()
+      await expect(
+        lightbox.getByTestId(publicPortfolioShotTestId(secondId)),
+      ).toHaveAttribute('aria-current', 'true')
+
       await client.page.getByTestId(TEST_ID.portfolioLightboxClose).click()
-      await expect(client.page.getByTestId(TEST_ID.portfolioLightbox)).toHaveCount(0)
+      await expect(lightbox).toHaveCount(0)
     } finally {
       await client.context.close()
     }
