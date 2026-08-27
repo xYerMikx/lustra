@@ -1,18 +1,13 @@
 export const PORTFOLIO_SSR_COUNT = 5
 
-const TABLET_MIN_WIDTH = 768
 const DESKTOP_MIN_WIDTH = 1024
 
 export function portfolioFeedPageSize(viewportWidth: number): number {
   if (viewportWidth >= DESKTOP_MIN_WIDTH) {
-    return 6
+    return 8
   }
 
-  if (viewportWidth >= TABLET_MIN_WIDTH) {
-    return 4
-  }
-
-  return 2
+  return 6
 }
 
 export function initialPortfolioVisibleCount(total: number): number {

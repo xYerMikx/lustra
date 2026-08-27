@@ -7,18 +7,18 @@ import {
 } from '@/features/master-portfolio/model/portfolio-feed-window'
 
 describe('portfolioFeedPageSize', () => {
-  it('loads two photos at a time on a phone', () => {
-    expect(portfolioFeedPageSize(390)).toBe(2)
+  it('loads six photos at a time on a phone', () => {
+    expect(portfolioFeedPageSize(390)).toBe(6)
   })
 
-  it('loads four photos at a time on a tablet', () => {
-    expect(portfolioFeedPageSize(768)).toBe(4)
-    expect(portfolioFeedPageSize(900)).toBe(4)
+  it('loads six photos at a time on a tablet', () => {
+    expect(portfolioFeedPageSize(768)).toBe(6)
+    expect(portfolioFeedPageSize(900)).toBe(6)
   })
 
-  it('loads six photos at a time on a desktop', () => {
-    expect(portfolioFeedPageSize(1024)).toBe(6)
-    expect(portfolioFeedPageSize(1440)).toBe(6)
+  it('loads eight photos at a time on a desktop', () => {
+    expect(portfolioFeedPageSize(1024)).toBe(8)
+    expect(portfolioFeedPageSize(1440)).toBe(8)
   })
 })
 

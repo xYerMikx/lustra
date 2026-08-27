@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import type { PublicMasterView } from '@lustra/contracts'
-import cn from 'classnames'
 
 import styles from '@/app/m/[slug]/master.module.css'
 import { FavoriteToggle } from '@/features/favorites'
@@ -22,27 +21,31 @@ export function MasterHero({ master }: MasterHeroProps) {
   const cover = pickCoverItem(master.portfolio)
 
   return (
-    <section className={cn(styles.hero, cover && styles.heroWithCover)}>
-      {cover ? (
-        <Image
-          className={styles.cover}
-          src={cover.url}
-          alt={cover.caption ?? master.displayName}
-          width={cover.width}
-          height={cover.height}
-          sizes="(min-width: 640px) 640px, 100vw"
-          quality={90}
-          priority
-          data-testid={TEST_ID.masterPublicCover}
-        />
-      ) : null}
-      <p className={styles.place}>
-        {district} · {ratingLabel}
-      </p>
-      <h1 className={styles.name} data-testid={TEST_ID.masterPublicName}>
-        {master.displayName}
-      </h1>
-      {master.headline ? <p className={styles.headline}>{master.headline}</p> : null}
+    <section className={styles.hero}>
+      <div className={styles.identity}>
+        {cover ? (
+          <div className={styles.coverFrame} data-testid={TEST_ID.masterPublicCover}>
+            <Image
+              className={styles.cover}
+              src={cover.url}
+              alt={cover.caption ?? master.displayName}
+              fill
+              sizes="(min-width: 768px) 160px, 96px"
+              quality={90}
+              priority
+            />
+          </div>
+        ) : null}
+        <div className={styles.identityCopy}>
+          <p className={styles.place}>
+            {district} · {ratingLabel}
+          </p>
+          <h1 className={styles.name} data-testid={TEST_ID.masterPublicName}>
+            {master.displayName}
+          </h1>
+          {master.headline ? <p className={styles.headline}>{master.headline}</p> : null}
+        </div>
+      </div>
       {master.bio ? <p className={styles.bio}>{master.bio}</p> : null}
       <MasterContactLinks contact={master.contact} />
       <div className={styles.heroActions}>
