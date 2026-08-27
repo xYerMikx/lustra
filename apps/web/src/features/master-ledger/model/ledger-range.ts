@@ -44,3 +44,21 @@ export function ledgerRangeForPreset(
 
   return { from: `${today.slice(0, 7)}-01`, to: endOfMonth(today) }
 }
+
+export function detectLedgerPreset(
+  from: string,
+  to: string,
+  now: Date,
+): LedgerPeriodPreset | null {
+  const presets: LedgerPeriodPreset[] = ['week', 'two_weeks', 'month']
+
+  for (const preset of presets) {
+    const range = ledgerRangeForPreset(preset, now)
+
+    if (range.from === from && range.to === to) {
+      return preset
+    }
+  }
+
+  return null
+}

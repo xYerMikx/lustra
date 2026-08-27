@@ -33,6 +33,22 @@
   color: var(--color-text);
 }
 
+.financeHint {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+}
+
+.financeLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent-700);
+  font-weight: var(--font-weight-600);
+  text-decoration: none;
+}
+
 .toolbar {
   display: flex;
   flex-direction: column;

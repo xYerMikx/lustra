@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  MASTER_WORKSPACE_MORE,
+  MASTER_WORKSPACE_PRIMARY,
   isMasterWorkspacePath,
   isWorkspaceItemActive,
   workspaceNavItems,
@@ -20,6 +22,21 @@ describe('master workspace nav', () => {
     ).toBe(true)
     expect(isWorkspaceItemActive('/app', '/app')).toBe(true)
     expect(isWorkspaceItemActive('/app/master/calendar', '/app')).toBe(false)
+  })
+
+  it('keeps the cash register on the primary mobile bar', () => {
+    expect(MASTER_WORKSPACE_PRIMARY.map((item) => item.href)).toEqual([
+      '/app',
+      '/app/master/calendar',
+      '/app/master/bookings',
+      '/app/master/ledger',
+    ])
+    expect(MASTER_WORKSPACE_MORE.map((item) => item.href)).toContain(
+      '/app/master/portfolio',
+    )
+    expect(MASTER_WORKSPACE_MORE.map((item) => item.href)).toContain(
+      '/app/master/profile',
+    )
   })
 
   it('hides first-steps after onboarding is done', () => {

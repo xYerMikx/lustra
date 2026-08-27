@@ -5,6 +5,7 @@ import type { DistrictView, MasterProfileView } from '@lustra/contracts'
 
 import { useMasterSession } from '@/features/auth'
 import { MasterProfileEditForm } from '@/features/master-profile-edit/ui/master-profile-edit-form'
+import { ProfileLedgerHint } from '@/features/master-profile-edit/ui/profile-ledger-hint'
 import { TelegramLinkCard } from '@/features/telegram-link'
 import { ApiError } from '@/shared/api/http'
 import {
@@ -100,6 +101,7 @@ export function MasterProfileEditShell() {
           districts={districts}
           onProfileSaved={setProfile}
         />
+        <ProfileLedgerHint />
         <TelegramLinkCard linked={session.telegramLinked} audience="master" />
       </section>
     </div>

@@ -7,6 +7,7 @@ import { profileStatusLabel } from '@/features/master-cabinet/model/profile-stat
 import { useMasterCabinet } from '@/features/master-cabinet/model/use-master-cabinet'
 import { EmailVerifyBanner } from '@/features/master-cabinet/ui/email-verify-banner'
 import { TelegramLinkCard } from '@/features/telegram-link'
+import { LedgerSnapshotCard } from '@/features/master-cabinet/ui/ledger-snapshot-card'
 import { PublicProfileShare } from '@/features/master-cabinet/ui/public-profile-share'
 import { SubmitForReviewButton } from '@/features/master-cabinet/ui/submit-for-review-button'
 import { UpcomingBookingsList } from '@/features/master-cabinet/ui/upcoming-bookings-list'
@@ -79,6 +80,7 @@ export function MasterCabinetHub() {
 
         {!session.emailVerified ? <EmailVerifyBanner /> : null}
         <TelegramLinkCard linked={session.telegramLinked} audience="master" />
+        <LedgerSnapshotCard />
 
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Публичная страница</h2>
@@ -149,9 +151,6 @@ export function MasterCabinetHub() {
             </ButtonLink>
             <ButtonLink href="/app/master/clients" variant="ghost" fullWidth>
               Клиенты
-            </ButtonLink>
-            <ButtonLink href="/app/master/ledger" variant="ghost" fullWidth>
-              Касса
             </ButtonLink>
           </div>
         </div>

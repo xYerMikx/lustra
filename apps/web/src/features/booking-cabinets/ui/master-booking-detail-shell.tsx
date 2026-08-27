@@ -11,6 +11,7 @@ import { useMasterBookingDetail } from '@/features/booking-cabinets/model/use-ma
 import { BookingCancelWarning } from '@/features/booking-cabinets/ui/booking-cancel-warning'
 import { BookingInfoCard } from '@/features/booking-cabinets/ui/booking-info-card'
 import { DevNotifyProbeCard } from '@/features/booking-cabinets/ui/dev-notify-probe-card'
+import { BookingLedgerCard } from '@/features/booking-cabinets/ui/booking-ledger-card'
 import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import { ClientSocialLink } from '@/features/booking-cabinets/ui/client-social-link'
 import { MasterBookingBackLink } from '@/features/booking-cabinets/ui/master-booking-back-link'
@@ -121,6 +122,14 @@ export function MasterBookingDetailShell({
           <BookingInfoCard title="Заметка">
             <span className={styles.cardHint}>{booking.masterNote}</span>
           </BookingInfoCard>
+        ) : null}
+
+        {booking.status === 'completed' ? (
+          <BookingLedgerCard
+            bookingId={booking.id}
+            startsAt={booking.startsAt}
+            priceLabel={priceLabel}
+          />
         ) : null}
 
         <DevNotifyProbeCard bookingId={booking.id} />
