@@ -1,6 +1,7 @@
 import { COMPLETED_BOOKING_ID } from '../ids'
 import { expect, test } from '../fixtures'
 import { loginMaster } from '../helpers/auth'
+import { openMasterFinances } from '../helpers/open-master-finances'
 import { TEST_ID } from '../test-id'
 
 test.describe('master ledger', () => {
@@ -12,10 +13,9 @@ test.describe('master ledger', () => {
     ).toBeVisible()
   })
 
-  test('adds an expense from the cash register sheet', async ({ page }) => {
+  test('adds an expense from the finances sheet', async ({ page }) => {
     await loginMaster(page)
-    await page.goto('/app/master/ledger')
-    await expect(page.getByTestId(TEST_ID.pageMasterLedger)).toBeVisible()
+    await openMasterFinances(page)
     await expect(page.getByTestId(TEST_ID.ledgerChart)).toBeVisible()
 
     await page.getByTestId(TEST_ID.ledgerQuickExpense).click()

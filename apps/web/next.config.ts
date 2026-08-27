@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../.."),
-  transpilePackages: ["@lustra/contracts"],
+  transpilePackages: ["@lustra/contracts", "recharts"],
   compiler: {
     // SWC analog of babel-plugin-react-remove-properties — prod only.
     reactRemoveProperties: keepTestIds

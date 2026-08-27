@@ -1,6 +1,7 @@
 'use client'
 
 import cn from 'classnames'
+import dynamic from 'next/dynamic'
 import type { LedgerPeriodPreset } from '@lustra/contracts'
 
 import { buildLedgerBreakdown, buildLedgerSeries } from '@/features/master-ledger/model/build-ledger-series'
@@ -12,13 +13,20 @@ import { LedgerBreakdown } from '@/features/master-ledger/ui/ledger-breakdown'
 import { LedgerEntryDialog } from '@/features/master-ledger/ui/ledger-entry-dialog'
 import { LedgerEntryList } from '@/features/master-ledger/ui/ledger-entry-list'
 import { LedgerQuickActions } from '@/features/master-ledger/ui/ledger-quick-actions'
-import { LedgerSeriesChart } from '@/features/master-ledger/ui/ledger-series-chart'
 import { LedgerSummaryCards } from '@/features/master-ledger/ui/ledger-summary-cards'
 import styles from '@/features/master-ledger/ui/master-ledger.module.css'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { Button } from '@/shared/ui/button'
 import { Field } from '@/shared/ui/field'
 import { Select } from '@/shared/ui/select'
+
+const LedgerSeriesChart = dynamic(
+  () =>
+    import('@/features/master-ledger/ui/ledger-series-chart').then(
+      (module) => module.LedgerSeriesChart,
+    ),
+  { ssr: false },
+)
 
 const KIND_OPTIONS = [
   { value: '', label: 'Все операции' },
