@@ -31,21 +31,24 @@ export function PortfolioCarouselSlide({
     />
   )
 
+  const current = active ? 'true' : undefined
+
+  const testId = publicPortfolioShotTestId(item.id)
+
   if (!onOpen) {
     return (
-      <li className={styles.slide} aria-current={active ? 'true' : undefined}>
+      <li className={styles.slide} aria-current={current} data-testid={testId}>
         {image}
       </li>
     )
   }
 
   return (
-    <li className={styles.slide} aria-current={active ? 'true' : undefined}>
+    <li className={styles.slide} aria-current={current} data-testid={testId}>
       <button
         type="button"
         className={styles.slideButton}
-        data-testid={publicPortfolioShotTestId(item.id)}
-        aria-current={active ? 'true' : undefined}
+        aria-current={current}
         onClick={onOpen}
       >
         {image}
