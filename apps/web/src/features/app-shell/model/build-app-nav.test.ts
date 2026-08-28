@@ -55,6 +55,12 @@ describe('buildAppNavItems', () => {
 })
 
 describe('isAppNavActive', () => {
+  it('marks home only on the app root', () => {
+    expect(isAppNavActive('/', '/')).toBe(true)
+    expect(isAppNavActive('/catalog', '/')).toBe(false)
+    expect(isAppNavActive('/app', '/')).toBe(false)
+  })
+
   it('marks catalog for category paths', () => {
     expect(isAppNavActive('/catalog', '/catalog')).toBe(true)
     expect(isAppNavActive('/catalog/manikyur', '/catalog')).toBe(true)
