@@ -18,6 +18,7 @@ import {
 } from '@/features/auth/model/load-session'
 import { logout } from '@/shared/api/auth-client'
 import { TEST_ID } from '@/shared/lib/test-id'
+import { BrandMark } from '@/shared/ui/brand-mark'
 import { LogoutIcon } from '@/shared/ui/icon-pack'
 import { LandingLink } from '@/shared/ui/landing-link'
 import { Spinner } from '@/shared/ui/spinner'
@@ -67,6 +68,7 @@ export function AppHeader() {
 
   const user = session.status === 'ready' ? session.user : null
   const navItems = buildAppNavItems(user)
+  const homeCurrent = isAppNavActive(pathname, '/')
   const loginCurrent = isAppNavActive(pathname, '/app/login')
 
   const handleLogout = async () => {
@@ -87,9 +89,16 @@ export function AppHeader() {
 
   return (
     <header className={cn(styles.header, compact && styles.headerCompact)}>
-      <Link href="/" className={styles.brand}>
-        Lumira
+      <Link
+        href="/"
+        className={styles.brand}
+        aria-label="Lumira, на главную"
+        aria-current={homeCurrent ? 'page' : undefined}
+      >
+        <BrandMark className={styles.brandMark} />
+        <span className={styles.brandLabel}>Главная</span>
       </Link>
+
       <div className={styles.headerEnd}>
         <LandingLink className={cn(styles.navLink, styles.siteLink)}>
           На сайт

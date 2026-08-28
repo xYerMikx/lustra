@@ -11,17 +11,38 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-16);
-  padding: var(--spacing-20) 0 var(--spacing-12);
+  padding: var(--spacing-16) 0;
 }
 
 .brand {
+  display: flex;
   flex-shrink: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-26);
-  line-height: var(--text-26--line-height);
-  font-weight: var(--font-weight-700);
-  color: var(--color-text);
+  align-items: center;
+  gap: var(--spacing-12);
+  min-height: var(--spacing-64);
   text-decoration: none;
+}
+
+.brandMark {
+  display: block;
+  box-sizing: border-box;
+  width: var(--spacing-64);
+  height: var(--spacing-64);
+  padding: var(--spacing-4);
+  flex-shrink: 0;
+  object-fit: contain;
+  transform: translateY(var(--spacing-4)) scaleY(0.9);
+}
+
+.brandLabel {
+  font-size: var(--text-15);
+  line-height: var(--text-15--line-height);
+  font-weight: var(--font-weight-500);
+  color: var(--color-text);
+}
+
+.brand:hover .brandLabel {
+  color: var(--color-accent);
 }
 
 .headerEnd {
@@ -43,6 +64,8 @@
 }
 
 .navLink {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
   color: var(--color-text-2);
   text-decoration: none;
 }
@@ -159,8 +182,17 @@
   }
 
   .brand {
-    font-size: var(--text-20);
-    line-height: var(--text-20--line-height);
+    min-height: var(--spacing-56);
+  }
+
+  .brandMark {
+    width: var(--spacing-56);
+    height: var(--spacing-56);
+  }
+
+  .brandLabel {
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
   }
 
   .headerEnd {

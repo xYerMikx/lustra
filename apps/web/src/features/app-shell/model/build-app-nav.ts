@@ -48,6 +48,10 @@ export function buildAppNavItems(user: MeResponse | null): AppNavItem[] {
 }
 
 export function isAppNavActive(pathname: string, href: string): boolean {
+  if (href === '/') {
+    return pathname === '/'
+  }
+
   if (href === '/catalog') {
     return pathname === '/catalog' || pathname.startsWith('/catalog/')
   }
