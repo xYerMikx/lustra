@@ -47,15 +47,18 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_BY",
     siteName: "Lumira",
-    title: "Lumira — бьюти-мастера Минска и Беларуси",
-    description:
-      "Агрегатор бьюти-мастеров в Минске и по Беларуси. Запись онлайн по услуге и району.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Lumira — бьюти-мастера Беларуси",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
-    title: "Lumira — бьюти-мастера Минска и Беларуси",
-    description:
-      "Агрегатор бьюти-мастеров в Минске и по Беларуси. Запись онлайн по услуге и району.",
+    card: "summary_large_image",
+    images: ["/og.png"],
   },
   robots: {
     index: true,
