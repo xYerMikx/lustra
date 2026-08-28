@@ -6,15 +6,15 @@ import type {
 } from '@/features/app-home/model/client-flow-slides'
 import styles from '@/features/app-home/ui/client-flow-slide-card.module.css'
 
-const ROW_TONE_CLASS: Record<NonNullable<ClientFlowRow['tone']>, string> = {
+type ClientFlowTone = NonNullable<ClientFlowRow['tone']>
+
+const ROW_TONE_CLASS: Record<ClientFlowTone, string | undefined> = {
   ok: styles.rowOk,
   free: styles.rowFree,
   hold: styles.rowHold,
 }
 
-const ROW_META_TONE_CLASS: Partial<
-  Record<NonNullable<ClientFlowRow['tone']>, string>
-> = {
+const ROW_META_TONE_CLASS: Partial<Record<ClientFlowTone, string | undefined>> = {
   ok: styles.rowOkMeta,
 }
 
