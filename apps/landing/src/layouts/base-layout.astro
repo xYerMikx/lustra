@@ -5,6 +5,7 @@ import SiteFooter from '@/components/site-footer.astro'
 import SiteHeader from '@/components/site-header.astro'
 import { getLandingGoogleSiteVerification } from '@/lib/analytics'
 import { FONT_PRELOADS } from '@/lib/font-preloads'
+import { ogImageForPath } from '@/lib/og-pages'
 import {
   DEFAULT_DESCRIPTION,
   OG_IMAGE,
@@ -18,6 +19,7 @@ interface Props {
   canonicalPath?: string
   ogType?: string
   ogImagePath?: string
+  ogImageAlt?: string
   noindex?: boolean
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
 }
@@ -27,10 +29,15 @@ const {
   description = DEFAULT_DESCRIPTION,
   canonicalPath = Astro.url.pathname,
   ogType = 'website',
-  ogImagePath = OG_IMAGE.path,
+  ogImagePath: ogImagePathProp,
+  ogImageAlt: ogImageAltProp,
   noindex = false,
   jsonLd,
 } = Astro.props
+
+const pageOg = ogImageForPath(canonicalPath)
+const ogImagePath = ogImagePathProp ?? pageOg.path
+const ogImageAlt = ogImageAltProp ?? pageOg.alt
 
 const siteOrigin = Astro.site?.href?.replace(/\/$/, '') ?? 'https://lumira.by'
 const path =
@@ -103,13 +110,13 @@ const googleVerification = getLandingGoogleSiteVerification()
     <meta property="og:image:type" content={OG_IMAGE.type} />
     <meta property="og:image:width" content={String(OG_IMAGE.width)} />
     <meta property="og:image:height" content={String(OG_IMAGE.height)} />
-    <meta property="og:image:alt" content={OG_IMAGE.alt} />
+    <meta property="og:image:alt" content={ogImageAlt} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     {
       jsonLdBlocks.map((block) => (

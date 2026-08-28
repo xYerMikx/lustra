@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "astro dev --port 4321",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "generate:og": "node --experimental-strip-types scripts/generate-og.ts",
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.5",
@@ -15,6 +17,7 @@
     "astro": "^5.1.1"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }

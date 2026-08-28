@@ -1,4 +1,10 @@
 import { PLATFORM_OPERATOR } from '@/lib/operator'
+import {
+  DEFAULT_OG_IMAGE,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_TYPE,
+  OG_IMAGE_WIDTH,
+} from '@/lib/og-pages'
 
 export const SITE_NAME = 'Lumira'
 export const SITE_ORIGIN = 'https://lumira.by'
@@ -6,11 +12,11 @@ export const DEFAULT_DESCRIPTION =
   'Lumira — агрегатор бьюти-мастеров в Минске и по Беларуси. Выбирайте по услуге и району, смотрите свободные окна и записывайтесь онлайн.'
 
 export const OG_IMAGE = {
-  path: '/og.png',
-  width: 1200,
-  height: 630,
-  alt: 'Lumira — бьюти-мастера Минска и Беларуси',
-  type: 'image/png',
+  path: DEFAULT_OG_IMAGE.path,
+  width: OG_IMAGE_WIDTH,
+  height: OG_IMAGE_HEIGHT,
+  alt: DEFAULT_OG_IMAGE.alt,
+  type: OG_IMAGE_TYPE,
 } as const
 
 export function absoluteUrl(path: string): string {
