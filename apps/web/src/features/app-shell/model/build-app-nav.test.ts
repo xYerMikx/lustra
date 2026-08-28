@@ -4,6 +4,7 @@ import type { MeResponse } from '@lustra/contracts'
 import {
   buildAppNavItems,
   initialsFromEmail,
+  isAppNavActive,
 } from '@/features/app-shell/model/build-app-nav'
 
 function user(partial: Partial<MeResponse> & Pick<MeResponse, 'role' | 'email'>): MeResponse {
@@ -50,6 +51,24 @@ describe('buildAppNavItems', () => {
       { href: '/admin', label: 'Админка' },
       { href: '/app', label: 'Кабинет' },
     ])
+  })
+})
+
+describe('isAppNavActive', () => {
+  it('marks catalog for category paths', () => {
+    expect(isAppNavActive('/catalog', '/catalog')).toBe(true)
+    expect(isAppNavActive('/catalog/manikyur', '/catalog')).toBe(true)
+    expect(isAppNavActive('/app', '/catalog')).toBe(false)
+  })
+
+  it('marks cabinet only on the hub', () => {
+    expect(isAppNavActive('/app', '/app')).toBe(true)
+    expect(isAppNavActive('/app/login', '/app')).toBe(false)
+  })
+
+  it('marks login only on the login path', () => {
+    expect(isAppNavActive('/app/login', '/app/login')).toBe(true)
+    expect(isAppNavActive('/app', '/app/login')).toBe(false)
   })
 })
 

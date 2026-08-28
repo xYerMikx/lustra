@@ -10,9 +10,9 @@ const masterHref = getAppUrl(
   '/app/register?role=master&utm_source=landing-for-masters',
 )
 
-const title = 'Для мастеров — онлайн-запись и витрина · Lumira'
+const title = 'Для мастеров — календарь записи и витрина · Lumira'
 const description =
-  'Lumira для бьюти-мастеров Беларуси: онлайн-запись клиентов, календарь, витрина услуг и портфолио. Регистрация бесплатна; продвижение в каталоге оплачивается отдельно.'
+  'Ссылку из шапки клиент открывает сам и берёт окно. Заявку из директа заносите за несколько кликов. Кабинет бесплатный, с записи процент не берём.'
 ---
 
 <BaseLayout
@@ -33,6 +33,8 @@ const description =
     lead={content.lead!}
     primaryCta={content.primaryCta!}
     masterHref={masterHref}
+    closingTitle={content.closingTitle!}
+    closingLead={content.closingLead!}
     benefits={content.benefits!}
   />
 </BaseLayout>

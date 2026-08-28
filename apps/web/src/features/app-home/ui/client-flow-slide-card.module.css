@@ -1,0 +1,70 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  height: 100%;
+}
+
+.kicker {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-20);
+  line-height: var(--text-20--line-height);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-8);
+  align-items: start;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.rowName {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  font-weight: var(--font-weight-600);
+  color: var(--color-text);
+}
+
+.rowMeta {
+  font-size: var(--text-13);
+  line-height: var(--text-13--line-height);
+  color: var(--color-text-2);
+  text-align: right;
+}
+
+.rowOk {
+  border-color: color-mix(in srgb, var(--color-sage) 45%, var(--color-border));
+}
+
+.rowOkMeta {
+  color: var(--color-success);
+}
+
+.rowFree {
+  border-color: color-mix(in srgb, var(--color-sage) 45%, var(--color-border));
+}
+
+.rowHold {
+  border-color: color-mix(in srgb, var(--color-gold) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-gold) 12%, var(--color-surface));
+}

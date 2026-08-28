@@ -1,5 +1,6 @@
 ---
 import PaymentMarks from '@/components/payment-marks.astro'
+import { isNavCurrent } from '@/lib/nav-current'
 import { PLATFORM_OPERATOR } from '@/lib/operator'
 
 interface Props {
@@ -8,6 +9,19 @@ interface Props {
 
 const year = Astro.props.year ?? new Date().getFullYear()
 const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
+const path = Astro.url.pathname
+const productLinks = [
+  { href: '/', label: 'Главная' },
+  { href: '/services/', label: 'Все услуги' },
+  { href: '/for-masters/', label: 'Для мастеров' },
+  { href: '/#faq', label: 'FAQ' },
+]
+const companyLinks = [
+  { href: '/contacts/', label: 'Реквизиты' },
+  { href: '/payment/', label: 'Оплата и возврат' },
+  { href: '/terms/', label: 'Публичная оферта' },
+  { href: '/privacy/', label: 'Политика конфиденциальности' },
+]
 ---
 
 <footer class="site-footer">
@@ -20,17 +34,29 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
     <nav class="cols" aria-label="Подвал">
       <div class="col">
         <p class="col-title">Продукт</p>
-        <a href="/">Главная</a>
-        <a href="/services/">Все услуги</a>
-        <a href="/for-masters/">Для мастеров</a>
-        <a href="/#faq">FAQ</a>
+        {
+          productLinks.map((link) => (
+            <a
+              href={link.href}
+              aria-current={isNavCurrent(path, link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
       </div>
       <div class="col">
         <p class="col-title">Компания</p>
-        <a href="/contacts/">Реквизиты</a>
-        <a href="/payment/">Оплата и возврат</a>
-        <a href="/terms/">Публичная оферта</a>
-        <a href="/privacy/">Политика конфиденциальности</a>
+        {
+          companyLinks.map((link) => (
+            <a
+              href={link.href}
+              aria-current={isNavCurrent(path, link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          ))
+        }
       </div>
       <div class="col facts">
         <p class="col-title">Контакты</p>
@@ -59,8 +85,8 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
 <style>
   .site-footer {
     border-top: 1px solid var(--color-border);
-    background: var(--color-surface-2);
-    padding: var(--spacing-64) 0 var(--spacing-40);
+    background: var(--color-bg);
+    padding: var(--spacing-32) 0 var(--spacing-32);
   }
 
   .inner {
@@ -121,6 +147,11 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
     color: var(--color-accent);
   }
 
+  .col a[aria-current='page'] {
+    color: var(--color-text);
+    font-weight: var(--font-weight-600);
+  }
+
   .bottom {
     width: min(1120px, calc(100% - var(--spacing-40)));
     margin: var(--spacing-40) auto 0;
@@ -137,6 +168,12 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
     color: var(--color-text-3);
   }
 
+  @media (min-width: 961px) {
+    .site-footer {
+      padding: var(--spacing-64) 0 var(--spacing-40);
+    }
+  }
+
   @media (max-width: 960px) {
     .inner {
       grid-template-columns: 1fr;
@@ -149,6 +186,10 @@ const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
 
     .facts {
       grid-column: 1 / -1;
+    }
+
+    .bottom {
+      margin-top: var(--spacing-24);
     }
   }
 

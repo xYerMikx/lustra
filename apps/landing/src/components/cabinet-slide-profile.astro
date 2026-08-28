@@ -1,0 +1,33 @@
+---
+const services = [
+  { name: 'Маникюр', meta: '90 мин', sum: 'от 70 р' },
+  { name: 'Педикюр', meta: '75 мин', sum: 'от 90 р' },
+  { name: 'Наращивание', meta: '150 мин', sum: 'от 120 р' },
+]
+---
+
+<article class="cabinet-slide" data-slide aria-label="Профиль">
+  <p class="cabinet-kicker">Витрина · то, что видит клиент</p>
+  <p class="cabinet-title">Анна · ногти</p>
+  <p class="cabinet-meta">Фрунзенский · lumira.by/m/anna</p>
+  <div class="cabinet-thumbs" aria-hidden="true">
+    <span class="cabinet-thumb t1"></span>
+    <span class="cabinet-thumb t2"></span>
+    <span class="cabinet-thumb t3"></span>
+  </div>
+  <ul class="cabinet-list">
+    {
+      services.map((item) => (
+        <li class="cabinet-row is-wide">
+          <div>
+            <p class="cabinet-name">{item.name}</p>
+            <p class="cabinet-meta">{item.meta}</p>
+          </div>
+          <span class="cabinet-sum">{item.sum}</span>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="cabinet-chip">Ссылка в шапку Instagram</p>
+  <p class="cabinet-action">Скопировать ссылку</p>
+</article>

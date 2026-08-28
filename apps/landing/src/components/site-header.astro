@@ -1,5 +1,6 @@
 ---
 import { SHOW_WORKS_PREVIEW } from '@/lib/flags'
+import { isNavCurrent } from '@/lib/nav-current'
 import { getAppUrl } from '@/lib/site'
 
 interface Props {
@@ -11,6 +12,18 @@ const catalogHref = Astro.props.catalogHref ?? getAppUrl('/catalog')
 const masterHref =
   Astro.props.masterHref ??
   getAppUrl('/app/register?role=master&utm_source=landing')
+const path = Astro.url.pathname
+
+const links = [
+  { href: '/#how', label: 'Как работает' },
+  ...(SHOW_WORKS_PREVIEW ? [{ href: '/#works', label: 'Работы' }] : []),
+  { href: '/#browse', label: 'Категории' },
+  { href: '/services/', label: 'Все услуги' },
+  { href: '/for-masters/', label: 'Мастерам' },
+  { href: '/payment/', label: 'Оплата' },
+  { href: '/contacts/', label: 'Контакты' },
+  { href: catalogHref, label: 'Каталог' },
+]
 ---
 
 <header class="site-header">
@@ -30,14 +43,17 @@ const masterHref =
     </button>
 
     <nav class="nav" id="site-nav" data-open="false" aria-label="Основная навигация">
-      <a href="/#how">Как работает</a>
-      {SHOW_WORKS_PREVIEW && <a href="/#works">Работы</a>}
-      <a href="/#browse">Категории</a>
-      <a href="/services/">Все услуги</a>
-      <a href="/for-masters/">Мастерам</a>
-      <a href="/payment/">Оплата</a>
-      <a href="/contacts/">Контакты</a>
-      <a href={catalogHref}>Каталог</a>
+      {
+        links.map((link) => {
+          const current = isNavCurrent(path, link.href)
+
+          return (
+            <a href={link.href} aria-current={current ? 'page' : undefined}>
+              {link.label}
+            </a>
+          )
+        })
+      }
       <a class="nav-cta" href={masterHref}>Я мастер</a>
     </nav>
   </div>
@@ -169,6 +185,12 @@ const masterHref =
     color: var(--color-accent);
   }
 
+  .nav a[aria-current='page'] {
+    color: var(--color-text);
+    font-weight: var(--font-weight-600);
+    box-shadow: inset 0 calc(-1 * var(--spacing-2)) 0 var(--color-accent);
+  }
+
   .nav-cta {
     color: var(--color-accent);
     font-weight: var(--font-weight-600);
@@ -194,6 +216,12 @@ const masterHref =
 
     .nav[data-open='true'] {
       display: flex;
+    }
+
+    .nav a[aria-current='page'] {
+      box-shadow: none;
+      border-left: var(--spacing-2) solid var(--color-accent);
+      padding-left: var(--spacing-12);
     }
   }
 </style>

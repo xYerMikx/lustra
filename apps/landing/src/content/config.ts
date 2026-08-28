@@ -53,6 +53,8 @@ const sections = defineCollection({
         .min(1)
         .optional(),
       benefits: z.array(stepSchema).min(1).optional(),
+      closingTitle: z.string().min(1).optional(),
+      closingLead: z.string().min(1).optional(),
       body: z.array(z.string().min(1)).min(1).optional(),
       emptyMessage: z.string().min(1).optional(),
     })

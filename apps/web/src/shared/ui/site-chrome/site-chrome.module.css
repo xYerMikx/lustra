@@ -51,6 +51,18 @@
   color: var(--color-text);
 }
 
+.navLink[aria-current='page'],
+.loginLink[aria-current='page'] {
+  color: var(--color-text);
+  font-weight: var(--font-weight-600);
+  box-shadow: inset 0 calc(-1 * var(--spacing-2)) 0 var(--color-accent);
+}
+
+.siteLink {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .account {
   display: flex;
   flex-shrink: 0;

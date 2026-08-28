@@ -1,0 +1,51 @@
+---
+const days = [
+  { label: 'Пн', num: '24' },
+  { label: 'Вт', num: '25' },
+  { label: 'Ср', num: '26' },
+  { label: 'Чт', num: '27' },
+  { label: 'Пт', num: '28', on: true },
+  { label: 'Сб', num: '29' },
+  { label: 'Вс', num: '30' },
+]
+
+const slots = [
+  { time: '11:00', title: 'Катя · маникюр', tone: 'busy' },
+  { time: '13:00', title: 'Свободно', tone: 'free' },
+  { time: '14:30', title: 'Бронь подтверждается', tone: 'hold' },
+  { time: '16:00', title: 'Свободно', tone: 'free' },
+  { time: '18:00', title: 'Оля · гель', tone: 'busy' },
+]
+---
+
+<article class="cabinet-slide" data-slide aria-label="Календарь">
+  <p class="cabinet-kicker">Неделя · 24–30 авг</p>
+  <p class="cabinet-title">Календарь</p>
+  <div class="cabinet-week">
+    {
+      days.map((day) => (
+        <p class:list={['cabinet-day', day.on && 'is-on']}>
+          {day.label}
+          <strong>{day.num}</strong>
+        </p>
+      ))
+    }
+  </div>
+  <ul class="cabinet-list">
+    {
+      slots.map((slot) => (
+        <li
+          class:list={[
+            'cabinet-row',
+            'is-slot',
+            slot.tone === 'free' && 'is-free',
+            slot.tone === 'hold' && 'is-hold',
+          ]}
+        >
+          <span class="cabinet-time">{slot.time}</span>
+          <p class="cabinet-name">{slot.title}</p>
+        </li>
+      ))
+    }
+  </ul>
+</article>

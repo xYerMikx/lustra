@@ -1,0 +1,76 @@
+---
+const rows = [
+  {
+    time: '11:00',
+    title: 'Катя · маникюр',
+    meta: '90 мин · Instagram',
+    sum: '70 р',
+    badge: 'Подтверждена',
+    tone: 'ok',
+  },
+  {
+    time: '13:00',
+    title: 'Свободно',
+    meta: 'окно 90 мин',
+    sum: '',
+    badge: '',
+    tone: 'free',
+  },
+  {
+    time: '14:30',
+    title: 'Мария · педикюр',
+    meta: 'клиент подтверждает',
+    sum: '90 р',
+    badge: 'Удержание',
+    tone: 'hold',
+  },
+  {
+    time: '16:00',
+    title: 'Оля · гель',
+    meta: 'из директа',
+    sum: '90 р',
+    badge: 'Подтверждена',
+    tone: 'ok',
+  },
+]
+---
+
+<article class="cabinet-slide" data-slide aria-label="Записи">
+  <p class="cabinet-kicker">Сегодня · пятница</p>
+  <p class="cabinet-title">Записи</p>
+  <ul class="cabinet-list">
+    {
+      rows.map((row) => (
+        <li
+          class:list={[
+            'cabinet-row',
+            row.tone === 'free' && 'is-free',
+            row.tone === 'hold' && 'is-hold',
+          ]}
+        >
+          <span class="cabinet-time">{row.time}</span>
+          <div>
+            <p class="cabinet-name">{row.title}</p>
+            <p class="cabinet-meta">{row.meta}</p>
+          </div>
+          <div>
+            {
+              row.badge ? (
+                <span
+                  class:list={[
+                    'cabinet-badge',
+                    row.tone === 'ok' && 'is-ok',
+                    row.tone === 'hold' && 'is-hold',
+                  ]}
+                >
+                  {row.badge}
+                </span>
+              ) : null
+            }
+            {row.sum ? <p class="cabinet-sum">{row.sum}</p> : null}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</article>
