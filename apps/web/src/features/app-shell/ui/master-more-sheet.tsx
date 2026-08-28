@@ -11,7 +11,8 @@ import {
   workspaceNavItems,
 } from '@/features/app-shell/model/master-workspace-nav'
 import { Button } from '@/shared/ui/button'
-import { CatalogIcon } from '@/shared/ui/icon-pack'
+import { CatalogIcon, HomeIcon } from '@/shared/ui/icon-pack'
+import { LandingLink } from '@/shared/ui/landing-link'
 import styles from '@/features/app-shell/ui/master-workspace-nav.module.css'
 
 type MasterMoreSheetProps = {
@@ -52,6 +53,10 @@ export function MasterMoreSheet({
             <CatalogIcon />
             <span>Каталог</span>
           </Link>
+          <LandingLink className={cn(styles.link, styles.linkRail)}>
+            <HomeIcon />
+            <span>На сайт</span>
+          </LandingLink>
         </nav>
         <Button type="button" variant="ghost" onClick={onClose}>
           Закрыть

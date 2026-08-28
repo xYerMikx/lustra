@@ -47,6 +47,18 @@ export function buildAppNavItems(user: MeResponse | null): AppNavItem[] {
   return items
 }
 
+export function isAppNavActive(pathname: string, href: string): boolean {
+  if (href === '/catalog') {
+    return pathname === '/catalog' || pathname.startsWith('/catalog/')
+  }
+
+  if (href === '/app') {
+    return pathname === '/app'
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
 export function initialsFromEmail(email: string): string {
   const local = email.split('@')[0]?.trim() ?? ''
 

@@ -1,0 +1,49 @@
+---
+const rows = [
+  { when: '28 авг', title: 'Катя · маникюр', sum: '+70 р', tone: 'in' },
+  { when: '27 авг', title: 'Чаевые · Мария', sum: '+10 р', tone: 'in' },
+  { when: '25 авг', title: 'Аренда кабинета', sum: '−250 р', tone: 'out' },
+  { when: '24 авг', title: 'Оля · гель', sum: '+90 р', tone: 'in' },
+]
+---
+
+<article class="cabinet-slide" data-slide aria-label="Касса">
+  <p class="cabinet-kicker">Август · касса</p>
+  <p class="cabinet-title">Доходы и расходы</p>
+  <dl class="cabinet-metrics">
+    <div class="cabinet-metric">
+      <dt>Доход</dt>
+      <dd>1 840 р</dd>
+    </div>
+    <div class="cabinet-metric">
+      <dt>Расход</dt>
+      <dd>420 р</dd>
+    </div>
+    <div class="cabinet-metric is-net">
+      <dt>Итог</dt>
+      <dd>1 420 р</dd>
+    </div>
+  </dl>
+  <div class="cabinet-bars" aria-hidden="true">
+    <span class="cabinet-bar h2"></span>
+    <span class="cabinet-bar h4"></span>
+    <span class="cabinet-bar is-out h1"></span>
+    <span class="cabinet-bar h6"></span>
+    <span class="cabinet-bar h3"></span>
+    <span class="cabinet-bar h5"></span>
+    <span class="cabinet-bar h7"></span>
+  </div>
+  <ul class="cabinet-list">
+    {
+      rows.map((row) => (
+        <li class:list={['cabinet-row', 'is-wide', row.tone === 'in' ? 'is-in' : 'is-out']}>
+          <div>
+            <p class="cabinet-name">{row.title}</p>
+            <p class="cabinet-meta">{row.when}</p>
+          </div>
+          <span class="cabinet-sum">{row.sum}</span>
+        </li>
+      ))
+    }
+  </ul>
+</article>

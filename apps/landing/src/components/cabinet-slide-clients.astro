@@ -1,0 +1,30 @@
+---
+const people = [
+  { name: 'Катя', meta: '12 визитов · последний 20 авг', action: 'Записать' },
+  { name: 'Мария', meta: '8 визитов · 18 авг', action: 'Записать' },
+  { name: 'Оля', meta: '5 визитов · 12 авг', action: 'Записать' },
+  { name: 'Даша', meta: '3 визита · 3 авг', action: 'Записать' },
+]
+---
+
+<article class="cabinet-slide" data-slide aria-label="Клиенты">
+  <p class="cabinet-kicker">Книга клиентов</p>
+  <p class="cabinet-title">Постоянники</p>
+  <div class="cabinet-tabs">
+    <p class="cabinet-tab">Поиск</p>
+    <p class="cabinet-tab is-on">Частые</p>
+  </div>
+  <ul class="cabinet-list">
+    {
+      people.map((person) => (
+        <li class="cabinet-row is-wide">
+          <div>
+            <p class="cabinet-name">{person.name}</p>
+            <p class="cabinet-meta">{person.meta}</p>
+          </div>
+          <span class="cabinet-badge is-ok">{person.action}</span>
+        </li>
+      ))
+    }
+  </ul>
+</article>

@@ -3,7 +3,7 @@ name: Deploy landing
 on:
   workflow_dispatch:
   push:
-    branches: [develop, main]
+    branches: [main]
     paths:
       - 'apps/landing/**'
       - 'packages/ui/**'

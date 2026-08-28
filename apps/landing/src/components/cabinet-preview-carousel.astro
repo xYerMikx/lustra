@@ -1,0 +1,262 @@
+---
+import CabinetPreviewSlides from './cabinet-preview-slides.astro'
+
+const slides = [
+  { label: 'Касса', caption: 'Доход, чаевые и аренда в одном месте' },
+  { label: 'Записи', caption: 'Кто записан сегодня, статус и цена' },
+  { label: 'Календарь', caption: 'Окна дня рядом с бронями' },
+  { label: 'Профиль', caption: 'То, что клиент видит по ссылке из шапки' },
+  { label: 'Клиенты', caption: 'Постоянники и запись в один тап' },
+]
+---
+
+<div
+  class="carousel"
+  data-cabinet-carousel
+  role="region"
+  aria-roledescription="карусель"
+  aria-label="Превью кабинета мастера"
+>
+  <div class="phone">
+    <div class="viewport">
+      <CabinetPreviewSlides />
+    </div>
+    <div class="fade" aria-hidden="true"></div>
+    <div class="hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M6 9l6 6 6-6"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </div>
+    <div class="dots" data-dots>
+      {
+        slides.map((slide, index) => (
+          <button
+            type="button"
+            data-dot={String(index)}
+            aria-label={slide.label}
+            aria-current={index === 0 ? 'true' : undefined}
+          >
+            <span class="pip"></span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <p class="caption" data-caption>{slides[0].caption}</p>
+</div>
+
+<script>
+  const INTERVAL_MS = 4500
+
+  const initCarousel = (root: HTMLElement) => {
+    const track = root.querySelector('[data-track]')
+    const dots = [...root.querySelectorAll('[data-dot]')]
+    const caption = root.querySelector('[data-caption]')
+    const captions = [
+      'Доход, чаевые и аренда в одном месте',
+      'Кто записан сегодня, статус и цена',
+      'Окна дня рядом с бронями',
+      'То, что клиент видит по ссылке из шапки',
+      'Постоянники и запись в один тап',
+    ]
+    const total = dots.length
+
+    if (!(track instanceof HTMLElement) || total === 0) {
+      return
+    }
+
+    let index = 0
+    let timer: ReturnType<typeof setInterval> | undefined
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    const goTo = (next: number) => {
+      index = (next + total) % total
+      track.style.transform = `translateX(-${String((index * 100) / total)}%)`
+
+      dots.forEach((dot, dotIndex) => {
+        if (dot instanceof HTMLElement) {
+          if (dotIndex === index) {
+            dot.setAttribute('aria-current', 'true')
+          } else {
+            dot.removeAttribute('aria-current')
+          }
+        }
+      })
+
+      if (caption) {
+        caption.textContent = captions[index] ?? ''
+      }
+    }
+
+    const stop = () => {
+      if (timer !== undefined) {
+        clearInterval(timer)
+        timer = undefined
+      }
+    }
+
+    const start = () => {
+      if (reduceMotion || document.hidden) {
+        return
+      }
+
+      stop()
+      timer = setInterval(() => {
+        goTo(index + 1)
+      }, INTERVAL_MS)
+    }
+
+    dots.forEach((dot, dotIndex) => {
+      dot.addEventListener('click', () => {
+        goTo(dotIndex)
+        start()
+      })
+    })
+
+    root.addEventListener('mouseenter', stop)
+    root.addEventListener('mouseleave', start)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stop()
+      } else {
+        start()
+      }
+    })
+
+    goTo(0)
+    start()
+  }
+
+  document.querySelectorAll('[data-cabinet-carousel]').forEach((node) => {
+    if (node instanceof HTMLElement) {
+      initCarousel(node)
+    }
+  })
+</script>
+
+<style>
+  .carousel {
+    width: min(100%, calc(var(--spacing-96) * 5));
+  }
+
+  .phone {
+    position: relative;
+    padding: var(--spacing-8);
+    border-radius: var(--radius-22);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-3);
+  }
+
+  .viewport {
+    overflow: hidden;
+    border-radius: var(--radius-14);
+    background: var(--color-surface-2);
+    height: calc(var(--spacing-96) * 4);
+  }
+
+  .fade {
+    position: absolute;
+    left: var(--spacing-8);
+    right: var(--spacing-8);
+    bottom: var(--spacing-8);
+    height: var(--spacing-64);
+    border-radius: 0 0 var(--radius-14) var(--radius-14);
+    background: linear-gradient(
+      transparent,
+      var(--color-surface-2)
+    );
+    z-index: var(--z-10);
+    pointer-events: none;
+  }
+
+  .hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--spacing-40);
+    display: flex;
+    justify-content: center;
+    z-index: var(--z-20);
+    pointer-events: none;
+    color: color-mix(in srgb, var(--color-text) 45%, transparent);
+  }
+
+  .hint svg {
+    display: block;
+    width: var(--spacing-24);
+    height: var(--spacing-24);
+    animation: hint-bob var(--duration-700) var(--ease-out-quart) infinite alternate;
+  }
+
+  @keyframes hint-bob {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(var(--spacing-4));
+    }
+  }
+
+  .dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--spacing-12);
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-4);
+    z-index: var(--z-10);
+    pointer-events: none;
+  }
+
+  .dots button {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-40);
+    height: var(--spacing-40);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .pip {
+    display: block;
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    border-radius: var(--radius-999);
+    background: color-mix(in srgb, var(--color-text) 28%, var(--color-surface));
+    box-shadow: var(--shadow-1);
+  }
+
+  .dots button[aria-current='true'] .pip {
+    width: var(--spacing-16);
+    background: var(--color-accent);
+  }
+
+  .caption {
+    margin-top: var(--spacing-12);
+    text-align: center;
+    font-size: var(--text-13);
+    line-height: var(--text-13--line-height);
+    color: var(--color-text-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint svg {
+      animation: none;
+    }
+  }
+</style>

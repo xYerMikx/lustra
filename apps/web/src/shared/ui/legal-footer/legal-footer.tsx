@@ -2,29 +2,32 @@ import Image from 'next/image'
 
 import { PAYMENT_MARKS } from '@/shared/lib/payment-marks'
 import { PLATFORM_OPERATOR } from '@/shared/lib/operator'
-import { publicSiteUrl } from '@/shared/lib/public-site-url'
+import { LandingLink } from '@/shared/ui/landing-link'
 import styles from '@/shared/ui/legal-footer/legal-footer.module.css'
 
 export function LegalFooter() {
   const year = new Date().getFullYear()
-  const site = publicSiteUrl()
   const mailto = `mailto:${PLATFORM_OPERATOR.supportEmail}`
 
   return (
     <footer className={styles.footer}>
       <nav className={styles.links} aria-label="Юридическая информация">
-        <a className={styles.link} href={`${site}/contacts`}>
+        <LandingLink className={styles.link}>О сервисе</LandingLink>
+        <LandingLink className={styles.link} href="/for-masters/">
+          Мастерам
+        </LandingLink>
+        <LandingLink className={styles.link} href="/contacts/">
           Реквизиты
-        </a>
-        <a className={styles.link} href={`${site}/payment`}>
+        </LandingLink>
+        <LandingLink className={styles.link} href="/payment/">
           Оплата и возврат
-        </a>
-        <a className={styles.link} href={`${site}/terms`}>
+        </LandingLink>
+        <LandingLink className={styles.link} href="/terms/">
           Публичная оферта
-        </a>
-        <a className={styles.link} href={`${site}/privacy`}>
+        </LandingLink>
+        <LandingLink className={styles.link} href="/privacy/">
           Политика конфиденциальности
-        </a>
+        </LandingLink>
       </nav>
 
       <p className={styles.fact}>

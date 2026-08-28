@@ -9,6 +9,7 @@ import type { MeResponse } from '@lustra/contracts'
 import {
   buildAppNavItems,
   initialsFromUser,
+  isAppNavActive,
 } from '@/features/app-shell/model/build-app-nav'
 import { isMasterWorkspacePath } from '@/features/app-shell/model/master-workspace-nav'
 import {
@@ -18,6 +19,7 @@ import {
 import { logout } from '@/shared/api/auth-client'
 import { TEST_ID } from '@/shared/lib/test-id'
 import { LogoutIcon } from '@/shared/ui/icon-pack'
+import { LandingLink } from '@/shared/ui/landing-link'
 import { Spinner } from '@/shared/ui/spinner'
 import styles from '@/shared/ui/site-chrome/site-chrome.module.css'
 
@@ -65,6 +67,7 @@ export function AppHeader() {
 
   const user = session.status === 'ready' ? session.user : null
   const navItems = buildAppNavItems(user)
+  const loginCurrent = isAppNavActive(pathname, '/app/login')
 
   const handleLogout = async () => {
     setLoggingOut(true)
@@ -88,16 +91,24 @@ export function AppHeader() {
         Lumira
       </Link>
       <div className={styles.headerEnd}>
+        <LandingLink className={cn(styles.navLink, styles.siteLink)}>
+          На сайт
+        </LandingLink>
         <nav className={styles.nav} aria-label="Основная навигация">
-          {navItems.map((item) => (
-            <Link
-              key={`${item.href}:${item.label}`}
-              href={item.href}
-              className={styles.navLink}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const current = isAppNavActive(pathname, item.href)
+
+            return (
+              <Link
+                key={`${item.href}:${item.label}`}
+                href={item.href}
+                className={styles.navLink}
+                aria-current={current ? 'page' : undefined}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
         {session.status === 'ready' ? (
@@ -132,7 +143,11 @@ export function AppHeader() {
         ) : null}
 
         {session.status === 'guest' ? (
-          <Link href="/app/login" className={styles.loginLink}>
+          <Link
+            href="/app/login"
+            className={styles.loginLink}
+            aria-current={loginCurrent ? 'page' : undefined}
+          >
             Войти
           </Link>
         ) : null}

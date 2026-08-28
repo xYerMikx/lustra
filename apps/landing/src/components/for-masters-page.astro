@@ -1,5 +1,6 @@
 ---
 import SignupTermsNote from './signup-terms-note.astro'
+import CabinetPreviewCarousel from './cabinet-preview-carousel.astro'
 
 interface Benefit {
   title: string
@@ -12,24 +13,44 @@ interface Props {
   lead: string
   primaryCta: string
   masterHref: string
+  closingTitle: string
+  closingLead: string
   benefits: Benefit[]
 }
 
-const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
+const {
+  eyebrow,
+  title,
+  lead,
+  primaryCta,
+  masterHref,
+  closingTitle,
+  closingLead,
+  benefits,
+} = Astro.props
 ---
 
 <main>
   <section class="hero-lite">
-    <div class="wrap">
-      <p class="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
-      <p class="lead">{lead}</p>
-      <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
-      <SignupTermsNote />
+    <div class="hero-grid">
+      <div class="copy">
+        <div class="intro">
+          <p class="eyebrow">{eyebrow}</p>
+          <h1>{title}</h1>
+          <p class="lead">{lead}</p>
+        </div>
+        <div class="cta-block">
+          <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+          <SignupTermsNote />
+        </div>
+      </div>
+      <div class="preview">
+        <CabinetPreviewCarousel />
+      </div>
     </div>
   </section>
 
-  <section class="benefits section">
+  <section class="benefits">
     <div class="grid">
       {
         benefits.map((item) => (
@@ -42,19 +63,21 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
     </div>
   </section>
 
-  <section class="closing section">
+  <section class="closing">
     <div class="wrap">
-      <h2>Начните с профиля</h2>
-      <p>Заполните услуги и окна — клиенты найдут вас в каталоге Минска.</p>
-      <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
-      <SignupTermsNote />
+      <h2>{closingTitle}</h2>
+      <p>{closingLead}</p>
+      <div class="cta-block is-center">
+        <a class="btn btn-primary" href={masterHref}>{primaryCta}</a>
+        <SignupTermsNote />
+      </div>
     </div>
   </section>
 </main>
 
 <style>
   .hero-lite {
-    padding: var(--spacing-64) 0 var(--spacing-40);
+    padding: var(--spacing-16) 0;
     background:
       radial-gradient(
         ellipse 70% 60% at 80% 0%,
@@ -64,9 +87,30 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
       var(--color-bg);
   }
 
-  .wrap {
-    width: min(760px, calc(100% - var(--spacing-40)));
+  .hero-grid {
+    width: min(1040px, calc(100% - var(--spacing-32)));
     margin-inline: auto;
+    display: grid;
+    gap: var(--spacing-16);
+    align-items: start;
+  }
+
+  .copy,
+  .intro,
+  .preview {
+    min-width: 0;
+  }
+
+  .preview {
+    width: min(100%, calc(var(--spacing-96) * 5));
+    justify-self: start;
+  }
+
+  .copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-16);
   }
 
   .eyebrow {
@@ -74,34 +118,50 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
     line-height: var(--text-13--line-height);
     color: var(--color-text-3);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: var(--spacing-12);
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-8);
   }
 
   h1 {
-    font-size: clamp(var(--text-32), 6vw, var(--text-40));
+    font-size: clamp(var(--text-26), 6vw, var(--text-40));
     line-height: 1.15;
-    max-width: 16ch;
-    margin-bottom: var(--spacing-16);
+    max-width: 18ch;
+    margin-bottom: var(--spacing-8);
   }
 
   .lead {
     color: var(--color-text-2);
     max-width: 42ch;
-    margin-bottom: var(--spacing-32);
-    line-height: 1.55;
+    line-height: 1.45;
+  }
+
+  .cta-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 42ch;
+  }
+
+  .cta-block.is-center {
+    align-items: center;
+    margin-inline: auto;
+    max-width: 100%;
+  }
+
+  .benefits {
+    padding: var(--spacing-24) 0;
   }
 
   .grid {
-    width: min(960px, calc(100% - var(--spacing-40)));
+    width: min(960px, calc(100% - var(--spacing-32)));
     margin-inline: auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-24) var(--spacing-32);
+    grid-template-columns: 1fr;
+    gap: var(--spacing-16) var(--spacing-32);
   }
 
   article {
-    padding-top: var(--spacing-20);
+    padding-top: var(--spacing-16);
     border-top: 1px solid var(--color-border);
   }
 
@@ -113,27 +173,101 @@ const { eyebrow, title, lead, primaryCta, masterHref, benefits } = Astro.props
 
   article p {
     color: var(--color-text-2);
-    line-height: 1.5;
+    line-height: 1.45;
+  }
+
+  .closing {
+    padding: var(--spacing-40) 0 var(--spacing-32);
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface-2);
   }
 
   .closing .wrap {
+    width: min(640px, calc(100% - var(--spacing-32)));
+    margin-inline: auto;
     text-align: center;
   }
 
   .closing h2 {
-    font-size: var(--text-32);
-    line-height: var(--text-32--line-height);
-    margin-bottom: var(--spacing-12);
+    font-size: var(--text-26);
+    line-height: var(--text-26--line-height);
+    margin-bottom: var(--spacing-8);
   }
 
   .closing p {
     color: var(--color-text-2);
-    margin-bottom: var(--spacing-24);
+    margin-bottom: var(--spacing-16);
+    line-height: 1.45;
   }
 
-  @media (max-width: 720px) {
+  @media (min-width: 768px) {
+    .hero-lite {
+      padding: var(--spacing-40) 0 var(--spacing-32);
+    }
+
+    .hero-grid {
+      width: min(1040px, calc(100% - var(--spacing-40)));
+    }
+
+    .benefits {
+      padding: var(--spacing-40) 0;
+    }
+
     .grid {
-      grid-template-columns: 1fr;
+      width: min(960px, calc(100% - var(--spacing-40)));
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-24) var(--spacing-32);
+    }
+
+    article {
+      padding-top: var(--spacing-20);
+    }
+
+    .closing {
+      padding: var(--spacing-56) 0 var(--spacing-64);
+    }
+
+    .closing h2 {
+      font-size: var(--text-32);
+      line-height: var(--text-32--line-height);
+      margin-bottom: var(--spacing-12);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-lite {
+      padding: var(--spacing-64) 0 var(--spacing-40);
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(calc(var(--spacing-96) * 4), 0.95fr);
+      column-gap: var(--spacing-40);
+      align-items: start;
+    }
+
+    .preview {
+      width: 100%;
+      max-width: calc(var(--spacing-96) * 5);
+      justify-self: end;
+    }
+
+    .benefits {
+      padding: var(--spacing-64) 0;
+    }
+
+    .closing {
+      padding: var(--spacing-80) 0 var(--spacing-96);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .closing .wrap {
+      text-align: start;
+    }
+
+    .closing .cta-block.is-center {
+      align-items: flex-start;
+      margin-inline: 0;
     }
   }
 </style>
