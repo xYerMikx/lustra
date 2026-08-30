@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { MeResponse } from '@lustra/contracts'
+import type { MeResponse } from '@lumira/contracts'
 
 import {
   buildAppNavItems,

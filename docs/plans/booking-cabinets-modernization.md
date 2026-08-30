@@ -210,7 +210,7 @@ foundation ──┬─ M1 web: CTA + shared manual form
 
 ## Тесты (минимум на волну)
 
-См. `.cursor/skills/lustra-testing/SKILL.md`. Smoke-маркеры: `{role}.smoke.{runId}@example.com`.
+См. `.cursor/skills/lumira-testing/SKILL.md`. Smoke-маркеры: `{role}.smoke.{runId}@example.com`.
 
 | Агент | Обязательно |
 |---|---|

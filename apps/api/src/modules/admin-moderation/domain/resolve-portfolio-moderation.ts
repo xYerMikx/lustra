@@ -1,4 +1,4 @@
-import type { MediaModerationStatus, ModeratePortfolioAction } from '@lustra/contracts'
+import type { MediaModerationStatus, ModeratePortfolioAction } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 

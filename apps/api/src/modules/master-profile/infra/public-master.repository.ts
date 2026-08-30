@@ -1,5 +1,5 @@
-import type { Prisma } from '@lustra/db'
-import type { SearchMastersQuery } from '@lustra/contracts'
+import type { Prisma } from '@lumira/db'
+import type { SearchMastersQuery } from '@lumira/contracts'
 import { Injectable } from '@nestjs/common'
 
 import { PrismaService } from '@/common/prisma/prisma.service'

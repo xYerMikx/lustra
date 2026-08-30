@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { BookingMasterView } from '@lustra/contracts'
+import type { BookingMasterView } from '@lumira/contracts'
 
 import {
   cancelMasterBooking,

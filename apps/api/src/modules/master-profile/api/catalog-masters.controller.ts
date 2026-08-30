@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import {
   SearchMastersQuerySchema,
   type SearchMastersQuery,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { GetPublicMasterBySlugUseCase } from '@/modules/master-profile/app/get-public-master-by-slug.usecase'

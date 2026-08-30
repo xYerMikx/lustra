@@ -1,7 +1,7 @@
 import type {
   MasterClientListResponse,
   MasterClientView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

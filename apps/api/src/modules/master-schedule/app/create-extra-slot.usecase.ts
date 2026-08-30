@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { isGranularityMin } from '@lustra/contracts'
-import { Prisma } from '@lustra/db'
-import type { CreateExtraSlotInput } from '@lustra/contracts'
+import { isGranularityMin } from '@lumira/contracts'
+import { Prisma } from '@lumira/db'
+import type { CreateExtraSlotInput } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

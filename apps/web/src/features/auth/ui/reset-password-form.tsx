@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { ResetPasswordInputSchema, type ResetPasswordInput } from '@lustra/contracts'
+import { ResetPasswordInputSchema, type ResetPasswordInput } from '@lumira/contracts'
 
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { resetPassword } from '@/shared/api/auth-client'

@@ -2,7 +2,7 @@
 
 import cn from 'classnames'
 import dynamic from 'next/dynamic'
-import type { LedgerPeriodPreset } from '@lustra/contracts'
+import type { LedgerPeriodPreset } from '@lumira/contracts'
 
 import { buildLedgerBreakdown, buildLedgerSeries } from '@/features/master-ledger/model/build-ledger-series'
 import { formatLedgerPeriodLabel } from '@/features/master-ledger/model/format-ledger-period'

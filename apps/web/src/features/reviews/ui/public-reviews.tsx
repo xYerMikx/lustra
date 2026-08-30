@@ -1,4 +1,4 @@
-import type { PublicReviewView } from '@lustra/contracts'
+import type { PublicReviewView } from '@lumira/contracts'
 
 import { PublicReviewCard } from '@/features/reviews/ui/public-review-card'
 import styles from '@/features/reviews/ui/reviews.module.css'

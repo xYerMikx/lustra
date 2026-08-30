@@ -1,7 +1,7 @@
 import type {
   MasterCalendarSlotView,
   ScheduleExceptionView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import {
   MASTER_TIMEZONE,

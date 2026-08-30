@@ -1,4 +1,4 @@
-import type { LedgerSummaryView } from '@lustra/contracts'
+import type { LedgerSummaryView } from '@lumira/contracts'
 import cn from 'classnames'
 
 import { formatByn } from '@/shared/lib/money'

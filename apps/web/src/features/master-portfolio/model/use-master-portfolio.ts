@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { preparePortfolioUpload } from '@/features/master-portfolio/model/prepare-portfolio-upload'
 import { ApiError } from '@/shared/api/http'

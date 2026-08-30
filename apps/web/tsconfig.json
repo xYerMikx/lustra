@@ -1,5 +1,5 @@
 {
-  "extends": "@lustra/config/nextjs.json",
+  "extends": "@lumira/config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

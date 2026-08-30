@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { AuthSessionResponse } from '@lustra/contracts'
+import type { AuthSessionResponse } from '@lumira/contracts'
 
 import { JwtTokenService } from '@/common/auth/jwt-token.service'
 import { DomainError } from '@/common/errors/domain-error'

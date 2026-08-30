@@ -1,5 +1,5 @@
 {
-  "name": "@lustra/web",
+  "name": "@lumira/web",
   "private": true,
   "version": "0.1.0",
   "scripts": {
@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
-    "@lustra/contracts": "workspace:*",
-    "@lustra/ui": "workspace:^",
+    "@lumira/contracts": "workspace:*",
+    "@lumira/ui": "workspace:^",
     "classnames": "^2.5.1",
     "next": "^15.1.3",
     "qrcode": "^1.5.4",
@@ -28,7 +28,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@lustra/config": "workspace:*",
+    "@lumira/config": "workspace:*",
     "@playwright/test": "^1.62.1",
     "@types/node": "^22.10.2",
     "@types/qrcode": "^1.5.6",

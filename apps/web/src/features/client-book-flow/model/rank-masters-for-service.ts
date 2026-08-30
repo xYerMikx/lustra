@@ -1,4 +1,4 @@
-import type { CatalogMasterCard } from '@lustra/contracts'
+import type { CatalogMasterCard } from '@lumira/contracts'
 
 import { normalizeServiceTitle } from '@/features/client-book-flow/model/normalize-service-title'
 import type {

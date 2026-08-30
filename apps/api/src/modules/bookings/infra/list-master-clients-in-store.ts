@@ -1,4 +1,4 @@
-import type { Prisma } from '@lustra/db'
+import type { Prisma } from '@lumira/db'
 
 import type { MasterClientRecord } from '@/modules/bookings/app/booking.ports'
 import { resolveStoredSocialHandle } from '@/modules/bookings/domain/guest-lookup-plan'

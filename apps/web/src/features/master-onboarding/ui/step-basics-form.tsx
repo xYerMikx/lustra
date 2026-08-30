@@ -9,7 +9,7 @@ import {
   type MasterProfileView,
   type PatchMasterProfileInput,
   type StepBasicsInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { buildStepBasicsDefaultValues } from '@/features/master-onboarding/model/build-step-basics-defaults'
 import {

@@ -1,4 +1,4 @@
-import type { OnboardingStep } from '@lustra/contracts'
+import type { OnboardingStep } from '@lumira/contracts'
 
 export type MasterWorkspaceItem = {
   href: string

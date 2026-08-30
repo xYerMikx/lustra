@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { ServiceCategoryListResponse } from '@lustra/contracts'
+import type { ServiceCategoryListResponse } from '@lumira/contracts'
 
 import type { CategoryStore } from '@/modules/master-services/app/master-services.ports'
 import { CategoryRepository } from '@/modules/master-services/infra/category.repository'

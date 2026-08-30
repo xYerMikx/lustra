@@ -2,8 +2,8 @@ import type {
   Prisma,
   ReviewAuthorRole as PrismaReviewAuthorRole,
   ReviewStatus as PrismaReviewStatus,
-} from '@lustra/db'
-import type { ReviewAuthorRole, ReviewStatus } from '@lustra/contracts'
+} from '@lumira/db'
+import type { ReviewAuthorRole, ReviewStatus } from '@lumira/contracts'
 
 import type { ReviewRecord } from '@/modules/reviews/domain/map-review'
 

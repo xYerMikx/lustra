@@ -9,7 +9,7 @@ import {
   type ServiceCategoryView,
   type ServiceTemplateView,
   type ServiceView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 import cn from 'classnames'
 
 import styles from '@/features/master-onboarding/ui/onboarding.module.css'

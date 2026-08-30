@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 export type BookingStatusTone = 'hold' | 'confirmed' | 'done' | 'muted' | 'alert'
 

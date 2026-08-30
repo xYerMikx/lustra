@@ -1,4 +1,4 @@
-import type { AvailabilitySlotView } from '@lustra/contracts'
+import type { AvailabilitySlotView } from '@lumira/contracts'
 
 import { extraPaySuffix } from '@/shared/lib/money'
 import { MASTER_TIMEZONE, formatTimeInTimeZone } from '@/shared/lib/tz'

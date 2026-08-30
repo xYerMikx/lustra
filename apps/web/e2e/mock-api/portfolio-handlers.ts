@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { PORTFOLIO_MAX_BYTES, PORTFOLIO_MAX_ITEMS, type PortfolioItemView } from '@lustra/contracts'
+import { PORTFOLIO_MAX_BYTES, PORTFOLIO_MAX_ITEMS, type PortfolioItemView } from '@lumira/contracts'
 
 import { DRAFT_MASTER_PROFILE_ID, MASTER_PROFILE_ID, MASTER_USER_ID } from '../ids'
 import { requireUser, type HandlerResult } from './auth-handlers'

@@ -3,7 +3,7 @@ import {
   normalizeSocialHandle,
   telegramProfileUrl,
   type ContactChannel,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type ClientSocialNetwork = 'instagram' | 'telegram'
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { BlockReason } from '@lustra/contracts'
+import type { BlockReason } from '@lumira/contracts'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {

@@ -7,7 +7,7 @@ import type {
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from './http'
 

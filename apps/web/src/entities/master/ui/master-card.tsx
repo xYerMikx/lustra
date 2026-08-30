@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { CatalogMasterCard } from '@lustra/contracts'
+import type { CatalogMasterCard } from '@lumira/contracts'
 
 import styles from '@/entities/master/ui/master-card.module.css'
 import { masterCardTestId } from '@/shared/lib/test-id'

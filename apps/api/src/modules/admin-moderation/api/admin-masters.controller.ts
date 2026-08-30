@@ -14,7 +14,7 @@ import {
   ModerateMasterInputSchema,
   type AdminListMastersQuery,
   type ModerateMasterInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 import type { FastifyRequest } from 'fastify'
 
 import { AdminGuard } from '@/common/auth/admin.guard'

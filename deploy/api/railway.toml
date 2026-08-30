@@ -3,8 +3,8 @@
 
 [build]
 builder = "RAILPACK"
-# @lustra/api and workspace deps (contracts, db with prisma generate).
-buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @lustra/api... build"
+# @lumira/api and workspace deps (contracts, db with prisma generate).
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @lumira/api... build"
 watchPatterns = [
   "apps/api/**",
   "packages/contracts/**",

@@ -36,7 +36,7 @@ const sections = defineCollection({
           z.object({
             criterion: z.string().min(1),
             direct: z.string().min(1),
-            lustra: z.string().min(1),
+            lumira: z.string().min(1),
           }),
         )
         .min(1)

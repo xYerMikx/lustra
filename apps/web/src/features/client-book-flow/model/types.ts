@@ -1,4 +1,4 @@
-import type { RecommendedMasterRef } from '@lustra/contracts'
+import type { RecommendedMasterRef } from '@lumira/contracts'
 
 export type ClientBookStep = 'service' | 'master' | 'slot'
 

@@ -3,7 +3,7 @@ description: Postman via MCP — collections live in Postman, not in git
 alwaysApply: true
 ---
 
-# Lustra — Postman / API smoke
+# Lumira — Postman / API smoke
 
 ## Source of truth
 
@@ -32,8 +32,8 @@ alwaysApply: true
 
 - Name: John Yermalayeu's Workspace
 - Workspace ID: `267d2e90-afe0-4a42-85a8-6ecfc8ebbd7c`
-- Collection: **Lustra Auth Smoke** (`53334068-a15d4d6a-e5b8-4155-bc4d-d1c30571b9a0`)
-- Environment: **Lustra Local** (`baseUrl=http://localhost:3333`)
+- Collection: **Lumira Auth Smoke** (`53334068-a15d4d6a-e5b8-4155-bc4d-d1c30571b9a0`)
+- Environment: **Lumira Local** (`baseUrl=http://localhost:3333`)
 
 ## When API changes
 
@@ -41,4 +41,4 @@ Update the Postman collection through MCP (request + examples + auth/CSRF notes)
 
 ## Smoke data in requests
 
-Register/login smoke requests must use marker emails: `{role}.smoke.{runId}@example.com` with a fresh `runId` per run (Postman pre-request script or collection variable). See `.cursor/rules/lustra-smoke-data.mdc`. Cleanup script is deferred to a later PR.
+Register/login smoke requests must use marker emails: `{role}.smoke.{runId}@example.com` with a fresh `runId` per run (Postman pre-request script or collection variable). See `.cursor/rules/lumira-smoke-data.mdc`. Cleanup script is deferred to a later PR.

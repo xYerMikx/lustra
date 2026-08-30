@@ -1,4 +1,4 @@
-import type { MediaModerationStatus } from '@lustra/contracts'
+import type { MediaModerationStatus } from '@lumira/contracts'
 
 export function portfolioModerationLabel(
   status: MediaModerationStatus,

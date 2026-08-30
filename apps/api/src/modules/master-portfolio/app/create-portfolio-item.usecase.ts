@@ -6,7 +6,7 @@ import {
   PORTFOLIO_MAX_ITEMS,
   type CreatePortfolioQuery,
   type PortfolioItemView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

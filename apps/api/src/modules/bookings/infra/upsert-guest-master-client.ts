@@ -1,5 +1,5 @@
-import { Prisma } from '@lustra/db'
-import type { ManualBookingChannel } from '@lustra/contracts'
+import { Prisma } from '@lumira/db'
+import type { ManualBookingChannel } from '@lumira/contracts'
 
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'
 import { DomainError } from '@/common/errors/domain-error'

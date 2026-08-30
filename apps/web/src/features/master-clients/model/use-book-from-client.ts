@@ -5,7 +5,7 @@ import type {
   CreateManualBookingInput,
   MasterClientView,
   ServiceView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { loadManualBookingFormData } from '@/features/manual-booking/model/load-manual-booking-form-data'
 import { createManualBooking } from '@/shared/api/bookings-client'

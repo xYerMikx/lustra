@@ -1,4 +1,4 @@
-import { Prisma } from '@lustra/db'
+import { Prisma } from '@lumira/db'
 import { Injectable } from '@nestjs/common'
 
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'

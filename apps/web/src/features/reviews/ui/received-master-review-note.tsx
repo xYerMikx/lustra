@@ -1,4 +1,4 @@
-import type { BookingReviewRef } from '@lustra/contracts'
+import type { BookingReviewRef } from '@lumira/contracts'
 
 import styles from '@/features/reviews/ui/reviews.module.css'
 

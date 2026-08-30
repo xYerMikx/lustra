@@ -1,4 +1,4 @@
-import type { MasterCalendarSlotView } from '@lustra/contracts'
+import type { MasterCalendarSlotView } from '@lumira/contracts'
 
 export function bookedVisitCount(slots: MasterCalendarSlotView[]): number {
   const ids = new Set<string>()

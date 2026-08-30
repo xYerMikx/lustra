@@ -1,4 +1,4 @@
-# Lustra — local orchestration
+# Lumira — local orchestration
 # Run from repo root: `make` / `make start`
 
 .DEFAULT_GOAL := help
@@ -40,7 +40,7 @@ down: ## остановить контейнеры (данные сохраня�
 wait-db: ## дождаться healthy Postgres
 	@echo "Ждём Postgres..."
 	@i=0; \
-	until $(COMPOSE) exec -T postgres pg_isready -U lustra -d lustra_dev >/dev/null 2>&1; do \
+	until $(COMPOSE) exec -T postgres pg_isready -U lumira -d lumira_dev >/dev/null 2>&1; do \
 		i=$$((i+1)); \
 		if [ $$i -gt 60 ]; then echo "Postgres не поднялся"; exit 1; fi; \
 		sleep 1; \
@@ -89,13 +89,13 @@ test: ## unit-тесты
 	$(PNPM) test
 
 test-e2e: ## Playwright UI e2e (мок API, без Postgres)
-	$(PNPM) --filter @lustra/web test:e2e
+	$(PNPM) --filter @lumira/web test:e2e
 
 test-e2e-headed: ## те же e2e с видимым браузером
-	$(PNPM) --filter @lustra/web test:e2e:headed
+	$(PNPM) --filter @lumira/web test:e2e:headed
 
 test-e2e-ui: ## Playwright UI Mode (таймлайн, шаги, трейсы)
-	$(PNPM) --filter @lustra/web test:e2e:ui
+	$(PNPM) --filter @lumira/web test:e2e:ui
 
 typecheck: ## tsc по монорепо
 	$(PNPM) typecheck

@@ -1,4 +1,4 @@
-import type { BlockReason, CreateTimeBlockInput } from '@lustra/contracts'
+import type { BlockReason, CreateTimeBlockInput } from '@lumira/contracts'
 
 export type TimeBlockRecord = {
   id: string

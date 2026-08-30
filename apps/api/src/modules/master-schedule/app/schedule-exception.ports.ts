@@ -2,7 +2,7 @@ import type {
   ExceptionType,
   GranularityMin,
   PutScheduleExceptionInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type ScheduleExceptionRecord = {
   id: string

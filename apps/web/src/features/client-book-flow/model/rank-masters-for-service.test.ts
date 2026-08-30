@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { CatalogMasterCard } from '@lustra/contracts'
+import type { CatalogMasterCard } from '@lumira/contracts'
 
 import { rankMastersForService } from '@/features/client-book-flow/model/rank-masters-for-service'
 import type { ClientBookServiceOption } from '@/features/client-book-flow/model/types'

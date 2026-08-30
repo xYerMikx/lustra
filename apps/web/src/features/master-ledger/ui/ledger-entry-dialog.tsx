@@ -4,7 +4,7 @@ import type {
   CreateLedgerEntryInput,
   LedgerCategoryView,
   LedgerKind,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ledgerDialogTitle } from '@/features/master-ledger/model/ledger-dialog-title'
 import type { LedgerComposerIntent } from '@/features/master-ledger/model/parse-ledger-intent'

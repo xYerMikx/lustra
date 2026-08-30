@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { CreateManualBookingInput } from '@lustra/contracts'
+import type { CreateManualBookingInput } from '@lumira/contracts'
 
 import {
   loadManualBookingFormData,

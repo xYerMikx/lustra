@@ -3,7 +3,7 @@ import type {
   PatchPortfolioItemInput,
   PortfolioItemView,
   PortfolioListResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

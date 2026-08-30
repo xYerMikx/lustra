@@ -3,8 +3,8 @@ import type {
   MasterCalendarSlotView,
   ScheduleExceptionView,
   TimeBlockView,
-} from '@lustra/contracts'
-import { isGranularityMin } from '@lustra/contracts'
+} from '@lumira/contracts'
+import { isGranularityMin } from '@lumira/contracts'
 
 export type CalendarMasterRecord = {
   id: string

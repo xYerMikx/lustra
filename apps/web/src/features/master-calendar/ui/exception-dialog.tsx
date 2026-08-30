@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import type { PutScheduleExceptionInput } from '@lustra/contracts'
+import type { PutScheduleExceptionInput } from '@lumira/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
 import {

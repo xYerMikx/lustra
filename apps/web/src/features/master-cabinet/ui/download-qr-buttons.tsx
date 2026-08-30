@@ -24,7 +24,7 @@ export function DownloadQrButtons({ slug }: DownloadQrButtonsProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const qrUrl = () => buildQrProfileUrl(slug, window.location.origin)
-  const fileBase = `lustra-${slug}`
+  const fileBase = `lumira-${slug}`
 
   const downloadPng = async () => {
     setBusy('png')

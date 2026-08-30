@@ -1,4 +1,4 @@
-import type { ServiceTemplateView } from '@lustra/contracts'
+import type { ServiceTemplateView } from '@lumira/contracts'
 
 type TemplateSeed = {
   categoryName: string

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useRouter } from 'next/navigation'
-import type { MeResponse } from '@lustra/contracts'
+import type { MeResponse } from '@lumira/contracts'
 
 import { loadSession } from '@/features/auth/model/load-session'
 

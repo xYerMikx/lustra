@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { PublicServiceView } from '@lustra/contracts'
+import type { PublicServiceView } from '@lumira/contracts'
 
 import {
   matchMasterService,

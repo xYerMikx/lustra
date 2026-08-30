@@ -1,5 +1,5 @@
-import type { BookingStatus } from '@lustra/contracts'
-import type { Prisma } from '@lustra/db'
+import type { BookingStatus } from '@lumira/contracts'
+import type { Prisma } from '@lumira/db'
 
 import type { ListBookingsScope } from '@/modules/bookings/app/booking.ports'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'

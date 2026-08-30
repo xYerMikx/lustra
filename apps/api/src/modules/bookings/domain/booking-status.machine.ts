@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 export type ConfirmHoldResult =
   | { ok: true; toStatus: Extract<BookingStatus, 'pending' | 'confirmed'> }

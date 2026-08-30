@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { CatalogMasterCard } from '@lustra/contracts'
+import type { CatalogMasterCard } from '@lumira/contracts'
 
 import {
   fetchCatalogMasters,

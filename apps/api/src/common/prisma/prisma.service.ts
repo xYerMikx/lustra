@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
-import { PrismaClient } from '@lustra/db'
+import { PrismaClient } from '@lumira/db'
 
 /**
- * Обёртка над singleton-клиентом из @lustra/db с хуками жизненного цикла Nest.
+ * Обёртка над singleton-клиентом из @lumira/db с хуками жизненного цикла Nest.
  * TransactionManager кладёт транзакционный клиент в AsyncLocalStorage и подменяет
  * этот сервис изнутри контекста запроса (см. transaction-manager.service.ts).
  */

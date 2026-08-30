@@ -5,7 +5,7 @@ import type {
   RecommendedServiceView,
   ServiceCategoryView,
   ServiceTemplateView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { listClientBookings } from '@/shared/api/bookings-client'
 import {

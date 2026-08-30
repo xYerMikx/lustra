@@ -1,4 +1,4 @@
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { PublicPortfolioFeed } from '@/features/master-portfolio/ui/public-portfolio-feed'
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'

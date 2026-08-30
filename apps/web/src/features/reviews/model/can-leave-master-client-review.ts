@@ -1,5 +1,5 @@
-import { REVIEW_WINDOW_DAYS } from '@lustra/contracts'
-import type { BookingMasterView } from '@lustra/contracts'
+import { REVIEW_WINDOW_DAYS } from '@lumira/contracts'
+import type { BookingMasterView } from '@lumira/contracts'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 

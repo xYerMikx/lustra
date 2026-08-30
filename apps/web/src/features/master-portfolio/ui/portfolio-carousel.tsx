@@ -1,6 +1,6 @@
 'use client'
 
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 import cn from 'classnames'
 
 import { openPortfolioSlide } from '@/features/master-portfolio/model/open-portfolio-slide'

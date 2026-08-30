@@ -1,5 +1,5 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3333'
-const CSRF_COOKIE = 'lustra_csrf'
+const CSRF_COOKIE = 'lumira_csrf'
 const CSRF_HEADER = 'X-CSRF-Token'
 
 const NO_REFRESH_PATHS = new Set([

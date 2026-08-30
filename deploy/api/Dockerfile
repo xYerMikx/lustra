@@ -15,15 +15,15 @@ COPY packages/db/package.json packages/db/
 COPY packages/contracts/package.json packages/contracts/
 COPY packages/config/package.json packages/config/
 COPY packages/ui/package.json packages/ui/
-RUN pnpm install --frozen-lockfile --filter @lustra/api...
+RUN pnpm install --frozen-lockfile --filter @lumira/api...
 
 FROM deps AS build
 COPY . .
 ENV DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build?schema=public
 ENV DIRECT_URL=postgresql://build:build@127.0.0.1:5432/build?schema=public
-RUN pnpm --filter @lustra/contracts build \
-  && pnpm --filter @lustra/db build \
-  && pnpm --filter @lustra/api build
+RUN pnpm --filter @lumira/contracts build \
+  && pnpm --filter @lumira/db build \
+  && pnpm --filter @lumira/api build
 
 FROM node:24-bookworm-slim AS runner
 RUN apt-get update \

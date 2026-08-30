@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import type { ExceptionType } from '@lustra/contracts'
-import { Prisma } from '@lustra/db'
+import type { ExceptionType } from '@lumira/contracts'
+import { Prisma } from '@lumira/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {

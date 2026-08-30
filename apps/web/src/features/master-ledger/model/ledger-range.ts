@@ -1,4 +1,4 @@
-import type { LedgerPeriodPreset } from '@lustra/contracts'
+import type { LedgerPeriodPreset } from '@lumira/contracts'
 
 import {
   addDaysToYmdDate,

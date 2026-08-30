@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { RecommendedServiceView, ServiceTemplateView } from '@lustra/contracts'
+import type { RecommendedServiceView, ServiceTemplateView } from '@lumira/contracts'
 
 import { buildServiceOptions } from '@/features/client-book-flow/model/build-service-options'
 

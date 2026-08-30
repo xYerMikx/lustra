@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { MasterStatus, ModerationStatus, Prisma, ReviewStatus } from '@lustra/db'
+import type { MasterStatus, ModerationStatus, Prisma, ReviewStatus } from '@lumira/db'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import {

@@ -1,4 +1,4 @@
-import type { PublicMasterView, PublicReviewView } from '@lustra/contracts'
+import type { PublicMasterView, PublicReviewView } from '@lumira/contracts'
 
 export type MasterStructuredData = {
   '@context': 'https://schema.org'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { LedgerSummaryView } from '@lustra/contracts'
+import type { LedgerSummaryView } from '@lumira/contracts'
 
 import { ledgerRangeForPreset } from '@/features/master-ledger/model/ledger-range'
 import { listMasterLedger } from '@/shared/api/ledger-client'

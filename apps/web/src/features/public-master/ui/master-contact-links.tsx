@@ -1,4 +1,4 @@
-import type { PublicMasterContactView } from '@lustra/contracts'
+import type { PublicMasterContactView } from '@lumira/contracts'
 
 import {
   contactLinkTargetProps,

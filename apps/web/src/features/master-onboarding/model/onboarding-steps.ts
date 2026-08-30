@@ -1,4 +1,4 @@
-import type { OnboardingStep } from '@lustra/contracts'
+import type { OnboardingStep } from '@lumira/contracts'
 
 export const ONBOARDING_STEPS = [
   { id: 'profile', label: 'Профиль' },

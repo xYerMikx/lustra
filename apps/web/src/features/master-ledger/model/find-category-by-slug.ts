@@ -1,4 +1,4 @@
-import type { LedgerCategoryView, LedgerKind } from '@lustra/contracts'
+import type { LedgerCategoryView, LedgerKind } from '@lumira/contracts'
 
 export function findCategoryBySlug(
   categories: LedgerCategoryView[],

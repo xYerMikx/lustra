@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import type { PublicMasterView } from '@lustra/contracts'
+import type { PublicMasterView } from '@lumira/contracts'
 
 import styles from '@/app/m/[slug]/master.module.css'
 import { FavoriteToggle } from '@/features/favorites'

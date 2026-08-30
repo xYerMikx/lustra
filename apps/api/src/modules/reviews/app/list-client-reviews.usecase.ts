@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { ReceivedClientReviewListResponse } from '@lustra/contracts'
+import type { ReceivedClientReviewListResponse } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import type { ReviewStore } from '@/modules/reviews/app/reviews.ports'

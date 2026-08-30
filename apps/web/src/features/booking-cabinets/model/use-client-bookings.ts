@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { BookingClientView } from '@lustra/contracts'
+import type { BookingClientView } from '@lumira/contracts'
 
 import {
   cancelClientBooking,

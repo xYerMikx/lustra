@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { PublicReviewListResponse } from '@lustra/contracts'
+import type { PublicReviewListResponse } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 import type { ReviewStore } from '@/modules/reviews/app/reviews.ports'

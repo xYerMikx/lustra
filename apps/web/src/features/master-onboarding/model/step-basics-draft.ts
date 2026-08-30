@@ -1,6 +1,6 @@
-import type { LocationType } from '@lustra/contracts'
+import type { LocationType } from '@lumira/contracts'
 
-export const ONBOARDING_STEP1_STORAGE_KEY = 'lustra:onboarding:step1'
+export const ONBOARDING_STEP1_STORAGE_KEY = 'lumira:onboarding:step1'
 
 export type StepBasicsDraft = {
   displayName: string

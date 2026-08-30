@@ -1,4 +1,4 @@
-import type { PublicReviewView } from '@lustra/contracts'
+import type { PublicReviewView } from '@lumira/contracts'
 
 import { formatReviewDate } from '@/features/reviews/model/format-review-date'
 import styles from '@/features/reviews/ui/reviews.module.css'

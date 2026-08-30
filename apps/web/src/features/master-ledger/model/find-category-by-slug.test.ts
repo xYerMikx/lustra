@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { LedgerCategoryView } from '@lustra/contracts'
+import type { LedgerCategoryView } from '@lumira/contracts'
 
 import { findCategoryBySlug } from '@/features/master-ledger/model/find-category-by-slug'
 

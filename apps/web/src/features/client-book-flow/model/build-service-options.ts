@@ -1,7 +1,7 @@
 import type {
   RecommendedServiceView,
   ServiceTemplateView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { normalizeServiceTitle } from '@/features/client-book-flow/model/normalize-service-title'
 import type { ClientBookServiceOption } from '@/features/client-book-flow/model/types'

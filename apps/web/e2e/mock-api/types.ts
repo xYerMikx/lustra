@@ -18,7 +18,7 @@ import type {
   ServiceTemplateView,
   ServiceView,
   TimeBlockView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type E2eUser = {
   id: string

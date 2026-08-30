@@ -3,7 +3,7 @@ import {
   isGranularityMin,
   type AvailabilityQuery,
   type AvailabilityResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 import { ClockService } from '@/common/time/clock.service'

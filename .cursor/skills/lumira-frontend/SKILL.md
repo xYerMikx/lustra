@@ -1,14 +1,14 @@
 ---
-name: lustra-frontend
+name: lumira-frontend
 description: >-
-  Implements Lustra Next.js/Astro UI with composition, feature-sliced layout,
+  Implements Lumira Next.js/Astro UI with composition, feature-sliced layout,
   strict size limits, and minimal useEffect. Use when editing apps/web or
   apps/landing, building screens, forms, catalog, booking UI, or master calendar.
 ---
 
-# Lustra frontend
+# Lumira frontend
 
-Read `.cursor/rules/lustra-frontend.mdc` + design-system rule. Tokens: TECH-DESIGN §23.
+Read `.cursor/rules/lumira-frontend.mdc` + design-system rule. Tokens: TECH-DESIGN §23.
 
 ## Checklist before coding
 
@@ -49,7 +49,7 @@ Prefer `useEffectEvent` for stable effect bodies that call latest handlers (Reac
 
 ## Validation
 
-- Schemas only from `@lustra/contracts` (when package exists); duplicate ad-hoc zod in features is forbidden.
+- Schemas only from `@lumira/contracts` (when package exists); duplicate ad-hoc zod in features is forbidden.
 - Show field errors from API `VALIDATION_FAILED.details` as well as client resolver.
 
 ## Role UI

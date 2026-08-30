@@ -2,8 +2,8 @@ import type {
   AuthUserView,
   MasterProfileStatus,
   UserRole,
-} from '@lustra/contracts'
-import { resolveOnboardingStep } from '@lustra/contracts'
+} from '@lumira/contracts'
+import { resolveOnboardingStep } from '@lumira/contracts'
 
 type UserRow = {
   id: string

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import styles from '@/features/master-portfolio/ui/master-portfolio.module.css'
 import { publicPortfolioShotTestId } from '@/shared/lib/test-id'

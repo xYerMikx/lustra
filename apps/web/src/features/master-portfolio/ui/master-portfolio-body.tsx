@@ -1,6 +1,6 @@
 'use client'
 
-import { PORTFOLIO_MAX_ITEMS, type PortfolioItemView } from '@lustra/contracts'
+import { PORTFOLIO_MAX_ITEMS, type PortfolioItemView } from '@lumira/contracts'
 
 import { PortfolioManagerGrid } from '@/features/master-portfolio/ui/portfolio-manager-grid'
 import { PortfolioUploadControl } from '@/features/master-portfolio/ui/portfolio-upload-control'

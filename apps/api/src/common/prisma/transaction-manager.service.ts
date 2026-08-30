@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 
 import { Injectable } from '@nestjs/common'
-import type { Prisma } from '@lustra/db'
+import type { Prisma } from '@lumira/db'
 
 import { PrismaService } from './prisma.service'
 

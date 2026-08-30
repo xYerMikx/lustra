@@ -3,11 +3,11 @@
  *
  *   ADMIN_BOOTSTRAP_EMAIL=admin@example.com \
  *   ADMIN_BOOTSTRAP_PASSWORD='at-least-8-chars' \
- *   pnpm --filter @lustra/api ensure-admin
+ *   pnpm --filter @lumira/api ensure-admin
  */
 import { config as loadEnv } from 'dotenv'
 import * as argon2 from 'argon2'
-import { PrismaClient } from '@lustra/db'
+import { PrismaClient } from '@lumira/db'
 
 loadEnv()
 

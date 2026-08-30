@@ -1,4 +1,4 @@
-# Lustra
+# Lumira
 
 Агрегатор бьюти-мастеров (Минск). Монорепо: NestJS API + Next.js приложение + Astro-лендинг.
 
@@ -12,7 +12,7 @@
 
 ## Быстрый старт
 
-Из корня репо (`manik/`):
+Из корня репо:
 
 ```bash
 make setup    # один раз: install + .env + docker + migrate + seed
@@ -34,9 +34,9 @@ pnpm dev
 
 | Сервис | Порт | Назначение |
 |---|---|---|
-| Postgres | 5432 | `lustra` / `lustra` / `lustra_dev` |
+| Postgres | 5432 | `lumira` / `lumira` / `lumira_dev` |
 | Redis | 6379 | очереди / кэш |
-| MinIO | 9000 | S3-хранилище (консоль http://localhost:9001, `lustra` / `lustra-minio`) |
+| MinIO | 9000 | S3-хранилище (консоль http://localhost:9001, `lumira` / `lumira-minio`) |
 | API | 3333 | NestJS (Fastify) — `/health`, `/health/deep` |
 | Web | 3000 | Next.js 15 |
 | Landing | 4321 | Astro |
@@ -51,7 +51,7 @@ ADMIN_BOOTSTRAP_EMAIL=admin@example.com
 ADMIN_BOOTSTRAP_PASSWORD='at-least-8-chars'
 # опционально: ADMIN_IP_ALLOWLIST=127.0.0.1
 
-pnpm --filter @lustra/api ensure-admin
+pnpm --filter @lumira/api ensure-admin
 ```
 
 Вход → `/admin`. Роль `admin` нельзя получить через `/auth/register`.
@@ -77,7 +77,7 @@ make prod-logs
 ## Структура
 
 ```
-lustra/
+lumira/
 ├─ apps/
 │  ├─ api/          # NestJS 11 + Fastify — REST, Telegram, BullMQ
 │  ├─ web/          # Next.js 15 — /catalog, /m/[slug], /app/**, /admin/**
@@ -96,7 +96,7 @@ lustra/
    └─ skills/       # скиллы по фронту / беку / дизайну / тестам
 ```
 
-Планируемые пакеты (ещё не заведены): `@lustra/contracts` (Zod DTO + typed client). `@lustra/ui` уже есть (токены).
+Планируемые пакеты (ещё не заведены): `@lumira/contracts` (Zod DTO + typed client). `@lumira/ui` уже есть (токены).
 
 Landing → web ссылки: `PUBLIC_APP_URL` в `apps/landing/.env` (local `http://localhost:3000`, на staging/prod — URL приложения).
 
@@ -161,7 +161,7 @@ chore: add makefile
 | `develop` → `main` | краткое **описание релиза** (что выкатываем) | только `## Summary` — конкретно что сделано |
 | `feature/*` → `develop` | краткое описание фичи/фикса | только `## Summary` — короткий what/why |
 
-Без Test plan и без подписей «Made with/by …». Агент создаёт PR через `gh` по `.cursor/rules/lustra-pull-requests.mdc`.
+Без Test plan и без подписей «Made with/by …». Агент создаёт PR через `gh` по `.cursor/rules/lumira-pull-requests.mdc`.
 
 ## Конвенции кода
 

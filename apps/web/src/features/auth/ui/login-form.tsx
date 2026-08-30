@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { LoginInputSchema, type LoginInput } from '@lustra/contracts'
+import { LoginInputSchema, type LoginInput } from '@lumira/contracts'
 
 import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'
 import { clearSessionCache } from '@/features/auth/model/load-session'

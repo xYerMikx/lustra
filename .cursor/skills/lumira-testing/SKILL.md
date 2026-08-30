@@ -1,14 +1,14 @@
 ---
-name: lustra-testing
+name: lumira-testing
 description: >-
-  Writes and maintains Lustra unit tests for frontend utils and backend domain/use-cases,
+  Writes and maintains Lumira unit tests for frontend utils and backend domain/use-cases,
   plus Playwright/API e2e for P0 flows. Use when adding tests, fixing CI, booking races,
   or when the user mentions coverage, vitest, playwright, or e2e.
 ---
 
-# Lustra testing
+# Lumira testing
 
-Rules summary: `.cursor/rules/lustra-testing.mdc`, smoke markers: `.cursor/rules/lustra-smoke-data.mdc`. Product acceptance: PRD §17, TECH-DESIGN §29 (smoke), §28 (slices).
+Rules summary: `.cursor/rules/lumira-testing.mdc`, smoke markers: `.cursor/rules/lumira-smoke-data.mdc`. Product acceptance: PRD §17, TECH-DESIGN §29 (smoke), §28 (slices).
 
 ## What to unit-test
 

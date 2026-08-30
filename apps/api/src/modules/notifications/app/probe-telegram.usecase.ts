@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { OkResponse } from '@lustra/contracts'
+import type { OkResponse } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

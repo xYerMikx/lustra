@@ -1,6 +1,6 @@
 'use client'
 
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import {
   clientContactLine,

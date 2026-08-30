@@ -1,7 +1,7 @@
 import {
   PutScheduleExceptionInputSchema,
   type PutScheduleExceptionInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { minuteOfDayFromHm } from '@/features/master-calendar/model/minute-of-day-from-hm'
 

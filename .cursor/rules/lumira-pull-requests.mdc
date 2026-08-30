@@ -3,7 +3,7 @@ description: GitHub PR conventions via gh — develop→main releases vs feature
 alwaysApply: true
 ---
 
-# Lustra — pull requests
+# Lumira — pull requests
 
 Use **`gh`** for all GitHub PR work (create, view, checks). Base production branch is **`main`** (not `master`).
 

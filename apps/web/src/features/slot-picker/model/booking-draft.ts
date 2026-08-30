@@ -20,7 +20,7 @@ export function availabilityRangeFromToday(
   }
 }
 
-export const BOOKING_DRAFT_KEY = 'lustra.bookingDraft'
+export const BOOKING_DRAFT_KEY = 'lumira.bookingDraft'
 
 export type BookingDraft = {
   masterId: string

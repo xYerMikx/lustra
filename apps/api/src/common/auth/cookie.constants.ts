@@ -1,6 +1,6 @@
-export const ACCESS_COOKIE = 'lustra_access'
-export const REFRESH_COOKIE = 'lustra_refresh'
-export const CSRF_COOKIE = 'lustra_csrf'
+export const ACCESS_COOKIE = 'lumira_access'
+export const REFRESH_COOKIE = 'lumira_refresh'
+export const CSRF_COOKIE = 'lumira_csrf'
 export const CSRF_HEADER = 'x-csrf-token'
 
 export const ACCESS_TTL_SEC = 15 * 60

@@ -1,4 +1,4 @@
-import type { MasterProfileStatus, ModerateMasterAction } from '@lustra/contracts'
+import type { MasterProfileStatus, ModerateMasterAction } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 

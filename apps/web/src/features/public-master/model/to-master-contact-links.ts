@@ -1,7 +1,7 @@
 import {
   instagramProfileUrl,
   telegramProfileUrl,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type MasterContactLink = {
   label: string

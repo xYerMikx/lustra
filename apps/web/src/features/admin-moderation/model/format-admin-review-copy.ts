@@ -1,4 +1,4 @@
-import type { ReviewAuthorRole } from '@lustra/contracts'
+import type { ReviewAuthorRole } from '@lumira/contracts'
 
 import { joinDotLabels } from '@/shared/lib/join-dot-labels'
 

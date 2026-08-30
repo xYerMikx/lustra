@@ -4,7 +4,7 @@ import type {
   LedgerEntryView,
   LedgerKind,
   LedgerListResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { MASTER_PROFILE_ID, MASTER_USER_ID } from '../ids'
 import { requireUser, type HandlerResult } from './auth-handlers'

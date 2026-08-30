@@ -1,4 +1,4 @@
-import type { AuthUserView } from '@lustra/contracts'
+import type { AuthUserView } from '@lumira/contracts'
 
 function isSafeNextPath(value: string): boolean {
   return value.startsWith('/') && !value.startsWith('//')

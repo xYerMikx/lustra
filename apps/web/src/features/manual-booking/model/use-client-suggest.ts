@@ -4,7 +4,7 @@ import {
   useState,
   type KeyboardEvent,
 } from 'react'
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import { applySuggestKey } from '@/features/manual-booking/model/apply-suggest-key'
 import { filterMasterClients } from '@/features/manual-booking/model/filter-master-clients'

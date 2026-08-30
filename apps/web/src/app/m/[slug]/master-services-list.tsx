@@ -1,4 +1,4 @@
-import type { PublicServiceView } from '@lustra/contracts'
+import type { PublicServiceView } from '@lumira/contracts'
 
 import styles from '@/app/m/[slug]/master.module.css'
 import { formatPriceLabel } from '@/shared/lib/money'

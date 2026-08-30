@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { MeResponse } from '@lustra/contracts'
+import type { MeResponse } from '@lumira/contracts'
 
 import {
   buildAppNavItems,

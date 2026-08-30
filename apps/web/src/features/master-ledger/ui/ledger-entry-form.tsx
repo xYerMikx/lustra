@@ -5,7 +5,7 @@ import type {
   CreateLedgerEntryInput,
   LedgerCategoryView,
   LedgerKind,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { findCategoryBySlug } from '@/features/master-ledger/model/find-category-by-slug'
 import type { LedgerComposerIntent } from '@/features/master-ledger/model/parse-ledger-intent'

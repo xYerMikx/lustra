@@ -1,5 +1,5 @@
 {
-  "name": "lustra",
+  "name": "lumira",
   "private": true,
   "version": "0.1.0",
   "engines": {
@@ -8,9 +8,9 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "turbo run dev",
-    "dev:api": "turbo run dev --filter=@lustra/api",
-    "dev:web": "turbo run dev --filter=@lustra/web",
-    "dev:landing": "turbo run dev --filter=@lustra/landing",
+    "dev:api": "turbo run dev --filter=@lumira/api",
+    "dev:web": "turbo run dev --filter=@lumira/web",
+    "dev:landing": "turbo run dev --filter=@lumira/landing",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "lint:commit": "commitlint",
@@ -19,11 +19,11 @@
     "test:e2e": "turbo run test:e2e",
     "prepush": "sh scripts/pre-push.sh",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "db:generate": "pnpm --filter @lustra/db generate",
-    "db:migrate": "pnpm --filter @lustra/db migrate",
-    "db:migrate:deploy": "pnpm --filter @lustra/db migrate:deploy",
-    "db:seed": "pnpm --filter @lustra/db seed",
-    "db:studio": "pnpm --filter @lustra/db studio",
+    "db:generate": "pnpm --filter @lumira/db generate",
+    "db:migrate": "pnpm --filter @lumira/db migrate",
+    "db:migrate:deploy": "pnpm --filter @lumira/db migrate:deploy",
+    "db:seed": "pnpm --filter @lumira/db seed",
+    "db:studio": "pnpm --filter @lumira/db studio",
     "prepare": "husky"
   },
   "devDependencies": {

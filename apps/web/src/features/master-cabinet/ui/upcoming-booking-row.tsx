@@ -1,4 +1,4 @@
-import type { MasterCalendarSlotView } from '@lustra/contracts'
+import type { MasterCalendarSlotView } from '@lumira/contracts'
 import Link from 'next/link'
 
 import styles from '@/features/master-cabinet/ui/master-cabinet.module.css'

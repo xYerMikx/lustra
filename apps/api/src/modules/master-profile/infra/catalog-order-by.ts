@@ -1,5 +1,5 @@
-import type { Prisma } from '@lustra/db'
-import type { CatalogSort } from '@lustra/contracts'
+import type { Prisma } from '@lumira/db'
+import type { CatalogSort } from '@lumira/contracts'
 
 export function catalogOrderBy(
   sort: CatalogSort | undefined,

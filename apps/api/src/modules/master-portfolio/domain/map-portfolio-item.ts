@@ -1,4 +1,4 @@
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { publicMediaUrl } from '@/common/media/public-media-url'
 import type { PortfolioItemRecord } from '@/modules/master-portfolio/infra/portfolio.repository'

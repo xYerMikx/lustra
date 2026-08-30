@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import { listMasterClients } from '@/shared/api/master-clients-client'
 import { ApiError } from '@/shared/api/http'

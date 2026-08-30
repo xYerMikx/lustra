@@ -1,4 +1,4 @@
-import type { MasterCalendarView } from '@lustra/contracts'
+import type { MasterCalendarView } from '@lumira/contracts'
 import { describe, expect, it } from 'vitest'
 
 import { calendarSlotLabel } from '@/features/master-calendar/model/calendar-slot-label'

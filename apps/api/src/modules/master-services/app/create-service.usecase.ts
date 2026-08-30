@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { CreateServiceInput, ServiceView } from '@lustra/contracts'
+import type { CreateServiceInput, ServiceView } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

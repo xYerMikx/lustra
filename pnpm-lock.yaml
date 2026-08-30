@@ -41,10 +41,10 @@ importers:
       '@fastify/helmet':
         specifier: ^13.0.1
         version: 13.1.0
-      '@lustra/contracts':
+      '@lumira/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@lustra/db':
+      '@lumira/db':
         specifier: workspace:*
         version: link:../../packages/db
       '@nestjs/common':
@@ -99,7 +99,7 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@lustra/config':
+      '@lumira/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@nestjs/cli':
@@ -141,7 +141,7 @@ importers:
       '@fontsource-variable/playfair-display':
         specifier: ^5.2.5
         version: 5.3.0
-      '@lustra/ui':
+      '@lumira/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       astro:
@@ -160,10 +160,10 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.7.1
         version: 5.7.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.21.0)(react-hook-form@7.85.0(react@19.2.8))(zod@3.25.76)
-      '@lustra/contracts':
+      '@lumira/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@lustra/ui':
+      '@lumira/ui':
         specifier: workspace:^
         version: link:../../packages/ui
       classnames:
@@ -191,7 +191,7 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@lustra/config':
+      '@lumira/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@playwright/test':
@@ -238,7 +238,7 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@lustra/config':
+      '@lumira/config':
         specifier: workspace:*
         version: link:../config
       typescript:
@@ -254,7 +254,7 @@ importers:
         specifier: ^6.1.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
     devDependencies:
-      '@lustra/config':
+      '@lumira/config':
         specifier: workspace:*
         version: link:../config
       '@types/node':

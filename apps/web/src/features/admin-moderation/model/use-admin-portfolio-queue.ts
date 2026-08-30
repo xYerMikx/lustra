@@ -5,7 +5,7 @@ import type {
   AdminPortfolioCard,
   MediaModerationStatus,
   ModeratePortfolioAction,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { UseFormClearErrors, UseFormSetError } from 'react-hook-form'
-import { MasterSlugSchema } from '@lustra/contracts'
+import { MasterSlugSchema } from '@lumira/contracts'
 
 import type { EditMasterProfileFormValues } from '@/features/master-profile-edit/model/edit-profile-form-schema'
 import { checkSlugAvailability } from '@/shared/api/master-profile-client'

@@ -1,4 +1,4 @@
-import type { MeResponse } from '@lustra/contracts'
+import type { MeResponse } from '@lumira/contracts'
 
 import { getMe } from '@/shared/api/auth-client'
 import { ApiError } from '@/shared/api/http'

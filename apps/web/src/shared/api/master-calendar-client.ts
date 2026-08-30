@@ -3,7 +3,7 @@ import type {
   CreateTimeBlockInput,
   MasterCalendarView,
   TimeBlockView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

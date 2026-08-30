@@ -1,4 +1,4 @@
-import type { RecommendedServiceView } from '@lustra/contracts'
+import type { RecommendedServiceView } from '@lumira/contracts'
 
 export const DEFAULT_RECOMMENDATION_LIMIT = 3
 

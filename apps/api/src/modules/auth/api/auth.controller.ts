@@ -20,7 +20,7 @@ import {
   type RegisterInput,
   type ResetPasswordInput,
   type VerifyEmailInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 import type { FastifyReply, FastifyRequest } from 'fastify'
 
 import type { AuthUser } from '@/common/auth/auth-user'

@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 import { bookingStatusLabel } from '@/features/booking-cabinets/model/booking-labels'
 import { bookingStatusTone } from '@/features/booking-cabinets/model/booking-status-tone'

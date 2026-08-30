@@ -1,4 +1,4 @@
-import type { Prisma } from '@lustra/db'
+import type { Prisma } from '@lumira/db'
 
 import { DomainError } from '@/common/errors/domain-error'
 import { missingGranuleStarts } from '@/modules/bookings/domain/missing-granule-starts'

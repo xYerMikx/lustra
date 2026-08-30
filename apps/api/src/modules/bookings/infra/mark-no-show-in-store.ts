@@ -1,4 +1,4 @@
-import type { Prisma } from '@lustra/db'
+import type { Prisma } from '@lumira/db'
 
 import { OutboxEventType } from '@/common/events/outbox-event-type'
 import type { MarkNoShowStoreInput } from '@/modules/bookings/app/booking.ports'

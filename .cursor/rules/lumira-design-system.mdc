@@ -1,10 +1,10 @@
 ---
-description: Lustra design system — tokens, typography, anti-AI-slop visuals
+description: Lumira design system — tokens, typography, anti-AI-slop visuals
 globs: apps/web/**/*.{tsx,css},apps/landing/**/*.{astro,css},packages/ui/**/*
 alwaysApply: false
 ---
 
-# Lustra — design system
+# Lumira — design system
 
 Tokens live in `packages/ui/tokens.css` (TECH-DESIGN §23). Use **only** scale values — no one-off `13px` / `border-radius: 10px`. Landing and web import this file; do not duplicate hex/spacing in feature CSS.
 
@@ -20,7 +20,7 @@ Tokens live in `packages/ui/tokens.css` (TECH-DESIGN §23). Use **only** scale v
 - UI: **Manrope** (body, forms) — not Inter/Roboto/Arial as primary brand face
 - Spacing/radius/shadows: numeric scales (`--spacing-12`, `--radius-8`, `--shadow-1`)
 - **No `em` / `rem`** for spacing, type, letter-spacing, or `min-width`/`max-width` — only `px` via tokens (e.g. `letter-spacing: 1px`, `min-width: var(--spacing-96)`)
-- Import tokens from `@lustra/ui/tokens.css`; do not hardcode one-off px/hex/`rgba(...)` in feature CSS — use semantic vars (`--color-overlay`, `--color-text`, …). New colors belong in `tokens.css` first.
+- Import tokens from `@lumira/ui/tokens.css`; do not hardcode one-off px/hex/`rgba(...)` in feature CSS — use semantic vars (`--color-overlay`, `--color-text`, …). New colors belong in `tokens.css` first.
 
 ## Visual rules
 

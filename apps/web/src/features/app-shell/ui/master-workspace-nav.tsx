@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
-import type { OnboardingStep } from '@lustra/contracts'
+import type { OnboardingStep } from '@lumira/contracts'
 
 import { MasterMoreSheet } from '@/features/app-shell/ui/master-more-sheet'
 import { MasterNavLink } from '@/features/app-shell/ui/master-nav-link'

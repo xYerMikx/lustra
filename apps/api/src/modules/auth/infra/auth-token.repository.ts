@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { AuthToken, AuthTokenKind } from '@lustra/db'
+import type { AuthToken, AuthTokenKind } from '@lumira/db'
 
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'
 

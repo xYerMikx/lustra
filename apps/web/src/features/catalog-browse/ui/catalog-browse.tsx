@@ -4,7 +4,7 @@ import type {
   SearchMastersQuery,
   ServiceCategoryView,
   ServiceTemplateView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { MasterCard } from '@/entities/master'
 import { emptyCatalogCopy } from '@/features/catalog-browse/model/empty-catalog-copy'

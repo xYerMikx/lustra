@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { OkResponse, VerifyEmailInput } from '@lustra/contracts'
+import type { OkResponse, VerifyEmailInput } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'

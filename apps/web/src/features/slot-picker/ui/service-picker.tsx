@@ -1,6 +1,6 @@
 'use client'
 
-import type { PublicServiceView } from '@lustra/contracts'
+import type { PublicServiceView } from '@lumira/contracts'
 import cn from 'classnames'
 
 import styles from '@/features/slot-picker/ui/slot-picker.module.css'

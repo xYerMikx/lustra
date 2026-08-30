@@ -1,4 +1,4 @@
-import type { RegisterRole } from '@lustra/contracts'
+import type { RegisterRole } from '@lumira/contracts'
 
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { TEST_ID } from '@/shared/lib/test-id'

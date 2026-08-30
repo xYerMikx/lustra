@@ -1,6 +1,6 @@
-import type { ServiceView } from '@lustra/contracts'
-import type { PriceType, Service, ServiceCategory } from '@lustra/db'
-import { Prisma } from '@lustra/db'
+import type { ServiceView } from '@lumira/contracts'
+import type { PriceType, Service, ServiceCategory } from '@lumira/db'
+import { Prisma } from '@lumira/db'
 
 export type ServiceRecord = Service & {
   category: Pick<ServiceCategory, 'id' | 'name' | 'slug'>

@@ -1,4 +1,4 @@
-import { Prisma } from '@lustra/db'
+import { Prisma } from '@lumira/db'
 
 import { OutboxEventType } from '@/common/events/outbox-event-type'
 import { DomainError } from '@/common/errors/domain-error'

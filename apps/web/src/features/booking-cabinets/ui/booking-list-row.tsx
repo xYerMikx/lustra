@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 import { BookingStatusBadge } from '@/features/booking-cabinets/ui/booking-status-badge'
 import styles from '@/features/booking-cabinets/ui/bookings.module.css'

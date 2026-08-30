@@ -1,4 +1,4 @@
-import type { AdminMasterCard } from '@lustra/contracts'
+import type { AdminMasterCard } from '@lumira/contracts'
 
 import type { AdminMasterRecord } from '@/modules/admin-moderation/infra/admin-moderation.repository'
 

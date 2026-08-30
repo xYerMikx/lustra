@@ -1,6 +1,6 @@
 'use client'
 
-import type { MasterReviewView } from '@lustra/contracts'
+import type { MasterReviewView } from '@lumira/contracts'
 
 import { formatReviewDate } from '@/features/reviews/model/format-review-date'
 import { MasterReplyForm } from '@/features/reviews/ui/master-reply-form'

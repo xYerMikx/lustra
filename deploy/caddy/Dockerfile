@@ -20,7 +20,7 @@ FROM deps AS build
 COPY . .
 ARG PUBLIC_APP_URL
 ENV PUBLIC_APP_URL=$PUBLIC_APP_URL
-RUN pnpm --filter @lustra/landing build
+RUN pnpm --filter @lumira/landing build
 
 FROM caddy:2.11.4-alpine
 COPY deploy/caddy/Caddyfile /etc/caddy/Caddyfile

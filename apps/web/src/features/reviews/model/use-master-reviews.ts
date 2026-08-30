@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { MasterReviewView } from '@lustra/contracts'
+import type { MasterReviewView } from '@lumira/contracts'
 
 import { listMasterReviews } from '@/shared/api/reviews-client'
 import { ApiError } from '@/shared/api/http'

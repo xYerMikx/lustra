@@ -8,7 +8,7 @@ import type {
   ReceivedClientReviewListResponse,
   ReplyToReviewInput,
   ReplyToReviewResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

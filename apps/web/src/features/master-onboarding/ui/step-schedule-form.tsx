@@ -7,7 +7,7 @@ import {
   PutMasterScheduleInputSchema,
   type MasterScheduleView,
   type PutMasterScheduleInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 import cn from 'classnames'
 
 import { buildStepScheduleDefaults } from '@/features/master-onboarding/model/build-step-schedule-defaults'

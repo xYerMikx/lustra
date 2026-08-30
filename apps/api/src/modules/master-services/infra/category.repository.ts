@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { ServiceCategoryView } from '@lustra/contracts'
+import type { ServiceCategoryView } from '@lumira/contracts'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 

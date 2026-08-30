@@ -1,4 +1,4 @@
-import type { LedgerEntryView } from '@lustra/contracts'
+import type { LedgerEntryView } from '@lumira/contracts'
 
 import { formatByn } from '@/shared/lib/money'
 import { Button } from '@/shared/ui/button'

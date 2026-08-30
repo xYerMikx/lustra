@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { AvailabilityRuleInput } from '@lustra/contracts'
+import type { AvailabilityRuleInput } from '@lumira/contracts'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {

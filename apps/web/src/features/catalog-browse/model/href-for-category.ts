@@ -1,4 +1,4 @@
-import type { SearchMastersQuery } from '@lustra/contracts'
+import type { SearchMastersQuery } from '@lumira/contracts'
 
 export function catalogSearchParams(query: SearchMastersQuery): URLSearchParams {
   const params = new URLSearchParams()

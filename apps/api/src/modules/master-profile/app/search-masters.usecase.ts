@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type {
   SearchMastersQuery,
   SearchMastersResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { PublicMasterStore } from '@/modules/master-profile/app/public-master.ports'
 import { toCatalogMasterCard } from '@/modules/master-profile/domain/map-catalog-master'

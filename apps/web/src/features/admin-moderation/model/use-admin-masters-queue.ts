@@ -5,7 +5,7 @@ import type {
   AdminMasterCard,
   MasterProfileStatus,
   ModerateMasterAction,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import {

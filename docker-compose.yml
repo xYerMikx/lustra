@@ -1,19 +1,19 @@
-name: lustra
+name: lumira
 
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: lustra
-      POSTGRES_PASSWORD: lustra
-      POSTGRES_DB: lustra_dev
+      POSTGRES_USER: lumira
+      POSTGRES_PASSWORD: lumira
+      POSTGRES_DB: lumira_dev
     ports:
       - "5432:5432"
     volumes:
-      - lustra_postgres_data:/var/lib/postgresql/data
+      - lumira_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U lustra -d lustra_dev"]
+      test: ["CMD-SHELL", "pg_isready -U lumira -d lumira_dev"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,7 +25,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - lustra_redis_data:/data
+      - lumira_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -37,13 +37,13 @@ services:
     restart: unless-stopped
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
-      MINIO_ROOT_USER: lustra
-      MINIO_ROOT_PASSWORD: lustra-minio
+      MINIO_ROOT_USER: lumira
+      MINIO_ROOT_PASSWORD: lumira-minio
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - lustra_minio_data:/data
+      - lumira_minio_data:/data
 
   minio-init:
     image: minio/mc:latest
@@ -52,13 +52,13 @@ services:
     restart: on-failure
     entrypoint: >
       /bin/sh -c "
-      until mc alias set local http://minio:9000 lustra lustra-minio; do
+      until mc alias set local http://minio:9000 lumira lumira-minio; do
         sleep 1;
       done;
-      mc mb --ignore-existing local/lustra-media;
+      mc mb --ignore-existing local/lumira-media;
       "
 
 volumes:
-  lustra_postgres_data:
-  lustra_redis_data:
-  lustra_minio_data:
+  lumira_postgres_data:
+  lumira_redis_data:
+  lumira_minio_data:

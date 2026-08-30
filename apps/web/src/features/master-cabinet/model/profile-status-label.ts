@@ -1,4 +1,4 @@
-import type { MasterProfileStatus } from '@lustra/contracts'
+import type { MasterProfileStatus } from '@lumira/contracts'
 
 const LABELS: Record<MasterProfileStatus, string> = {
   draft: 'Черновик',

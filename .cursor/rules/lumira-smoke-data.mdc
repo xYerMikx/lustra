@@ -3,7 +3,7 @@ description: Smoke/e2e test data markers and cleanup policy
 alwaysApply: true
 ---
 
-# Lustra — smoke test data
+# Lumira — smoke test data
 
 ## Why markers
 
@@ -46,4 +46,4 @@ Until the script lands: reset local DB via `docker compose down -v` or manual `D
 
 - New smoke/e2e helpers **must** use these markers
 - Do **not** add the cleanup script unless explicitly requested
-- Cross-ref: `.cursor/skills/lustra-testing/SKILL.md`, `docs/TECH-DESIGN.md` §29, `docs/PRD.md` §17
+- Cross-ref: `.cursor/skills/lumira-testing/SKILL.md`, `docs/TECH-DESIGN.md` §29, `docs/PRD.md` §17

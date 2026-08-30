@@ -1,4 +1,4 @@
-import type { SearchMastersQuery } from '@lustra/contracts'
+import type { SearchMastersQuery } from '@lumira/contracts'
 
 export function emptyCatalogCopy(
   query: SearchMastersQuery,

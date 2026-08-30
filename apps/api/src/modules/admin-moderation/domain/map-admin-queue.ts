@@ -1,4 +1,4 @@
-import type { AdminPortfolioCard, AdminReviewCard } from '@lustra/contracts'
+import type { AdminPortfolioCard, AdminReviewCard } from '@lumira/contracts'
 
 import { publicMediaUrl } from '@/common/media/public-media-url'
 import type {

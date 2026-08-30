@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { MasterProfileView, ServiceView } from '@lustra/contracts'
+import type { MasterProfileView, ServiceView } from '@lumira/contracts'
 
 import {
   pickUpcomingBookings,
