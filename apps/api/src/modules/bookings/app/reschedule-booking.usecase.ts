@@ -3,7 +3,7 @@ import {
   isGranularityMin,
   type MasterBookingResponse,
   type RescheduleBookingInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

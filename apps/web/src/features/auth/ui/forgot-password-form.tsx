@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { ForgotPasswordInputSchema, type ForgotPasswordInput } from '@lustra/contracts'
+import { ForgotPasswordInputSchema, type ForgotPasswordInput } from '@lumira/contracts'
 
 import styles from '@/features/auth/ui/auth-form.module.css'
 import { requestPasswordReset } from '@/shared/api/auth-client'

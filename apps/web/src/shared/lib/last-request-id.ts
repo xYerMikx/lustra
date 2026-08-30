@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'lustra:last-request-id'
+const STORAGE_KEY = 'lumira:last-request-id'
 
 let memoryRequestId: string | undefined
 

@@ -1,12 +1,12 @@
 ---
-name: lustra-pull-requests
+name: lumira-pull-requests
 description: >-
-  Creates GitHub pull requests for Lustra with gh CLI using release vs feature
+  Creates GitHub pull requests for Lumira with gh CLI using release vs feature
   title/body conventions. Use when opening a PR, drafting release notes for
   develop→main, or when the user asks to push and create a pull request.
 ---
 
-# Lustra pull requests
+# Lumira pull requests
 
 Base branch: **`main`**. Integration branch: **`develop`**. Tool: **`gh`**.
 

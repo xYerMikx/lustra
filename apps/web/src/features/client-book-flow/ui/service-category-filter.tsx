@@ -1,7 +1,7 @@
 'use client'
 
 import cn from 'classnames'
-import type { ServiceCategoryView } from '@lustra/contracts'
+import type { ServiceCategoryView } from '@lumira/contracts'
 
 import styles from '@/features/client-book-flow/ui/client-book-flow.module.css'
 import { catalogCategoryTestId } from '@/shared/lib/test-id'

@@ -1,4 +1,4 @@
-import type { ServiceCategoryView } from '@lustra/contracts'
+import type { ServiceCategoryView } from '@lumira/contracts'
 
 import type {
   ServiceRecord,

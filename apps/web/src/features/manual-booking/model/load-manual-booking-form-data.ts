@@ -1,4 +1,4 @@
-import type { MasterClientView, ServiceView } from '@lustra/contracts'
+import type { MasterClientView, ServiceView } from '@lumira/contracts'
 
 import { listMasterClients } from '@/shared/api/master-clients-client'
 import { listMasterServices } from '@/shared/api/master-services-client'

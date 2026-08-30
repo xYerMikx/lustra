@@ -1,9 +1,9 @@
 ---
-description: Core Lustra architecture — SOLID, size limits, no god objects
+description: Core Lumira architecture — SOLID, size limits, no god objects
 alwaysApply: true
 ---
 
-# Lustra — core
+# Lumira — core
 
 Sources of truth: `docs/PRD.md` (what/why), `docs/TECH-DESIGN.md` (how). On conflict, prefer TECH-DESIGN for schema/API.
 

@@ -1,4 +1,4 @@
-import type { OkResponse, TelegramLinkStartResponse } from '@lustra/contracts'
+import type { OkResponse, TelegramLinkStartResponse } from '@lumira/contracts'
 
 import { apiFetch } from './http'
 

@@ -1,5 +1,5 @@
 {
-  "extends": "@lustra/config/nestjs.json",
+  "extends": "@lumira/config/nestjs.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",

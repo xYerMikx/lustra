@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { MasterCalendarSlotView } from '@lustra/contracts'
+import type { MasterCalendarSlotView } from '@lumira/contracts'
 
 import { pickUpcomingBookings } from '@/features/master-cabinet/model/pick-upcoming-bookings'
 

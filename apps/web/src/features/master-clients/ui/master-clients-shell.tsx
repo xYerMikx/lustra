@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import cn from 'classnames'
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import { todayYmdDate } from '@/features/master-calendar/model/calendar-range'
 import { ManualBookingDialog } from '@/features/manual-booking/ui/manual-booking-dialog'

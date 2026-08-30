@@ -1,4 +1,4 @@
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 export function clientSuggestMeta(client: MasterClientView): string {
   const parts: string[] = []

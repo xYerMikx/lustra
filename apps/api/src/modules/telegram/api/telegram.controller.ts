@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { SkipThrottle, Throttle } from '@nestjs/throttler'
-import type { OkResponse, TelegramLinkStartResponse } from '@lustra/contracts'
+import type { OkResponse, TelegramLinkStartResponse } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { CurrentUser } from '@/common/auth/current-user.decorator'

@@ -1,18 +1,18 @@
 ---
-name: lustra-backend
+name: lumira-backend
 description: >-
-  Implements Lustra NestJS API with use-case modules, guards/pipes, Zod validation,
+  Implements Lumira NestJS API with use-case modules, guards/pipes, Zod validation,
   and SOLID-sized services. Use when editing apps/api, Prisma access, bookings,
   scheduling, auth, or adding REST endpoints.
 ---
 
-# Lustra backend
+# Lumira backend
 
-Read `.cursor/rules/lustra-backend.mdc` and TECH-DESIGN §§12–18 (layers, errors, booking protocol).
+Read `.cursor/rules/lumira-backend.mdc` and TECH-DESIGN §§12–18 (layers, errors, booking protocol).
 
 ## New endpoint workflow
 
-1. Add/extend Zod schema in `@lustra/contracts` (rule: no schema → no endpoint).
+1. Add/extend Zod schema in `@lumira/contracts` (rule: no schema → no endpoint).
 2. Create/update **use-case** in `modules/<ctx>/app/<action>.usecase.ts` (kebab-case file, e.g. `hold-slot.usecase.ts`).
 3. Wire controller in `api/` — inject use-case only.
 4. Guard: auth + `@Roles(...)`; load actor from token.

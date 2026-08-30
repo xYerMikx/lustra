@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 const NO_SHOWABLE = new Set<BookingStatus>(['pending', 'confirmed'])
 

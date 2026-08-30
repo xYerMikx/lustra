@@ -3,8 +3,8 @@ import {
   type AvailabilityRuleView,
   type MasterSchedulePolicyView,
   type MasterScheduleView,
-} from '@lustra/contracts'
-import type { AvailabilityRule, MasterBookingPolicy } from '@lustra/db'
+} from '@lumira/contracts'
+import type { AvailabilityRule, MasterBookingPolicy } from '@lumira/db'
 
 export type ScheduleRuleRecord = Pick<
   AvailabilityRule,

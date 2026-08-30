@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { MasterProfileView } from '@lustra/contracts'
+import type { MasterProfileView } from '@lumira/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import { publishMasterProfile } from '@/shared/api/master-profile-client'

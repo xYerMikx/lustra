@@ -1,4 +1,4 @@
-import { Prisma } from '@lustra/db'
+import { Prisma } from '@lumira/db'
 
 import { DomainError } from '@/common/errors/domain-error'
 import type { CreateHoldInput } from '@/modules/bookings/app/booking.ports'

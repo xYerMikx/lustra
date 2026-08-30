@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { isGranularityMin, type HoldSlotInput, type HoldSlotResponse } from '@lustra/contracts'
+import { isGranularityMin, type HoldSlotInput, type HoldSlotResponse } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { DomainError } from '@/common/errors/domain-error'

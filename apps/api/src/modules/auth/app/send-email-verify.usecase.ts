@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import type { OkResponse } from '@lustra/contracts'
+import type { OkResponse } from '@lumira/contracts'
 
 import { publicAppUrl } from '@/common/env/public-app-url'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'

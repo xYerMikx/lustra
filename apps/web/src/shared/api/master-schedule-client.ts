@@ -4,7 +4,7 @@ import type {
   PutScheduleExceptionInput,
   ScheduleExceptionListResponse,
   ScheduleExceptionView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

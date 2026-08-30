@@ -2,7 +2,7 @@
 interface Row {
   criterion: string
   direct: string
-  lustra: string
+  lumira: string
 }
 
 interface Props {
@@ -36,8 +36,8 @@ const { eyebrow, title, lead, rows } = Astro.props
             <span class="direct" role="cell">
               {row.direct}
             </span>
-            <span class="lustra" role="cell">
-              {row.lustra}
+            <span class="lumira" role="cell">
+              {row.lumira}
             </span>
           </div>
         ))
@@ -110,7 +110,7 @@ const { eyebrow, title, lead, rows } = Astro.props
     color: var(--color-text-2);
   }
 
-  .lustra {
+  .lumira {
     color: var(--color-accent-700);
     font-weight: var(--font-weight-500);
   }
@@ -131,7 +131,7 @@ const { eyebrow, title, lead, rows } = Astro.props
       font-weight: var(--font-weight-600);
     }
 
-    .lustra::before {
+    .lumira::before {
       content: 'Lumira: ';
       color: var(--color-text-3);
       font-weight: var(--font-weight-600);

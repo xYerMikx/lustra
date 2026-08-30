@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { usePortfolioInfiniteFeed } from '@/features/master-portfolio/model/use-portfolio-infinite-feed'
 import { PortfolioLightbox } from '@/features/master-portfolio/ui/portfolio-lightbox'

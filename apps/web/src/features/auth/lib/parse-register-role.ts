@@ -1,4 +1,4 @@
-import { RegisterRoleSchema, type RegisterRole } from '@lustra/contracts'
+import { RegisterRoleSchema, type RegisterRole } from '@lumira/contracts'
 
 export function parseRegisterRole(value: string | null): RegisterRole {
   const parsed = RegisterRoleSchema.safeParse(value)

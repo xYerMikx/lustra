@@ -7,7 +7,7 @@ import {
   type CreateManualBookingInput,
   type MasterClientView,
   type ServiceView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
 import {

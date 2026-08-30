@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type {
   AdminListPortfolioQuery,
   AdminListPortfolioResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { assertAdmin } from '@/modules/admin-moderation/domain/assert-admin'

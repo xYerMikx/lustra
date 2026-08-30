@@ -1,6 +1,6 @@
 'use client'
 
-import type { AvailabilityDayView } from '@lustra/contracts'
+import type { AvailabilityDayView } from '@lumira/contracts'
 import cn from 'classnames'
 
 import { formatDayStripLabel } from '@/features/slot-picker/model/format-day-strip-label'

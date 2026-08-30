@@ -1,8 +1,8 @@
 import type {
   MasterLocationView,
   MasterProfileView,
-} from '@lustra/contracts'
-import type { LocationType, MasterStatus } from '@lustra/db'
+} from '@lumira/contracts'
+import type { LocationType, MasterStatus } from '@lumira/db'
 
 export type MasterLocationRecord = {
   id: string

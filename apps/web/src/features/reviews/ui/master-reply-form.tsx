@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import {
   ReplyToReviewInputSchema,
   type ReplyToReviewInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import styles from '@/features/reviews/ui/reviews.module.css'
 import { replyToReview } from '@/shared/api/reviews-client'

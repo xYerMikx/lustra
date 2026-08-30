@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { PublicMasterView } from '@lustra/contracts'
+import type { PublicMasterView } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 import type { PublicMasterStore } from '@/modules/master-profile/app/public-master.ports'

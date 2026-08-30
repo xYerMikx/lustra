@@ -1,6 +1,6 @@
 'use client'
 
-import type { PublicServiceView } from '@lustra/contracts'
+import type { PublicServiceView } from '@lumira/contracts'
 
 import { formatHoldCountdown } from '@/features/slot-picker/model/hold-timer'
 import { useSlotPicker } from '@/features/slot-picker/model/use-slot-picker'

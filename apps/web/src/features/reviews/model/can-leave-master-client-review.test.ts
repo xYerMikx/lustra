@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { BookingMasterView } from '@lustra/contracts'
+import type { BookingMasterView } from '@lumira/contracts'
 
 import { canLeaveMasterClientReview } from '@/features/reviews/model/can-leave-master-client-review'
 

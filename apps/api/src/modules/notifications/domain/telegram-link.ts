@@ -11,7 +11,7 @@ export function generateTelegramLinkNonce(): string {
 }
 
 export function telegramDeepLink(botUsername: string, nonce: string): string {
-  const username = botUsername.replace(/^@/, '').trim() || 'lustra_bot'
+  const username = botUsername.replace(/^@/, '').trim() || 'lumira_bot'
 
   return `https://t.me/${username}?start=${nonce}`
 }

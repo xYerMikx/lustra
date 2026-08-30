@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import type { RescheduleBookingInput } from '@lustra/contracts'
+import type { RescheduleBookingInput } from '@lumira/contracts'
 
 import {
   buildRescheduleFormDefaults,

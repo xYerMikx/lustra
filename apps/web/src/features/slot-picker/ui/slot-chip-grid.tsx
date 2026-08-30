@@ -1,6 +1,6 @@
 'use client'
 
-import type { AvailabilitySlotView } from '@lustra/contracts'
+import type { AvailabilitySlotView } from '@lumira/contracts'
 import cn from 'classnames'
 
 import {

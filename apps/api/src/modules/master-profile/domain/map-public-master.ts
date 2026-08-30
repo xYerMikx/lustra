@@ -2,8 +2,8 @@ import type {
   PublicMasterContactView,
   PublicMasterView,
   PublicServiceView,
-} from '@lustra/contracts'
-import type { LocationType, MasterStatus, PriceType } from '@lustra/db'
+} from '@lumira/contracts'
+import type { LocationType, MasterStatus, PriceType } from '@lumira/db'
 
 import { publicMediaUrl } from '@/common/media/public-media-url'
 

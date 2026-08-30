@@ -1,5 +1,5 @@
 {
-  "name": "@lustra/db",
+  "name": "@lumira/db",
   "private": true,
   "version": "0.1.0",
   "main": "./dist/index.js",
@@ -18,7 +18,7 @@
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
-    "@lustra/config": "workspace:*",
+    "@lumira/config": "workspace:*",
     "@types/node": "^22.10.2",
     "prisma": "^6.1.0",
     "tsx": "^4.19.2",

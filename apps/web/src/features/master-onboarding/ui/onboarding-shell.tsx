@@ -8,7 +8,7 @@ import type {
   MeResponse,
   PatchMasterProfileInput,
   PutMasterScheduleInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import {
   onboardingDataReducer,

@@ -5,7 +5,7 @@ import type {
   AdminReviewCard,
   ModerateReviewAction,
   ReviewStatus,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ApiError } from '@/shared/api/http'
 import { listAdminReviews, moderateReview } from '@/shared/api/admin-client'

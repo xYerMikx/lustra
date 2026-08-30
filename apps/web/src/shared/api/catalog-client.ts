@@ -8,7 +8,7 @@ import type {
   PublicReviewListResponse,
   AvailabilityQuery,
   AvailabilityResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { catalogApiQuery } from '@/features/catalog-browse/model/href-for-category'
 

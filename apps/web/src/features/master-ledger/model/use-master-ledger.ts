@@ -9,7 +9,7 @@ import type {
   LedgerKind,
   LedgerListResponse,
   LedgerPeriodPreset,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ledgerRangeForPreset } from '@/features/master-ledger/model/ledger-range'
 import { parseLedgerIntent } from '@/features/master-ledger/model/parse-ledger-intent'

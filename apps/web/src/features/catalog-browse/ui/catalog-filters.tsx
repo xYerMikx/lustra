@@ -5,7 +5,7 @@ import type {
   DistrictView,
   SearchMastersQuery,
   ServiceTemplateView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { catalogAvailableOnOptions } from '@/features/catalog-browse/model/catalog-available-on-options'
 import {

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import type {
   BookingMasterView,
   ReceivedClientReviewView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { canLeaveMasterClientReview } from '@/features/reviews/model/can-leave-master-client-review'
 import { LeaveMasterClientReviewForm } from '@/features/reviews/ui/leave-master-client-review-form'

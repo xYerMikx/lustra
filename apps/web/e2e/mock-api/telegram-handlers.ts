@@ -18,7 +18,7 @@ export function handleTelegram(
     return {
       response: {
         status: 200,
-        body: { deepLink: 'https://t.me/lustra_bot?start=e2e-nonce' },
+        body: { deepLink: 'https://t.me/lumira_bot?start=e2e-nonce' },
       },
     }
   }

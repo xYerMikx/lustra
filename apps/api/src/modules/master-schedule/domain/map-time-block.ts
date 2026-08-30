@@ -1,4 +1,4 @@
-import type { TimeBlockView } from '@lustra/contracts'
+import type { TimeBlockView } from '@lumira/contracts'
 
 import type { TimeBlockRecord } from '@/modules/master-schedule/app/time-block.ports'
 

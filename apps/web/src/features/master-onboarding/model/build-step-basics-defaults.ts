@@ -2,7 +2,7 @@ import type {
   DistrictView,
   MasterProfileView,
   StepBasicsInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { readStepBasicsDraft } from '@/features/master-onboarding/model/step-basics-draft'
 

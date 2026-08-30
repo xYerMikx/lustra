@@ -48,7 +48,7 @@ jobs:
           fi
 
           pnpm install --frozen-lockfile
-          pnpm --filter @lustra/landing build
+          pnpm --filter @lumira/landing build
 
       - name: Upload dist over FTP
         env:

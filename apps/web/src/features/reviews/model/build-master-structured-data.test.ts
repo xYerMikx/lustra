@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { PublicReviewView } from '@lustra/contracts'
+import type { PublicReviewView } from '@lumira/contracts'
 
 import { buildMasterStructuredData } from '@/features/reviews/model/build-master-structured-data'
 

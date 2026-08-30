@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { VerifyEmailInputSchema, type VerifyEmailInput } from '@lustra/contracts'
+import { VerifyEmailInputSchema, type VerifyEmailInput } from '@lumira/contracts'
 
 import { clearSessionCache } from '@/features/auth/model/load-session'
 import styles from '@/features/auth/ui/auth-form.module.css'

@@ -1,4 +1,4 @@
-import type { ClientRecommendationsResponse } from '@lustra/contracts'
+import type { ClientRecommendationsResponse } from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

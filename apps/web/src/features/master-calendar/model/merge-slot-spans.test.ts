@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { MasterCalendarSlotView } from '@lustra/contracts'
+import type { MasterCalendarSlotView } from '@lumira/contracts'
 
 import { mergeSlotSpans } from '@/features/master-calendar/model/merge-slot-spans'
 

@@ -1,5 +1,5 @@
 {
-  "name": "@lustra/contracts",
+  "name": "@lumira/contracts",
   "private": true,
   "version": "0.1.0",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@lustra/config": "workspace:*",
+    "@lumira/config": "workspace:*",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   }

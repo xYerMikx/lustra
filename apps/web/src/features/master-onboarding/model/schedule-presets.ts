@@ -1,4 +1,4 @@
-import type { AvailabilityRuleInput } from '@lustra/contracts'
+import type { AvailabilityRuleInput } from '@lumira/contracts'
 
 export const WEEKDAY_LABELS = [
   { weekday: 1 as const, label: 'Пн' },

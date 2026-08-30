@@ -2,7 +2,7 @@ import type {
   BookingReviewRef,
   BookingStatus,
   ContactChannel,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { resolveStoredSocialHandle } from '@/modules/bookings/domain/guest-lookup-plan'
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'

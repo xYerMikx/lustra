@@ -1,4 +1,4 @@
-import type { BookingStatus, ContactChannel, ManualBookingChannel } from '@lustra/contracts'
+import type { BookingStatus, ContactChannel, ManualBookingChannel } from '@lumira/contracts'
 
 import type { BookingRecord } from '@/modules/bookings/domain/map-booking'
 import type { HoldableSlotRow } from '@/modules/bookings/domain/slot-holdability'

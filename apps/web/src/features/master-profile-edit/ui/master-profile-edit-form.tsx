@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import type { DistrictView, MasterProfileView } from '@lustra/contracts'
+import type { DistrictView, MasterProfileView } from '@lumira/contracts'
 
 import { LOCATION_TYPE_OPTIONS } from '@/features/master-onboarding/model/step-basics-draft'
 import { buildEditProfileDefaults } from '@/features/master-profile-edit/model/build-edit-profile-defaults'

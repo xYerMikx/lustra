@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose'
-import type { UserRole } from '@lustra/contracts'
+import type { UserRole } from '@lumira/contracts'
 
 import { ACCESS_TTL_SEC } from '@/common/auth/cookie.constants'
 import { isProduction } from '@/common/env/is-production'

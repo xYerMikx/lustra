@@ -1,4 +1,4 @@
-import type { MasterCalendarSlotStatus } from '@lustra/contracts'
+import type { MasterCalendarSlotStatus } from '@lumira/contracts'
 
 export type ScheduleSlotRecord = {
   id: string

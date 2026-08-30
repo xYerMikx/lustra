@@ -45,7 +45,7 @@ function injectYandexMetrika(counterId: string, webvisor: boolean) {
 
   loadScript(
     `https://mc.yandex.ru/metrika/tag.js?id=${counterId}`,
-    'lustra-ym-tag',
+    'lumira-ym-tag',
   )
 }
 
@@ -68,7 +68,7 @@ function injectGoogleAnalytics(measurementId: string) {
 
   loadScript(
     `https://www.googletagmanager.com/gtag/js?id=${measurementId}`,
-    'lustra-ga-tag',
+    'lumira-ga-tag',
   )
 }
 

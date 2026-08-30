@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { TelegramLinkStartResponse } from '@lustra/contracts'
+import type { TelegramLinkStartResponse } from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'

@@ -1,5 +1,5 @@
 {
-  "name": "@lustra/landing",
+  "name": "@lumira/landing",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.5",
     "@fontsource-variable/playfair-display": "^5.2.5",
-    "@lustra/ui": "workspace:*",
+    "@lumira/ui": "workspace:*",
     "astro": "^5.1.1"
   },
   "devDependencies": {

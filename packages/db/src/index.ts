@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 
 declare global {
   // eslint-disable-next-line no-var
-  var __lustraPrisma: PrismaClient | undefined
+  var __lumiraPrisma: PrismaClient | undefined
 }
 
 /**
@@ -11,13 +11,13 @@ declare global {
  * чтобы прокидывать транзакционный клиент через AsyncLocalStorage.
  */
 export const prisma: PrismaClient =
-  globalThis.__lustraPrisma ??
+  globalThis.__lumiraPrisma ??
   new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   })
 
 if (process.env.NODE_ENV !== 'production') {
-  globalThis.__lustraPrisma = prisma
+  globalThis.__lumiraPrisma = prisma
 }
 
 export * from '@prisma/client'

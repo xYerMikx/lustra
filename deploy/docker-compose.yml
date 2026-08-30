@@ -1,4 +1,4 @@
-name: lustra-prod
+name: lumira-prod
 
 services:
   postgres:
@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - lustra_postgres_data:/var/lib/postgresql/data
+      - lumira_postgres_data:/var/lib/postgresql/data
     shm_size: 256mb
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -31,7 +31,7 @@ services:
         "${REDIS_PASSWORD}",
       ]
     volumes:
-      - lustra_redis_data:/data
+      - lumira_redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
@@ -94,8 +94,8 @@ services:
       DOMAIN: ${DOMAIN}
       ACME_EMAIL: ${ACME_EMAIL}
     volumes:
-      - lustra_caddy_data:/data
-      - lustra_caddy_config:/config
+      - lumira_caddy_data:/data
+      - lumira_caddy_config:/config
     depends_on:
       - web
       - api
@@ -103,10 +103,10 @@ services:
       - internal
 
 volumes:
-  lustra_postgres_data:
-  lustra_redis_data:
-  lustra_caddy_data:
-  lustra_caddy_config:
+  lumira_postgres_data:
+  lumira_redis_data:
+  lumira_caddy_data:
+  lumira_caddy_config:
 
 networks:
   internal:

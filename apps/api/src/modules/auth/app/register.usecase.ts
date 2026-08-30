@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
-import type { RegisterInput, AuthSessionResponse } from '@lustra/contracts'
-import { Prisma } from '@lustra/db'
+import type { RegisterInput, AuthSessionResponse } from '@lumira/contracts'
+import { Prisma } from '@lumira/db'
 
 import { JwtTokenService } from '@/common/auth/jwt-token.service'
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'

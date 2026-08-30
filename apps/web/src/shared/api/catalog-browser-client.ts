@@ -4,7 +4,7 @@ import type {
   SearchMastersResponse,
   ServiceCategoryListResponse,
   ServiceTemplateListResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { catalogApiQuery } from '@/features/catalog-browse/model/href-for-category'
 import { apiFetch } from '@/shared/api/http'

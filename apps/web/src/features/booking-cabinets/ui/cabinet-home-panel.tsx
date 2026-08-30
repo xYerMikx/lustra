@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import type { UserRole } from '@lustra/contracts'
+import type { UserRole } from '@lumira/contracts'
 
 import { useSession } from '@/features/auth'
 import { MasterCabinetHub } from '@/features/master-cabinet'

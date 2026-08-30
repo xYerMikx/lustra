@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { isGranularityMin } from '@lustra/contracts'
+import { isGranularityMin } from '@lumira/contracts'
 
 import { PrismaService } from '@/common/prisma/prisma.service'
 import type {

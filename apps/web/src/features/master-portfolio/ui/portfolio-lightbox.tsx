@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { clampCarouselIndex } from '@/features/master-portfolio/model/carousel-index-from-scroll'
 import { PortfolioCarousel } from '@/features/master-portfolio/ui/portfolio-carousel'

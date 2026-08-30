@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import type { CreateExtraSlotInput } from '@lustra/contracts'
+import type { CreateExtraSlotInput } from '@lumira/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
 import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'

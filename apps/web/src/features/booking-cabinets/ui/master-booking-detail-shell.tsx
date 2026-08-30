@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import type { RescheduleBookingInput } from '@lustra/contracts'
+import type { RescheduleBookingInput } from '@lumira/contracts'
 
 import { formatBookingWhen } from '@/features/booking-cabinets/model/booking-labels'
 import { canMarkNoShow } from '@/features/booking-cabinets/model/can-mark-no-show'

@@ -1,4 +1,4 @@
-import type { BookingStatus, ReviewAuthorRole, ReviewStatus } from '@lustra/contracts'
+import type { BookingStatus, ReviewAuthorRole, ReviewStatus } from '@lumira/contracts'
 
 import type { ReviewRecord } from '@/modules/reviews/domain/map-review'
 

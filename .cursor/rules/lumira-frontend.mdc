@@ -4,7 +4,7 @@ globs: apps/web/**/*.{ts,tsx},apps/landing/**/*.{ts,tsx,astro,css}
 alwaysApply: false
 ---
 
-# Lustra — frontend
+# Lumira — frontend
 
 ## Structure (`apps/web`)
 
@@ -66,7 +66,7 @@ import { buildBlockIsoRange } from '@/features/master-calendar/model/build-block
 
 - Server/public data: RSC + `fetch` tags / TanStack Query for private mutable data.
 - Filters/steps: URL `searchParams` as source of truth.
-- Forms: react-hook-form + Zod from `@lustra/contracts`.
+- Forms: react-hook-form + Zod from `@lumira/contracts`.
 - **Avoid `useEffect`** unless syncing with an external system (DOM, browser API, non-React widget). Prefer:
   - derived state during render
   - event handlers

@@ -1,4 +1,4 @@
-import type { PatchMasterProfileInput } from '@lustra/contracts'
+import type { PatchMasterProfileInput } from '@lumira/contracts'
 
 import type {
   EditMasterProfileFormValues,

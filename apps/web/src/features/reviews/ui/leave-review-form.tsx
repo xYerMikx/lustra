@@ -8,7 +8,7 @@ import {
   CreateReviewInputSchema,
   type CreateReviewInput,
   type CreateReviewResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import styles from '@/features/reviews/ui/reviews.module.css'
 import { createReview } from '@/shared/api/reviews-client'

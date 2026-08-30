@@ -1,6 +1,6 @@
 'use client'
 
-import type { PublicMasterView } from '@lustra/contracts'
+import type { PublicMasterView } from '@lumira/contracts'
 
 import { orderServicesForPicker } from '@/features/client-book-flow/model/match-master-service'
 import type { ClientBookServiceOption } from '@/features/client-book-flow/model/types'

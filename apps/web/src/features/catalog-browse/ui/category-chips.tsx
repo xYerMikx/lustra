@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import cn from 'classnames'
-import type { SearchMastersQuery, ServiceCategoryView } from '@lustra/contracts'
+import type { SearchMastersQuery, ServiceCategoryView } from '@lumira/contracts'
 
 import { hrefForCategory } from '@/features/catalog-browse/model/href-for-category'
 import styles from '@/features/catalog-browse/ui/category-chips.module.css'

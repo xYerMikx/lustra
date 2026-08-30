@@ -1,5 +1,5 @@
 {
-  "name": "@lustra/api",
+  "name": "@lumira/api",
   "private": true,
   "version": "0.1.0",
   "scripts": {
@@ -17,8 +17,8 @@
     "@fastify/cookie": "^11.0.1",
     "@fastify/cors": "^10.0.1",
     "@fastify/helmet": "^13.0.1",
-    "@lustra/contracts": "workspace:*",
-    "@lustra/db": "workspace:*",
+    "@lumira/contracts": "workspace:*",
+    "@lumira/db": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-fastify": "^11.0.1",
@@ -38,7 +38,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@lustra/config": "workspace:*",
+    "@lumira/config": "workspace:*",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",

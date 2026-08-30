@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import type { UserRole } from '@lustra/contracts'
+import type { UserRole } from '@lumira/contracts'
 import type { FastifyRequest } from 'fastify'
 
 import type { AuthUser } from '@/common/auth/auth-user'

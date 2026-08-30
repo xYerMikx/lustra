@@ -21,8 +21,8 @@ COPY . .
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm --filter @lustra/contracts build \
-  && pnpm --filter @lustra/web build
+RUN pnpm --filter @lumira/contracts build \
+  && pnpm --filter @lumira/web build
 
 FROM node:24-bookworm-slim AS runner
 WORKDIR /app

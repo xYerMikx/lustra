@@ -1,4 +1,4 @@
-import type { CatalogSort, LocationType } from '@lustra/contracts'
+import type { CatalogSort, LocationType } from '@lumira/contracts'
 
 export const CATALOG_SORT_OPTIONS: Array<{ value: CatalogSort; label: string }> = [
   { value: 'recommended', label: 'Рекомендуемые' },

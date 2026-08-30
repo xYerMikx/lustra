@@ -1,14 +1,14 @@
 ---
-name: lustra-design-system
+name: lumira-design-system
 description: >-
-  Applies Lustra visual design tokens, typography, and layout rules for beauty-editorial
+  Applies Lumira visual design tokens, typography, and layout rules for beauty-editorial
   UI. Use when styling pages, building UI primitives, landing hero, catalog cards,
   or when the user mentions design system, tokens, or visual polish.
 ---
 
-# Lustra design system
+# Lumira design system
 
-Canonical token block: TECH-DESIGN §23. Rules file: `.cursor/rules/lustra-design-system.mdc`.
+Canonical token block: TECH-DESIGN §23. Rules file: `.cursor/rules/lumira-design-system.mdc`.
 
 ## Workflow for UI work
 

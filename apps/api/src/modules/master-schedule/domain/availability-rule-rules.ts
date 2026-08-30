@@ -1,4 +1,4 @@
-import type { AvailabilityRuleInput } from '@lustra/contracts'
+import type { AvailabilityRuleInput } from '@lumira/contracts'
 
 import { DomainError } from '@/common/errors/domain-error'
 

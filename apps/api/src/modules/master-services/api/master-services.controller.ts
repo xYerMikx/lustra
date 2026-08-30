@@ -13,7 +13,7 @@ import {
   UpdateServiceInputSchema,
   type CreateServiceInput,
   type UpdateServiceInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { CurrentUser } from '@/common/auth/current-user.decorator'

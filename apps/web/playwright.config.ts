@@ -11,9 +11,9 @@ const headed =
  * Contract UI e2e: Next talks to an in-memory mock API (no Postgres).
  *
  * See the browser:
- *   pnpm --filter @lustra/web test:e2e:headed
- *   pnpm --filter @lustra/web test:e2e:ui
- *   pnpm --filter @lustra/web test:e2e:debug
+ *   pnpm --filter @lumira/web test:e2e:headed
+ *   pnpm --filter @lumira/web test:e2e:ui
+ *   pnpm --filter @lumira/web test:e2e:debug
  *
  * HTML report + traces: apps/web/playwright-report (trace.playwright.dev).
  *

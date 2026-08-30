@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DistrictView, MasterProfileView } from '@lustra/contracts'
+import type { DistrictView, MasterProfileView } from '@lumira/contracts'
 
 import { useMasterSession } from '@/features/auth'
 import { MasterProfileEditForm } from '@/features/master-profile-edit/ui/master-profile-edit-form'

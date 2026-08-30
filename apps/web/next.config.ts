@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../.."),
-  transpilePackages: ["@lustra/contracts", "recharts"],
+  transpilePackages: ["@lumira/contracts", "recharts"],
   images: {
     qualities: [75, 90],
     remotePatterns: [

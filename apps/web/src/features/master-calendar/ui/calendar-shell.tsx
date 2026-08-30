@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import type { MasterClientView, ServiceView } from '@lustra/contracts'
+import type { MasterClientView, ServiceView } from '@lumira/contracts'
 
 import { calendarHref, isYmdDate } from '@/features/master-calendar/model/calendar-href'
 import { groupCalendarByDay } from '@/features/master-calendar/model/group-calendar'

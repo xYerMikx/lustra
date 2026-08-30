@@ -1,4 +1,4 @@
-import type { LocationType } from '@lustra/db'
+import type { LocationType } from '@lumira/db'
 
 import type { MasterProfileRecord } from '@/modules/master-profile/domain/map-master-profile'
 

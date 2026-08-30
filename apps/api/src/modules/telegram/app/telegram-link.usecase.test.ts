@@ -44,13 +44,13 @@ describe('StartTelegramLinkUseCase', () => {
     )
 
     const previous = process.env.TELEGRAM_BOT_USERNAME
-    process.env.TELEGRAM_BOT_USERNAME = 'lustra_test_bot'
+    process.env.TELEGRAM_BOT_USERNAME = 'lumira_test_bot'
 
     const result = await useCase.execute(user)
 
     process.env.TELEGRAM_BOT_USERNAME = previous
 
-    expect(result.deepLink.startsWith('https://t.me/lustra_test_bot?start=')).toBe(
+    expect(result.deepLink.startsWith('https://t.me/lumira_test_bot?start=')).toBe(
       true,
     )
     expect(tokens.invalidateUnused).toHaveBeenCalledWith(

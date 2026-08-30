@@ -1,7 +1,7 @@
 import type {
   MasterScheduleView,
   PutMasterScheduleInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { SCHEDULE_PRESETS } from '@/features/master-onboarding/model/schedule-presets'
 

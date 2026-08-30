@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import cn from 'classnames'
-import type { OnboardingStep } from '@lustra/contracts'
+import type { OnboardingStep } from '@lumira/contracts'
 
 import { MasterNavLink } from '@/features/app-shell/ui/master-nav-link'
 import {

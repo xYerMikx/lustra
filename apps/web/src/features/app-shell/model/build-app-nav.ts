@@ -1,4 +1,4 @@
-import type { MeResponse, UserRole } from '@lustra/contracts'
+import type { MeResponse, UserRole } from '@lumira/contracts'
 
 export type AppNavItem = {
   href: string

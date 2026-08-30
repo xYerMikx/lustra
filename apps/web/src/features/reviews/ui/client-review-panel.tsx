@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { BookingClientView, ClientReviewView } from '@lustra/contracts'
+import type { BookingClientView, ClientReviewView } from '@lumira/contracts'
 
 import { canLeaveReview } from '@/features/reviews/model/can-leave-review'
 import { LeaveReviewForm } from '@/features/reviews/ui/leave-review-form'

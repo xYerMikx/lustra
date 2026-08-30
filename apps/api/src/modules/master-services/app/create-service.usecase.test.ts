@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { Prisma } from '@lustra/db'
+import { Prisma } from '@lumira/db'
 
 import { DomainError } from '@/common/errors/domain-error'
 import type {

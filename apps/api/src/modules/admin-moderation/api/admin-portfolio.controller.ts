@@ -14,7 +14,7 @@ import {
   ModeratePortfolioInputSchema,
   type AdminListPortfolioQuery,
   type ModeratePortfolioInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 import type { FastifyRequest } from 'fastify'
 
 import { AdminGuard } from '@/common/auth/admin.guard'

@@ -1,4 +1,4 @@
-import type { ScheduleExceptionView } from '@lustra/contracts'
+import type { ScheduleExceptionView } from '@lumira/contracts'
 
 import { hmFromMinuteOfDay } from '@/features/master-calendar/model/hm-from-minute-of-day'
 

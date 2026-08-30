@@ -1,7 +1,7 @@
 'use client'
 
 import cn from 'classnames'
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import { clientSuggestMeta } from '@/features/manual-booking/model/client-suggest-meta'
 import { useClientSuggest } from '@/features/manual-booking/model/use-client-suggest'

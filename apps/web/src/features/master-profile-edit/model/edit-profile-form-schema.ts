@@ -2,7 +2,7 @@ import { z } from 'zod'
 import {
   LocationTypeSchema,
   MasterSlugSchema,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export const EditMasterProfileFormSchema = z
   .object({

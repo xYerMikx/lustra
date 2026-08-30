@@ -7,7 +7,7 @@ import type {
   CreateTimeBlockInput,
   MasterCalendarView,
   PutScheduleExceptionInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { loadManualBookingFormData } from '@/features/manual-booking/model/load-manual-booking-form-data'
 import {

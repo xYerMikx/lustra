@@ -4,7 +4,7 @@ import type {
   MasterCalendarSlotView,
   ScheduleExceptionView,
   TimeBlockView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { exceptionSummary } from '@/features/master-calendar/model/exception-summary'
 import { blockOverlapsHour } from '@/features/master-calendar/model/group-calendar'

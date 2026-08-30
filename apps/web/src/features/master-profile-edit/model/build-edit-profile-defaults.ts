@@ -1,4 +1,4 @@
-import type { DistrictView, MasterProfileView } from '@lustra/contracts'
+import type { DistrictView, MasterProfileView } from '@lumira/contracts'
 
 import type { EditMasterProfileFormValues } from '@/features/master-profile-edit/model/edit-profile-form-schema'
 

@@ -3,7 +3,7 @@ import type {
   MasterProfileView,
   MasterScheduleView,
   ServiceCategoryView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type OnboardingDataState =
   | { status: 'loading' }

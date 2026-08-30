@@ -1,4 +1,4 @@
-# Технический дизайн — «Lustra»
+# Технический дизайн — «Lumira»
 
 Единственный источник истины по схеме БД, бэкенду и фронтенду. PRD (`docs/PRD.md`) описывает **что** и **зачем**, этот документ — **как**.
 
@@ -900,7 +900,7 @@ apps/api/src/
 │  ├─ prisma/                  # PrismaService + TransactionManager (AsyncLocalStorage)
 │  ├─ errors/                  # DomainError + коды + ExceptionFilter → HTTP
 │  ├─ auth/                    # JwtGuard, RolesGuard, @CurrentUser(), @Roles()
-│  ├─ pipes/                   # ZodValidationPipe (схемы из @lustra/contracts)
+│  ├─ pipes/                   # ZodValidationPipe (схемы из @lumira/contracts)
 │  ├─ idempotency/             # IdempotencyInterceptor (Redis + БД)
 │  ├─ time/                    # ClockService (инъекция «сейчас» → тестируемость), tz-хелперы
 │  ├─ cache/                   # RedisCache + инвалидация по тегам
@@ -1121,7 +1121,7 @@ DEL  /api/v1/master/ledger/entries/:id       // только source=manual
 ```
 Клиент отправляет только `startsAt` (сервер сам пересчитывает гранулы) — `slotIds` нужны фронту для оптимистичной подсветки и понимания, какие окна исчезнут.
 
-## 19. Пакет `@lustra/contracts`
+## 19. Пакет `@lumira/contracts`
 
 Единственное место, где описана форма данных между всеми тремя приложениями.
 
@@ -1188,11 +1188,11 @@ apps/web/src/
 │  ├─ auth/            (LoginForm, RegisterForm, useSession)
 │  └─ reviews/         (ReviewForm, ReviewList)
 ├─ shared/
-│  ├─ api/    (typed client из @lustra/contracts, queryKeys, errorToMessage)
-│  ├─ ui/     (re-export @lustra/ui + локальные примитивы)
+│  ├─ api/    (typed client из @lumira/contracts, queryKeys, errorToMessage)
+│  ├─ ui/     (re-export @lumira/ui + локальные примитивы)
 │  ├─ hooks/  (useMediaQuery, useVisibilityRefetch, useCountdown)
 │  └─ lib/    (date, money, phone, tz)
-└─ styles/ (tokens.css из @lustra/ui, globals.css)
+└─ styles/ (tokens.css из @lumira/ui, globals.css)
 ```
 
 ## 22. Слои состояния
@@ -1308,7 +1308,7 @@ apps/landing/src/
 │  ├─ Hero.astro (clip-path reveal, LCP-картинка с fetchpriority=high)
 │  ├─ HowItWorks.astro (2 таба: клиенту / мастеру — CSS-таб без JS)
 │  ├─ WorksMarquee.astro (CSS-анимация, фото портфолио с билда)
-│  ├─ ComparisonTable.astro (директ vs Lustra)
+│  ├─ ComparisonTable.astro (директ vs Lumira)
 │  ├─ CategoriesGrid.astro / DistrictsGrid.astro (внутренние ссылки → SEO)
 │  ├─ MastersStrip.astro (3–6 реальных карточек)
 │  ├─ Faq.astro (островок: <details> + FAQPage JSON-LD)
@@ -1326,7 +1326,7 @@ JS на лендинге — только два острова (меню, ак�
 | `/m/[slug]` | ≤140 КБ | ≤2.5 с | `BookingSheet` и `Lightbox` — `dynamic()` |
 | `/app/master/calendar` | ≤200 КБ | ≤2.8 с | самый тяжёлый экран, `@dnd-kit` только на десктопе |
 
-Приёмы: `next/dynamic` для календаря/лайтбокса/загрузчика фото, `React.lazy` для админки, `next/font` не используем (шрифты self-host из `@lustra/ui` с `preload` двух файлов), иконки — только импорт нужных из Lucide.
+Приёмы: `next/dynamic` для календаря/лайтбокса/загрузчика фото, `React.lazy` для админки, `next/font` не используем (шрифты self-host из `@lumira/ui` с `preload` двух файлов), иконки — только импорт нужных из Lucide.
 
 ## 28. Порядок реализации (вертикальные срезы)
 
@@ -1375,7 +1375,7 @@ JS на лендинге — только два острова (меню, ак�
 
 До появления скрипта локально: `docker compose down -v` или ручной `DELETE` по паттерну email.
 
-Postman-коллекции — в workspace (MCP), не в git (`.cursor/rules/lustra-postman.mdc`).
+Postman-коллекции — в workspace (MCP), не в git (`.cursor/rules/lumira-postman.mdc`).
 
 ## 30. Открытые технические вопросы
 
@@ -1383,6 +1383,6 @@ Postman-коллекции — в workspace (MCP), не в git (`.cursor/rules/l
 2. **TTL удержания:** 10 минут — не слишком долго для популярного мастера? Вариант: 5 минут для гостя (ещё не логинился) и 10 для авторизованного.
 3. **Бронирование без регистрации** (только имя + телефон + Telegram): сильно повышает конверсию, но открывает спам и усложняет отмену. Делаем в MVP или требуем аккаунт?
 4. **Подтверждение телефона** (SMS/звонок): без него ручная склейка гостя с аккаунтом по номеру — потенциальная утечка истории. В MVP склейку делаем только с подтверждением от клиента в интерфейсе?
-5. ~~**Одна БД или две**~~ — **решено:** staging бесплатный, вторым `docker compose -p staging` стеком на том же VPS (своя БД `lustra_staging`, свой Redis, поддомен `staging.<домен>`, лимиты `cpus 0.5 / mem 512m`) → полный паритет с продом за 0 €. Для CI — **Neon free** с веткой БД на каждый PR (миграции и e2e не трогают staging). Выбор прод-Postgres (self-hosted в контейнере vs managed) отложен до среза 7–8: код от него не зависит.
+5. ~~**Одна БД или две**~~ — **решено:** staging бесплатный, вторым `docker compose -p staging` стеком на том же VPS (своя БД `lumira_staging`, свой Redis, поддомен `staging.<домен>`, лимиты `cpus 0.5 / mem 512m`) → полный паритет с продом за 0 €. Для CI — **Neon free** с веткой БД на каждый PR (миграции и e2e не трогают staging). Выбор прод-Postgres (self-hosted в контейнере vs managed) отложен до среза 7–8: код от него не зависит.
 6. ~~**Хостинг API**~~ — **решено:** Hetzner CX22 + Docker + Caddy (auto-TLS), деплой из GitHub Actions по SSH образами из GHCR; лендинг — Cloudflare Pages (free, коммерция разрешена), Next.js — контейнером на том же VPS. Пайплайн: PR → тесты на Neon-ветке; `develop` → staging-стек; тег `v*` → прод с manual approval и авто-rollback на предыдущий `sha`.
 7. **Реалтайм в календаре:** поллинг 30 с в MVP или сразу SSE-канал `master:<id>` (Nest уже умеет)? Поллинг проще, SSE лучше для мастера с плотным днём.

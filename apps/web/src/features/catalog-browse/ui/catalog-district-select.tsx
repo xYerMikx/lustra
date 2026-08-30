@@ -1,6 +1,6 @@
 'use client'
 
-import type { DistrictView } from '@lustra/contracts'
+import type { DistrictView } from '@lumira/contracts'
 
 import { CATALOG_MAX_DISTRICTS } from '@/features/catalog-browse/model/catalog-filter-options'
 import { catalogDistrictTestId, TEST_ID } from '@/shared/lib/test-id'

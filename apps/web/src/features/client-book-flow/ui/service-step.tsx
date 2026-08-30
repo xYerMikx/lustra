@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import type { ServiceCategoryView } from '@lustra/contracts'
+import type { ServiceCategoryView } from '@lumira/contracts'
 
 import { filterServiceOptions } from '@/features/client-book-flow/model/filter-service-options'
 import type { ClientBookServiceOption } from '@/features/client-book-flow/model/types'

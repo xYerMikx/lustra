@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto'
 
 import { Injectable } from '@nestjs/common'
-import type { Prisma, UserRole } from '@lustra/db'
+import type { Prisma, UserRole } from '@lumira/db'
 
 import {
   PRIVACY_CONSENT_VERSION,

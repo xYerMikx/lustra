@@ -5,7 +5,7 @@ import type {
   ReceivedClientReviewView,
   ReviewAuthorRole,
   ReviewStatus,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 export type ReviewRecord = {
   id: string

@@ -1,4 +1,4 @@
-import type { LedgerEntryView, LedgerKind } from '@lustra/contracts'
+import type { LedgerEntryView, LedgerKind } from '@lumira/contracts'
 
 import { addDaysToYmdDate, ymdToUtcDate } from '@/shared/lib/tz'
 

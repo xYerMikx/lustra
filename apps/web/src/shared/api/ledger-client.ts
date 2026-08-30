@@ -5,7 +5,7 @@ import type {
   LedgerEntryResponse,
   LedgerListResponse,
   ListLedgerQuery,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

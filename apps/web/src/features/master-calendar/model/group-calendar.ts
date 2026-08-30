@@ -3,7 +3,7 @@ import type {
   MasterCalendarView,
   ScheduleExceptionView,
   TimeBlockView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import {
   MASTER_TIMEZONE,

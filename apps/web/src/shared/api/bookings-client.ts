@@ -13,7 +13,7 @@ import type {
   MasterBookingResponse,
   MasterCancelBookingInput,
   RescheduleBookingInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

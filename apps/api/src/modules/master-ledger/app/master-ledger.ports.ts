@@ -1,4 +1,4 @@
-import type { LedgerKind } from '@lustra/contracts'
+import type { LedgerKind } from '@lumira/contracts'
 
 import type {
   LedgerCategoryRecord,

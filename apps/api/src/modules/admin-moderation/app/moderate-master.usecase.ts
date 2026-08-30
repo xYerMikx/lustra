@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type {
   ModerateMasterInput,
   ModerateMasterResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { MASTER_MODERATE_AUDIT_ACTION } from '@/common/events/audit-action-type'

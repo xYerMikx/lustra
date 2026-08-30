@@ -9,7 +9,7 @@ import type {
   BookingClientView,
   HoldSlotResponse,
   PublicServiceView,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import {
   availabilityRangeFromToday,

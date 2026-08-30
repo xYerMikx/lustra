@@ -1,6 +1,6 @@
-import { Prisma, type BookingStatus as PrismaBookingStatus } from '@lustra/db'
+import { Prisma, type BookingStatus as PrismaBookingStatus } from '@lumira/db'
 import { Injectable } from '@nestjs/common'
-import type { BookingStatus } from '@lustra/contracts'
+import type { BookingStatus } from '@lumira/contracts'
 
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'
 import { DomainError } from '@/common/errors/domain-error'

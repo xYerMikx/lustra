@@ -2,7 +2,7 @@
 
 import cn from 'classnames'
 import Image from 'next/image'
-import type { PortfolioItemView } from '@lustra/contracts'
+import type { PortfolioItemView } from '@lumira/contracts'
 
 import { portfolioModerationLabel } from '@/features/master-portfolio/model/portfolio-moderation-label'
 import { portfolioRatioClass } from '@/features/master-portfolio/model/portfolio-ratio-class'

@@ -4,7 +4,7 @@ globs: "**/*.{test,spec}.{ts,tsx},**/e2e/**/*,**/tests/**/*"
 alwaysApply: false
 ---
 
-# Lustra — testing
+# Lumira — testing
 
 ## Unit (Vitest) — required for
 
@@ -54,7 +54,7 @@ new RefreshTokensUseCase(
 
 ## Smoke / manual API probes
 
-- Markers and cleanup policy: `.cursor/rules/lustra-smoke-data.mdc`
-- Postman collections live in workspace (MCP), not git — `.cursor/rules/lustra-postman.mdc`
+- Markers and cleanup policy: `.cursor/rules/lumira-smoke-data.mdc`
+- Postman collections live in workspace (MCP), not git — `.cursor/rules/lumira-postman.mdc`
 - Local curl smoke: `apps/api/postman/run-auth-smoke.sh` (uses `{role}.smoke.{runId}@example.com`)
 - Cleanup script (`pnpm db:cleanup:smoke`) — follow-up PR; do not block feature PRs on it

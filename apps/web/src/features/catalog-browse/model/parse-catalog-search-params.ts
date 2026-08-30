@@ -1,5 +1,5 @@
-import type { SearchMastersQuery } from '@lustra/contracts'
-import { SearchMastersQuerySchema } from '@lustra/contracts'
+import type { SearchMastersQuery } from '@lumira/contracts'
+import { SearchMastersQuerySchema } from '@lumira/contracts'
 
 type SearchParamValue = string | string[] | undefined
 

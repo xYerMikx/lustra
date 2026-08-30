@@ -4,13 +4,13 @@ globs: apps/api/**/*.ts
 alwaysApply: false
 ---
 
-# Lustra — backend
+# Lumira — backend
 
 ## Module layout (per feature)
 
 ```
 modules/<name>/
-  api/       controllers + DTO re-exports (Zod from @lustra/contracts)
+  api/       controllers + DTO re-exports (Zod from @lumira/contracts)
   app/       one use-case per operation — `hold-slot.usecase.ts`, `confirm-booking.usecase.ts`
   domain/    pure FSM / policy — `booking-status.machine.ts` (no Prisma, no HTTP)
   infra/     repositories — `booking.repository.ts` (Prisma + raw SQL when needed)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { MasterClientView } from '@lustra/contracts'
+import type { MasterClientView } from '@lumira/contracts'
 
 import { clientSuggestMeta } from '@/features/manual-booking/model/client-suggest-meta'
 

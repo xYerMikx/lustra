@@ -1,4 +1,4 @@
-import type { PublicServiceView } from '@lustra/contracts'
+import type { PublicServiceView } from '@lumira/contracts'
 
 import { normalizeServiceTitle } from '@/features/client-book-flow/model/normalize-service-title'
 

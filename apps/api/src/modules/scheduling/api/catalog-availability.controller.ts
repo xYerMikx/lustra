@@ -2,7 +2,7 @@ import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common'
 import {
   AvailabilityQuerySchema,
   type AvailabilityQuery,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { ZodValidationPipe } from '@/common/auth/zod-validation.pipe'
 import { GetAvailabilityUseCase } from '@/modules/scheduling/app/get-availability.usecase'

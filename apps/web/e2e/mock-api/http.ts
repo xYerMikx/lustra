@@ -120,17 +120,17 @@ export function sessionCookie(userId: string): string[] {
   const csrf = `csrf-${userId}`
 
   return [
-    `lustra_access=e2e.${userId}; Path=/; HttpOnly; SameSite=Lax`,
-    `lustra_refresh=e2e-refresh.${userId}; Path=/; HttpOnly; SameSite=Lax`,
-    `lustra_csrf=${csrf}; Path=/; SameSite=Lax`,
+    `lumira_access=e2e.${userId}; Path=/; HttpOnly; SameSite=Lax`,
+    `lumira_refresh=e2e-refresh.${userId}; Path=/; HttpOnly; SameSite=Lax`,
+    `lumira_csrf=${csrf}; Path=/; SameSite=Lax`,
   ]
 }
 
 export function clearSessionCookies(): string[] {
   return [
-    'lustra_access=; Path=/; Max-Age=0; SameSite=Lax',
-    'lustra_refresh=; Path=/; Max-Age=0; SameSite=Lax',
-    'lustra_csrf=; Path=/; Max-Age=0; SameSite=Lax',
+    'lumira_access=; Path=/; Max-Age=0; SameSite=Lax',
+    'lumira_refresh=; Path=/; Max-Age=0; SameSite=Lax',
+    'lumira_csrf=; Path=/; Max-Age=0; SameSite=Lax',
   ]
 }
 
@@ -143,7 +143,7 @@ export function needsCsrf(method: string, pathname: string): boolean {
 }
 
 export function csrfOk(request: MockRequest): boolean {
-  const cookieToken = request.cookies.lustra_csrf
+  const cookieToken = request.cookies.lumira_csrf
   const headerToken = request.csrfHeader
 
   return Boolean(
@@ -152,7 +152,7 @@ export function csrfOk(request: MockRequest): boolean {
 }
 
 export function sessionUserId(request: MockRequest): string | null {
-  const token = request.cookies.lustra_access
+  const token = request.cookies.lumira_access
 
   if (!token?.startsWith('e2e.')) {
     return null

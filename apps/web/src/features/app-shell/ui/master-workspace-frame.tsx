@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import cn from 'classnames'
-import type { MeResponse } from '@lustra/contracts'
+import type { MeResponse } from '@lumira/contracts'
 
 import { loadSession } from '@/features/auth/model/load-session'
 import { isMasterWorkspacePath } from '@/features/app-shell/model/master-workspace-nav'

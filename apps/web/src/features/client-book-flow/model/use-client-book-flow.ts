@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useMemo, useState } from 'react'
-import type { PublicMasterView } from '@lustra/contracts'
+import type { PublicMasterView } from '@lumira/contracts'
 
 import { buildServiceOptions } from '@/features/client-book-flow/model/build-service-options'
 import { rankMastersForService } from '@/features/client-book-flow/model/rank-masters-for-service'

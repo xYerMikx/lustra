@@ -8,7 +8,7 @@ import {
   RegisterInputSchema,
   type RegisterInput,
   type RegisterRole,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { parseRegisterRole } from '@/features/auth/lib/parse-register-role'
 import { resolvePostAuthPath } from '@/features/auth/lib/resolve-post-auth-path'

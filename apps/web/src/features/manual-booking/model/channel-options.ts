@@ -1,4 +1,4 @@
-import type { ManualBookingChannel } from '@lustra/contracts'
+import type { ManualBookingChannel } from '@lumira/contracts'
 
 export const MANUAL_CHANNEL_OPTIONS: Array<{
   value: ManualBookingChannel

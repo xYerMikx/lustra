@@ -3,7 +3,7 @@ import type {
   LedgerEntryView,
   LedgerKind,
   LedgerSource,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { decimalToMoneyString } from '@/modules/master-ledger/domain/parse-money'
 

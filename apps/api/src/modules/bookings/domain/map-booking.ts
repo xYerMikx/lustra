@@ -4,7 +4,7 @@ import type {
   BookingReviewRef,
   BookingStatus,
   ContactChannel,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { socialHandleFromNote } from '@/modules/bookings/domain/social-handle-note'
 

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import {
   CreateTimeBlockInputSchema,
   type CreateTimeBlockInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import formStyles from '@/features/auth/ui/auth-form.module.css'
 import { buildBlockIsoRange } from '@/features/master-calendar/model/build-block-iso-range'

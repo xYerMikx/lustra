@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { Prisma } from '@lustra/db'
+import type { Prisma } from '@lumira/db'
 
 import { PRISMA_ERROR } from '@/common/db/prisma-error-codes'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'

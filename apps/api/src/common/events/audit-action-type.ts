@@ -1,4 +1,4 @@
-import type { ModerateMasterAction } from '@lustra/contracts'
+import type { ModerateMasterAction } from '@lumira/contracts'
 
 export const AuditActionType = {
   MasterModerateApprove: 'master.moderate.approve',

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type {
   CreateReviewInput,
   CreateReviewResponse,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import type { AuthUser } from '@/common/auth/auth-user'
 import { isDevelopment } from '@/common/env/is-production'

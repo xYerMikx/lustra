@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { ReceivedClientReviewView } from '@lustra/contracts'
+import type { ReceivedClientReviewView } from '@lumira/contracts'
 
 import { averageStarRating } from '@/features/reviews/model/average-star-rating'
 import { listClientReviews } from '@/shared/api/reviews-client'

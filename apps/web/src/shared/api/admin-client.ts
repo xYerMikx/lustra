@@ -11,7 +11,7 @@ import type {
   ModerateReviewAction,
   ModerateReviewResponse,
   ReviewStatus,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { apiFetch } from '@/shared/api/http'
 

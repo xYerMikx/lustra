@@ -1,4 +1,4 @@
-// Схема БД "Lustra". Источник истины: /docs/TECH-DESIGN.md §4-§9.
+// Схема БД "Lumira". Источник истины: /docs/TECH-DESIGN.md §4-§9.
 //
 // Конвенции:
 // - id: String @default(uuid()) (хранится как text)

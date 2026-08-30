@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { RefreshSession } from '@lustra/db'
+import type { RefreshSession } from '@lumira/db'
 
 import { REFRESH_TTL_SEC } from '@/common/auth/cookie.constants'
 import { TransactionManager } from '@/common/prisma/transaction-manager.service'

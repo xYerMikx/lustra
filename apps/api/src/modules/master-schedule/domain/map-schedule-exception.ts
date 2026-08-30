@@ -1,5 +1,5 @@
-import type { ScheduleExceptionView } from '@lustra/contracts'
-import { isGranularityMin } from '@lustra/contracts'
+import type { ScheduleExceptionView } from '@lumira/contracts'
+import { isGranularityMin } from '@lumira/contracts'
 
 import type { ScheduleExceptionRecord } from '@/modules/master-schedule/app/schedule-exception.ports'
 

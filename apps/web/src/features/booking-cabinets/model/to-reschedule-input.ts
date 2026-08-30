@@ -1,7 +1,7 @@
 import {
   RescheduleBookingInputSchema,
   type RescheduleBookingInput,
-} from '@lustra/contracts'
+} from '@lumira/contracts'
 
 import { buildManualStartsAt } from '@/features/manual-booking/model/build-manual-starts-at'
 import { splitInstantLocal } from '@/features/master-calendar/model/split-instant-local'
