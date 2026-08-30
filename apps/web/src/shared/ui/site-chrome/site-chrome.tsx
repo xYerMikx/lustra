@@ -13,7 +13,9 @@ export function SiteChrome({ children }: SiteChromeProps) {
   return (
     <div className={styles.shell}>
       <AppHeader />
-      <MasterWorkspaceFrame>{children}</MasterWorkspaceFrame>
+      <div className={styles.body}>
+        <MasterWorkspaceFrame>{children}</MasterWorkspaceFrame>
+      </div>
       <LegalFooter />
     </div>
   )

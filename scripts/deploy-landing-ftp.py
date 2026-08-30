@@ -31,6 +31,11 @@ def main() -> None:
         print(f"Missing build output {dist}", file=sys.stderr)
         sys.exit(1)
 
+    htaccess = Path("apps/landing/public/.htaccess")
+
+    if htaccess.is_file():
+        (dist / ".htaccess").write_text(htaccess.read_text())
+
     netrc = Path.home() / ".netrc"
     netrc.write_text(
         "machine "
@@ -53,6 +58,7 @@ def main() -> None:
                 "set ftp:passive-mode yes",
                 "set ftp:ssl-allow yes",
                 "set ftp:ssl-protect-data yes",
+                "set ftp:list-options -a",
                 "set ssl:verify-certificate no",
                 "open " + host,
                 "lcd " + str(dist),
