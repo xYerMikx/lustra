@@ -189,7 +189,7 @@ function ogHtml({
         justify-content: space-between;
         width: ${WIDTH}px;
         height: ${HEIGHT}px;
-        padding: 72px 56px 72px 84px;
+        padding: 72px 80px 72px 84px;
         background:
           radial-gradient(740px 620px at 0% 0%, rgba(214, 163, 74, 0.74), transparent 62%),
           radial-gradient(680px 540px at 100% 100%, rgba(203, 90, 38, 0.74), transparent 58%),
@@ -241,15 +241,18 @@ function ogHtml({
         display: grid;
         flex-shrink: 0;
         place-items: center;
-        width: 408px;
-        height: 408px;
-        overflow: hidden;
+        align-self: center;
+        width: 320px;
+        height: 320px;
+        overflow: visible;
       }
 
       .mark {
-        width: 526px;
-        height: 526px;
+        display: block;
+        width: 260px;
+        height: 260px;
         object-fit: contain;
+        object-position: center;
       }
     </style>
   </head>

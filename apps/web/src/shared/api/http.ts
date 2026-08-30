@@ -2,6 +2,7 @@ import {
   refreshAccessSession,
   shouldAttemptSessionRefresh,
 } from '@/shared/api/session-refresh'
+import { rememberRequestId } from '@/shared/lib/last-request-id'
 
 export type ApiErrorBody = {
   error: {
@@ -16,6 +17,7 @@ export class ApiError extends Error {
   readonly status: number
   readonly code: string
   readonly details?: unknown
+  readonly requestId?: string
 
   constructor(status: number, body: ApiErrorBody['error']) {
     super(body.message)
@@ -23,6 +25,9 @@ export class ApiError extends Error {
     this.status = status
     this.code = body.code
     this.details = body.details
+    this.requestId = body.requestId
+
+    rememberRequestId(body.requestId)
   }
 }
 
