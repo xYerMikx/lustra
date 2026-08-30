@@ -23,11 +23,11 @@ const catalogHref = Astro.props.catalogHref ?? getAppUrl('/catalog')
 <style>
   .not-found {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: min(720px, calc(100% - var(--spacing-40)));
-    min-height: calc(100dvh - var(--spacing-96) * 2);
     margin-inline: auto;
     padding: var(--spacing-40) 0 var(--spacing-96);
     text-align: center;
