@@ -1,0 +1,17 @@
+---
+import BaseLayout from '@/layouts/base-layout.astro'
+import NotFoundPage from '@/components/not-found-page.astro'
+
+const title = 'Страница не найдена · Lumira'
+const description =
+  'Такой страницы на Lumira нет. Вернитесь на главную или откройте каталог мастеров.'
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/404"
+  noindex={true}
+>
+  <NotFoundPage />
+</BaseLayout>

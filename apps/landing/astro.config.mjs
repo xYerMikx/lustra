@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config'
 
 export default defineConfig({
   site: 'https://lumira.by',
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
   server: {
     port: 4321,
   },
